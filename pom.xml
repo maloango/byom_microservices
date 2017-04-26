@@ -19,6 +19,10 @@
         <lucene.version>3.6.1</lucene.version>
         <aspectj.version>1.6.8</aspectj.version>
         <batik.version>1.6</batik.version>
+
+        <docker.image.prefix>smartbank</docker.image.prefix>
+        <docker.plugin.version>0.4.13</docker.plugin.version>
+
     </properties>
 
     <dependencies>
@@ -693,7 +697,31 @@
     			</configuration>
     	    </plugin>
 
-
+          <plugin>
+              <groupId>com.spotify</groupId>
+              <artifactId>docker-maven-plugin</artifactId>
+              <version>${docker.plugin.version}</version>
+              <executions>
+                  <execution>
+                      <phase>package</phase>
+                      <goals>
+                          <goal>build</goal>
+                      </goals>
+                  </execution>
+              </executions>
+              <configuration>
+                  <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                  <baseImage>tomcat</baseImage>
+                  <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
+                  <resources>
+                      <resource>
+                          <targetPath>/</targetPath>
+                          <directory>${project.build.directory}</directory>
+                          <include>${project.build.finalName}.war</include>
+                      </resource>
+                  </resources>
+              </configuration>
+          </plugin>
 
     	</plugins>
     </build>

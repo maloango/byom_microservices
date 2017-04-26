@@ -1,0 +1,17 @@
+version: "3"
+services:
+  dbserver:
+      image: mysql:latest
+      environment:
+        - MYSQL_ROOT_PASSWORD=ap0ll0
+        - MYSQL_DATABASE=cyclos3
+      ports:
+        - "3306:3306"
+  coreserver:
+      image: smartbank/smartbank-services
+      ports:
+       - "8888:8080"
+      links:
+       - dbserver
+
+

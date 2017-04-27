@@ -596,6 +596,8 @@
             <artifactId>hsqldb</artifactId>
             <version>2.2.9</version>
         </dependency>
+
+      <!--
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-core</artifactId>
@@ -611,6 +613,8 @@
             <artifactId>tomcat-embed-logging-log4j</artifactId>
             <version>7.0.76</version>
         </dependency>
+        -->
+
         <dependency>
             <groupId>org.eclipse.jdt.core.compiler</groupId>
             <artifactId>ecj</artifactId>

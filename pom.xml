@@ -723,6 +723,11 @@
                           <directory>${project.build.directory}</directory>
                           <include>${project.build.finalName}.war</include>
                       </resource>
+                      <resource>
+                          <targetPath>/</targetPath>
+                          <directory>${project.basedir}/src/main/docker</directory>
+                          <include>tomcat-users.xml</include>
+                      </resource>
                   </resources>
               </configuration>
           </plugin>

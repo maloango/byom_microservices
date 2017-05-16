@@ -18,25 +18,45 @@
  */
 package nl.strohalm.cyclos.webservices.rest;
 
-import java.util.Collection;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import nl.strohalm.cyclos.entities.access.MemberUser;
 import nl.strohalm.cyclos.entities.access.PrincipalType;
 import nl.strohalm.cyclos.entities.access.User;
-import nl.strohalm.cyclos.entities.customization.fields.MemberCustomField;
-import nl.strohalm.cyclos.entities.customization.fields.MemberCustomFieldValue;
+import nl.strohalm.cyclos.entities.accounts.MemberAccountType;
+import nl.strohalm.cyclos.entities.accounts.MemberGroupAccountSettings;
+import nl.strohalm.cyclos.entities.accounts.SystemAccountOwner;
+import nl.strohalm.cyclos.entities.customization.fields.*;
 import nl.strohalm.cyclos.entities.exceptions.EntityNotFoundException;
+import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.entities.members.Contact;
 import nl.strohalm.cyclos.entities.members.Member;
+import nl.strohalm.cyclos.entities.members.imports.ImportedMember;
+import nl.strohalm.cyclos.entities.members.imports.ImportedMemberRecord;
+import nl.strohalm.cyclos.entities.members.imports.ImportedMemberRecordCustomFieldValue;
+import nl.strohalm.cyclos.entities.members.imports.MemberImport;
+import nl.strohalm.cyclos.entities.members.records.MemberRecordType;
+import nl.strohalm.cyclos.entities.settings.AccessSettings;
+import nl.strohalm.cyclos.entities.settings.LocalSettings;
+import nl.strohalm.cyclos.services.accounts.CreditLimitDTO;
 import nl.strohalm.cyclos.services.customization.MemberCustomFieldService;
 import nl.strohalm.cyclos.services.elements.ContactService;
 import nl.strohalm.cyclos.services.elements.ElementService;
+import nl.strohalm.cyclos.services.elements.ElementServiceLocal;
 import nl.strohalm.cyclos.services.elements.MemberService;
+import nl.strohalm.cyclos.services.fetch.FetchServiceLocal;
+import nl.strohalm.cyclos.services.settings.SettingsServiceLocal;
+import nl.strohalm.cyclos.services.transactions.TransactionContext;
+import nl.strohalm.cyclos.services.transactions.TransferDTO;
 import nl.strohalm.cyclos.utils.CustomFieldHelper;
+import nl.strohalm.cyclos.utils.DateHelper;
 import nl.strohalm.cyclos.utils.access.LoggedUser;
-import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.utils.conversion.CalendarConverter;
+import nl.strohalm.cyclos.utils.csv.UnknownColumnException;
+import nl.strohalm.cyclos.utils.validation.*;
 import nl.strohalm.cyclos.webservices.WebServiceContext;
 import nl.strohalm.cyclos.webservices.members.FullTextMemberSearchParameters;
 import nl.strohalm.cyclos.webservices.members.MemberResultPage;
@@ -45,6 +65,10 @@ import nl.strohalm.cyclos.webservices.model.MemberVO;
 import nl.strohalm.cyclos.webservices.model.MyProfileVO;
 import nl.strohalm.cyclos.webservices.model.RegistrationFieldValueVO;
 
+import nl.strohalm.cyclos.webservices.rest.MembersRestPayload;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -114,6 +138,10 @@ public class MembersRestController extends BaseRestController {
     private MemberService              memberService;
     private MemberFieldsRestController memberFieldsRestController;
     private CustomFieldHelper          customFieldHelper;
+
+    //TODO -- INJECTS THESE FROM XML
+    private ElementServiceLocal        elementServiceLocal  ;
+    private FetchServiceLocal          fetchService;
 
     /**
      * Gets member and custom fields by member id
@@ -212,6 +240,15 @@ public class MembersRestController extends BaseRestController {
         this.memberService = memberService;
     }
 
+
+    public void setElementServiceLocal(final ElementServiceLocal elementServiceLocal) {
+        this.elementServiceLocal = elementServiceLocal;
+    }
+
+    public void setFetchServiceLocal(final FetchServiceLocal fetchService) {
+        this.fetchService = fetchService;
+    }
+
     /**
      * Updates the authenticated user's profile
      */
@@ -240,5 +277,67 @@ public class MembersRestController extends BaseRestController {
         member.setCustomValues(newFieldValues);
         elementService.changeProfile(member);
     }
+
+
+
+    /**
+     * Create a new member
+     */
+    @RequestMapping(value = "members/create", method = RequestMethod.POST)
+    @ResponseBody
+    public MemberVO create(@RequestBody final MembersRestPayload params) {
+        return saveMember(params);
+    }
+
+
+    private MemberVO saveMember(MembersRestPayload params) {
+
+        Boolean sendActivationMail = Boolean.FALSE ;
+        // Fill the member
+        Member member = new Member();
+        final MemberUser user = new MemberUser();
+        member.setUser(user);
+        member.setCreationDate(params.getCreationDate());
+
+        Member loggedMember = (Member) LoggedUser.element().clone();
+        //final MemberGroup group = fetchService.fetch((MemberGroup)null);
+        final MemberGroup group = loggedMember.getMemberGroup();
+        member.setGroup(group);
+
+        //if (StringUtils.isNotBlank(params.getName())) {
+            //member.setGroup(params.getGroup());
+          //  member.setGroup(group);
+        //}
+
+        if (StringUtils.isNotBlank(params.getName())) {
+            member.setName(params.getName());
+        } else {}
+
+        if (StringUtils.isNotBlank(params.getSalt())) {
+            user.setSalt(params.getSalt());
+        } else {}
+
+        if (StringUtils.isNotBlank(params.getUsername())) {
+            user.setUsername(params.getUsername());
+        } else {}
+
+        if (StringUtils.isNotBlank(params.getPassword())) {
+            user.setPassword(params.getPassword());
+        } else {}
+
+        if (StringUtils.isNotBlank(params.getEmail())) {
+            member.setEmail(params.getEmail());
+        } else {}
+
+        Date now = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(now);
+
+        member.setActivationDate(cal);
+        member = elementServiceLocal.insertMember(member, !sendActivationMail, false);
+        MemberVO memberVO = memberService.getMemberVO(member, true, false);
+        return memberVO ;
+
+       }
 
 }

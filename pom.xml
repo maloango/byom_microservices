@@ -5,10 +5,14 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>smartbank</groupId>
    <artifactId>core-service</artifactId>
-   <packaging>war</packaging>
+   <packaging>jar</packaging>
    <version>1.0-SNAPSHOT</version>
    <name>SmartBank</name>
    <url>http://struts.apache.org/1.x</url>
+   
+  <!--  <modules>
+        <module>core-service-ui</module>
+    </modules> -->
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -679,14 +683,14 @@
                 </configuration>
             </plugin>
 
-          <plugin>
+        <!--   <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-war-plugin</artifactId>
               <version>2.1.1</version>
               <configuration>
                   <webResources>
                       <resource>
-                          <!-- this is relative to the pom.xml directory -->
+                          this is relative to the pom.xml directory
                           <directory>lib</directory>
                       </resource>
                       <resource>
@@ -695,15 +699,45 @@
                              <include>**/*.xml</include>
                              <include>**/*.properties</include>
                          </includes>
-                          <!-- this copy XML resources files in the same path as the classes ** Cyclos oddity -->
-                          <!-- this copy properties resources files in the same path as the classes ** Cyclos oddity -->
+                          this copy XML resources files in the same path as the classes ** Cyclos oddity
+                          this copy properties resources files in the same path as the classes ** Cyclos oddity
                          <targetPath>WEB-INF/classes</targetPath>
                       </resource>
                    </webResources>
 
               </configuration>
-          </plugin>
+          </plugin> -->
+          
+         <!-- Maven Assembly Plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<!-- get all project dependencies -->
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<!-- MainClass in mainfest make a executable jar -->
+					<!-- <archive>
+					  <manifest>
+						<mainClass>com.mkyong.core.utils.App</mainClass>
+					  </manifest>
+					</archive> -->
 
+				</configuration>
+				<executions>
+				  <execution>
+					<id>make-assembly</id>
+                                        <!-- bind to the packaging phase -->
+					<phase>package</phase>
+					<goals>
+						<goal>single</goal>
+					</goals>
+				  </execution>
+				</executions>
+			</plugin>
+			
             <plugin>
     			<groupId>org.mortbay.jetty</groupId>
     			<artifactId>maven-jetty-plugin</artifactId>

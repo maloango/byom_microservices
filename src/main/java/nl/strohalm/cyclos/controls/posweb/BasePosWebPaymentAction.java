@@ -125,6 +125,7 @@ public abstract class BasePosWebPaymentAction extends PaymentAction {
         } else {
             payment = scheduledPaymentService.load(payment.getId(), SCHEDULED_FETCH);
         }
+        
 
         session.setAttribute("lastPayment", payment);
         session.setAttribute("lastPaymentIsScheduled", payment instanceof ScheduledPayment);

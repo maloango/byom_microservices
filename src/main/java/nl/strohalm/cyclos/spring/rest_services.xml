@@ -40,5 +40,11 @@
 	<bean id="adsRestController" class="nl.strohalm.cyclos.webservices.rest.AdsRestController" />
 	<bean id="adFieldsRestController" class="nl.strohalm.cyclos.webservices.rest.AdFieldsRestController" />
 	<bean id="adCategoriesRestController" class="nl.strohalm.cyclos.webservices.rest.AdCategoriesRestController" />
+	<bean id="managePasswordsController" class="nl.strohalm.cyclos.webservices.rest.access.ManagePasswordsController" />
+	<bean id="resetAndSendPasswordController" class="nl.strohalm.cyclos.webservices.rest.access.ResetAndSendPasswordController" />
+	<bean id="manageExternalAccessController" class="nl.strohalm.cyclos.webservices.rest.access.ManageExternalAccessController" />
+	<bean id="manageTransactionPasswordController" class="nl.strohalm.cyclos.webservices.rest.access.ManageTransactionPasswordController" />
+	<bean id="editAccountFeeController" class="nl.strohalm.cyclos.webservices.rest.access.EditAccountFeeController" />
+	<bean id="RemoveAccountFeeController" class="nl.strohalm.cyclos.webservices.rest.access.RemoveAccountFeeController" />
 
 </beans>

@@ -45,6 +45,10 @@
 	<bean id="manageExternalAccessController" class="nl.strohalm.cyclos.webservices.rest.access.ManageExternalAccessController" />
 	<bean id="manageTransactionPasswordController" class="nl.strohalm.cyclos.webservices.rest.access.ManageTransactionPasswordController" />
 	<bean id="editAccountFeeController" class="nl.strohalm.cyclos.webservices.rest.access.EditAccountFeeController" />
-	<bean id="RemoveAccountFeeController" class="nl.strohalm.cyclos.webservices.rest.access.RemoveAccountFeeController" />
+	<bean id="removeAccountFeeController" class="nl.strohalm.cyclos.webservices.rest.access.RemoveAccountFeeController" />
+	<bean id="generateTransactionPasswordController" class="nl.strohalm.cyclos.webservices.rest.access.GenerateTransactionPasswordController" />
+	<bean id="editAccountTypeController" class="nl.strohalm.cyclos.webservices.rest.access.EditAccountTypeController" />
+	<bean id="listAccountTypesController" class="nl.strohalm.cyclos.webservices.rest.access.ListAccountTypesController" />
+	<bean id="removeAccountTypeController" class="nl.strohalm.cyclos.webservices.rest.access.RemoveAccountTypeController" />
 
 </beans>

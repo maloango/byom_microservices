@@ -50,5 +50,11 @@
 	<bean id="editAccountTypeController" class="nl.strohalm.cyclos.webservices.rest.access.EditAccountTypeController" />
 	<bean id="listAccountTypesController" class="nl.strohalm.cyclos.webservices.rest.access.ListAccountTypesController" />
 	<bean id="removeAccountTypeController" class="nl.strohalm.cyclos.webservices.rest.access.RemoveAccountTypeController" />
+	<bean id="removeAdminController" class="nl.strohalm.cyclos.webservices.rest.admin.removeAdminController" />
+	<bean id="administrativeTasksContoller" class="nl.strohalm.cyclos.webservices.rest.admintasks.AdministrativeTasksContoller" />
+	<bean id="removeAlertsController" class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveAlertsAction" />
+	<bean id="viewErrorLogEntryController" class="nl.strohalm.cyclos.webservices.rest.alerts.ViewErrorLogEntryController" />
+	<bean id="removeErrorLogEntriesController" class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveErrorLogEntriesController" />
+	
 
 </beans>

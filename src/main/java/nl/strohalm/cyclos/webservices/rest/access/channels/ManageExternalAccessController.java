@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
 import nl.strohalm.cyclos.access.MemberPermission;
+import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.access.User.TransactionPasswordStatus;
@@ -30,101 +31,119 @@ import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class ManageExternalAccessController extends BaseRestController {
-	
+
 	private ChannelService channelService;
 	private ElementService elementService;
-	private AccessService accessService;
-	private PermissionService permissionService;
 	private GroupService groupService;
-	
+	private PermissionService permissionService;
+	private AccessService accessService;
+
 	public void setAccessService(AccessService accessService) {
 		this.accessService = accessService;
 	}
-	
+
 	public void setElementService(ElementService elementService) {
 		this.elementService = elementService;
 	}
+
 	public void setGroupService(GroupService groupService) {
 		this.groupService = groupService;
 	}
+
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
-	
+
+	@Inject
 	public void setChannelService(final ChannelService channelService) {
 		this.channelService = channelService;
 	}
 
-
 	public static class ManageExternalAccessRequestDto {
 		private long memberId;
-		public final long getMemberId() {
-			return memberId;
-		}
-		public final void setMemberId(long memberId) {
-			this.memberId = memberId;
-		}
-		public final Element getElement() {
-			return element;
-		}
-		public final void setElement(Element element) {
-			this.element = element;
-		}
-		public final User getUser() {
-			return user;
-		}
-		public final void setUser(User user) {
-			this.user = user;
-		}
 		private Element element;
 		private User user;
+
+		public User getUser() {
+			return user;
+		}
+
+		public void setUser(User user) {
+			this.user = user;
+		}
+
+		public Element getElement() {
+			return element;
+		}
+
+		public void setElement(Element element) {
+			this.element = element;
+		}
+
+		public long getMemberId() {
+			return memberId;
+		}
+
+		public void setMemberId(long memberId) {
+			this.memberId = memberId;
+		}
 
 	}
 
 	public static class ManageExternalAccessResponseDto {
 		private Member member;
 		private boolean myAccess;
-		private boolean channels;
+		private Channel channels;
 		private boolean memberCanHavePin;
 		private boolean canChangePin;
-		public ManageExternalAccessResponseDto(Member member, boolean myAccess,
-				boolean channels, boolean memberCanHavePin, boolean canChangePin) {
+		private boolean canManagePreferences;
+		private boolean canChangeChannelAccess;
+
+		public ManageExternalAccessResponseDto(Member member, boolean myAccess, Channel channels,
+				boolean memberCanHavePin, boolean canChangePin, boolean canManagePreferences,
+				boolean canChangeChannelAccess) {
 			super();
-			this.canChangePin =canChangePin;
-			this.memberCanHavePin =memberCanHavePin;
-			this.channels = channels;
-			this.canChangePin = canChangePin;
 			this.member = member;
+			this.myAccess = myAccess;
+			this.channels = channels;
+			this.memberCanHavePin = memberCanHavePin;
+			this.canChangePin = canChangePin;
+			this.canManagePreferences = canManagePreferences;
+			this.canChangeChannelAccess = canChangeChannelAccess;
 		}
-		public Member getMember(){
+
+		public Member getMember() {
 			return member;
 		}
-			
-		public final void setMember(Member member) {
+
+		public void setMember(Member member) {
 			this.member = member;
 		}
+
 		public boolean isMyAccess() {
 			return myAccess;
 		}
-		public final void isMyAccess(boolean myAccess) {
+
+		public void setMyAccess(boolean myAccess) {
 			this.myAccess = myAccess;
 		}
-		public boolean getChannels(){
+
+		public Channel getChannels() {
 			return channels;
 		}
-		public final void setChannels(boolean channels) {
+
+		public void setChannels(Channel channels) {
 			this.channels = channels;
 		}
-		public void setChannel(boolean channels) {
-			this.channels = channels;
-		}
+
 		public boolean isMemberCanHavePin() {
 			return memberCanHavePin;
 		}
-		public final void setMemberCanHavePin(boolean memberCanHavePin) {
+
+		public void setMemberCanHavePin(boolean memberCanHavePin) {
 			this.memberCanHavePin = memberCanHavePin;
 		}
-		
+
 		public boolean isCanChangePin() {
 			return canChangePin;
 		}
@@ -132,12 +151,12 @@ public class ManageExternalAccessController extends BaseRestController {
 		public void setCanChangePin(boolean canChangePin) {
 			this.canChangePin = canChangePin;
 		}
-		
+
 	}
-	@RequestMapping(value = "/admin/manageExternalAccess", method = RequestMethod.POST)
+
+	@RequestMapping(value = "/admin/manageExternalAccess", method = RequestMethod.PUT)
 	@ResponseBody
-	public ManageExternalAccessResponseDto ManageExternalAccess(
-			@RequestBody final ManageExternalAccessRequestDto form,
+	public ManageExternalAccessResponseDto ManageExternalAccess(@RequestBody final ManageExternalAccessRequestDto form,
 			HttpServletRequest request) {
 
 		boolean myAccess = false;
@@ -147,20 +166,17 @@ public class ManageExternalAccessController extends BaseRestController {
 		Member member;
 		final long memberId = form.getMemberId();
 		if (memberId > 0) {
-			member = elementService.load(memberId, Element.Relationships.USER,
-					Member.Relationships.CHANNELS, RelationshipHelper.nested(
-							Element.Relationships.GROUP,
-							MemberGroup.Relationships.CHANNELS));
+			member = elementService.load(memberId, Element.Relationships.USER, Member.Relationships.CHANNELS,
+					RelationshipHelper.nested(Element.Relationships.GROUP, MemberGroup.Relationships.CHANNELS));
 			if (form.getElement().equals(member)) {
 				myAccess = true;
 			}
 
 		} else {
 			// Member managing his/her own external access settings
-			member = elementService.load(form.getElement().getId(),
-					Element.Relationships.USER, Member.Relationships.CHANNELS,
-					RelationshipHelper.nested(Element.Relationships.GROUP,
-							MemberGroup.Relationships.CHANNELS));
+			member = elementService.load(form.getElement().getId(), Element.Relationships.USER,
+					Member.Relationships.CHANNELS,
+					RelationshipHelper.nested(Element.Relationships.GROUP, MemberGroup.Relationships.CHANNELS));
 			myAccess = true;
 		}
 
@@ -171,14 +187,11 @@ public class ManageExternalAccessController extends BaseRestController {
 
 		// If the pin is blocked, check the permission to unblock it
 		if (memberCanHavePin) {
-			final boolean pinBlocked = accessService.isPinBlocked(member
-					.getMemberUser());
+			final boolean pinBlocked = accessService.isPinBlocked(member.getMemberUser());
 			if (pinBlocked) {
-				final boolean canUnblockPin = permissionService
-						.permission(member)
+				final boolean canUnblockPin = permissionService.permission(member)
 						.admin(AdminMemberPermission.ACCESS_UNBLOCK_PIN)
-						.broker(BrokerPermission.MEMBER_ACCESS_UNBLOCK_PIN)
-						.member(MemberPermission.ACCESS_UNBLOCK_PIN)
+						.broker(BrokerPermission.MEMBER_ACCESS_UNBLOCK_PIN).member(MemberPermission.ACCESS_UNBLOCK_PIN)
 						.hasPermission();
 				request.setAttribute("canUnblockPin", canUnblockPin);
 			}
@@ -186,14 +199,11 @@ public class ManageExternalAccessController extends BaseRestController {
 
 		// Check if the group of member uses a transaction password
 		if (myAccess) {
-			final boolean usesTransactionPassword = memberGroup
-					.getBasicSettings().getTransactionPassword().isUsed();
+			final boolean usesTransactionPassword = memberGroup.getBasicSettings().getTransactionPassword().isUsed();
 			if (usesTransactionPassword) {
-				request.setAttribute("usesTransactionPassword",
-						usesTransactionPassword);
+				request.setAttribute("usesTransactionPassword", usesTransactionPassword);
 				final TransactionPasswordStatus transactionPasswordStatus = elementService
-						.reloadUser(form.getUser().getId())
-						.getTransactionPasswordStatus();
+						.reloadUser(form.getUser().getId()).getTransactionPasswordStatus();
 				if (transactionPasswordStatus == TransactionPasswordStatus.BLOCKED) {
 					request.setAttribute("transactionPasswordBlocked", true);
 				} else if (transactionPasswordStatus.isGenerationAllowed()) {
@@ -203,17 +213,13 @@ public class ManageExternalAccessController extends BaseRestController {
 		}
 
 		final boolean canChangePin = memberCanHavePin
-				&& permissionService.permission(member)
-						.admin(AdminMemberPermission.ACCESS_CHANGE_PIN)
-						.broker(BrokerPermission.MEMBER_ACCESS_CHANGE_PIN)
-						.member().hasPermission();
+				&& permissionService.permission(member).admin(AdminMemberPermission.ACCESS_CHANGE_PIN)
+						.broker(BrokerPermission.MEMBER_ACCESS_CHANGE_PIN).member().hasPermission();
 
 		// Channels that the group of member have access
-		final Channel webChannel = channelService
-				.loadByInternalName(Channel.WEB);
+		final Channel webChannel = channelService.loadByInternalName(Channel.WEB);
 
-		final Collection<Channel> memberGroupChannels = new ArrayList<Channel>(
-				memberGroup.getChannels());
+		final Collection<Channel> memberGroupChannels = new ArrayList<Channel>(memberGroup.getChannels());
 		// The "web" channel can not be customized by the user, so it should not
 		// be sent to the JSP page
 		// We need to clone the channels collection because it's associated to
@@ -228,9 +234,17 @@ public class ManageExternalAccessController extends BaseRestController {
 			memberCanHaveSmsChannel = memberGroupChannels.remove(smsChannel);
 		}
 
-		// Store member and settings in the request
-		ManageExternalAccessResponseDto reponse = new ManageExternalAccessResponseDto(member,myAccess,memberCanHaveSmsChannel,memberCanHavePin,canChangePin);
-				
+		final boolean hasPermission = permissionService.permission(member)
+				.admin(AdminMemberPermission.PREFERENCES_MANAGE_NOTIFICATIONS)
+				.member(MemberPermission.PREFERENCES_MANAGE_NOTIFICATIONS)
+				.broker(BrokerPermission.PREFERENCES_MANAGE_NOTIFICATIONS).hasPermission();
+
+		final boolean canManagePreferences = memberCanHaveSmsChannel && hasPermission;
+
+		final boolean canChangeChannelAccess = accessService.canChangeChannelsAccess(member);
+
+		ManageExternalAccessResponseDto reponse = new ManageExternalAccessResponseDto(member, myAccess, smsChannel,
+				memberCanHavePin, canChangePin, canManagePreferences, canChangeChannelAccess);
 		return reponse;
 	}
 }

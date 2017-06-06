@@ -23,13 +23,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.upload.FormFile;
-
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseFormAction;
-import nl.strohalm.cyclos.controls.ads.imports.ImportAdsForm;
 import nl.strohalm.cyclos.entities.accounts.Currency;
 import nl.strohalm.cyclos.entities.ads.imports.AdImport;
 import nl.strohalm.cyclos.services.accounts.CurrencyService;
@@ -41,6 +37,9 @@ import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.csv.UnknownColumnException;
 import nl.strohalm.cyclos.utils.validation.RequiredError;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
+
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.upload.FormFile;
 
 /**
  * Action used to import advertisements

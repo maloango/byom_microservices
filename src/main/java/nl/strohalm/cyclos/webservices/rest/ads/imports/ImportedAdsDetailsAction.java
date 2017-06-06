@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseQueryAction;
-import nl.strohalm.cyclos.controls.ads.imports.ImportedAdsDetailsForm;
 import nl.strohalm.cyclos.entities.ads.imports.AdImport;
 import nl.strohalm.cyclos.entities.ads.imports.ImportedAd;
 import nl.strohalm.cyclos.entities.ads.imports.ImportedAdQuery;

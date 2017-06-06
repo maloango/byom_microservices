@@ -55,6 +55,12 @@
 	<bean id="removeAlertsController" class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveAlertsAction" />
 	<bean id="viewErrorLogEntryController" class="nl.strohalm.cyclos.webservices.rest.alerts.ViewErrorLogEntryController" />
 	<bean id="removeErrorLogEntriesController" class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveErrorLogEntriesController" />
+	<bean id="editDynamicDocumentController" class="nl.strohalm.cyclos.webservices.rest.customization.documents.EditDynamicDocumentController" />
+	<bean id="editMemberDocumentController" class="nl.strohalm.cyclos.webservices.rest.customization.documents.EditMemberDocumentController" />
+	<bean id="editStaticDocumentController" class="nl.strohalm.cyclos.webservices.rest.customization.documents.EditStaticDocumentController" />
+	<bean id="listDocumentsController" class="nl.strohalm.cyclos.webservices.rest.customization.documents.ListDocumentsController" />
+	<bean id="removeDocumentController" class="nl.strohalm.cyclos.webservices.rest.customization.documents.RemoveDocumentController" />
+	<bean id="viewDocumentController" class="nl.strohalm.cyclos.webservices.rest.customization.documents.ViewDocumentController" />
 	
 
 </beans>

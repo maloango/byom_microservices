@@ -1,13 +1,13 @@
 package nl.strohalm.cyclos.webservices.rest.customization.files;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +21,6 @@ import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.customization.files.CustomizedFile;
 import nl.strohalm.cyclos.entities.customization.files.CustomizedFileQuery;
 import nl.strohalm.cyclos.services.customization.CustomizedFileService;
-import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.CustomizationHelper;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
@@ -119,12 +118,19 @@ public class EditCustomizedFileController extends BaseRestController {
     }
     
     public static class EditCustomizedFileResposeDTO{
-    	
+    	String message;
+		Map<String, Object> param;
+		public EditCustomizedFileResposeDTO(String message, Map<String, Object> param) {
+			super();
+			this.message = message;
+			this.param = param;
+		}
+
     	
     	
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/editCustomizedFile", method = RequestMethod.POST)
     @ResponseBody
     protected EditCustomizedFileResposeDTO handleSubmit(@RequestBody EditCustomizedFileRequestDTO  form) throws Exception {
        // final EditCustomizedFileForm form = context.getForm();
@@ -151,10 +157,23 @@ public class EditCustomizedFileController extends BaseRestController {
 
         // Physically update the file
         customizationHelper.updateFile(physicalFile, customizedFile);
+        Map<String, Object> param = new HashMap<String, Object>();
+        String message = null;
+        if (isInsert) {
+        	message ="customizedFile.customized"; 	
+        }
+        else {
+        	message ="customizedFile.modified";
+		}
+        
+        param.put("fileId", customizedFile.getId());
+        EditCustomizedFileResposeDTO response = new EditCustomizedFileResposeDTO(message, param);
+        return response;
+		//return null;
 
-        context.sendMessage(isInsert ? "customizedFile.customized" : "customizedFile.modified");
+        //context.sendMessage(isInsert ? "customizedFile.customized" : "customizedFile.modified");
 
-        return ActionHelper.redirectWithParam(context.getRequest(), context.getSuccessForward(), "fileId", customizedFile.getId());
+        //return ActionHelper.redirectWithParam(context.getRequest(), context.getSuccessForward(), "fileId", customizedFile.getId());
     }
 
    // @Override

@@ -62,7 +62,7 @@ public class MemberBulkChangeGroupController extends BaseRestController {
 		request.setAttribute("possibleNewGroups", groupService.search(query));
 	}
 
-	private DataBinder<FullTextMemberQuery> dataBinder;
+/*	private DataBinder<FullTextMemberQuery> dataBinder;
 	private GroupService groupService;
 	private ElementService elementService;
 	private SettingsService settingsService;
@@ -96,207 +96,7 @@ public class MemberBulkChangeGroupController extends BaseRestController {
 
 	}
 
-	public static class MemberBulkChangeGroupRequestDto extends
-			HashMap<String, Object> {
-		private Member broker;
-		private Period activationPeriod;
-		private Collection<GroupFilter> groupFilters;
-		private SortOrder memberSortOrder;
-		private boolean withImagesOnly;
-
-		public Period getActivationPeriod() {
-			return activationPeriod;
-		}
-
-		public Member getBroker() {
-			return broker;
-		}
-
-		public Collection<GroupFilter> getGroupFilters() {
-			return groupFilters;
-		}
-
-		public SortOrder getMemberSortOrder() {
-			return memberSortOrder;
-		}
-
-		public Nature getNature() {
-			return Nature.MEMBER;
-		}
-
-		public Class<? extends ElementQuery> getQueryClass() {
-			return MemberQuery.class;
-		}
-
-		public boolean isWithImagesOnly() {
-			return withImagesOnly;
-		}
-
-		public void setActivationPeriod(final Period activationPeriod) {
-			this.activationPeriod = activationPeriod;
-		}
-
-		public void setBroker(final Member broker) {
-			this.broker = broker;
-		}
-
-		public void setGroupFilters(final Collection<GroupFilter> groupFilters) {
-			this.groupFilters = groupFilters;
-		}
-
-		public void setMemberSortOrder(final SortOrder memberSortOrder) {
-			this.memberSortOrder = memberSortOrder;
-		}
-
-		public void setWithImagesOnly(final boolean withImagesOnly) {
-			this.withImagesOnly = withImagesOnly;
-		}
-
-		public Map<String, Object> getQuery() {
-			return values;
-		}
-
-		public Object getQuery(final String key) {
-			return values.get(key);
-		}
-
-		public void setQuery(final Map<String, Object> query) {
-			values = query;
-		}
-
-		public void setQuery(final String key, final Object value) {
-			values.put(key, value);
-		}
-
-		protected Map<String, Object> values;
-
-		public Map<String, Object> getValues() {
-			return values;
-		}
-
-		public void setValues(final Map<String, Object> values) {
-			this.values = values;
-		}
-
-		boolean isArray= false;
-		private Map<String, Class<?>> propertyTypes = new HashMap<String, Class<?>>();
-
-		public boolean contains(final String name, final String key) {
-			return get(name, key) != null;
-		}
-
-		public Object get(final Object key) {
-			final String name = (String) key;
-			if (!propertyTypes.containsKey(key)) {
-				propertyTypes
-						.put(name, isArray ? Object[].class : Object.class);
-			}
-			return super.get(key);
-		}
-
-		public Object get(final String name) {
-			return this.get((Object) name);
-		}
-
-		public Object get(final String name, final int index) {
-			final Object value = this.get(name);
-			if (value != null) {
-				if (value instanceof List<?>) {
-					return ((List<?>) value).get(index);
-				} else if (value.getClass().isArray()) {
-					return Array.get(value, index);
-				}
-			}
-			return null;
-		}
-
-		public Object get(final String name, final String key) {
-			final Object value = this.get(name);
-			if (value != null) {
-				if (value instanceof DynaBean) {
-					return ((DynaBean) value).get(key);
-				} else {
-					try {
-						return PropertyUtils.getProperty(value, key);
-					} catch (final Exception e) {
-						// Keep on
-					}
-				}
-			}
-			return null;
-		}
-
-		public DynaClass getDynaClass() {
-			final LazyDynaClass dynaClass = new LazyDynaClass();
-			for (final Map.Entry<String, Class<?>> entry : propertyTypes
-					.entrySet()) {
-				dynaClass.add(entry.getKey(), entry.getValue());
-			}
-			return dynaClass;
-		}
-
-		public Object put(final String key, final Object value) {
-			final String name = key;
-			if (!propertyTypes.containsKey(key)) {
-				propertyTypes
-						.put(name, isArray ? Object[].class : Object.class);
-			}
-			return super.put(key, value);
-		}
-
-		public void remove(final String name, final String key) {
-			final Object value = this.get(name);
-			if (value != null) {
-				if (value instanceof DynaBean) {
-					((DynaBean) value).set(key, null);
-				} else {
-					try {
-						PropertyUtils.setProperty(value, key, null);
-					} catch (final Exception e) {
-						// Keep on
-					}
-				}
-			}
-		}
-
-		@SuppressWarnings("unchecked")
-		public void set(final String name, final int index, final Object value) {
-			final Object bean = this.get(name);
-			if (bean != null) {
-				if (bean instanceof List) {
-					((List<Object>) bean).set(index, value);
-				} else if (value.getClass().isArray()) {
-					Array.set(bean, index, value);
-				}
-			}
-		}
-
-		public void set(final String name, final Object value) {
-			put(name, value);
-		}
-
-		public void set(final String name, final String key, final Object value) {
-			final Object bean = this.get(name);
-			if (bean != null) {
-				if (bean instanceof DynaBean) {
-					((DynaBean) bean).set(key, value);
-				} else {
-					try {
-						PropertyUtils.setProperty(bean, key, value);
-					} catch (final Exception e) {
-						// Keep on
-					}
-				}
-			}
-		}
-
-		public void setArray(final String name) {
-			setType(name, Object[].class);
-		}
-
-		public void setType(final String name, final Class<?> type) {
-			propertyTypes.put(name, type);
-		}
+	public static class MemberBulkChangeGroupRequestDto {
 
 	}
 
@@ -316,10 +116,10 @@ public class MemberBulkChangeGroupController extends BaseRestController {
 	@ResponseBody
 	protected MemberBulkChangeGroupResponseDto formAction(
 			final MemberBulkChangeGroupRequestDto form) throws Exception {
-		// final MemberBulkActionsForm form = context.getForm();
+		final MemberBulkActionsForm form = context.getForm();
 
 		// Read the user input
-		//final MapBean bean = form.getChangeGroup();
+		final MapBean bean = form.getChangeGroup();
 		final FullTextMemberQuery query = getDataBinder().readFromString(
 				form.getQuery());
 		final MemberGroup newGroup = groupService.load(CoercionHelper.coerce(
@@ -377,6 +177,6 @@ public class MemberBulkChangeGroupController extends BaseRestController {
 			throw new ValidationException("comments", "remark.comments",
 					new RequiredError());
 		}
-	}
+	}*/
 
 }

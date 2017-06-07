@@ -135,6 +135,7 @@ public class EditDynamicDocumentController extends BaseRestController {
 
         final File documentFile = customizationHelper.documentFile(document);
         customizationHelper.updateFile(documentFile, document.getDocumentPage());
+        Map<String, Object> param = new HashMap<String, Object>();
         String message = null;
         if (isInsert) {
         	message = "documentFile.inserted";
@@ -142,7 +143,7 @@ public class EditDynamicDocumentController extends BaseRestController {
         	else {
         		message = "documentFile.modified";
         	}
-        Map<String, Object> param = new HashMap<String, Object>();
+        //Map<String, Object> param = new HashMap<String, Object>();
         param.put("documentId", document.getId());
         EditDynamicDocumentResponseDTO response = new EditDynamicDocumentResponseDTO(message, param);
         return response;

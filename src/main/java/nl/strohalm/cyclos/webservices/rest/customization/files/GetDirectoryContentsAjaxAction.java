@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAjaxAction;
+import nl.strohalm.cyclos.controls.customization.files.GetDirectoryContentsAjaxForm;
 import nl.strohalm.cyclos.utils.CustomizationHelper;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.BeanCollectionBinder;

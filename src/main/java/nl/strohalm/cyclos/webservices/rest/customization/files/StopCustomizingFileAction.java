@@ -21,17 +21,18 @@ package nl.strohalm.cyclos.webservices.rest.customization.files;
 
 import java.io.File;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
+import nl.strohalm.cyclos.controls.customization.files.StopCustomizingFileForm;
 import nl.strohalm.cyclos.entities.customization.files.CustomizedFile;
 import nl.strohalm.cyclos.services.customization.CustomizedFileService;
 import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.CustomizationHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to stop customizing a file

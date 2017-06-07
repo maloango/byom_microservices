@@ -23,9 +23,12 @@ import java.io.File;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAjaxAction;
+import nl.strohalm.cyclos.controls.customization.files.GetFileContentsAjaxForm;
 import nl.strohalm.cyclos.entities.customization.files.CustomizedFile;
 import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.entities.groups.GroupFilter;
@@ -33,8 +36,6 @@ import nl.strohalm.cyclos.services.customization.CustomizedFileService;
 import nl.strohalm.cyclos.utils.CustomizationHelper;
 import nl.strohalm.cyclos.utils.EntityHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Action used to return the file contents

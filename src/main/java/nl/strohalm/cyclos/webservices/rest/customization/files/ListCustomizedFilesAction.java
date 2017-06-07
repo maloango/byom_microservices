@@ -23,15 +23,16 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
+import nl.strohalm.cyclos.controls.customization.files.ListCustomizedFilesForm;
 import nl.strohalm.cyclos.entities.customization.files.CustomizedFile;
 import nl.strohalm.cyclos.entities.customization.files.CustomizedFileQuery;
 import nl.strohalm.cyclos.services.customization.CustomizedFileService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to list the customized files of a given type

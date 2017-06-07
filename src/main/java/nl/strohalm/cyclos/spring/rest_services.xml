@@ -61,6 +61,16 @@
 	<bean id="listDocumentsController" class="nl.strohalm.cyclos.webservices.rest.customization.documents.ListDocumentsController" />
 	<bean id="removeDocumentController" class="nl.strohalm.cyclos.webservices.rest.customization.documents.RemoveDocumentController" />
 	<bean id="viewDocumentController" class="nl.strohalm.cyclos.webservices.rest.customization.documents.ViewDocumentController" />
+	<bean id="editCustomizedFileController" class="nl.strohalm.cyclos.webservices.rest.customization.files.EditCustomizedFileController" />
+	<bean id="listCustomizedFilesController" class="nl.strohalm.cyclos.webservices.rest.customization.files.ListCustomizedFilesController" />
+	<bean id="stopCustomizingController" class="nl.strohalm.cyclos.webservices.rest.customization.files.StopCustomizingController" />
+	<bean id="exportThemeController" class="nl.strohalm.cyclos.webservices.rest.customization.themes.ExportThemeController" />
+	<bean id="importThemeController" class="nl.strohalm.cyclos.webservices.rest.customization.themes.ImportThemeController" />
+	<bean id="removeThemeController" class="nl.strohalm.cyclos.webservices.rest.customization.themes.RemoveThemeController" />
+	<bean id="selectThemeController" class="nl.strohalm.cyclos.webservices.rest.customization.themes.SelectThemeController" />
+	<bean id="editGroupController" class="nl.strohalm.cyclos.webservices.rest.groups.EditGroupController" />
+	<bean id="listGroupsController" class="nl.strohalm.cyclos.webservices.rest.groups.ListGroupsController" />
+	<bean id="removeGroupController" class="nl.strohalm.cyclos.webservices.rest.groups.RemoveGroupController" />
 	
 
 </beans>

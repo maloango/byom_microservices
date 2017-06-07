@@ -33,8 +33,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@Controller
-public class MemberBulkGenerateCardController extends BaseRestController {
+
+/*public class MemberBulkGenerateCardController extends BaseRestController {
 	private DataBinder<FullTextMemberQuery> dataBinder;
 	private CardService cardService;
 	private SettingsService settingsService;
@@ -59,9 +59,9 @@ public class MemberBulkGenerateCardController extends BaseRestController {
 		}
 	}
 
-	/**
+	*//**
 	 * @see nl.strohalm.cyclos.entities.settings.events.LocalSettingsChangeListener#onLocalSettingsUpdate(nl.strohalm.cyclos.entities.settings.events.LocalSettingsEvent)
-	 */
+	 *//*
 
 	public void onLocalSettingsUpdate(final LocalSettingsEvent event) {
 		try {
@@ -183,5 +183,5 @@ public class MemberBulkGenerateCardController extends BaseRestController {
 			throw new ValidationException("comments", "remark.comments",
 					new RequiredError());
 		}
-	}
-}
+	}*/
+

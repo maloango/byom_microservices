@@ -71,6 +71,13 @@
 	<bean id="editGroupController" class="nl.strohalm.cyclos.webservices.rest.groups.EditGroupController" />
 	<bean id="listGroupsController" class="nl.strohalm.cyclos.webservices.rest.groups.ListGroupsController" />
 	<bean id="removeGroupController" class="nl.strohalm.cyclos.webservices.rest.groups.RemoveGroupController" />
+	<bean id="editGroupCustomizedFileController" class="nl.strohalm.cyclos.webservices.rest.groups.editGroupCustomizedFileController" />
+	<bean id="stopCustomizingGroupFileController" class="nl.strohalm.cyclos.webservices.rest.groups.StopCustomizingGroupFileController" />
+	<bean id="editGroupFilterCustomizedController" class="nl.strohalm.cyclos.webservices.rest.groups.EditGroupFilterCustomizedController" />
+	<bean id="stopCustomizingGroupFilterFileController" class="nl.strohalm.cyclos.webservices.rest.groups.StopCustomizingGroupFilterFileController" />
+	<bean id="removeImageController" class="nl.strohalm.cyclos.webservices.rest.image.RemoveImageController" />
+	<bean id="removeLoanGroup" class="nl.strohalm.cyclos.webservices.rest.loangroups.RemoveLoanGroup" />
+	<bean id="searchLoanGroupsController" class="nl.strohalm.cyclos.webservices.rest.loangroups.SearchLoanGroupsController />
 	
 
 </beans>

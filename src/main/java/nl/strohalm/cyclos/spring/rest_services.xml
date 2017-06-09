@@ -76,8 +76,17 @@
 	<bean id="editGroupFilterCustomizedController" class="nl.strohalm.cyclos.webservices.rest.groups.EditGroupFilterCustomizedController" />
 	<bean id="stopCustomizingGroupFilterFileController" class="nl.strohalm.cyclos.webservices.rest.groups.StopCustomizingGroupFilterFileController" />
 	<bean id="removeImageController" class="nl.strohalm.cyclos.webservices.rest.image.RemoveImageController" />
-	<bean id="removeLoanGroup" class="nl.strohalm.cyclos.webservices.rest.loangroups.RemoveLoanGroup" />
+	<bean id="removeLoanGroupController" class="nl.strohalm.cyclos.webservices.rest.loangroups.RemoveLoanGroupController" />
 	<bean id="searchLoanGroupsController" class="nl.strohalm.cyclos.webservices.rest.loangroups.SearchLoanGroupsController />
+	<bean id="editAdInterestController" class="nl.strohalm.cyclos.webservices.rest.members.EditAdInterestController />
+	<bean id="listAdInterestsController" class="nl.strohalm.cyclos.webservices.rest.members.ListAdInterestsController />
+	<bean id="removeAdInterestsController" class="nl.strohalm.cyclos.webservices.rest.members.RemoveAdInterestsController />
+	<bean id="deleteContactController" class="nl.strohalm.cyclos.webservices.rest.members.DeleteContactController />
+	<bean id="editContactController" class="nl.strohalm.cyclos.webservices.rest.members.EditContactController />
+	<bean id="listContacts" class="nl.strohalm.cyclos.webservices.rest.members.ListContacts />
+	<bean id="SelectDocumentController" class="nl.strohalm.cyclos.webservices.rest.members.SelectDocumentController />
+	<bean id="pendingMemberProfileController" class="nl.strohalm.cyclos.webservices.rest.members.PendingMemberProfileController />
+	<bean id="resendEmailValidationController" class="nl.strohalm.cyclos.webservices.rest.members.ResendEmailValidationController />
 	
 
 </beans>

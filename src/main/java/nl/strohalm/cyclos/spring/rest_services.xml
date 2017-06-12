@@ -87,6 +87,18 @@
 	<bean id="SelectDocumentController" class="nl.strohalm.cyclos.webservices.rest.members.SelectDocumentController />
 	<bean id="pendingMemberProfileController" class="nl.strohalm.cyclos.webservices.rest.members.PendingMemberProfileController />
 	<bean id="resendEmailValidationController" class="nl.strohalm.cyclos.webservices.rest.members.ResendEmailValidationController />
+	<bean id="editReceiptPrinterSettingsController" class="nl.strohalm.cyclos.webservices.rest.members.EditReceiptPrinterSettingsController />
+	<bean id="listReceiptPrinterSettingsController" class="nl.strohalm.cyclos.webservices.rest.members.ListReceiptPrinterSettingsController />
+	<bean id="removeReceiptPrinterSettingsController" class="nl.strohalm.cyclos.webservices.rest.members.RemoveReceiptPrinterSettingsController />
+	<bean id="EditGeneralReferenceController" class="nl.strohalm.cyclos.webservices.rest.members.references.EditGeneralReferenceController />
+	<bean id="editTransactionFeedbackController" class="nl.strohalm.cyclos.webservices.rest.members.references.EditTransactionFeedbackController />
+	<bean id="removeReferenceController" class="nl.strohalm.cyclos.webservices.rest.members.references.RemoveReferenceController />
+	<bean id="changeOperatorGroupController" class="nl.strohalm.cyclos.webservices.rest.members.operators.ChangeOperatorGroupController />
+	<bean id="CreateOperatorController" class="nl.strohalm.cyclos.webservices.rest.members.operators.CreateOperatorController />
+	<bean id="operatorProfileController" class="nl.strohalm.cyclos.webservices.rest.members.operators.OperatorProfileController />
+	<bean id="removeOperatorController" class="nl.strohalm.cyclos.webservices.rest.members.operators.RemoveOperatorController />
+	<bean id="removeOperatorController" class="nl.strohalm.cyclos.webservices.rest.members.operators.RemoveOperatorController />
+	<bean id="RequestPaymentController" class="nl.strohalm.cyclos.webservices.rest.payments.request.RequestPaymentController />
 	
 
 </beans>

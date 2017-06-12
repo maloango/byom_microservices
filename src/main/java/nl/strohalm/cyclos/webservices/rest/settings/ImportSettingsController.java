@@ -51,8 +51,14 @@ public class ImportSettingsController extends BaseRestController {
 		}
 	}
 
-/*	public static class ImportSettingsResponseDto {
+	public static class ImportSettingsResponseDto {
 		private String message;
+		List<String> names;
+		public ImportSettingsResponseDto(String message, List<String> names) {
+			super();
+			this.message = message;
+			this.names = names;
+		}
 
 		public String getMessage() {
 			return message;
@@ -65,42 +71,47 @@ public class ImportSettingsController extends BaseRestController {
 
 	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
 	@ResponseBody
-	protected ImportSettingsResponseDto executeAction(@RequestBody ImportSettingsRequestDto form)
-			throws Exception {
-		//final ManageSettingsForm form = context.getForm();
+	protected ImportSettingsResponseDto executeAction(
+			@RequestBody ImportSettingsRequestDto form) throws Exception {
+		// final ManageSettingsForm form = context.getForm();
 		final LocalSettings localSettings = settingsService.getLocalSettings();
 		final FormFile upload = form.getUpload();
 		final Collection<Setting.Type> types = CoercionHelper.coerceCollection(
 				Setting.Type.class, List.class, form.getType());
+		String message = null;
+		List<String> names=null;
+		ImportSettingsResponseDto response = new ImportSettingsResponseDto(message, names);
 		try {
 			final List<String> lines = IOUtils.readLines(
 					upload.getInputStream(), localSettings.getCharset());
 			final String xml = StringUtils.join(lines.iterator(), '\n');
 			settingsService.importFromXml(xml, types);
-			context.sendMessage("settings.imported");
+			message = "settings.imported";
+			return response;
 		} catch (final PermissionDeniedException e) {
 			// Rethrow when permission denied
 			throw e;
 		} catch (final SelectedSettingTypeNotInFileException e) {
 			final List<Type> notImportedTypes = e.getNotImportedTypes();
-			final List<String> names = new ArrayList<String>();
+			names = new ArrayList<String>();
 			for (final Type type : notImportedTypes) {
-				names.add(context.message("settings.type." + type.name()));
+				names.add("settings.type." + type.name());
 			}
-			context.sendMessage("settings.error.selectedSettingTypeNotInFile",
-					StringUtils.join(names.iterator(), "\n"));
+			message ="settings.error.selectedSettingTypeNotInFile";
+			StringUtils.join(names.iterator(), "\n");
 		} catch (final Exception e) {
-			context.sendMessage("settings.error.importing");
+			message ="settings.error.importing";
+			return response;
 		} finally {
 			upload.destroy();
 		}
 		if (types.contains(Setting.Type.MAIL_TRANSLATION)
 				|| types.contains(Setting.Type.MESSAGE)) {
-			return context.findForward("manageTranslationMessages");
+			message ="manageTranslationMessages";
+			return response;
 		} else {
-			return context.getSuccessForward();
+			//
 		}
+		return response;
 	}
-
-*/
 }

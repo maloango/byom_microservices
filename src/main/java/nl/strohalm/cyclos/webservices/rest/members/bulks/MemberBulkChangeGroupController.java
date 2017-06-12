@@ -2,10 +2,12 @@ package nl.strohalm.cyclos.webservices.rest.members.bulks;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -62,7 +64,7 @@ public class MemberBulkChangeGroupController extends BaseRestController {
 		request.setAttribute("possibleNewGroups", groupService.search(query));
 	}
 
-/*	private DataBinder<FullTextMemberQuery> dataBinder;
+	private DataBinder<FullTextMemberQuery> dataBinder;
 	private GroupService groupService;
 	private ElementService elementService;
 	private SettingsService settingsService;
@@ -97,11 +99,87 @@ public class MemberBulkChangeGroupController extends BaseRestController {
 	}
 
 	public static class MemberBulkChangeGroupRequestDto {
+		private MapBean changeGroup = new MapBean("newGroup", "comments");
+		private MapBean changeBroker = new MapBean("newBroker", "comments",
+				"suspendCommission");
+		private MapBean generateCard = new MapBean("newCard", "comments",
+				"generateForPending", "generateForActive");
+		private MapBean changeChannels = new MapBean(true, "enableIds",
+				"disableIds");
 
+		public Map<String, Object> getQuery() {
+			return values;
+		}
+
+		public Object getQuery(final String key) {
+			return values.get(key);
+		}
+
+		protected Map<String, Object> values;
+
+		public Map<String, Object> getValues() {
+			return values;
+		}
+
+		public void setValues(final Map<String, Object> values) {
+			this.values = values;
+		}
+
+		public void setQuery(final Map<String, Object> query) {
+			values = query;
+		}
+
+		public void setQuery(final String key, final Object value) {
+			values.put(key, value);
+		}
+
+		public MapBean getChangeBroker() {
+			return changeBroker;
+		}
+
+		public MapBean getChangeChannels() {
+			return changeChannels;
+		}
+
+		public MapBean getChangeGroup() {
+			return changeGroup;
+		}
+
+		public MapBean getGenerateCard() {
+			return generateCard;
+		}
+
+		public void setChangeBroker(final MapBean changeBroker) {
+			this.changeBroker = changeBroker;
+		}
+
+		public void setChangeChannels(final MapBean changeChannels) {
+			this.changeChannels = changeChannels;
+		}
+
+		public void setChangeGroup(final MapBean changeGroup) {
+			this.changeGroup = changeGroup;
+		}
+
+		public void setGenerateCard(final MapBean generateCard) {
+			this.generateCard = generateCard;
+		}
 	}
 
 	public static class MemberBulkChangeGroupResponseDto {
 		private String message;
+		int changed;
+		int unchanged;
+		String name;
+
+		public MemberBulkChangeGroupResponseDto(String message, int changed,
+				int unchanged, String name) {
+			super();
+			this.message = message;
+			this.changed = changed;
+			this.unchanged = unchanged;
+			this.name = name;
+		}
 
 		public String getMessage() {
 			return message;
@@ -116,8 +194,8 @@ public class MemberBulkChangeGroupController extends BaseRestController {
 	@ResponseBody
 	protected MemberBulkChangeGroupResponseDto formAction(
 			final MemberBulkChangeGroupRequestDto form) throws Exception {
-		final MemberBulkActionsForm form = context.getForm();
-
+		// final MemberBulkActionsForm form = context.getForm();
+		String message = null;
 		// Read the user input
 		final MapBean bean = form.getChangeGroup();
 		final FullTextMemberQuery query = getDataBinder().readFromString(
@@ -129,12 +207,16 @@ public class MemberBulkChangeGroupController extends BaseRestController {
 
 		final BulkMemberActionResultVO results = elementService
 				.bulkChangeMemberGroup(query, newGroup, comments);
-		context.sendMessage("member.bulkActions.groupChanged",
-				results.getChanged(), results.getUnchanged(),
-				newGroup.getName());
+		message = "member.bulkActions.groupChanged";
 
+		int changed = results.getChanged();
+		int unchanged = results.getUnchanged();
+		String name = newGroup.getName();
+		MemberBulkChangeGroupResponseDto response = new MemberBulkChangeGroupResponseDto(
+				message, changed, unchanged, name);
 		// Clear the change group parameters
 		form.getChangeGroup().clear();
+		return response;
 	}
 
 	protected void prepareForm(final ActionContext context) throws Exception {
@@ -177,6 +259,6 @@ public class MemberBulkChangeGroupController extends BaseRestController {
 			throw new ValidationException("comments", "remark.comments",
 					new RequiredError());
 		}
-	}*/
+	}
 
 }

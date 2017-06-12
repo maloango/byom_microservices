@@ -31,6 +31,7 @@ import nl.strohalm.cyclos.access.OperatorPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
+import nl.strohalm.cyclos.controls.ads.MemberAdsForm;
 import nl.strohalm.cyclos.entities.ads.Ad;
 import nl.strohalm.cyclos.entities.ads.AdQuery;
 import nl.strohalm.cyclos.entities.customization.images.AdImage;

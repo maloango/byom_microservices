@@ -11,10 +11,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.struts.action.ActionForward;
-import org.springframework.stereotype.Controller;
-
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.payments.PaymentForm;
 import nl.strohalm.cyclos.controls.payments.SchedulingType;
@@ -28,6 +24,10 @@ import nl.strohalm.cyclos.entities.groups.MemberGroupSettings;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
+import nl.strohalm.cyclos.services.elements.ElementService;
+import nl.strohalm.cyclos.services.groups.GroupService;
+import nl.strohalm.cyclos.services.permissions.PermissionService;
+import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.services.transactions.DoPaymentDTO;
 import nl.strohalm.cyclos.services.transactions.ScheduledPaymentDTO;
 import nl.strohalm.cyclos.services.transactions.TransactionContext;
@@ -37,236 +37,168 @@ import nl.strohalm.cyclos.utils.TimePeriod;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.BeanCollectionBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
+import nl.strohalm.cyclos.utils.binding.MapBean;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.AccountOwnerConverter;
 import nl.strohalm.cyclos.utils.conversion.CoercionHelper;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.struts.action.ActionForward;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 @Controller
-public class PaymentController extends BaseRestController{
+public class PaymentController extends BaseRestController {
+	private GroupService groupService;
+	private ElementService elementService;
+	private PermissionService permissionService;
+	private SettingsService settingsService;
 
-/*    @Override
-    protected AccountOwner getFromOwner(final ActionContext context) {
-        final PaymentForm form = context.getForm();
-        final Long fromId = IdConverter.instance().valueOf(form.getFrom());
-        if (fromId == null) {
-            return context.getAccountOwner();
-        }
-        final Element element = elementService.load(fromId, Element.Relationships.GROUP);
-        if (element instanceof Member) {
-            return (Member) element;
-        }
-        return null;
-    }
+	protected AccountOwner getFromOwner(final ActionContext context) {
+		final PaymentForm form = context.getForm();
+		final Long fromId = IdConverter.instance().valueOf(form.getFrom());
+		if (fromId == null) {
+			return context.getAccountOwner();
+		}
+		final Element element = elementService.load(fromId,
+				Element.Relationships.GROUP);
+		if (element instanceof Member) {
+			return (Member) element;
+		}
+		return null;
+	}
 
-    @Override
-    protected ActionForward handleSubmit(final ActionContext context) throws Exception {
-        final PaymentForm form = context.getForm();
-        final Map<String, Object> params = new HashMap<String, Object>();
-        params.put("selectMember", form.isSelectMember());
-        params.put("toSystem", form.isToSystem());
-        params.put("from", form.getFrom());
-        return ActionHelper.redirectWithParams(context.getRequest(), super.handleSubmit(context), params);
-    }
+	public static class PaymentRequestDto {
+		private boolean selectMember;
+		private String to;
+		private boolean toSystem;
+		private Object payments = new MapBean(true, "date", "amount");
+		private String from;
 
-   
-    protected DataBinder<DoPaymentDTO> initDataBinder() {
-        final BeanBinder<DoPaymentDTO> binder = (BeanBinder<DoPaymentDTO>) super.initDataBinder();
-        binder.registerBinder("to", PropertyBinder.instance(AccountOwner.class, "to", AccountOwnerConverter.instance()));
+		public Object getPayments() {
+			return payments;
+		}
 
-        final LocalSettings localSettings = settingsService.getLocalSettings();
+		public String getTo() {
+			return to;
+		}
 
-        final BeanBinder<ScheduledPaymentDTO> scheduledPayments = BeanBinder.instance(ScheduledPaymentDTO.class);
-        scheduledPayments.registerBinder("date", PropertyBinder.instance(Calendar.class, "date", localSettings.getRawDateConverter()));
-        scheduledPayments.registerBinder("amount", PropertyBinder.instance(BigDecimal.class, "amount", localSettings.getNumberConverter()));
-        binder.registerBinder("payments", BeanCollectionBinder.instance(scheduledPayments, "payments"));
-        return binder;
-    }
+		public boolean isSelectMember() {
+			return selectMember;
+		}
 
-    protected void prepareForm(final ActionContext context) throws Exception {
-        super.prepareForm(context);
-        final HttpServletRequest request = context.getRequest();
-        final PaymentForm form = context.getForm();
+		public boolean isToSystem() {
+			return toSystem;
+		}
 
-        String titleKey = null;
+		public void setPayments(final Object payments) {
+			this.payments = payments;
+		}
 
-        final boolean toSystem = form.isToSystem();
-        final boolean selectMember = form.isSelectMember();
+		public void setSelectMember(final boolean selectMember) {
+			this.selectMember = selectMember;
+		}
 
-        final boolean asMember = (Boolean) request.getAttribute("asMember");
-        final Member fromMember = (Member) request.getAttribute("member");
+		public void setTo(final String to) {
+			this.to = to;
+		}
 
-        if (toSystem) {
-            // Payment to system
-            if (asMember) {
-                // from selected member to system
-                if (context.isAdmin()) {
-                    // admin making member to system payment
-                    titleKey = "payment.title.systemMemberToSystem";
-                } else {
-                    // broker making member to system payment
-                    titleKey = "payment.title.brokerMemberToSystem";
-                }
-            } else {
-                // payment from logged member to system
-                titleKey = "payment.title.memberToSystem";
-            }
-        } else if (selectMember) {
-            // Payment to an yet unknown member
-            if (asMember) {
-                // from selected member to another member
-                if (context.isAdmin()) {
-                    // admin making member to another member
-                    titleKey = "payment.title.systemMemberToMember";
-                } else {
-                    // broker making member to another member
-                    titleKey = "payment.title.brokerMemberToMember";
-                }
-            } else {
-                // from logged user to another member
-                if (context.isAdmin()) {
-                    titleKey = "payment.title.systemToMember";
-                } else {
-                    titleKey = "payment.title.memberToMember";
-                }
-            }
-        } else {
-            // Payment to a pre-selected member
-            Member member = null;
-            final Long memberId = IdConverter.instance().valueOf(form.getTo());
-            final Element loggedElement = context.getElement();
-            if (memberId != null && memberId != loggedElement.getId()) {
-                final Element element = elementService.load(memberId, Element.Relationships.USER);
-                if (element instanceof Member) {
-                    member = (Member) element;
-                }
-            }
-            if (member == null) {
-                throw new ValidationException();
-            }
-            request.setAttribute("member", member);
+		public void setToSystem(final boolean toSystem) {
+			this.toSystem = toSystem;
+		}
 
-            if (context.isAdmin()) {
-                titleKey = "payment.title.systemToMember";
-            } else {
-                titleKey = "payment.title.memberToMember";
-            }
-        }
+		private String amount;
+		private String description;
+		private String type;
+		private String date;
+		private String currency;
 
-        request.setAttribute("titleKey", titleKey);
-        request.setAttribute("toSystem", toSystem);
-        request.setAttribute("toMember", !toSystem);
-        request.setAttribute("selectMember", selectMember);
-        request.setAttribute("currentTime", System.currentTimeMillis());
-        request.setAttribute("fromMember", fromMember);
+		private MapBean customValues = new MapBean(true, "field", "value");
 
-        // Check whether scheduled payments may be performed
-        boolean allowsScheduling = false;
-        boolean allowsMultipleScheduling = false;
-        if (context.isAdmin() && fromMember == null) {
-            allowsScheduling = true;
-            allowsMultipleScheduling = true;
-        } else {
-            MemberGroup memberGroup;
-            if (fromMember == null) {
-                memberGroup = ((Member) context.getAccountOwner()).getMemberGroup();
-            } else {
-                memberGroup = fromMember.getMemberGroup();
-            }
-            final MemberGroupSettings memberSettings = memberGroup.getMemberSettings();
-            allowsScheduling = memberSettings.isAllowsScheduledPayments();
-            allowsMultipleScheduling = memberSettings.isAllowsMultipleScheduledPayments();
-        }
-        if (allowsScheduling) {
-            request.setAttribute("allowsScheduling", allowsScheduling);
-            request.setAttribute("allowsMultipleScheduling", allowsMultipleScheduling);
-            final Collection<SchedulingType> schedulingTypes = EnumSet.of(SchedulingType.IMMEDIATELY, SchedulingType.SINGLE_FUTURE);
-            if (allowsMultipleScheduling) {
-                schedulingTypes.add(SchedulingType.MULTIPLE_FUTURE);
-            }
-            request.setAttribute("schedulingTypes", schedulingTypes);
-            request.setAttribute("schedulingFields", Arrays.asList(TimePeriod.Field.MONTHS, TimePeriod.Field.WEEKS, TimePeriod.Field.DAYS));
-        }
-    }
+		public String getAmount() {
+			return amount;
+		}
 
-    *//**
-     * Reads the payment DTO from the form
-     *//*
+		public String getCurrency() {
+			return currency;
+		}
 
-    protected DoPaymentDTO resolvePaymentDTO(final ActionContext context) {
-        final DoPaymentDTO dto = super.resolvePaymentDTO(context);
-        dto.setContext(TransactionContext.PAYMENT);
-        final PaymentForm form = context.getForm();
-        if (form.isToSystem()) {
-            dto.setTo(SystemAccountOwner.instance());
-        }
-        // When there is a single payment scheduled for today, remove it, making the payment to be processed now
-        final List<ScheduledPaymentDTO> payments = dto.getPayments();
-        if (payments != null && payments.size() == 1) {
-            final ScheduledPaymentDTO payment = payments.get(0);
-            if (DateUtils.isSameDay(Calendar.getInstance(), payment.getDate())) {
-                // A single payment scheduled for today is handled as not scheduled
-                dto.setPayments(null);
-            }
-        }
-        return dto;
-    }
-*/
-    @SuppressWarnings("unchecked")
+		public MapBean getCustomValues() {
+			return customValues;
+		}
 
-    protected TransferTypeQuery resolveTransferTypeQuery(final ActionContext context) {
+		public String getDate() {
+			return date;
+		}
 
-        final PaymentForm form = context.getForm();
-        final Long fromId = IdConverter.instance().valueOf(form.getFrom());
-        final Long toId = IdConverter.instance().valueOf(form.getTo());
+		public String getDescription() {
+			return description;
+		}
 
-        final boolean fromMe = fromId == null;
-        final boolean asMember = !fromMe;
-        final boolean toSpecificMember = !form.isSelectMember() && !form.isToSystem();
-        final boolean toUnknownMember = form.isSelectMember();
-        final boolean toSystem = form.isToSystem();
+		public String getFrom() {
+			return from;
+		}
 
-        if (toUnknownMember || (asMember && !toSystem)) {
-            // Since we don't know who will receive the payment yet, we cannot resolve transfer types
-            return null;
-        }
+		public String getType() {
+			return type;
+		}
 
-        // Check the preselected currency
-        Currency currency = CoercionHelper.coerce(Currency.class, form.getCurrency());
+		public void setAmount(final String amount) {
+			this.amount = amount;
+		}
 
-        // When there's none, use the first one
-        if (currency == null) {
-            final HttpServletRequest request = context.getRequest();
-            final Collection<Currency> currencies = (Collection<Currency>) request.getAttribute("currencies");
-            if (!currencies.isEmpty()) {
-                currency = currencies.iterator().next();
-            }
-        }
+		public void setCurrency(final String currency) {
+			this.currency = currency;
+		}
 
-        // Build the query
-        final TransferTypeQuery query = new TransferTypeQuery();
-        query.setChannel(Channel.WEB);
-        query.setContext(TransactionContext.PAYMENT);
-        query.setUsePriority(true);
-        // query.setCurrency(currency);
+		public void setCustomValues(final MapBean customValues) {
+			this.customValues = customValues;
+		}
 
-        // Determine the from
-        if (fromMe) {
-            query.setGroup(context.getGroup());
-            query.setFromOwner(context.getAccountOwner());
-        } else {
-            query.setBy(context.getElement());
-            query.setFromOwner(EntityHelper.reference(Member.class, fromId));
-        }
+		public void setDate(final String date) {
+			this.date = date;
+		}
 
-        // Determine the to
-        if (toSystem) {
-            query.setToOwner(SystemAccountOwner.instance());
-        } else if (toSpecificMember) {
-            query.setToOwner(EntityHelper.reference(Member.class, toId));
-        }
+		public void setDescription(final String description) {
+			this.description = description;
+		}
 
-        return query;
-    }
+		public void setFrom(final String from) {
+			this.from = from;
+		}
+
+		public void setType(final String type) {
+			this.type = type;
+		}
+	}
+
+	public static class PaymentResponseDto {
+		private Map<String, Object> params;
+
+		public PaymentResponseDto(Map<String, Object> params) {
+			super();
+			this.params = params;
+		}
+
+	}
+
+	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@ResponseBody
+	protected PaymentResponseDto handleSubmit(
+			@RequestBody PaymentRequestDto form) throws Exception {
+		// final PaymentForm form = context.getForm();
+		final Map<String, Object> params = new HashMap<String, Object>();
+		params.put("selectMember", form.isSelectMember());
+		params.put("toSystem", form.isToSystem());
+		params.put("from", form.getFrom());
+		PaymentResponseDto response = new PaymentResponseDto(params);
+		return response;
+	}
+
 }

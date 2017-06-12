@@ -1,80 +1,95 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.transfertypes;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.accounts.transfertypes.EditTransferTypeForm;
+import nl.strohalm.cyclos.entities.Relationship;
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
+import nl.strohalm.cyclos.entities.accounts.SystemAccountType;
+import nl.strohalm.cyclos.entities.accounts.fees.transaction.TransactionFee;
+import nl.strohalm.cyclos.entities.accounts.fees.transaction.TransactionFeeQuery;
 import nl.strohalm.cyclos.entities.accounts.loans.Loan;
 import nl.strohalm.cyclos.entities.accounts.loans.LoanParameters;
+import nl.strohalm.cyclos.entities.accounts.transactions.AuthorizationLevel;
 import nl.strohalm.cyclos.entities.accounts.transactions.TransferType;
 import nl.strohalm.cyclos.entities.accounts.transactions.TransferType.Context;
 import nl.strohalm.cyclos.entities.accounts.transactions.TransferType.TransactionHierarchyVisibility;
+import nl.strohalm.cyclos.entities.accounts.transactions.TransferTypeQuery;
+import nl.strohalm.cyclos.entities.customization.fields.PaymentCustomField;
+import nl.strohalm.cyclos.entities.groups.AdminGroup;
+import nl.strohalm.cyclos.entities.groups.Group;
+import nl.strohalm.cyclos.entities.groups.GroupQuery;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.entities.members.Reference;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
-import nl.strohalm.cyclos.entities.settings.events.LocalSettingsChangeListener;
 import nl.strohalm.cyclos.entities.settings.events.LocalSettingsEvent;
 import nl.strohalm.cyclos.services.access.ChannelService;
 import nl.strohalm.cyclos.services.accounts.AccountTypeService;
+import nl.strohalm.cyclos.services.accounts.MemberAccountTypeQuery;
+import nl.strohalm.cyclos.services.accounts.SystemAccountTypeQuery;
 import nl.strohalm.cyclos.services.customization.PaymentCustomFieldService;
+import nl.strohalm.cyclos.services.elements.ElementService;
+import nl.strohalm.cyclos.services.groups.GroupService;
+import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
+import nl.strohalm.cyclos.services.transactions.TransactionContext;
 import nl.strohalm.cyclos.services.transfertypes.TransactionFeeService;
 import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
 import nl.strohalm.cyclos.services.transfertypes.exceptions.HasPendingPaymentsException;
 import nl.strohalm.cyclos.utils.ActionHelper;
+import nl.strohalm.cyclos.utils.Amount;
+import nl.strohalm.cyclos.utils.RelationshipHelper;
+import nl.strohalm.cyclos.utils.RequestHelper;
+import nl.strohalm.cyclos.utils.TimePeriod.Field;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinderHelper;
+import nl.strohalm.cyclos.utils.binding.MapBean;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.binding.SimpleCollectionBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
+import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class EditTransferTypeController extends BaseRestController implements
-		LocalSettingsChangeListener {
+public class EditTransferTypeController extends BaseRestController {
+	// later will be the implementation if required..
 	private AccountTypeService accountTypeService;
-
+	private GroupService groupService;
+	private ElementService elementService;
+	private PermissionService permissionService;
+	private SettingsService settingsService;
 	private ChannelService channelService;
 	private TransferTypeService transferTypeService;
 	private TransactionFeeService transactionFeeService;
 	private PaymentCustomFieldService paymentCustomFieldService;
 	private DataBinder<TransferType> dataBinder;
 	private ReadWriteLock lock = new ReentrantReadWriteLock(true);
-	private SettingsService settingsService;
-
-	public SettingsService getSettingsService() {
-		return settingsService;
-	}
-
-	public void setSettingsService(SettingsService settingsService) {
-		this.settingsService = settingsService;
-	}
-
-	public ChannelService getChannelService() {
-		return channelService;
-	}
-
-	public TransactionFeeService getTransactionFeeService() {
-		return transactionFeeService;
-	}
-
-	public PaymentCustomFieldService getPaymentCustomFieldService() {
-		return paymentCustomFieldService;
-	}
 
 	public AccountTypeService getAccountTypeService() {
 		return accountTypeService;
@@ -210,7 +225,6 @@ public class EditTransferTypeController extends BaseRestController implements
 		return transferTypeService;
 	}
 
-	@Override
 	public void onLocalSettingsUpdate(final LocalSettingsEvent event) {
 		try {
 			lock.writeLock().lock();
@@ -250,35 +264,282 @@ public class EditTransferTypeController extends BaseRestController implements
 	}
 
 	public static class EditTransferTypeRequestDto {
+		private long accountTypeId;
+		private long transferTypeId;
+		protected Map<String, Object> values;
 
+		public Map<String, Object> getValues() {
+			return values;
+		}
+
+		public void setValues(final Map<String, Object> values) {
+			this.values = values;
+		}
+
+		public long getAccountTypeId() {
+			return accountTypeId;
+		}
+
+		public Map<String, Object> getTransferType() {
+			return values;
+		}
+
+		public Object getTransferType(final String key) {
+			return values.get(key);
+		}
+
+		public long getTransferTypeId() {
+			return transferTypeId;
+		}
+
+		public void setAccountTypeId(final long accountTypeId) {
+			this.accountTypeId = accountTypeId;
+		}
+
+		public void setTransferType(final Map<String, Object> map) {
+			values = map;
+		}
+
+		public void setTransferType(final String key, final Object value) {
+			values.put(key, value);
+		}
+
+		public void setTransferTypeId(final long transferTypeId) {
+			this.transferTypeId = transferTypeId;
+		}
 	}
 
 	public static class EditTransferTypeResponseDto {
+		private String message;
+		Map<String, Object> params;
+
+		public EditTransferTypeResponseDto(String message,
+				Map<String, Object> params) {
+			super();
+			this.message = message;
+			this.params = params;
+		}
 
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.PUT)
 	@ResponseBody
-	protected ActionForward handleSubmit(final ActionContext context)
-			throws Exception {
-		final EditTransferTypeForm form = context.getForm();
+	protected EditTransferTypeResponseDto handleSubmit(
+			@RequestBody EditTransferTypeRequestDto form) throws Exception {
+		// final EditTransferTypeForm form = context.getForm();
 		TransferType transferType = retrieveTransferType(form);
 		final boolean isInsert = transferType.getId() == null;
+		// String error=null;
+		String message = null;
 		try {
 			transferType = transferTypeService.save(transferType);
 		} catch (final HasPendingPaymentsException e) {
-			return context.sendError("transferType.error.hasPendingPayments");
+			message = "transferType.error.hasPendingPayments";
 		}
-		context.sendMessage(isInsert ? "transferType.inserted"
-				: "transferType.modified");
+
+		if (isInsert)
+			message = "transferType.inserted";
+		else
+			message = "transferType.modified";
 		final Map<String, Object> params = new HashMap<String, Object>();
 		params.put("accountTypeId", form.getAccountTypeId());
 		params.put("transferTypeId", transferType.getId());
-		return ActionHelper.redirectWithParams(context.getRequest(),
-				context.getSuccessForward(), params);
+		EditTransferTypeResponseDto response = new EditTransferTypeResponseDto(
+				message, params);
+		return response;
 	}
 
-	private TransferType retrieveTransferType(final EditTransferTypeForm form) {
+	@SuppressWarnings("unchecked")
+	protected void prepareForm(final ActionContext context) throws Exception {
+		final HttpServletRequest request = context.getRequest();
+		final EditTransferTypeForm form = context.getForm();
+		final long accountTypeId = form.getAccountTypeId();
+		if (accountTypeId <= 0L) {
+			throw new ValidationException();
+		}
+		final AccountType accountType = accountTypeService.load(accountTypeId);
+
+		final long transferTypeId = form.getTransferTypeId();
+		final boolean isInsert = transferTypeId <= 0L;
+		TransferType transferType;
+		if (isInsert) {
+			transferType = new TransferType();
+			transferType.setFrom(accountType);
+			transferType.setDefaultFeedbackLevel(Reference.Level.NEUTRAL);
+
+			// Preselect the web channel
+			final Channel web = channelService.loadByInternalName(Channel.WEB);
+			transferType.setChannels(Collections.singleton(web));
+
+			final List<AccountType> accountTypes = new ArrayList<AccountType>();
+
+			// Search system account types
+			final SystemAccountTypeQuery systemAccountTypeQuery = new SystemAccountTypeQuery();
+			systemAccountTypeQuery.setCurrency(accountType.getCurrency());
+			accountTypes.addAll(accountTypeService
+					.search(systemAccountTypeQuery));
+
+			// Search member account types
+			final MemberAccountTypeQuery memberAccountTypeQuery = new MemberAccountTypeQuery();
+			memberAccountTypeQuery.setCurrency(accountType.getCurrency());
+			accountTypes.addAll(accountTypeService
+					.search(memberAccountTypeQuery));
+
+			// System account types cannot have transfer types to themselves
+			if (accountType instanceof SystemAccountType) {
+				accountTypes.remove(accountType);
+			}
+			request.setAttribute("accountTypes", accountTypes);
+		} else {
+			transferType = transferTypeService.load(transferTypeId,
+					TransferType.Relationships.FROM,
+					TransferType.Relationships.TO,
+					TransferType.Relationships.AUTHORIZATION_LEVELS,
+					TransferType.Relationships.CUSTOM_FIELDS);
+			processAuthorizationLevels(request, transferType);
+			final GroupQuery query = new GroupQuery();
+			query.setNatures(Group.Nature.ADMIN);
+			query.setStatus(Group.Status.NORMAL);
+			final Collection<AdminGroup> adminGroups = (Collection<AdminGroup>) groupService
+					.search(query);
+			request.setAttribute("adminGroups", adminGroups);
+
+			// Get the associated simple transaction fees
+			final TransactionFeeQuery simpleQuery = new TransactionFeeQuery();
+			final Set<Relationship> fetch = new HashSet<Relationship>();
+			fetch.add(RelationshipHelper.nested(
+					TransactionFee.Relationships.GENERATED_TRANSFER_TYPE,
+					TransferType.Relationships.FROM));
+			simpleQuery.setFetch(fetch);
+			simpleQuery.setNature(TransactionFee.Nature.SIMPLE);
+			simpleQuery.setTransferType(transferType);
+			simpleQuery.setReturnDisabled(true);
+			request.setAttribute("simpleTransactionFees",
+					transactionFeeService.search(simpleQuery));
+
+			if (transferType.isFromMember()) {
+				// Get the associated broker commissions
+				final TransactionFeeQuery brokerQuery = new TransactionFeeQuery();
+				brokerQuery.setNature(TransactionFee.Nature.BROKER);
+				brokerQuery.setTransferType(transferType);
+				brokerQuery.setReturnDisabled(true);
+				request.setAttribute("brokerCommissions",
+						transactionFeeService.search(brokerQuery));
+			}
+
+			// Get the custom fields
+			final List<PaymentCustomField> customFields = paymentCustomFieldService
+					.list(transferType, true);
+			request.setAttribute("customFields", customFields);
+
+			// Get the account types for linked fields
+			final List<? extends AccountType> linkedFieldAccountTypes = accountTypeService
+					.listAll();
+			request.setAttribute("linkedFieldAccountTypes",
+					linkedFieldAccountTypes);
+		}
+		request.setAttribute("transferType", transferType);
+
+		// Store the loan repayment transfer types (always from member to
+		// system)
+		final TransferTypeQuery toSystemRepaymentQuery = new TransferTypeQuery();
+		toSystemRepaymentQuery.setContext(TransactionContext.AUTOMATIC);
+		toSystemRepaymentQuery.setCurrency(transferType.getCurrency());
+		toSystemRepaymentQuery.setFromNature(AccountType.Nature.MEMBER);
+		toSystemRepaymentQuery.setToNature(AccountType.Nature.SYSTEM);
+		request.setAttribute("loanRepaymentTypes",
+				transferTypeService.search(toSystemRepaymentQuery));
+
+		getDataBinder().writeAsString(form.getTransferType(), transferType);
+		final Context ttContext = transferType.getContext();
+		form.setTransferType(
+				"enabled",
+				String.valueOf(ttContext.isPayment()
+						|| ttContext.isSelfPayment()));
+		request.setAttribute("accountType", accountType);
+		request.setAttribute("isSystemAccount",
+				accountType instanceof SystemAccountType);
+		request.setAttribute("isInsert", isInsert);
+		RequestHelper.storeEnum(request, Loan.Type.class, "loanTypes");
+		RequestHelper.storeEnum(request, Amount.Type.class, "amountTypes");
+		RequestHelper.storeEnum(request, AuthorizationLevel.Authorizer.class,
+				"authorizers");
+		RequestHelper.storeEnum(request, TransactionHierarchyVisibility.class,
+				"transactionHierarchyVisibilities");
+		request.setAttribute("feedbackTimeFields",
+				Arrays.asList(Field.DAYS, Field.WEEKS, Field.MONTHS));
+		request.setAttribute("channels", channelService.list());
+	}
+
+	protected void validateForm(final EditTransferTypeRequestDto form) {
+		// final EditTransferTypeForm form = context.getForm();
+		final TransferType transferType = retrieveTransferType(form);
+		transferTypeService.validate(transferType);
+	}
+
+	private void processAuthorizationLevels(final HttpServletRequest request,
+			final TransferType transferType) {
+		if (transferType.isRequiresAuthorization()) {
+			final Collection<AuthorizationLevel> rawAuthorizationLevels = transferType
+					.getAuthorizationLevels();
+			final LinkedList<AuthorizationLevel> authorizationLevels = new LinkedList<AuthorizationLevel>(
+					rawAuthorizationLevels);
+			request.setAttribute("authorizationLevels", authorizationLevels);
+			boolean insertNewLevel = false;
+			Collection<AuthorizationLevel.Authorizer> possibleAuthorizers = null;
+			if (CollectionUtils.isEmpty(authorizationLevels)) {
+				insertNewLevel = true;
+				if (transferType.isFromSystem() && transferType.isToSystem()) {
+					possibleAuthorizers = Arrays
+							.asList(AuthorizationLevel.Authorizer.ADMIN);
+				} else if (transferType.isFromSystem()
+						&& transferType.isToMember()) {
+					possibleAuthorizers = Arrays.asList(
+							AuthorizationLevel.Authorizer.ADMIN,
+							AuthorizationLevel.Authorizer.RECEIVER);
+				} else if (transferType.isToSystem()) {
+					possibleAuthorizers = Arrays.asList(
+							AuthorizationLevel.Authorizer.BROKER,
+							AuthorizationLevel.Authorizer.ADMIN);
+				} else {
+					possibleAuthorizers = Arrays.asList(
+							AuthorizationLevel.Authorizer.RECEIVER,
+							AuthorizationLevel.Authorizer.BROKER,
+							AuthorizationLevel.Authorizer.ADMIN);
+				}
+			} else {
+				RequestHelper.storeEnum(request,
+						AuthorizationLevel.Authorizer.class, "authorizers");
+				final AuthorizationLevel highestAuthorizationLevel = authorizationLevels
+						.getLast();
+				if ((highestAuthorizationLevel.getAuthorizer() == AuthorizationLevel.Authorizer.RECEIVER)) {
+					if (transferType.isFromSystem()) {
+						possibleAuthorizers = Arrays.asList(
+								AuthorizationLevel.Authorizer.ADMIN,
+								AuthorizationLevel.Authorizer.RECEIVER);
+					} else {
+						possibleAuthorizers = Arrays.asList(
+								AuthorizationLevel.Authorizer.PAYER,
+								AuthorizationLevel.Authorizer.BROKER,
+								AuthorizationLevel.Authorizer.ADMIN);
+					}
+				} else {
+					possibleAuthorizers = Arrays
+							.asList(AuthorizationLevel.Authorizer.ADMIN);
+				}
+				final Integer highestLevel = highestAuthorizationLevel
+						.getLevel();
+				insertNewLevel = (highestLevel < AuthorizationLevel.MAX_LEVELS);
+			}
+			request.setAttribute("insertNewLevel", insertNewLevel);
+			if (insertNewLevel) {
+				request.setAttribute("possibleAuthorizers", possibleAuthorizers);
+			}
+		}
+	}
+
+	private TransferType retrieveTransferType(
+			final EditTransferTypeRequestDto form) {
 		final TransferType transferType = getDataBinder().readFromString(
 				form.getTransferType());
 		transferType.setFrom(accountTypeService.load(transferType.getFrom()

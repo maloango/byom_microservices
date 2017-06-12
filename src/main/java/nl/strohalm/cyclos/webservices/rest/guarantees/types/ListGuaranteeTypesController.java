@@ -21,25 +21,30 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ListGuaranteeTypesController extends BaseRestController {
 	private GuaranteeTypeService guaranteeTypeService;
 	private PermissionService permissionService;
+
 	public static class ListGuaranteeTypesRequestDto {
 
 	}
 
 	public static class ListGuaranteeTypesResponseDto {
+		List<GuaranteeType> lstGuaranteeTypes;
+
+		public ListGuaranteeTypesResponseDto(
+				List<GuaranteeType> lstGuaranteeTypes) {
+			super();
+			this.lstGuaranteeTypes = lstGuaranteeTypes;
+		}
 
 	}
 
-	public List<GuaranteeType> executeAction(@RequestBody ListGuaranteeTypesRequestDto form)
-			throws Exception {
+	public ListGuaranteeTypesResponseDto executeAction(
+			@RequestBody ListGuaranteeTypesRequestDto form) throws Exception {
 		final GuaranteeTypeQuery guaranteeTypeQuery = new GuaranteeTypeQuery();
 		final List<GuaranteeType> lstGuaranteeTypes = guaranteeTypeService
 				.search(guaranteeTypeQuery);
-
-		/*request.setAttribute("editable", permissionService
-				.hasPermission(AdminSystemPermission.GUARANTEE_TYPES_MANAGE));
-		request.setAttribute("listGuaranteeTypes", lstGuaranteeTypes);*/
-
-		return lstGuaranteeTypes;
+		ListGuaranteeTypesResponseDto response = new ListGuaranteeTypesResponseDto(
+				lstGuaranteeTypes);
+		return response;
 	}
 
 	@Inject

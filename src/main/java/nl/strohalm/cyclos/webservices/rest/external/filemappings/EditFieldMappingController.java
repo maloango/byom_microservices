@@ -2,6 +2,7 @@ package nl.strohalm.cyclos.webservices.rest.external.filemappings;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,8 +23,10 @@ import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.services.accounts.external.filemapping.FieldMappingService;
 import nl.strohalm.cyclos.services.accounts.external.filemapping.FileMappingService;
 import nl.strohalm.cyclos.services.customization.MemberCustomFieldService;
+import nl.strohalm.cyclos.services.elements.ElementService;
+import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
-import nl.strohalm.cyclos.utils.ActionHelper;
+import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.utils.CustomFieldHelper;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
 import nl.strohalm.cyclos.utils.RequestHelper;
@@ -34,19 +37,24 @@ import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-import nl.strohalm.cyclos.webservices.rest.access.ResetAndSendPasswordController.ResetAndSendPasswordRequestDto;
 
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class EditFieldMappingController extends BaseRestController {
+	// later will be the implementation if required..
 	private MemberCustomFieldService memberCustomFieldService;
 	private FieldMappingService fieldMappingService;
 	private FileMappingService fileMappingService;
 	private DataBinder<FieldMapping> dataBinder;
+	private GroupService groupService;
+	private ElementService elementService;
 	private PermissionService permissionService;
+	private SettingsService settingsService;
 
 	private CustomFieldHelper customFieldHelper;
 
@@ -100,29 +108,94 @@ public class EditFieldMappingController extends BaseRestController {
 	}
 
 	public static class EditFieldMappingRequestDto {
+		private long fileMappingId;
+		private long fieldMappingId;
+		protected Map<String, Object> values;
+
+		public Map<String, Object> getValues() {
+			return values;
+		}
+
+		public void setValues(final Map<String, Object> values) {
+			this.values = values;
+		}
+
+		public Map<String, Object> getFieldMapping() {
+			return values;
+		}
+
+		public Object getFieldMapping(final String key) {
+			return values.get(key);
+		}
+
+		public long getFieldMappingId() {
+			return fieldMappingId;
+		}
+
+		public long getFileMappingId() {
+			return fileMappingId;
+		}
+
+		public void setFieldMapping(final Map<String, Object> map) {
+			values = map;
+		}
+
+		public void setFieldMapping(final String key, final Object value) {
+			values.put(key, value);
+		}
+
+		public void setFieldMappingId(final long fieldMappingId) {
+			this.fieldMappingId = fieldMappingId;
+		}
+
+		public void setFileMappingId(final long fileMappingId) {
+			this.fileMappingId = fileMappingId;
+		}
 
 	}
 
 	public static class EditFieldMappingResponseDto {
+		private String message;
+		private Long externalAccountId;
 
+		public EditFieldMappingResponseDto(String message,
+				Long externalAccountId) {
+			super();
+			this.message = message;
+			this.externalAccountId = externalAccountId;
+		}
+
+		public String getMessage() {
+			return message;
+		}
+
+		public void setMessage(String message) {
+			this.message = message;
+		}
 	}
 
-	protected EditFieldMappingResponseDto handleSubmit(@RequestBody ResetAndSendPasswordRequestDto form)
-			throws Exception {
-		//final EditFieldMappingForm form = context.getForm();
+	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@ResponseBody
+	protected EditFieldMappingResponseDto handleSubmit(
+			@RequestBody EditFieldMappingRequestDto form) throws Exception {
+		// final EditFieldMappingForm form = context.getForm();
 		FieldMapping fieldMapping = getDataBinder().readFromString(
 				form.getFieldMapping());
 		final boolean isInsert = fieldMapping.isTransient();
 		fieldMapping = fieldMappingService.save(fieldMapping);
-		context.sendMessage(isInsert ? "fieldMapping.inserted"
-				: "fieldMapping.modified");
+		String message = null;
+		if (isInsert)
+			message = "fieldMapping.inserted";
+		else
+			message = "fieldMapping.modified";
 		final Long externalAccountId = fieldMapping.getFileMapping()
 				.getAccount().getId();
-		return ActionHelper.redirectWithParam(context.getRequest(),
-				context.getSuccessForward(), "externalAccountId",
-				externalAccountId);
+		EditFieldMappingResponseDto response = new EditFieldMappingResponseDto(
+				message, externalAccountId);
+		return response;
 	}
 
+	// @Override
 	protected void prepareForm(final ActionContext context) throws Exception {
 		final HttpServletRequest request = context.getRequest();
 		final EditFieldMappingForm form = context.getForm();
@@ -193,6 +266,7 @@ public class EditFieldMappingController extends BaseRestController {
 		}
 	}
 
+	// @Override
 	protected void validateForm(final ActionContext context) {
 		final EditFieldMappingForm form = context.getForm();
 		final FieldMapping fieldMapping = getDataBinder().readFromString(

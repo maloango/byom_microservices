@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseFormAction;
+import nl.strohalm.cyclos.controls.ads.imports.ImportedAdsSummaryForm;
 import nl.strohalm.cyclos.entities.accounts.Currency;
 import nl.strohalm.cyclos.entities.ads.imports.AdImport;
 import nl.strohalm.cyclos.services.accounts.CurrencyService;

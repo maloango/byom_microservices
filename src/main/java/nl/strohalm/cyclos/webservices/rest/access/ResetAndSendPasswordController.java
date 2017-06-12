@@ -42,11 +42,6 @@ public class ResetAndSendPasswordController extends BaseRestController {
 	
 	private AccessService accessService;
 	
-	
-	public final void setAccessService(AccessService accessService) {
-		this.accessService = accessService;
-	}
-
 	public static class ResetAndSendPasswordRequestDto{
 		 private long              userId;
 

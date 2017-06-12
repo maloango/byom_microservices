@@ -1,21 +1,21 @@
 package nl.strohalm.cyclos.webservices.rest.members.messages;
 
 import java.util.Collection;
+import java.util.List;
 
-import org.apache.struts.action.ActionForward;
+import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.entities.groups.Group;
+import nl.strohalm.cyclos.entities.members.Element;
+import nl.strohalm.cyclos.entities.members.messages.MessageCategory;
+import nl.strohalm.cyclos.entities.members.messages.MessageCategoryQuery;
+import nl.strohalm.cyclos.services.elements.MessageCategoryService;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.entities.groups.Group;
-import nl.strohalm.cyclos.entities.members.Element;
-import nl.strohalm.cyclos.entities.members.messages.MessageCategoryQuery;
-import nl.strohalm.cyclos.services.elements.MessageCategoryService;
-import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class ListMessageCategoriesController extends BaseRestController {
@@ -59,25 +59,23 @@ public class ListMessageCategoriesController extends BaseRestController {
 	}
 
 	public static class ListMessageCategoriesResponseDto {
-		private String message;
+		private List<MessageCategory> search;
 
-		public String getMessage() {
-			return message;
+		public ListMessageCategoriesResponseDto(List<MessageCategory> search) {
+			super();
+			this.search = search;
 		}
 
-		public void setMessage(String message) {
-			this.message = message;
-		}
 	}
 
-	/*@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
 	@ResponseBody
 	protected ListMessageCategoriesResponseDto executeAction(
-			@RequestBody ListMessageCategoriesRequestDto form)
-			throws Exception {
+			@RequestBody ListMessageCategoriesRequestDto form) throws Exception {
 		final MessageCategoryQuery query = new MessageCategoryQuery();
-		form.getRequest().setAttribute("messageCategories",
-				messageCategoryService.search(query));
-		return context.getInputForward();
-	}*/
+		List<MessageCategory> search = messageCategoryService.search(query);
+		ListMessageCategoriesResponseDto response = new ListMessageCategoriesResponseDto(
+				search);
+		return response;
+	}
 }

@@ -27,27 +27,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ManageTransactionPasswordController extends BaseRestController {
+	// later will be the implementation if required..
+
 	private AccessService accessService;
-
-	public final AccessService getAccessService() {
-		return accessService;
-	}
-
-	public final void setAccessService(AccessService accessService) {
-		this.accessService = accessService;
-	}
-
-	public final ElementService getElementService() {
-		return elementService;
-	}
-
-	public final void setElementService(ElementService elementService) {
-		this.elementService = elementService;
-	}
-
 	private ElementService elementService;
 
-	public static class ManageTransactionPasswordRequestDTO {
+	public static class ManageTransactionPasswordRequestDto {
 		private long userId;
 		private boolean block;
 		private boolean embed;
@@ -77,37 +62,37 @@ public class ManageTransactionPasswordController extends BaseRestController {
 		}
 	}
 
-	public static class ManageTransactionPasswordResponseDTO {
+	public static class ManageTransactionPasswordResponseDto {
+		private String message;
+		private Long userId;
 
-		private User user;
-		String message;
+		public ManageTransactionPasswordResponseDto(String message, Long userId) {
+			super();
+			this.message = message;
+			this.userId = userId;
+		}
 
-		public ManageTransactionPasswordResponseDTO(String message) {
+		public Long getUserId() {
+			return userId;
+		}
+
+		public void setUserId(Long userId) {
+			this.userId = userId;
+		}
+
+		public String getMessage() {
+			return message;
+		}
+
+		public void setMessage(String message) {
 			this.message = message;
 		}
-
-		public final User getUser() {
-			return user;
-		}
-
-		public final void setUser(User user) {
-			this.user = user;
-		}
-
-		public final boolean isCanBlock() {
-			return canBlock;
-		}
-
-		public final void setCanBlock(boolean canBlock) {
-			this.canBlock = canBlock;
-		}
-
-		private boolean canBlock;
 	}
 
-	@RequestMapping(value = "/member/manageTransactionPassword", method = RequestMethod.PUT)
+	@RequestMapping(value = "", method = RequestMethod.POST)
 	@ResponseBody
-	protected ManageTransactionPasswordResponseDTO handleSubmit(final ManageTransactionPasswordRequestDTO form)
+	protected ManageTransactionPasswordResponseDto handleSubmit(
+			@RequestBody ManageTransactionPasswordRequestDto form)
 			throws Exception {
 		// final ManageTransactionPasswordForm form = context.getForm();
 		User user = retrieveUser(form);
@@ -117,32 +102,36 @@ public class ManageTransactionPasswordController extends BaseRestController {
 		dto.setAllowGeneration(!block);
 		user = accessService.resetTransactionPassword(dto);
 		String message = null;
-		if (block) {
+		if (block)
 			message = "transactionPassword.blocked";
-		} else {
+		else
 			message = "transactionPassword.reset";
-		}
-		ManageTransactionPasswordResponseDTO response = new ManageTransactionPasswordResponseDTO(message);
+		Long userId = user.getId();
+		ManageTransactionPasswordResponseDto response = new ManageTransactionPasswordResponseDto(
+				message, userId);
 		return response;
 	}
 
-	private User retrieveUser(final ManageTransactionPasswordRequestDTO form) {
+	private User retrieveUser(final ManageTransactionPasswordRequestDto form) {
 		// final HttpServletRequest request = context.getRequest();
-		if (form.getAttribute("element") != null) {
-			// The element may be already retrieved on the manage passwords
-			return ((Element) request.getAttribute("element")).getUser();
-		}
+		// if (request.getAttribute("element") != null) {
+		// The element may be already retrieved on the manage passwords
+		// action
+		// return ((Element) request.getAttribute("element")).getUser();
+		// }
 
-		final ManageTransactionPasswordForm form = context.getForm();
+		// final ManageTransactionPasswordForm form = context.getForm();
 		User user;
 		final long userId = form.getUserId();
 		try {
-			user = elementService.loadUser(userId,
-					RelationshipHelper.nested(User.Relationships.ELEMENT, Element.Relationships.GROUP));
+			user = elementService.loadUser(userId, RelationshipHelper.nested(
+					User.Relationships.ELEMENT, Element.Relationships.GROUP));
 			if (user instanceof OperatorUser) {
 				Element element = user.getElement();
 				element = elementService.load(element.getId(),
-						RelationshipHelper.nested(Operator.Relationships.MEMBER, Element.Relationships.GROUP));
+						RelationshipHelper.nested(
+								Operator.Relationships.MEMBER,
+								Element.Relationships.GROUP));
 			}
 		} catch (final Exception e) {
 			throw new ValidationException();

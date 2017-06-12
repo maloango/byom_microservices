@@ -1,16 +1,27 @@
+/*
+    This file is part of Cyclos (www.cyclos.org).
+    A project of the Social Trade Organisation (www.socialtrade.org).
+
+    Cyclos is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    Cyclos is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Cyclos; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+ */
 package nl.strohalm.cyclos.webservices.rest.access.channels;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
 import nl.strohalm.cyclos.access.MemberPermission;
@@ -28,7 +39,18 @@ import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * Action used to prepare the external access screen, where an admin can change
+ * the channel access for individual users.
+ * 
+ * @author Jefferson Magno
+ */
 @Controller
 public class ManageExternalAccessController extends BaseRestController {
 
@@ -99,8 +121,9 @@ public class ManageExternalAccessController extends BaseRestController {
 		private boolean canManagePreferences;
 		private boolean canChangeChannelAccess;
 
-		public ManageExternalAccessResponseDto(Member member, boolean myAccess, Channel channels,
-				boolean memberCanHavePin, boolean canChangePin, boolean canManagePreferences,
+		public ManageExternalAccessResponseDto(Member member, boolean myAccess,
+				Channel channels, boolean memberCanHavePin,
+				boolean canChangePin, boolean canManagePreferences,
 				boolean canChangeChannelAccess) {
 			super();
 			this.member = member;
@@ -156,7 +179,8 @@ public class ManageExternalAccessController extends BaseRestController {
 
 	@RequestMapping(value = "/admin/manageExternalAccess", method = RequestMethod.PUT)
 	@ResponseBody
-	public ManageExternalAccessResponseDto ManageExternalAccess(@RequestBody final ManageExternalAccessRequestDto form,
+	public ManageExternalAccessResponseDto ManageExternalAccess(
+			@RequestBody final ManageExternalAccessRequestDto form,
 			HttpServletRequest request) {
 
 		boolean myAccess = false;
@@ -166,17 +190,20 @@ public class ManageExternalAccessController extends BaseRestController {
 		Member member;
 		final long memberId = form.getMemberId();
 		if (memberId > 0) {
-			member = elementService.load(memberId, Element.Relationships.USER, Member.Relationships.CHANNELS,
-					RelationshipHelper.nested(Element.Relationships.GROUP, MemberGroup.Relationships.CHANNELS));
+			member = elementService.load(memberId, Element.Relationships.USER,
+					Member.Relationships.CHANNELS, RelationshipHelper.nested(
+							Element.Relationships.GROUP,
+							MemberGroup.Relationships.CHANNELS));
 			if (form.getElement().equals(member)) {
 				myAccess = true;
 			}
 
 		} else {
 			// Member managing his/her own external access settings
-			member = elementService.load(form.getElement().getId(), Element.Relationships.USER,
-					Member.Relationships.CHANNELS,
-					RelationshipHelper.nested(Element.Relationships.GROUP, MemberGroup.Relationships.CHANNELS));
+			member = elementService.load(form.getElement().getId(),
+					Element.Relationships.USER, Member.Relationships.CHANNELS,
+					RelationshipHelper.nested(Element.Relationships.GROUP,
+							MemberGroup.Relationships.CHANNELS));
 			myAccess = true;
 		}
 
@@ -187,11 +214,14 @@ public class ManageExternalAccessController extends BaseRestController {
 
 		// If the pin is blocked, check the permission to unblock it
 		if (memberCanHavePin) {
-			final boolean pinBlocked = accessService.isPinBlocked(member.getMemberUser());
+			final boolean pinBlocked = accessService.isPinBlocked(member
+					.getMemberUser());
 			if (pinBlocked) {
-				final boolean canUnblockPin = permissionService.permission(member)
+				final boolean canUnblockPin = permissionService
+						.permission(member)
 						.admin(AdminMemberPermission.ACCESS_UNBLOCK_PIN)
-						.broker(BrokerPermission.MEMBER_ACCESS_UNBLOCK_PIN).member(MemberPermission.ACCESS_UNBLOCK_PIN)
+						.broker(BrokerPermission.MEMBER_ACCESS_UNBLOCK_PIN)
+						.member(MemberPermission.ACCESS_UNBLOCK_PIN)
 						.hasPermission();
 				request.setAttribute("canUnblockPin", canUnblockPin);
 			}
@@ -199,11 +229,14 @@ public class ManageExternalAccessController extends BaseRestController {
 
 		// Check if the group of member uses a transaction password
 		if (myAccess) {
-			final boolean usesTransactionPassword = memberGroup.getBasicSettings().getTransactionPassword().isUsed();
+			final boolean usesTransactionPassword = memberGroup
+					.getBasicSettings().getTransactionPassword().isUsed();
 			if (usesTransactionPassword) {
-				request.setAttribute("usesTransactionPassword", usesTransactionPassword);
+				request.setAttribute("usesTransactionPassword",
+						usesTransactionPassword);
 				final TransactionPasswordStatus transactionPasswordStatus = elementService
-						.reloadUser(form.getUser().getId()).getTransactionPasswordStatus();
+						.reloadUser(form.getUser().getId())
+						.getTransactionPasswordStatus();
 				if (transactionPasswordStatus == TransactionPasswordStatus.BLOCKED) {
 					request.setAttribute("transactionPasswordBlocked", true);
 				} else if (transactionPasswordStatus.isGenerationAllowed()) {
@@ -213,13 +246,17 @@ public class ManageExternalAccessController extends BaseRestController {
 		}
 
 		final boolean canChangePin = memberCanHavePin
-				&& permissionService.permission(member).admin(AdminMemberPermission.ACCESS_CHANGE_PIN)
-						.broker(BrokerPermission.MEMBER_ACCESS_CHANGE_PIN).member().hasPermission();
+				&& permissionService.permission(member)
+						.admin(AdminMemberPermission.ACCESS_CHANGE_PIN)
+						.broker(BrokerPermission.MEMBER_ACCESS_CHANGE_PIN)
+						.member().hasPermission();
 
 		// Channels that the group of member have access
-		final Channel webChannel = channelService.loadByInternalName(Channel.WEB);
+		final Channel webChannel = channelService
+				.loadByInternalName(Channel.WEB);
 
-		final Collection<Channel> memberGroupChannels = new ArrayList<Channel>(memberGroup.getChannels());
+		final Collection<Channel> memberGroupChannels = new ArrayList<Channel>(
+				memberGroup.getChannels());
 		// The "web" channel can not be customized by the user, so it should not
 		// be sent to the JSP page
 		// We need to clone the channels collection because it's associated to
@@ -237,14 +274,17 @@ public class ManageExternalAccessController extends BaseRestController {
 		final boolean hasPermission = permissionService.permission(member)
 				.admin(AdminMemberPermission.PREFERENCES_MANAGE_NOTIFICATIONS)
 				.member(MemberPermission.PREFERENCES_MANAGE_NOTIFICATIONS)
-				.broker(BrokerPermission.PREFERENCES_MANAGE_NOTIFICATIONS).hasPermission();
+				.broker(BrokerPermission.PREFERENCES_MANAGE_NOTIFICATIONS)
+				.hasPermission();
+		final boolean canManagePreferences = memberCanHaveSmsChannel
+				&& hasPermission;
 
-		final boolean canManagePreferences = memberCanHaveSmsChannel && hasPermission;
+		final boolean canChangeChannelAccess = accessService
+				.canChangeChannelsAccess(member);
 
-		final boolean canChangeChannelAccess = accessService.canChangeChannelsAccess(member);
-
-		ManageExternalAccessResponseDto reponse = new ManageExternalAccessResponseDto(member, myAccess, smsChannel,
-				memberCanHavePin, canChangePin, canManagePreferences, canChangeChannelAccess);
+		ManageExternalAccessResponseDto reponse = new ManageExternalAccessResponseDto(
+				member, myAccess, smsChannel, memberCanHavePin, canChangePin,
+				canManagePreferences, canChangeChannelAccess);
 		return reponse;
 	}
 }

@@ -2,7 +2,9 @@ package nl.strohalm.cyclos.webservices.rest.members.bulks;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -33,8 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-
-/*public class MemberBulkGenerateCardController extends BaseRestController {
+public class MemberBulkGenerateCardController extends BaseRestController {
 	private DataBinder<FullTextMemberQuery> dataBinder;
 	private CardService cardService;
 	private SettingsService settingsService;
@@ -59,9 +60,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 		}
 	}
 
-	*//**
+	/**
 	 * @see nl.strohalm.cyclos.entities.settings.events.LocalSettingsChangeListener#onLocalSettingsUpdate(nl.strohalm.cyclos.entities.settings.events.LocalSettingsEvent)
-	 *//*
+	 */
 
 	public void onLocalSettingsUpdate(final LocalSettingsEvent event) {
 		try {
@@ -117,10 +118,34 @@ import org.springframework.web.bind.annotation.ResponseBody;
 		public void setGenerateCard(final MapBean generateCard) {
 			this.generateCard = generateCard;
 		}
+
+		public Object getQuery() {
+			return values;
+		}
+
+		protected Map<String, Object> values;
+
+		public Map<String, Object> getValues() {
+			return values;
+		}
+
+		public void setValues(final Map<String, Object> values) {
+			this.values = values;
+		}
 	}
 
 	public static class MemberBulkGenerateCardResponseDto {
 		private String message;
+		private int changed;
+		private int unChanged;
+
+		public MemberBulkGenerateCardResponseDto(String message, int changed,
+				int unChanged) {
+			super();
+			this.message = message;
+			this.changed = changed;
+			this.unChanged = unChanged;
+		}
 
 		public String getMessage() {
 			return message;
@@ -147,12 +172,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 		final BulkMemberActionResultVO results = cardService
 				.bulkGenerateNewCard(query, generateForPending,
 						generateForActive);
-		context.sendMessage("member.bulkActions.cardGenerated",
-				results.getChanged(), results.getUnchanged());
+		String message = "member.bulkActions.cardGenerated";
+		int changed = results.getChanged();
+		int unchanged = results.getUnchanged();
 
 		// Clear the generate card parameters
 		form.getGenerateCard().clear();
-
+		MemberBulkGenerateCardResponseDto response = new MemberBulkGenerateCardResponseDto(
+				message, changed, unchanged);
+		return response;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -183,5 +211,5 @@ import org.springframework.web.bind.annotation.ResponseBody;
 			throw new ValidationException("comments", "remark.comments",
 					new RequiredError());
 		}
-	}*/
-
+	}
+}

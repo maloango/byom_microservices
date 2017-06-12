@@ -65,12 +65,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class SendMessageController extends BaseRestController {
-/*	public static enum SendTo {
+	public static enum SendTo {
 		MEMBER, ADMIN, GROUP, BROKERED_MEMBERS
 	}
 
 	private static final int WRAP_SIZE = 50;
-
 	private MessageService messageService;
 	private MessageCategoryService messageCategoryService;
 	private PreferenceService preferenceService;
@@ -158,18 +157,46 @@ public class SendMessageController extends BaseRestController {
 		public void setToMemberId(final long toMemberId) {
 			this.toMemberId = toMemberId;
 		}
+
+		public boolean isAdmin() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		public boolean isBroker() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		public boolean isMember() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		public boolean isOperator() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		public void sendMessage(String key) {
+			// TODO Auto-generated method stub
+
+		}
 	}
 
 	public static class SendMessageResponseDto {
-		private String message;
+		private String key;
+		String errMessage;
+		long toMemberId;
 
-		public String getMessage() {
-			return message;
+		public SendMessageResponseDto(String key, String errMessage,
+				long toMemberId) {
+			super();
+			this.key = key;
+			this.errMessage = errMessage;
+			this.toMemberId = toMemberId;
 		}
 
-		public void setMessage(String message) {
-			this.message = message;
-		}
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.POST)
@@ -183,15 +210,18 @@ public class SendMessageController extends BaseRestController {
 		final SendMessageDTO dto = resolveDTO(form);
 
 		// Call the correct service method
+		String errMessage = null;
+		String key = null;
+		SendMessageResponseDto response = new SendMessageResponseDto(key, errMessage, toMemberId);
 		try {
-			String key = "message.sent";
+			 key = "message.sent";
 
 			messageService.send(dto);
 			if (dto instanceof SendDirectMessageToMemberDTO) {
 				final SendDirectMessageToMemberDTO sendDirectMessageToMemberDTO = (SendDirectMessageToMemberDTO) dto;
 				Type type = null;
 
-				if (context.isAdmin()) {
+				if (form.isAdmin()) {
 					type = Message.Type.FROM_ADMIN_TO_MEMBER;
 				} else {
 					type = Message.Type.FROM_MEMBER;
@@ -205,24 +235,21 @@ public class SendMessageController extends BaseRestController {
 					if (np.isMessage()) {
 						key = "message.warning.messageNotReceivedByEmail";
 					} else {
-						return context.sendError("message.error.emailNotSent");
+						key = "message.error.emailNotSent";
+						return response;
 					}
 				}
 			}
-			context.sendMessage(key);
+			form.sendMessage(key);
 		} catch (final MemberWontReceiveNotificationException e) {
-			return context
-					.sendError("message.error.memberWontReceiveNotification");
+			errMessage = "message.error.memberWontReceiveNotification";
 		}
 
 		// Go back to the correct location
 		if (dto.getInReplyTo() == null && toMemberId > 0L) {
-			return ActionHelper.redirectWithParam(context.getRequest(),
-					context.findForward("backToProfile"), "memberId",
-					toMemberId);
+			return response;
 		}
-
-		return context.findForward("backToList");
+		return response;
 	}
 
 	protected void prepareForm(final ActionContext context) throws Exception {
@@ -349,11 +376,6 @@ public class SendMessageController extends BaseRestController {
 		request.setAttribute("messageFormat", messageFormat);
 	}
 
-	protected void validateForm(final ActionContext context) {
-		final SendMessageDTO dto = resolveDTO(context);
-		messageService.validate(dto);
-	}
-
 	private <T extends SendMessageDTO> BeanBinder<T> basicDataBinderFor(
 			final Class<T> type) {
 		final BeanBinder<T> binder = BeanBinder.instance(type);
@@ -395,9 +417,9 @@ public class SendMessageController extends BaseRestController {
 		return (DataBinder<T>) dataBindersByType.get(type);
 	}
 
-	*//**
+	/**
 	 * Resolve a send message dto
-	 *//*
+	 */
 	private SendMessageDTO resolveDTO(final SendMessageRequestDto form) {
 		// final SendMessageForm form = context.getForm();
 		Class<? extends SendMessageDTO> dtoClass = null;
@@ -461,9 +483,9 @@ public class SendMessageController extends BaseRestController {
 		return inReplyTo;
 	}
 
-	*//**
+	/**
 	 * Resolve the member to send to, if any
-	 *//*
+	 */
 	private Member resolveToMember(final ActionContext context) {
 		final SendMessageForm form = context.getForm();
 		final long toMemberId = form.getToMemberId();
@@ -488,5 +510,5 @@ public class SendMessageController extends BaseRestController {
 
 		return toMember;
 	}
-*/
+
 }

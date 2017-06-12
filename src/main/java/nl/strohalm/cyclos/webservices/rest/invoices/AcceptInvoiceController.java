@@ -260,7 +260,6 @@ public class AcceptInvoiceController extends BaseRestController {
 	}
 
 
-
 	private boolean shouldValidateTransactionPassword(
 			final AcceptInvoiceRequestDto form, Invoice invoice,
 			TransferType transferType) {

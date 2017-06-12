@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseQueryAction;
+import nl.strohalm.cyclos.controls.ads.SearchAdsForm;
 import nl.strohalm.cyclos.entities.accounts.Currency;
 import nl.strohalm.cyclos.entities.ads.AbstractAdQuery;
 import nl.strohalm.cyclos.entities.ads.Ad;

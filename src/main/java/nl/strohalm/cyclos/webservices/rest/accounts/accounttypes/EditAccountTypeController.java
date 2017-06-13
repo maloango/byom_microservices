@@ -170,7 +170,7 @@ public class EditAccountTypeController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/editAccountType", method = RequestMethod.POST)
+	@RequestMapping(value = "/admin/editAccountType", method = RequestMethod.PUT)
 	@ResponseBody
 	protected EditAccountTypeResponseDTO handleSubmit(@RequestBody EditAccountTypeRequestDTO form) throws Exception {
 		// final EditAccountTypeForm form = context.getForm();

@@ -61,7 +61,6 @@ public class InvoiceDetailsAction extends BaseAction {
     private InvoiceService              invoiceService;
     private TransferTypeService         transferTypeService;
     private PaymentCustomFieldService   paymentCustomFieldService;
-
     private CustomFieldHelper           customFieldHelper;
 
     public InvoiceService getInvoiceService() {

@@ -32,9 +32,7 @@ import nl.strohalm.cyclos.utils.csv.CSVWriter;
 import nl.strohalm.cyclos.webservices.rest.reports.members.transactions.ExportMembersTransactionsReportToCsvAction.SummaryByPaymentFilterConverter;
 @Controller
 public class ExportMembersTransactionsReportToCsvController extends BaseRestController{
-
 	private final PaymentFilter paymentFilter;
-    private final boolean       isCount;
     public final SettingsService getSettingsService() {
 		return settingsService;
 	}
@@ -51,14 +49,15 @@ public class ExportMembersTransactionsReportToCsvController extends BaseRestCont
 		return isCount;
 	}
 
-	private SettingsService settingsService;
+	private final boolean       isCount;
+    private SettingsService settingsService;
 
     void SummaryByPaymentFilterConverter(final PaymentFilter paymentFilter, final boolean isCount) {
         this.paymentFilter = paymentFilter;
         this.isCount = isCount;
     }
 
-    //@Override
+   // @Override
     public String toString(final Map<PaymentFilter, TransactionSummaryVO> map) {
         String string = "";
         final TransactionSummaryVO vo = map.get(paymentFilter);
@@ -74,7 +73,7 @@ public class ExportMembersTransactionsReportToCsvController extends BaseRestCont
         return string;
     }
 
-    //@Override
+   // @Override
     public Map<PaymentFilter, TransactionSummaryVO> valueOf(final String string) {
         return null;
     }
@@ -82,15 +81,18 @@ public class ExportMembersTransactionsReportToCsvController extends BaseRestCont
 
 class TransactionSummaryVOConverter implements Converter<TransactionSummaryVO> {
 
-    private static final long serialVersionUID = -3481170993171107591L;
-
-    private final boolean     isCount;
+   
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final boolean     isCount;
 
     TransactionSummaryVOConverter(final boolean isCount) {
         this.isCount = isCount;
     }
 
-    @Override
+   // @Override
     public String toString(final TransactionSummaryVO vo) {
         String string = "";
         if (vo != null) {
@@ -105,7 +107,7 @@ class TransactionSummaryVOConverter implements Converter<TransactionSummaryVO> {
         return string;
     }
 
-    //@Override
+   // @Override
     public TransactionSummaryVO valueOf(final String string) {
         return null;
     }
@@ -127,7 +129,7 @@ public void setPaymentFilterService(final PaymentFilterService paymentFilterServ
     this.paymentFilterService = paymentFilterService;
 }
 
-//@Override
+@Override
 @SuppressWarnings({ "unchecked", "rawtypes" })
 protected List<?> executeQuery(final ActionContext context) {
     final MembersReportHandler reportHandler = getReportHandler();
@@ -153,14 +155,7 @@ protected String fileName(final ActionContext context) {
     return "members_transactions_summaries_" + loggedUser.getUsername() + ".csv";
 }
 
-public static class RequestDTO{
-	
-}
-public static class ResposneDTO{
-	
-}
-
-//@Override
+ //@Override
 protected CSVWriter<MemberTransactionSummaryReportData> resolveCSVWriter(final ActionContext context) {
     final MembersTransactionsReportForm form = context.getForm();
     final MembersTransactionsReportDTO dto = getReportHandler().getDataBinder().readFromString(form.getMembersTransactionsReport());
@@ -216,5 +211,6 @@ protected CSVWriter<MemberTransactionSummaryReportData> resolveCSVWriter(final A
 
     return csv;
 }
+
 
 }

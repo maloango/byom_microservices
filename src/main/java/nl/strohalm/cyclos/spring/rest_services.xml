@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<beans default-autowire="byName" 
-    xmlns="http://www.springframework.org/schema/beans"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
-    xmlns:util="http://www.springframework.org/schema/util"
+<beans default-autowire="byName"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
@@ -12,14 +10,16 @@
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
     ">
-	
+
 	<!-- Enable MVC annotations -->
 	<mvc:annotation-driven conversion-service="restConversionService">
 		<mvc:message-converters>
-			<bean id="customJacksonMessageConverter" class="nl.strohalm.cyclos.webservices.rest.CustomJacksonMessageConverter" />
+			<bean id="customJacksonMessageConverter"
+				class="nl.strohalm.cyclos.webservices.rest.CustomJacksonMessageConverter" />
 		</mvc:message-converters>
 	</mvc:annotation-driven>
-	<bean id="restConversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+	<bean id="restConversionService"
+		class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
 		<property name="formatterRegistrars">
 			<set>
 				<bean class="nl.strohalm.cyclos.webservices.rest.RestFormatterRegistrar" />
@@ -28,77 +28,230 @@
 	</bean>
 
 	<!-- REST controllers -->
-	<bean id="generalRestController" class="nl.strohalm.cyclos.webservices.rest.GeneralRestController" />
-	<bean id="accessRestController" class="nl.strohalm.cyclos.webservices.rest.AccessRestController" />
-	<bean id="membersRestController" class="nl.strohalm.cyclos.webservices.rest.MembersRestController" />
-	<bean id="memberFieldsRestController" class="nl.strohalm.cyclos.webservices.rest.MemberFieldsRestController" />
-	<bean id="contactsRestController" class="nl.strohalm.cyclos.webservices.rest.ContactsRestController" />
-	<bean id="accountsRestController" class="nl.strohalm.cyclos.webservices.rest.AccountsRestController" />
-	<bean id="transferTypesRestController" class="nl.strohalm.cyclos.webservices.rest.TransferTypesRestController" />
-	<bean id="paymentRestController" class="nl.strohalm.cyclos.webservices.rest.PaymentsRestController" />
-	<bean id="paymentFieldsRestController" class="nl.strohalm.cyclos.webservices.rest.PaymentFieldsRestController" />
+	<bean id="generalRestController"
+		class="nl.strohalm.cyclos.webservices.rest.GeneralRestController" />
+	<bean id="accessRestController"
+		class="nl.strohalm.cyclos.webservices.rest.AccessRestController" />
+	<bean id="membersRestController"
+		class="nl.strohalm.cyclos.webservices.rest.MembersRestController" />
+	<bean id="memberFieldsRestController"
+		class="nl.strohalm.cyclos.webservices.rest.MemberFieldsRestController" />
+	<bean id="contactsRestController"
+		class="nl.strohalm.cyclos.webservices.rest.ContactsRestController" />
+	<bean id="accountsRestController"
+		class="nl.strohalm.cyclos.webservices.rest.AccountsRestController" />
+	<bean id="transferTypesRestController"
+		class="nl.strohalm.cyclos.webservices.rest.TransferTypesRestController" />
+	<bean id="paymentRestController"
+		class="nl.strohalm.cyclos.webservices.rest.PaymentsRestController" />
+	<bean id="paymentFieldsRestController"
+		class="nl.strohalm.cyclos.webservices.rest.PaymentFieldsRestController" />
 	<bean id="adsRestController" class="nl.strohalm.cyclos.webservices.rest.AdsRestController" />
-	<bean id="adFieldsRestController" class="nl.strohalm.cyclos.webservices.rest.AdFieldsRestController" />
-	<bean id="adCategoriesRestController" class="nl.strohalm.cyclos.webservices.rest.AdCategoriesRestController" />
-	<bean id="managePasswordsController" class="nl.strohalm.cyclos.webservices.rest.access.ManagePasswordsController" />
-	<bean id="resetAndSendPasswordController" class="nl.strohalm.cyclos.webservices.rest.access.ResetAndSendPasswordController" />
-	<bean id="manageExternalAccessController" class="nl.strohalm.cyclos.webservices.rest.access.ManageExternalAccessController" />
-	<bean id="manageTransactionPasswordController" class="nl.strohalm.cyclos.webservices.rest.access.ManageTransactionPasswordController" />
-	<bean id="editAccountFeeController" class="nl.strohalm.cyclos.webservices.rest.access.EditAccountFeeController" />
-	<bean id="removeAccountFeeController" class="nl.strohalm.cyclos.webservices.rest.access.RemoveAccountFeeController" />
-	<bean id="generateTransactionPasswordController" class="nl.strohalm.cyclos.webservices.rest.access.GenerateTransactionPasswordController" />
-	<bean id="editAccountTypeController" class="nl.strohalm.cyclos.webservices.rest.access.EditAccountTypeController" />
-	<bean id="listAccountTypesController" class="nl.strohalm.cyclos.webservices.rest.access.ListAccountTypesController" />
-	<bean id="removeAccountTypeController" class="nl.strohalm.cyclos.webservices.rest.access.RemoveAccountTypeController" />
-	<bean id="removeAdminController" class="nl.strohalm.cyclos.webservices.rest.admin.removeAdminController" />
-	<bean id="administrativeTasksContoller" class="nl.strohalm.cyclos.webservices.rest.admintasks.AdministrativeTasksContoller" />
-	<bean id="removeAlertsController" class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveAlertsAction" />
-	<bean id="viewErrorLogEntryController" class="nl.strohalm.cyclos.webservices.rest.alerts.ViewErrorLogEntryController" />
-	<bean id="removeErrorLogEntriesController" class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveErrorLogEntriesController" />
-	<bean id="editDynamicDocumentController" class="nl.strohalm.cyclos.webservices.rest.customization.documents.EditDynamicDocumentController" />
-	<bean id="editMemberDocumentController" class="nl.strohalm.cyclos.webservices.rest.customization.documents.EditMemberDocumentController" />
-	<bean id="editStaticDocumentController" class="nl.strohalm.cyclos.webservices.rest.customization.documents.EditStaticDocumentController" />
-	<bean id="listDocumentsController" class="nl.strohalm.cyclos.webservices.rest.customization.documents.ListDocumentsController" />
-	<bean id="removeDocumentController" class="nl.strohalm.cyclos.webservices.rest.customization.documents.RemoveDocumentController" />
-	<bean id="viewDocumentController" class="nl.strohalm.cyclos.webservices.rest.customization.documents.ViewDocumentController" />
-	<bean id="editCustomizedFileController" class="nl.strohalm.cyclos.webservices.rest.customization.files.EditCustomizedFileController" />
-	<bean id="listCustomizedFilesController" class="nl.strohalm.cyclos.webservices.rest.customization.files.ListCustomizedFilesController" />
-	<bean id="stopCustomizingController" class="nl.strohalm.cyclos.webservices.rest.customization.files.StopCustomizingController" />
-	<bean id="exportThemeController" class="nl.strohalm.cyclos.webservices.rest.customization.themes.ExportThemeController" />
-	<bean id="importThemeController" class="nl.strohalm.cyclos.webservices.rest.customization.themes.ImportThemeController" />
-	<bean id="removeThemeController" class="nl.strohalm.cyclos.webservices.rest.customization.themes.RemoveThemeController" />
-	<bean id="selectThemeController" class="nl.strohalm.cyclos.webservices.rest.customization.themes.SelectThemeController" />
-	<bean id="editGroupController" class="nl.strohalm.cyclos.webservices.rest.groups.EditGroupController" />
-	<bean id="listGroupsController" class="nl.strohalm.cyclos.webservices.rest.groups.ListGroupsController" />
-	<bean id="removeGroupController" class="nl.strohalm.cyclos.webservices.rest.groups.RemoveGroupController" />
-	<bean id="editGroupCustomizedFileController" class="nl.strohalm.cyclos.webservices.rest.groups.editGroupCustomizedFileController" />
-	<bean id="stopCustomizingGroupFileController" class="nl.strohalm.cyclos.webservices.rest.groups.StopCustomizingGroupFileController" />
-	<bean id="editGroupFilterCustomizedController" class="nl.strohalm.cyclos.webservices.rest.groups.EditGroupFilterCustomizedController" />
-	<bean id="stopCustomizingGroupFilterFileController" class="nl.strohalm.cyclos.webservices.rest.groups.StopCustomizingGroupFilterFileController" />
-	<bean id="removeImageController" class="nl.strohalm.cyclos.webservices.rest.image.RemoveImageController" />
-	<bean id="removeLoanGroupController" class="nl.strohalm.cyclos.webservices.rest.loangroups.RemoveLoanGroupController" />
-	<bean id="searchLoanGroupsController" class="nl.strohalm.cyclos.webservices.rest.loangroups.SearchLoanGroupsController />
-	<bean id="editAdInterestController" class="nl.strohalm.cyclos.webservices.rest.members.EditAdInterestController />
-	<bean id="listAdInterestsController" class="nl.strohalm.cyclos.webservices.rest.members.ListAdInterestsController />
-	<bean id="removeAdInterestsController" class="nl.strohalm.cyclos.webservices.rest.members.RemoveAdInterestsController />
-	<bean id="deleteContactController" class="nl.strohalm.cyclos.webservices.rest.members.DeleteContactController />
-	<bean id="editContactController" class="nl.strohalm.cyclos.webservices.rest.members.EditContactController />
-	<bean id="listContacts" class="nl.strohalm.cyclos.webservices.rest.members.ListContacts />
-	<bean id="SelectDocumentController" class="nl.strohalm.cyclos.webservices.rest.members.SelectDocumentController />
-	<bean id="pendingMemberProfileController" class="nl.strohalm.cyclos.webservices.rest.members.PendingMemberProfileController />
-	<bean id="resendEmailValidationController" class="nl.strohalm.cyclos.webservices.rest.members.ResendEmailValidationController />
-	<bean id="editReceiptPrinterSettingsController" class="nl.strohalm.cyclos.webservices.rest.members.EditReceiptPrinterSettingsController />
-	<bean id="listReceiptPrinterSettingsController" class="nl.strohalm.cyclos.webservices.rest.members.ListReceiptPrinterSettingsController />
-	<bean id="removeReceiptPrinterSettingsController" class="nl.strohalm.cyclos.webservices.rest.members.RemoveReceiptPrinterSettingsController />
-	<bean id="EditGeneralReferenceController" class="nl.strohalm.cyclos.webservices.rest.members.references.EditGeneralReferenceController />
-	<bean id="editTransactionFeedbackController" class="nl.strohalm.cyclos.webservices.rest.members.references.EditTransactionFeedbackController />
-	<bean id="removeReferenceController" class="nl.strohalm.cyclos.webservices.rest.members.references.RemoveReferenceController />
-	<bean id="changeOperatorGroupController" class="nl.strohalm.cyclos.webservices.rest.members.operators.ChangeOperatorGroupController />
-	<bean id="CreateOperatorController" class="nl.strohalm.cyclos.webservices.rest.members.operators.CreateOperatorController />
-	<bean id="operatorProfileController" class="nl.strohalm.cyclos.webservices.rest.members.operators.OperatorProfileController />
-	<bean id="removeOperatorController" class="nl.strohalm.cyclos.webservices.rest.members.operators.RemoveOperatorController />
-	<bean id="removeOperatorController" class="nl.strohalm.cyclos.webservices.rest.members.operators.RemoveOperatorController />
-	<bean id="RequestPaymentController" class="nl.strohalm.cyclos.webservices.rest.payments.request.RequestPaymentController />
-	
+	<bean id="adFieldsRestController"
+		class="nl.strohalm.cyclos.webservices.rest.AdFieldsRestController" />
+	<bean id="adCategoriesRestController"
+		class="nl.strohalm.cyclos.webservices.rest.AdCategoriesRestController" />
+
+<!-- Access -->
+
+	<bean id="managePasswordsController"
+		class="nl.strohalm.cyclos.webservices.rest.access.ManagePasswordsController" />
+	<bean id="resetAndSendPasswordController"
+		class="nl.strohalm.cyclos.webservices.rest.access.ResetAndSendPasswordController" />
+
+
+	<bean id="manageExternalAccessController"
+		class="nl.strohalm.cyclos.webservices.rest.access.ManageExternalAccessController" />
+
+
+	<bean id="generateTransactionPasswordController"
+		class="nl.strohalm.cyclos.webservices.rest.access.GenerateTransactionPasswordController" />
+	<bean id="manageTransactionPasswordController"
+		class="nl.strohalm.cyclos.webservices.rest.access.ManageTransactionPasswordController" />
+
+<!-- Accounts -->
+
+
+	<bean id="accountFeeLogDetailsController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.accountfees.AccountFeeLogDetailsController" />
+	<bean id="editAccountFeeController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.accountfees.EditAccountFeeController" />
+	<bean id="listAccountFeeLogController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.accountfees.ListAccountFeeLogController" />
+	<bean id="rechargeFailedAccountFeeLogController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.accountfees.RechargeFailedAccountFeeLogController" />
+	<bean id="removeAccountFeeController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.accountfees.RemoveAccountFeeController" />
+	<bean id="runAccountFeeController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.accountfees.RunAccountFeeController" />
+
+
+	<bean id="editAccountTypeController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.accounttypes.EditAccountTypeController" />
+	<bean id="listAccountTypesController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.accounttypes.ListAccountTypesController" />
+	<bean id="removeAccountTypeController"
+		class="nl.strohalm.cyclos.webservices.rest..accounts.accounttypes.RemoveAccountTypeController" />
+
+
+	<bean id="editAuthorizationLevelController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.authorizationlevels.EditAuthorizationLevelController" />
+	<bean id="removeAuthorizationLevelController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.authorizationlevels.RemoveAuthorizationLevelController" />
+
+	<!-- cards package mapping require -->
+
+	<bean id="editCurrencyController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.currencies.EditCurrencyController" />
+	<bean id="listCurrenciesController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.currencies.ListCurrenciesController" />
+	<bean id="manageCurrencyController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.currencies.ManageCurrencyController" />
+	<bean id="" class="nl.strohalm.cyclos.webservices.rest.accounts.currencies" />
+	<bean id="removeCurrencyController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.currencies.RemoveCurrencyController" />
+
+
+	<!-- details package mapping require -->
+
+	<bean id="assignPosController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.pos.AssignPosController" />
+	<bean id="editPosController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.pos.EditPosController" />
+	<bean id="memberPosController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.pos.MemberPosController" />
+	<bean id="removePosController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.pos.RemovePosController" />
+	<bean id="searchPosController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.pos.SearchPosController" />
+
+	<!-- transfer types package mapping require -->
+
+	<bean id="removeAdminController"
+		class="nl.strohalm.cyclos.webservices.rest.admin.removeAdminController" />
+	<bean id="administrativeTasksContoller"
+		class="nl.strohalm.cyclos.webservices.rest.admintasks.AdministrativeTasksContoller" />
+	<bean id="removeAlertsController"
+		class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveAlertsAction" />
+	<bean id="viewErrorLogEntryController"
+		class="nl.strohalm.cyclos.webservices.rest.alerts.ViewErrorLogEntryController" />
+	<bean id="removeErrorLogEntriesController"
+		class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveErrorLogEntriesController" />
+	<bean id="editDynamicDocumentController"
+		class="nl.strohalm.cyclos.webservices.rest.customization.documents.EditDynamicDocumentController" />
+	<bean id="editMemberDocumentController"
+		class="nl.strohalm.cyclos.webservices.rest.customization.documents.EditMemberDocumentController" />
+	<bean id="editStaticDocumentController"
+		class="nl.strohalm.cyclos.webservices.rest.customization.documents.EditStaticDocumentController" />
+	<bean id="listDocumentsController"
+		class="nl.strohalm.cyclos.webservices.rest.customization.documents.ListDocumentsController" />
+	<bean id="removeDocumentController"
+		class="nl.strohalm.cyclos.webservices.rest.customization.documents.RemoveDocumentController" />
+	<bean id="viewDocumentController"
+		class="nl.strohalm.cyclos.webservices.rest.customization.documents.ViewDocumentController" />
+	<bean id="editCustomizedFileController"
+		class="nl.strohalm.cyclos.webservices.rest.customization.files.EditCustomizedFileController" />
+	<bean id="listCustomizedFilesController"
+		class="nl.strohalm.cyclos.webservices.rest.customization.files.ListCustomizedFilesController" />
+	<bean id="stopCustomizingController"
+		class="nl.strohalm.cyclos.webservices.rest.customization.files.StopCustomizingController" />
+	<bean id="exportThemeController"
+		class="nl.strohalm.cyclos.webservices.rest.customization.themes.ExportThemeController" />
+	<bean id="importThemeController"
+		class="nl.strohalm.cyclos.webservices.rest.customization.themes.ImportThemeController" />
+	<bean id="removeThemeController"
+		class="nl.strohalm.cyclos.webservices.rest.customization.themes.RemoveThemeController" />
+	<bean id="selectThemeController"
+		class="nl.strohalm.cyclos.webservices.rest.customization.themes.SelectThemeController" />
+	<bean id="editGroupController"
+		class="nl.strohalm.cyclos.webservices.rest.groups.EditGroupController" />
+	<bean id="listGroupsController"
+		class="nl.strohalm.cyclos.webservices.rest.groups.ListGroupsController" />
+	<bean id="removeGroupController"
+		class="nl.strohalm.cyclos.webservices.rest.groups.RemoveGroupController" />
+	<bean id="editGroupCustomizedFileController"
+		class="nl.strohalm.cyclos.webservices.rest.groups.editGroupCustomizedFileController" />
+	<bean id="stopCustomizingGroupFileController"
+		class="nl.strohalm.cyclos.webservices.rest.groups.StopCustomizingGroupFileController" />
+	<bean id="editGroupFilterCustomizedController"
+		class="nl.strohalm.cyclos.webservices.rest.groups.EditGroupFilterCustomizedController" />
+	<bean id="stopCustomizingGroupFilterFileController"
+		class="nl.strohalm.cyclos.webservices.rest.groups.StopCustomizingGroupFilterFileController" />
+	<bean id="removeImageController"
+		class="nl.strohalm.cyclos.webservices.rest.image.RemoveImageController" />
+	<bean id="removeLoanGroupController"
+		class="nl.strohalm.cyclos.webservices.rest.loangroups.RemoveLoanGroupController" />
+	<bean id="searchLoanGroupsController"
+		class="nl.strohalm.cyclos.webservices.rest.loangroups.SearchLoanGroupsController />
+	<bean id="
+		editAdInterestController "
+		class="nl.strohalm.cyclos.webservices.rest.members.EditAdInterestController />
+	<bean id="
+		listAdInterestsController "
+		class="nl.strohalm.cyclos.webservices.rest.members.ListAdInterestsController />
+	<bean id="
+		removeAdInterestsController "
+		class="nl.strohalm.cyclos.webservices.rest.members.RemoveAdInterestsController />
+	<bean id="
+		deleteContactController "
+		class="nl.strohalm.cyclos.webservices.rest.members.DeleteContactController />
+	<bean id="
+		editContactController "
+		class="nl.strohalm.cyclos.webservices.rest.members.EditContactController />
+	<bean id="
+		listContacts "
+		class="nl.strohalm.cyclos.webservices.rest.members.ListContacts />
+	<bean id="
+		SelectDocumentController "
+		class="nl.strohalm.cyclos.webservices.rest.members.SelectDocumentController />
+	<bean id="
+		pendingMemberProfileController "
+		class="nl.strohalm.cyclos.webservices.rest.members.PendingMemberProfileController />
+	<bean id="
+		resendEmailValidationController "
+		class="nl.strohalm.cyclos.webservices.rest.members.ResendEmailValidationController />
+	<bean id="
+		editReceiptPrinterSettingsController "
+		class="nl.strohalm.cyclos.webservices.rest.members.EditReceiptPrinterSettingsController />
+	<bean id="
+		listReceiptPrinterSettingsController "
+		class="nl.strohalm.cyclos.webservices.rest.members.ListReceiptPrinterSettingsController />
+	<bean id="
+		removeReceiptPrinterSettingsController "
+		class="nl.strohalm.cyclos.webservices.rest.members.RemoveReceiptPrinterSettingsController />
+	<bean id="
+		EditGeneralReferenceController "
+		class="nl.strohalm.cyclos.webservices.rest.members.references.EditGeneralReferenceController />
+	<bean id="
+		editTransactionFeedbackController "
+		class="nl.strohalm.cyclos.webservices.rest.members.references.EditTransactionFeedbackController />
+	<bean id="
+		removeReferenceController "
+		class="nl.strohalm.cyclos.webservices.rest.members.references.RemoveReferenceController />
+	<bean id="
+		changeOperatorGroupController "
+		class="nl.strohalm.cyclos.webservices.rest.members.operators.ChangeOperatorGroupController />
+	<bean id="
+		CreateOperatorController "
+		class="nl.strohalm.cyclos.webservices.rest.members.operators.CreateOperatorController />
+	<bean id="
+		operatorProfileController "
+		class="nl.strohalm.cyclos.webservices.rest.members.operators.OperatorProfileController />
+	<bean id="
+		removeOperatorController "
+		class="nl.strohalm.cyclos.webservices.rest.members.operators.RemoveOperatorController />
+	<bean id="
+		removeOperatorController "
+		class="nl.strohalm.cyclos.webservices.rest.members.operators.RemoveOperatorController />
+	<bean id="
+		requestPaymentController "
+		class="nl.strohalm.cyclos.webservices.rest.payments.request.RequestPaymentController />
+	<bean id="
+		exportAdsToCsvController "
+		class="nl.strohalm.cyclos.webservices.rest.ads.ExportAdsToCsvController />
+	<bean id="
+		cancelWebShopPaymentController "
+		class="nl.strohalm.cyclos.webservices.rest.webshop.CancelWebShopPaymentController />
+
 
 </beans>

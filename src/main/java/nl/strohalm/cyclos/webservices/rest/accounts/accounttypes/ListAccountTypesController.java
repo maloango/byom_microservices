@@ -52,7 +52,7 @@ public class ListAccountTypesController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/listAccountTypes", method = RequestMethod.POST)
+	@RequestMapping(value = "/admin/listAccountTypes", method = RequestMethod.GET)
 	@ResponseBody
 	protected ListAccountTypesResponseDTO executeAction(@RequestBody ListAccountTypesRequestDTO form) throws Exception {
 		// final HttpServletRequest request = context.getRequest();

@@ -4,7 +4,10 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import nl.strohalm.cyclos.entities.Relationship;
+import nl.strohalm.cyclos.entities.access.AdminUser;
 import nl.strohalm.cyclos.entities.access.TransactionPassword;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.accounts.AccountOwner;
@@ -19,6 +22,9 @@ import nl.strohalm.cyclos.entities.groups.OperatorGroup;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
+import nl.strohalm.cyclos.services.access.AccessService;
+import nl.strohalm.cyclos.services.access.exceptions.BlockedCredentialsException;
+import nl.strohalm.cyclos.services.access.exceptions.InvalidCredentialsException;
 import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.services.transactions.LoanPaymentDTO;
@@ -44,17 +50,13 @@ public class DiscardLoanController extends BaseRestController {
 	private DataBinder<? extends LoanPaymentDTO> dataBinder;
 
 	public static class DiscardLoanRequestDto {
-		private String date;
-		private String transactionPassword;
 		private long loanGroupId;
 		private long loanId;
 		private long loanPaymentId;
 		private long guaranteeId;
 		private long memberId;
-
-		public long getGuaranteeId() {
-			return guaranteeId;
-		}
+		private String date;
+		private String transactionPassword;
 
 		public long getLoanGroupId() {
 			return loanGroupId;
@@ -68,28 +70,16 @@ public class DiscardLoanController extends BaseRestController {
 			return loanPaymentId;
 		}
 
+		public long getGuaranteeId() {
+			return guaranteeId;
+		}
+
 		public long getMemberId() {
 			return memberId;
 		}
 
-		public void setGuaranteeId(final long guaranteeId) {
-			this.guaranteeId = guaranteeId;
-		}
-
-		public void setLoanGroupId(final long loanGroupId) {
-			this.loanGroupId = loanGroupId;
-		}
-
-		public void setLoanId(final long loanId) {
-			this.loanId = loanId;
-		}
-
-		public void setLoanPaymentId(final long loanPaymentId) {
-			this.loanPaymentId = loanPaymentId;
-		}
-
-		public void setMemberId(final long memberId) {
-			this.memberId = memberId;
+		public User getUser() {
+			return user;
 		}
 
 		public String getDate() {
@@ -117,26 +107,46 @@ public class DiscardLoanController extends BaseRestController {
 			}
 		}
 
-		User user;
+		private User user;
 
+		@SuppressWarnings("unchecked")
 		public <E extends Element> E getElement() {
 			return (E) user.getElement();
-
 		}
 
-		public void checkTransactionPassword(String transactionPassword2) {
-
+		@SuppressWarnings("unchecked")
+		public <G extends Group> G getGroup() {
+			final Element element = getElement();
+			return (G) element.getGroup();
 		}
 
-		public boolean isTransactionPasswordEnabled(AccountType to) {
+		public boolean isTransactionPasswordEnabled() {
+			Group loggedGroup = getGroup();
+			if (loggedGroup instanceof OperatorGroup) {
+				final GroupService groupService = bean(GroupService.class);
+				loggedGroup = groupService.load(loggedGroup.getId(),
+						RelationshipHelper.nested(
+								OperatorGroup.Relationships.MEMBER,
+								Element.Relationships.GROUP));
+			}
+			final TransactionPassword transactionPassword = loggedGroup
+					.getBasicSettings().getTransactionPassword();
+			return transactionPassword.isUsed();
+		}
+
+		public boolean isAdmin() {
+			return user instanceof AdminUser;
+		}
+
+		public boolean isTransactionPasswordEnabled(
+				final AccountType accountType) {
 			if (!isTransactionPasswordEnabled()) {
 				return false;
 			} else if (isAdmin()) {
 				return true; // the group settings is true
 			} else { // checks the member-group settings
 				final Member member = (Member) getAccountOwner();
-				final GroupService groupService = SpringHelper.bean(
-						getServletContext(), GroupService.class);
+				final GroupService groupService = bean(GroupService.class);
 				try {
 					final MemberGroupAccountSettings mgas = groupService
 							.loadAccountSettings(member.getGroup().getId(),
@@ -148,19 +158,21 @@ public class DiscardLoanController extends BaseRestController {
 			}
 		}
 
-		public boolean isTransactionPasswordEnabled() {
-			Group loggedGroup = getGroup();
-			if (loggedGroup instanceof OperatorGroup) {
-				final GroupService groupService = SpringHelper.bean(
-						getServletContext(), GroupService.class);
-				loggedGroup = groupService.load(loggedGroup.getId(),
-						RelationshipHelper.nested(
-								OperatorGroup.Relationships.MEMBER,
-								Element.Relationships.GROUP));
+		public void checkTransactionPassword(final String transactionPassword) {
+			try {
+				final AccessService accessService = bean(AccessService.class);
+				accessService.checkTransactionPassword(transactionPassword);
+			} catch (final InvalidCredentialsException e) {
+				throw new ValidationException(
+						"transactionPassword.error.invalid");
+			} catch (final BlockedCredentialsException e) {
+				//final HttpSession session = getSession();
+				//session.setAttribute("errorReturnTo",session.getAttribute("pathPrefix") + "/home");
+				throw new ValidationException(
+						"transactionPassword.error.blockedByTrials");
+			} catch (final RuntimeException e) {
+				throw e;
 			}
-			final TransactionPassword transactionPassword = loggedGroup
-					.getBasicSettings().getTransactionPassword();
-			return transactionPassword.isUsed();
 		}
 	}
 
@@ -183,7 +195,7 @@ public class DiscardLoanController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "", method = RequestMethod.POST)
 	@ResponseBody
 	protected DiscardLoanResponseDto handleSubmit(
 			@RequestBody DiscardLoanRequestDto form) throws Exception {
@@ -206,7 +218,44 @@ public class DiscardLoanController extends BaseRestController {
 		return response;
 	}
 
-	private LoanPaymentDTO resolveLoanDTO(DiscardLoanRequestDto form) {
+	protected boolean shouldValidateTransactionPassword(
+			final DiscardLoanRequestDto form, final Loan loan) {
+		if (form.getAccountOwner().equals(loan.getMember())) {
+			// When a logged member performing an operation over a loan to
+			// himself
+			return form.isTransactionPasswordEnabled(loan.getTransferType()
+					.getTo());
+		} else {
+			return form.isTransactionPasswordEnabled();
+		}
+	}
+
+	public DataBinder<? extends LoanPaymentDTO> getDataBinder() {
+		if (dataBinder == null) {
+			final BeanBinder<? extends LoanPaymentDTO> binder = instance(getDtoClass());
+			initDataBinder(binder);
+			dataBinder = binder;
+		}
+		return dataBinder;
+	}
+
+	protected Class<? extends LoanPaymentDTO> getDtoClass() {
+		return LoanPaymentDTO.class;
+	}
+
+	public static <T> BeanBinder<T> instance(final Class<T> beanClass) {
+		return instance(beanClass, null);
+	}
+
+	public static <T> BeanBinder<T> instance(final Class<T> beanClass,
+			final String path) {
+		final BeanBinder<T> binder = new BeanBinder<T>();
+		binder.setType(beanClass);
+		binder.setPath(path);
+		return binder;
+	}
+
+	protected LoanPaymentDTO resolveLoanDTO(final DiscardLoanRequestDto form) {
 		// final LoanDetailsForm form = context.getForm();
 		final LoanPaymentDTO dto = getDataBinder().readFromString(form);
 		// because it comes from a data binder it's an entity reference
@@ -234,30 +283,8 @@ public class DiscardLoanController extends BaseRestController {
 		return dto;
 	}
 
-	public DataBinder<? extends LoanPaymentDTO> getDataBinder() {
-		if (dataBinder == null) {
-			final BeanBinder<? extends LoanPaymentDTO> binder = BeanBinder
-					.instance(getDtoClass());
-			initDataBinder(binder);
-			dataBinder = binder;
-		}
-		return dataBinder;
-	}
-
-	protected Class<? extends LoanPaymentDTO> getDtoClass() {
-		return LoanPaymentDTO.class;
-	}
-
-	private boolean shouldValidateTransactionPassword(
-			DiscardLoanRequestDto form, Loan loan) {
-		if (form.getAccountOwner().equals(loan.getMember())) {
-			// When a logged member performing an operation over a loan to
-			// himself
-			return form.isTransactionPasswordEnabled(loan.getTransferType()
-					.getTo());
-		} else {
-			return form.isTransactionPasswordEnabled();
-		}
+	public static <T> T bean(final Class<T> requiredType) {
+		return bean(requiredType);
 	}
 
 	protected void initDataBinder(

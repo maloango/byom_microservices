@@ -78,31 +78,51 @@ public class EditAccountFeeController extends BaseRestController {
 		try {
 			lock.readLock().lock();
 			if (dataBinder == null) {
-				final LocalSettings localSettings = settingsService.getLocalSettings();
-				final BeanBinder<AccountFee> binder = BeanBinder.instance(AccountFee.class);
-				binder.registerBinder("id", PropertyBinder.instance(Long.class, "id", IdConverter.instance()));
-				binder.registerBinder("accountType", PropertyBinder.instance(MemberAccountType.class, "accountType",
+				final LocalSettings localSettings = settingsService
+						.getLocalSettings();
+				final BeanBinder<AccountFee> binder = BeanBinder
+						.instance(AccountFee.class);
+				binder.registerBinder(
+						"id",
+						PropertyBinder.instance(Long.class, "id",
+								IdConverter.instance()));
+				binder.registerBinder("accountType", PropertyBinder.instance(
+						MemberAccountType.class, "accountType",
 						ReferenceConverter.instance(MemberAccountType.class)));
-				binder.registerBinder("name", PropertyBinder.instance(String.class, "name"));
-				binder.registerBinder("description", PropertyBinder.instance(String.class, "description"));
-				binder.registerBinder("paymentDirection",
-						PropertyBinder.instance(PaymentDirection.class, "paymentDirection"));
-				binder.registerBinder("chargeMode", PropertyBinder.instance(ChargeMode.class, "chargeMode"));
-				binder.registerBinder("enabled", PropertyBinder.instance(Boolean.TYPE, "enabled"));
-				binder.registerBinder("enabledSince",
-						PropertyBinder.instance(Calendar.class, "enabledSince", localSettings.getRawDateConverter()));
-				binder.registerBinder("runMode", PropertyBinder.instance(RunMode.class, "runMode"));
-				binder.registerBinder("recurrence", DataBinderHelper.timePeriodBinder("recurrence"));
-				binder.registerBinder("day", PropertyBinder.instance(Byte.class, "day"));
-				binder.registerBinder("hour", PropertyBinder.instance(Byte.class, "hour"));
-				binder.registerBinder("invoiceMode", PropertyBinder.instance(InvoiceMode.class, "invoiceMode"));
-				binder.registerBinder("amount",
-						PropertyBinder.instance(BigDecimal.class, "amount", localSettings.getNumberConverter()));
-				binder.registerBinder("freeBase",
-						PropertyBinder.instance(BigDecimal.class, "freeBase", localSettings.getNumberConverter()));
-				binder.registerBinder("transferType", PropertyBinder.instance(TransferType.class, "transferType",
+				binder.registerBinder("name",
+						PropertyBinder.instance(String.class, "name"));
+				binder.registerBinder("description",
+						PropertyBinder.instance(String.class, "description"));
+				binder.registerBinder("paymentDirection", PropertyBinder
+						.instance(PaymentDirection.class, "paymentDirection"));
+				binder.registerBinder("chargeMode",
+						PropertyBinder.instance(ChargeMode.class, "chargeMode"));
+				binder.registerBinder("enabled",
+						PropertyBinder.instance(Boolean.TYPE, "enabled"));
+				binder.registerBinder("enabledSince", PropertyBinder.instance(
+						Calendar.class, "enabledSince",
+						localSettings.getRawDateConverter()));
+				binder.registerBinder("runMode",
+						PropertyBinder.instance(RunMode.class, "runMode"));
+				binder.registerBinder("recurrence",
+						DataBinderHelper.timePeriodBinder("recurrence"));
+				binder.registerBinder("day",
+						PropertyBinder.instance(Byte.class, "day"));
+				binder.registerBinder("hour",
+						PropertyBinder.instance(Byte.class, "hour"));
+				binder.registerBinder("invoiceMode", PropertyBinder.instance(
+						InvoiceMode.class, "invoiceMode"));
+				binder.registerBinder("amount", PropertyBinder.instance(
+						BigDecimal.class, "amount",
+						localSettings.getNumberConverter()));
+				binder.registerBinder("freeBase", PropertyBinder.instance(
+						BigDecimal.class, "freeBase",
+						localSettings.getNumberConverter()));
+				binder.registerBinder("transferType", PropertyBinder.instance(
+						TransferType.class, "transferType",
 						ReferenceConverter.instance(TransferType.class)));
-				binder.registerBinder("groups", SimpleCollectionBinder.instance(Group.class, "groups"));
+				binder.registerBinder("groups",
+						SimpleCollectionBinder.instance(Group.class, "groups"));
 				dataBinder = binder;
 			}
 			return dataBinder;
@@ -130,16 +150,18 @@ public class EditAccountFeeController extends BaseRestController {
 	}
 
 	@Inject
-	public void setAccountTypeService(final AccountTypeService accountTypeService) {
+	public void setAccountTypeService(
+			final AccountTypeService accountTypeService) {
 		this.accountTypeService = accountTypeService;
 	}
 
 	@Inject
-	public void setTransferTypeService(final TransferTypeService transferTypeService) {
+	public void setTransferTypeService(
+			final TransferTypeService transferTypeService) {
 		this.transferTypeService = transferTypeService;
 	}
 
-	public static class EditAccountFeeRequestDTO {
+	public static class EditAccountFeeRequestDto {
 		private long accountTypeId;
 		private long accountFeeId;
 		protected Map<String, Object> values;
@@ -191,38 +213,119 @@ public class EditAccountFeeController extends BaseRestController {
 		public void setPaymentDirection(final String paymentDirection) {
 			setAccountFee("paymentDirection", paymentDirection);
 		}
+
 	}
 
-	public static class EditAccountFeeResponseDTO {
-		Map<String, Object> params;
-		String message;
+	public static class EditAccountFeeResponseDto {
+		private String message;
+		private Map<String, Object> params;
 
-		public EditAccountFeeResponseDTO(Map<String, Object> params, String message) {
+		public EditAccountFeeResponseDto(String message,
+				Map<String, Object> params) {
 			super();
-			this.params = params;
 			this.message = message;
+			this.params = params;
 		}
 
+		public String getMessage() {
+			return message;
+		}
+
+		public void setMessage(String message) {
+			this.message = message;
+		}
 	}
 
-	@RequestMapping(value = "/admin/editAccountFee", method = RequestMethod.PUT)
+	@RequestMapping(value = "/admin/editAccountFee", method = RequestMethod.POST)
 	@ResponseBody
-	protected EditAccountFeeResponseDTO handleSubmit(@RequestBody EditAccountFeeRequestDTO form) throws Exception {
+	protected EditAccountFeeResponseDto handleSubmit(
+			@RequestBody EditAccountFeeRequestDto form) throws Exception {
 		// final EditAccountFeeForm form = context.getForm();
-		AccountFee accountFee = getDataBinder().readFromString(form.getAccountFee());
+		AccountFee accountFee = getDataBinder().readFromString(
+				form.getAccountFee());
 		final boolean isInsert = accountFee.getId() == null;
 		accountFee = accountFeeService.save(accountFee);
 		String message = null;
-		if (isInsert) {
+		if (isInsert)
 			message = "accountFee.inserted";
-		} else {
+		else
 			message = "accountFee.modified";
-		}
 		final Map<String, Object> params = new HashMap<String, Object>();
 		params.put("accountTypeId", form.getAccountTypeId());
 		params.put("accountFeeId", accountFee.getId());
-		EditAccountFeeResponseDTO response = new EditAccountFeeResponseDTO(params, message);
+		EditAccountFeeResponseDto response = new EditAccountFeeResponseDto(
+				message, params);
 		return response;
+	}
+
+	protected void prepareForm(final ActionContext context) throws Exception {
+		final HttpServletRequest request = context.getRequest();
+		final EditAccountFeeForm form = context.getForm();
+		final long accountTypeId = form.getAccountTypeId();
+		MemberAccountType accountType;
+		try {
+			accountType = (MemberAccountType) accountTypeService
+					.load(accountTypeId);
+		} catch (final Exception e) {
+			throw new ValidationException();
+		}
+
+		final long id = form.getAccountFeeId();
+		final boolean isInsert = id <= 0L;
+		AccountFee accountFee;
+		boolean alreadyRan;
+		if (isInsert) {
+			accountFee = new AccountFee();
+			alreadyRan = false;
+		} else {
+			accountFee = accountFeeService.load(id,
+					AccountFee.Relationships.GROUPS,
+					AccountFee.Relationships.TRANSFER_TYPE);
+
+			final List<TransferType> transferTypes = transferTypeService
+					.getPosibleTTsForAccountFee(accountType,
+							accountFee.getPaymentDirection());
+			request.setAttribute("transferTypes", transferTypes);
+
+			final AccountFeeLogQuery query = new AccountFeeLogQuery();
+			query.setPageForCount();
+			query.setAccountFee(accountFee);
+			alreadyRan = PageHelper.hasResults(accountFeeService
+					.searchLogs(query));
+		}
+
+		getDataBinder().writeAsString(form.getAccountFee(), accountFee);
+
+		final GroupQuery groupQuery = new GroupQuery();
+		groupQuery.setNatures(Group.Nature.MEMBER, Group.Nature.BROKER);
+		groupQuery.setStatus(Group.Status.NORMAL);
+		groupQuery.setMemberAccountType(accountType);
+		final List<? extends MemberGroup> groups = (List<? extends MemberGroup>) groupService
+				.search(groupQuery);
+
+		request.setAttribute("accountFee", accountFee);
+		request.setAttribute("isInsert", isInsert);
+		request.setAttribute("alreadyRan", alreadyRan);
+		request.setAttribute("accountType", accountType);
+		request.setAttribute("groups", groups);
+		request.setAttribute("recurrenceFields", Arrays.asList(
+				TimePeriod.Field.MONTHS, TimePeriod.Field.WEEKS,
+				TimePeriod.Field.DAYS));
+		RequestHelper.storeEnum(request, AccountFee.ChargeMode.class,
+				"chargeModes");
+		RequestHelper.storeEnum(request, AccountFee.PaymentDirection.class,
+				"paymentDirections");
+		RequestHelper.storeEnum(request, AccountFee.RunMode.class, "runModes");
+		RequestHelper.storeEnum(request, AccountFee.InvoiceMode.class,
+				"invoiceModes");
+		RequestHelper.storeEnum(request, WeekDay.class, "weekDays");
+	}
+
+	protected void validateForm(final ActionContext context) {
+		final EditAccountFeeForm form = context.getForm();
+		final AccountFee accountFee = getDataBinder().readFromString(
+				form.getAccountFee());
+		accountFeeService.validate(accountFee);
 	}
 
 }

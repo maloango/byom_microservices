@@ -1,7 +1,10 @@
 package nl.strohalm.cyclos.webservices.rest.loans;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpSession;
 
 import nl.strohalm.cyclos.entities.Relationship;
 import nl.strohalm.cyclos.entities.access.AdminUser;
@@ -19,7 +22,12 @@ import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.entities.groups.OperatorGroup;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
+import nl.strohalm.cyclos.entities.settings.LocalSettings;
+import nl.strohalm.cyclos.services.access.AccessService;
+import nl.strohalm.cyclos.services.access.exceptions.BlockedCredentialsException;
+import nl.strohalm.cyclos.services.access.exceptions.InvalidCredentialsException;
 import nl.strohalm.cyclos.services.groups.GroupService;
+import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.services.transactions.LoanPaymentDTO;
 import nl.strohalm.cyclos.services.transactions.LoanService;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
@@ -38,6 +46,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class ManageExpiredStatusController extends BaseRestController {
 	private LoanService loanService;
+	private SettingsService settingsService;
 	private DataBinder<? extends LoanPaymentDTO> dataBinder;
 
 	public static class ManageExpiredStatusRequestDto {
@@ -47,10 +56,6 @@ public class ManageExpiredStatusController extends BaseRestController {
 		private long loanPaymentId;
 		private long guaranteeId;
 		private long memberId;
-
-		public long getGuaranteeId() {
-			return guaranteeId;
-		}
 
 		public long getLoanGroupId() {
 			return loanGroupId;
@@ -64,28 +69,12 @@ public class ManageExpiredStatusController extends BaseRestController {
 			return loanPaymentId;
 		}
 
+		public long getGuaranteeId() {
+			return guaranteeId;
+		}
+
 		public long getMemberId() {
 			return memberId;
-		}
-
-		public void setGuaranteeId(final long guaranteeId) {
-			this.guaranteeId = guaranteeId;
-		}
-
-		public void setLoanGroupId(final long loanGroupId) {
-			this.loanGroupId = loanGroupId;
-		}
-
-		public void setLoanId(final long loanId) {
-			this.loanId = loanId;
-		}
-
-		public void setLoanPaymentId(final long loanPaymentId) {
-			this.loanPaymentId = loanPaymentId;
-		}
-
-		public void setMemberId(final long memberId) {
-			this.memberId = memberId;
 		}
 
 		public String getStatus() {
@@ -94,6 +83,66 @@ public class ManageExpiredStatusController extends BaseRestController {
 
 		public void setStatus(final String status) {
 			this.status = status;
+		}
+
+		public AccountOwner getAccountOwner() {
+			try {
+				final Element element = getElement();
+				return element.getAccountOwner();
+			} catch (final NullPointerException e) {
+				return null;
+			}
+		}
+
+		User user;
+
+		@SuppressWarnings("unchecked")
+		public <E extends Element> E getElement() {
+			return (E) user.getElement();
+		}
+
+		@SuppressWarnings("unchecked")
+		public <G extends Group> G getGroup() {
+			final Element element = getElement();
+			return (G) element.getGroup();
+		}
+
+		public boolean isTransactionPasswordEnabled() {
+			Group loggedGroup = getGroup();
+			if (loggedGroup instanceof OperatorGroup) {
+				final GroupService groupService = bean(GroupService.class);
+				loggedGroup = groupService.load(loggedGroup.getId(),
+						RelationshipHelper.nested(
+								OperatorGroup.Relationships.MEMBER,
+								Element.Relationships.GROUP));
+			}
+			final TransactionPassword transactionPassword = loggedGroup
+					.getBasicSettings().getTransactionPassword();
+			return transactionPassword.isUsed();
+		}
+
+		public boolean isAdmin() {
+			return user instanceof AdminUser;
+		}
+
+		public boolean isTransactionPasswordEnabled(
+				final AccountType accountType) {
+			if (!isTransactionPasswordEnabled()) {
+				return false;
+			} else if (isAdmin()) {
+				return true; // the group settings is true
+			} else { // checks the member-group settings
+				final Member member = (Member) getAccountOwner();
+				final GroupService groupService = bean(GroupService.class);
+				try {
+					final MemberGroupAccountSettings mgas = groupService
+							.loadAccountSettings(member.getGroup().getId(),
+									accountType.getId());
+					return mgas.isTransactionPasswordRequired();
+				} catch (final EntityNotFoundException e) {
+					return false;
+				}
+			}
 		}
 
 		private String date;
@@ -115,65 +164,22 @@ public class ManageExpiredStatusController extends BaseRestController {
 			this.transactionPassword = transactionPassword;
 		}
 
-		public void checkTransactionPassword(String transactionPassword2) {
-			//
-
-		}
-
-		public AccountOwner getAccountOwner() {
+		public void checkTransactionPassword(final String transactionPassword) {
 			try {
-				final Element element = getElement();
-				return element.getAccountOwner();
-			} catch (final NullPointerException e) {
-				return null;
+				final AccessService accessService = bean(AccessService.class);
+				accessService.checkTransactionPassword(transactionPassword);
+			} catch (final InvalidCredentialsException e) {
+				throw new ValidationException(
+						"transactionPassword.error.invalid");
+			} catch (final BlockedCredentialsException e) {
+				// final HttpSession session = getSession();
+				// session.setAttribute("errorReturnTo",
+				// session.getAttribute("pathPrefix") + "/home");
+				throw new ValidationException(
+						"transactionPassword.error.blockedByTrials");
+			} catch (final RuntimeException e) {
+				throw e;
 			}
-		}
-
-		User user;
-
-		@SuppressWarnings("unchecked")
-		public <E extends Element> E getElement() {
-			return (E) user.getElement();
-		}
-
-		public boolean isTransactionPasswordEnabled(
-				final AccountType accountType) {
-			if (!isTransactionPasswordEnabled()) {
-				return false;
-			} else if (isAdmin()) {
-				return true; // the group settings is true
-			} else { // checks the member-group settings
-				final Member member = (Member) getAccountOwner();
-				final GroupService groupService = SpringHelper.bean(
-						getServletContext(), GroupService.class);
-				try {
-					final MemberGroupAccountSettings mgas = groupService
-							.loadAccountSettings(member.getGroup().getId(),
-									accountType.getId());
-					return mgas.isTransactionPasswordRequired();
-				} catch (final EntityNotFoundException e) {
-					return false;
-				}
-			}
-		}
-
-		public boolean isAdmin() {
-			return user instanceof AdminUser;
-		}
-
-		public boolean isTransactionPasswordEnabled() {
-			Group loggedGroup = getGroup();
-			if (loggedGroup instanceof OperatorGroup) {
-				final GroupService groupService = SpringHelper.bean(
-						getServletContext(), GroupService.class);
-				loggedGroup = groupService.load(loggedGroup.getId(),
-						RelationshipHelper.nested(
-								OperatorGroup.Relationships.MEMBER,
-								Element.Relationships.GROUP));
-			}
-			final TransactionPassword transactionPassword = loggedGroup
-					.getBasicSettings().getTransactionPassword();
-			return transactionPassword.isUsed();
 		}
 	}
 
@@ -240,9 +246,8 @@ public class ManageExpiredStatusController extends BaseRestController {
 		return response;
 	}
 
-	private boolean shouldValidateTransactionPassword(
-			ManageExpiredStatusRequestDto form, Loan loan) {
-		//
+	protected boolean shouldValidateTransactionPassword(
+			final ManageExpiredStatusRequestDto form, final Loan loan) {
 		if (form.getAccountOwner().equals(loan.getMember())) {
 			// When a logged member performing an operation over a loan to
 			// himself
@@ -251,7 +256,19 @@ public class ManageExpiredStatusController extends BaseRestController {
 		} else {
 			return form.isTransactionPasswordEnabled();
 		}
-		return false;
+	}
+
+	public DataBinder<? extends LoanPaymentDTO> getDataBinder() {
+		if (dataBinder == null) {
+			final BeanBinder<? extends LoanPaymentDTO> binder = instance(getDtoClass());
+			initDataBinder(binder);
+			dataBinder = binder;
+		}
+		return dataBinder;
+	}
+
+	protected Class<? extends LoanPaymentDTO> getDtoClass() {
+		return LoanPaymentDTO.class;
 	}
 
 	protected LoanPaymentDTO resolveLoanDTO(
@@ -283,26 +300,30 @@ public class ManageExpiredStatusController extends BaseRestController {
 		return dto;
 	}
 
-	public DataBinder<? extends LoanPaymentDTO> getDataBinder() {
-		if (dataBinder == null) {
-			final BeanBinder<? extends LoanPaymentDTO> binder = BeanBinder
-					.instance(getDtoClass());
-			initDataBinder(binder);
-			dataBinder = binder;
-		}
-		return dataBinder;
+	public static <T> BeanBinder<T> instance(final Class<T> beanClass) {
+		return instance(beanClass, null);
 	}
 
-	protected Class<? extends LoanPaymentDTO> getDtoClass() {
-		return LoanPaymentDTO.class;
+	public static <T> BeanBinder<T> instance(final Class<T> beanClass,
+			final String path) {
+		final BeanBinder<T> binder = new BeanBinder<T>();
+		binder.setType(beanClass);
+		binder.setPath(path);
+		return binder;
+	}
+
+	public static <T> T bean(final Class<T> requiredType) {
+		return bean(requiredType);
 	}
 
 	protected void initDataBinder(
 			final BeanBinder<? extends LoanPaymentDTO> binder) {
-		binder.registerBinder("loan",
-				PropertyBinder.instance(Loan.class, "loanId"));
-		binder.registerBinder("loanPayment",
-				PropertyBinder.instance(LoanPayment.class, "loanPaymentId"));
+		// super.initDataBinder(binder);
+		final LocalSettings localSettings = settingsService.getLocalSettings();
+		binder.registerBinder(
+				"date",
+				PropertyBinder.instance(Calendar.class, "date",
+						localSettings.getRawDateConverter()));
 	}
 
 }

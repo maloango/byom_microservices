@@ -89,10 +89,9 @@ public class ManageTransactionPasswordController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST)
+	@RequestMapping(value = "", method = RequestMethod.PUT)
 	@ResponseBody
-	protected ManageTransactionPasswordResponseDto handleSubmit(
-			@RequestBody ManageTransactionPasswordRequestDto form)
+	protected ManageTransactionPasswordResponseDto handleSubmit(@RequestBody ManageTransactionPasswordRequestDto form)
 			throws Exception {
 		// final ManageTransactionPasswordForm form = context.getForm();
 		User user = retrieveUser(form);
@@ -107,31 +106,28 @@ public class ManageTransactionPasswordController extends BaseRestController {
 		else
 			message = "transactionPassword.reset";
 		Long userId = user.getId();
-		ManageTransactionPasswordResponseDto response = new ManageTransactionPasswordResponseDto(
-				message, userId);
+		ManageTransactionPasswordResponseDto response = new ManageTransactionPasswordResponseDto(message, userId);
 		return response;
 	}
 
 	private User retrieveUser(final ManageTransactionPasswordRequestDto form) {
-		// final HttpServletRequest request = context.getRequest();
-		// if (request.getAttribute("element") != null) {
-		// The element may be already retrieved on the manage passwords
-		// action
-		// return ((Element) request.getAttribute("element")).getUser();
-		// }
+	//	final HttpServletRequest request = context.getRequest();
+		/*if (request.getAttribute("element") != null) {
+			// The element may be already retrieved on the manage
+			// passwordsaction
+			return ((Element) request.getAttribute("element")).getUser();
+		}*/
 
 		// final ManageTransactionPasswordForm form = context.getForm();
 		User user;
 		final long userId = form.getUserId();
 		try {
-			user = elementService.loadUser(userId, RelationshipHelper.nested(
-					User.Relationships.ELEMENT, Element.Relationships.GROUP));
+			user = elementService.loadUser(userId,
+					RelationshipHelper.nested(User.Relationships.ELEMENT, Element.Relationships.GROUP));
 			if (user instanceof OperatorUser) {
 				Element element = user.getElement();
 				element = elementService.load(element.getId(),
-						RelationshipHelper.nested(
-								Operator.Relationships.MEMBER,
-								Element.Relationships.GROUP));
+						RelationshipHelper.nested(Operator.Relationships.MEMBER, Element.Relationships.GROUP));
 			}
 		} catch (final Exception e) {
 			throw new ValidationException();

@@ -113,7 +113,7 @@ public class EditCurrencyController extends BaseRestController implements
 		}
 	}
 
-	@RequestMapping(value = "/admin/editCurrency", method = RequestMethod.POST)
+	@RequestMapping(value = "/admin/editCurrency", method = RequestMethod.PUT)
 	@ResponseBody
 	protected EditCurrencyResponseDto handleSubmit(
 			@RequestBody EditCurrencyForm form) throws Exception {

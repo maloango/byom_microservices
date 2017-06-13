@@ -2,7 +2,6 @@ package nl.strohalm.cyclos.webservices.rest.accounts.accountfees;
 
 import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,50 +26,19 @@ public class RemoveAccountFeeController extends BaseRestController {
 		this.accountFeeService = accountFeeService;
 	}
 
-	public static class RemoveAccountFeeRequestDTO {
-		private long accountTypeId;
-		private long accountFeeId;
-
-		public long getAccountFeeId() {
-			return accountFeeId;
-		}
-
-		public long getAccountTypeId() {
-			return accountTypeId;
-		}
-
-		public void setAccountFeeId(final long accountFeeId) {
-			this.accountFeeId = accountFeeId;
-		}
-
-		public void setAccountTypeId(final long accountTypeId) {
-			this.accountTypeId = accountTypeId;
-		}
-	}
-
-	public static class RemoveAccountFeeResponseDTO {
-		String message;
-
-		public final String getMessage() {
-			return message;
-		}
-
-		public final void setMessage(String message) {
-			this.message = message;
-		}
-	}
-
 	@RequestMapping(value = "/admin/removeAccountFee", method = RequestMethod.DELETE)
 	@ResponseBody
-	protected RemoveAccountFeeResponseDTO executeAction(@RequestBody RemoveAccountFeeRequestDTO form) throws Exception {
-		// final RemoveAccountFeeForm form = context.getForm();
-		RemoveAccountFeeResponseDTO response = new RemoveAccountFeeResponseDTO();
+	protected ActionForward executeAction(final ActionContext context)
+			throws Exception {
+		final RemoveAccountFeeForm form = context.getForm();
 		try {
 			accountFeeService.remove(form.getAccountFeeId());
-			response.setMessage("accountFee.removed");
+			context.sendMessage("accountFee.removed");
 		} catch (final Exception e) {
-			response.setMessage("accountFee.error.removing");
+			context.sendMessage("accountFee.error.removing");
 		}
-		return response;
+		return ActionHelper.redirectWithParam(context.getRequest(),
+				context.getSuccessForward(), "accountTypeId",
+				form.getAccountTypeId());
 	}
 }

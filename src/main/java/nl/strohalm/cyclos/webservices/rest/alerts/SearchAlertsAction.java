@@ -29,6 +29,7 @@ import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseQueryAction;
+import nl.strohalm.cyclos.controls.alerts.SearchAlertsForm;
 import nl.strohalm.cyclos.entities.EntityReference;
 import nl.strohalm.cyclos.entities.alerts.Alert;
 import nl.strohalm.cyclos.entities.alerts.AlertQuery;

@@ -19,6 +19,9 @@
  */
 package nl.strohalm.cyclos.webservices.rest.members.messages;
 
+import org.apache.struts.action.ActionForward;
+import org.springframework.dao.DataIntegrityViolationException;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
@@ -26,9 +29,6 @@ import nl.strohalm.cyclos.controls.members.messages.RemoveMessageCategoryForm;
 import nl.strohalm.cyclos.entities.exceptions.DaoException;
 import nl.strohalm.cyclos.services.elements.MessageCategoryService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.struts.action.ActionForward;
-import org.springframework.dao.DataIntegrityViolationException;
 
 /**
  * Removes the message category

@@ -29,6 +29,9 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.access.MemberPermission;
 import nl.strohalm.cyclos.annotations.Inject;
@@ -71,9 +74,6 @@ import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.binding.SimpleCollectionBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to edit a custom field

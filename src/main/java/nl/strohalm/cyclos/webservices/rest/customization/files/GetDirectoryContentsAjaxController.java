@@ -1,4 +1,4 @@
-package nl.strohalm.cyclos.webservices.rest.customization.files;
+/*package nl.strohalm.cyclos.webservices.rest.customization.files;
 
 import java.io.File;
 import java.util.Collection;
@@ -104,3 +104,4 @@ public class GetDirectoryContentsAjaxController extends BaseRestController{
 
 	}
 
+*/

@@ -25,6 +25,9 @@ import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts.upload.FormFile;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseFormAction;
@@ -34,9 +37,6 @@ import nl.strohalm.cyclos.entities.customization.images.SystemImage;
 import nl.strohalm.cyclos.services.customization.ImageService;
 import nl.strohalm.cyclos.utils.ImageHelper.ImageType;
 import nl.strohalm.cyclos.utils.WebImageHelper;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts.upload.FormFile;
 
 /**
  * Action for displaying and updating system images

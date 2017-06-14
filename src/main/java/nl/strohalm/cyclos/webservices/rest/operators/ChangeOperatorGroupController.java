@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.operators.ChangeOperatorGroupForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.entities.members.Operator;
 import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.utils.ResponseHelper;
 import nl.strohalm.cyclos.utils.transaction.CurrentTransactionData;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class ChangeOperatorGroupController extends BaseRestController{
 	private GroupService groupService;

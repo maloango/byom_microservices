@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import antlr.collections.List;
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.services.elements.ContactService;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class ListContactsController extends BaseRestController{
 	
@@ -54,7 +54,7 @@ public class ListContactsController extends BaseRestController{
 	    @RequestMapping(value = "/member/contacts", method = RequestMethod.GET)
 	    @ResponseBody
 	    protected ListContactsResponse executeAction(@RequestBody ListContactsRequestDTo form) throws Exception {
-	        final Member member = (Member) (member) .getAccountOwner();
+	        //final Member member = (Member) (member) .getAccountOwner();
 	        ListContactsResponse resposne = new ListContactsResponse() ;
 	       // ListGroupsResponseDTO response = new ListGroupsResponseDTO((List<Group>) groupQuery);
 	        //resposne.getRequest().setAttribute("contacts", contactService.list(member));

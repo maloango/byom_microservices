@@ -19,6 +19,8 @@
  */
 package nl.strohalm.cyclos.webservices.rest.guarantees;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
@@ -27,8 +29,6 @@ import nl.strohalm.cyclos.entities.accounts.guarantees.Guarantee;
 import nl.strohalm.cyclos.services.accounts.guarantees.GuaranteeService;
 import nl.strohalm.cyclos.services.accounts.guarantees.exceptions.GuaranteeStatusChangeException;
 import nl.strohalm.cyclos.utils.ActionHelper;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Base class used to change the guarantee's status. It must be extended to support a new status change

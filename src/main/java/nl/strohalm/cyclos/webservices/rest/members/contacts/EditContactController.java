@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.members.contacts.ContactForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.members.Contact;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
@@ -22,6 +21,7 @@ import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class EditContactController extends BaseRestController{
 	 private ContactService      contactService;

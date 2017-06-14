@@ -23,6 +23,8 @@ import java.util.Calendar;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
@@ -30,8 +32,6 @@ import nl.strohalm.cyclos.controls.accounts.currencies.ManageCurrencyForm;
 import nl.strohalm.cyclos.entities.accounts.Currency;
 import nl.strohalm.cyclos.services.accounts.CurrencyService;
 import nl.strohalm.cyclos.services.accounts.rates.RateService;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to prepare the edit Currency / reinitialize rate screen

@@ -1,18 +1,15 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.accountfees;
 
-import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.accountfees.AccountFeeExecutionForm;
-import nl.strohalm.cyclos.entities.accounts.fees.account.AccountFee;
-import nl.strohalm.cyclos.services.accountfees.AccountFeeService;
-import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.entities.accounts.fees.account.AccountFee;
+import nl.strohalm.cyclos.services.accountfees.AccountFeeService;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class RunAccountFeeController extends BaseRestController {
@@ -61,7 +58,7 @@ public class RunAccountFeeController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/runAccountFee", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/runAccountFee", method = RequestMethod.POST)
 	@ResponseBody
 	protected RunAccountFeeResponseDto executeAction(
 			@RequestBody RunAccountFeeRequestDto form) throws Exception {

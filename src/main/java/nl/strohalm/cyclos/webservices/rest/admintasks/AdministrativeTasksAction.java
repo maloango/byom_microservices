@@ -24,6 +24,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
@@ -33,8 +35,6 @@ import nl.strohalm.cyclos.entities.Indexable;
 import nl.strohalm.cyclos.exceptions.PermissionDeniedException;
 import nl.strohalm.cyclos.services.application.ApplicationService;
 import nl.strohalm.cyclos.utils.ClassHelper;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to assemble the administrative tasks page

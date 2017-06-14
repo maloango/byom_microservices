@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.members.Element.Nature;
 import nl.strohalm.cyclos.services.elements.ElementService;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class RemoveOperatorController extends BaseRestController{
 	private ElementService elementService;

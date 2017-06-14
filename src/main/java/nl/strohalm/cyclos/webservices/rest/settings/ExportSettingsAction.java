@@ -24,6 +24,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
@@ -32,8 +34,6 @@ import nl.strohalm.cyclos.controls.settings.ManageSettingsForm;
 import nl.strohalm.cyclos.entities.settings.Setting;
 import nl.strohalm.cyclos.utils.ResponseHelper;
 import nl.strohalm.cyclos.utils.conversion.CoercionHelper;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to export settings into a XML file

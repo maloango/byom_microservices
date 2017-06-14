@@ -1,7 +1,12 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.pos;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
@@ -12,18 +17,9 @@ import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.exceptions.PermissionDeniedException;
 import nl.strohalm.cyclos.services.accounts.pos.PosService;
 import nl.strohalm.cyclos.services.elements.ElementService;
-import nl.strohalm.cyclos.utils.ActionHelper;
-import nl.strohalm.cyclos.utils.binding.MapBean;
 import nl.strohalm.cyclos.utils.transaction.CurrentTransactionData;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-
-import org.apache.struts.action.ActionForward;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class AssignPosController extends BaseRestController {
@@ -161,7 +157,7 @@ public class AssignPosController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/assignPos", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/assignPos", method = RequestMethod.POST)
 	@ResponseBody
 	protected AssignPosResponseDto handleSubmit(
 			@RequestBody AssignPosRequestDto form) throws Exception {

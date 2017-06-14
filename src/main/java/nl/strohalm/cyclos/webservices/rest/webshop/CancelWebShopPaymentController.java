@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.controls.webshop.WebShopHelper;
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.accounts.AccountOwner;
@@ -29,6 +28,7 @@ import nl.strohalm.cyclos.services.transactions.ScheduledPaymentDTO;
 import nl.strohalm.cyclos.services.transactions.TicketService;
 import nl.strohalm.cyclos.services.transactions.TransactionContext;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class CancelWebShopPaymentController extends BaseRestController{
 	private static final String RemoteAddr = null;

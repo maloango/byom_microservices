@@ -1,4 +1,4 @@
-package nl.strohalm.cyclos.webservices.rest.image;
+/*package nl.strohalm.cyclos.webservices.rest.image;
 
 import java.io.PrintWriter;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.image.ImageDetailsForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.Entity;
 import nl.strohalm.cyclos.entities.customization.images.Image;
 import nl.strohalm.cyclos.entities.customization.images.ImageCaptionDTO;
@@ -28,6 +26,7 @@ import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.MapBean;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class ImageDetailsController extends BaseRestController{
 	private ImageService imageService;
@@ -173,3 +172,4 @@ public class ImageDetailsController extends BaseRestController{
 	
 	
 }
+*/

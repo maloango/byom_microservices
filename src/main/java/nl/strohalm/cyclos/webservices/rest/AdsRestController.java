@@ -22,6 +22,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import nl.strohalm.cyclos.entities.ads.Ad;
 import nl.strohalm.cyclos.entities.ads.AdQuery;
 import nl.strohalm.cyclos.entities.exceptions.EntityNotFoundException;
@@ -35,13 +42,6 @@ import nl.strohalm.cyclos.webservices.ads.AdResultPage;
 import nl.strohalm.cyclos.webservices.ads.FullTextAdSearchParameters;
 import nl.strohalm.cyclos.webservices.model.AdVO;
 import nl.strohalm.cyclos.webservices.utils.QueryHelper;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Controller which handles /ads paths

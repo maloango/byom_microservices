@@ -1,22 +1,17 @@
 package nl.strohalm.cyclos.webservices.rest.customization.images;
 
-import javax.servlet.http.HttpServletRequest;
-
-import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.customization.images.RemoveCustomImageForm;
-import nl.strohalm.cyclos.entities.customization.images.Image;
-import nl.strohalm.cyclos.entities.customization.images.Image.Nature;
-import nl.strohalm.cyclos.services.customization.ImageService;
-import nl.strohalm.cyclos.utils.ActionHelper;
-import nl.strohalm.cyclos.utils.StringHelper;
-import nl.strohalm.cyclos.utils.WebImageHelper;
-import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.entities.customization.images.Image;
+import nl.strohalm.cyclos.entities.customization.images.Image.Nature;
+import nl.strohalm.cyclos.services.customization.ImageService;
+import nl.strohalm.cyclos.utils.WebImageHelper;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class RemoveCustomImageController extends BaseRestController {

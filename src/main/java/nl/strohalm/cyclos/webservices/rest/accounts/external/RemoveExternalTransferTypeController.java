@@ -1,6 +1,5 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.external;
 
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,12 +7,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.external.RemoveExternalTransferTypeForm;
 import nl.strohalm.cyclos.entities.accounts.external.ExternalTransferType;
 import nl.strohalm.cyclos.exceptions.PermissionDeniedException;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferTypeService;
-import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
@@ -52,7 +48,7 @@ public class RemoveExternalTransferTypeController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/removeAccountType", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeExternalTransferType", method = RequestMethod.DELETE)
 	@ResponseBody
 	protected RemoveExternalTransferTypeResponseDto executeAction(
 			@RequestBody RemoveExternalTransferTypeRequestDto form)

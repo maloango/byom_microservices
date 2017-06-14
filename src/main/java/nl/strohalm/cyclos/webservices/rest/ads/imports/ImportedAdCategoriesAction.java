@@ -21,6 +21,8 @@ package nl.strohalm.cyclos.webservices.rest.ads.imports;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
@@ -28,8 +30,6 @@ import nl.strohalm.cyclos.controls.ads.imports.ImportedAdCategoriesForm;
 import nl.strohalm.cyclos.entities.ads.imports.AdImport;
 import nl.strohalm.cyclos.services.ads.AdImportService;
 import nl.strohalm.cyclos.utils.EntityHelper;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to show the new categories

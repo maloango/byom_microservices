@@ -19,6 +19,8 @@
  */
 package nl.strohalm.cyclos.webservices.rest.groups.accounts;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
 import nl.strohalm.cyclos.controls.groups.accounts.RemoveGroupAccountForm;
@@ -27,8 +29,6 @@ import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.EntityHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to remove an account from a group

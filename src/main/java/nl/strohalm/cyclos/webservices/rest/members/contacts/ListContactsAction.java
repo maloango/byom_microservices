@@ -19,13 +19,13 @@
  */
 package nl.strohalm.cyclos.webservices.rest.members.contacts;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.services.elements.ContactService;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action for retrieving the logged member contacts

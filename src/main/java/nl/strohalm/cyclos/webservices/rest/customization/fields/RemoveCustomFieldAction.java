@@ -22,6 +22,8 @@ package nl.strohalm.cyclos.webservices.rest.customization.fields;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
@@ -41,8 +43,6 @@ import nl.strohalm.cyclos.services.customization.PaymentCustomFieldService;
 import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
 import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to remove a custom field

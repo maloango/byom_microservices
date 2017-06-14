@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.struts.action.ActionForward;
 import org.apache.struts.upload.FormFile;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +20,6 @@ import nl.strohalm.cyclos.access.BrokerPermission;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.customization.documents.EditMemberDocumentForm;
 import nl.strohalm.cyclos.controls.customization.documents.EditStaticDocumentForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.customization.documents.Document;
 import nl.strohalm.cyclos.entities.customization.documents.MemberDocument;
 import nl.strohalm.cyclos.entities.customization.documents.StaticDocument;
@@ -29,12 +27,12 @@ import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.services.customization.DocumentService;
 import nl.strohalm.cyclos.services.customization.exceptions.CannotUploadFileException;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
-import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.EntityHelper;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class EditMemberDocumentController extends BaseRestController {
 

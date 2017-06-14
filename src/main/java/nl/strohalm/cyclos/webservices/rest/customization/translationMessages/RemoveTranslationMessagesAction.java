@@ -19,13 +19,13 @@
  */
 package nl.strohalm.cyclos.webservices.rest.customization.translationMessages;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
 import nl.strohalm.cyclos.controls.customization.translationMessages.RemoveTranslationMessagesForm;
 import nl.strohalm.cyclos.services.customization.TranslationMessageService;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to remove messages

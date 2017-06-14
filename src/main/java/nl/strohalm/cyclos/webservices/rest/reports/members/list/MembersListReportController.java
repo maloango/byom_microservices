@@ -19,21 +19,21 @@ import nl.strohalm.cyclos.controls.reports.members.list.MembersListReportDTO;
 import nl.strohalm.cyclos.controls.reports.members.list.MembersListReportForm;
 import nl.strohalm.cyclos.controls.reports.members.list.MembersListReportHandler;
 import nl.strohalm.cyclos.controls.reports.members.list.MembersListReportVOIterator;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.accounts.SystemAccountType;
 import nl.strohalm.cyclos.entities.accounts.transactions.TransferType;
 import nl.strohalm.cyclos.entities.ads.Ad;
 import nl.strohalm.cyclos.entities.customization.fields.AdminCustomField;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
-import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.entities.groups.Group.Nature;
+import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.entities.members.Reference;
 import nl.strohalm.cyclos.entities.members.records.MemberRecordType;
 import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.utils.RequestHelper;
 import nl.strohalm.cyclos.utils.SpringHelper;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class MembersListReportController extends BaseRestController{
 
@@ -217,7 +217,7 @@ public class MembersListReportController extends BaseRestController{
 		}
 	}
 
-    @RequestMapping(value = "",method = RequestMethod.GET)
+  /*  @RequestMapping(value = "",method = RequestMethod.GET)
     @ResponseBody
     protected MembersListReportResponseDTO handleDisplay(@RequestBody MembersListReportRequestDTO form) throws Exception {
         
@@ -256,5 +256,5 @@ public class MembersListReportController extends BaseRestController{
         }
         return reportHandler;
     }
-
+*/
 }

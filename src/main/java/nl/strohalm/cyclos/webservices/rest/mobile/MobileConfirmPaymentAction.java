@@ -16,7 +16,7 @@
     along with Cyclos; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
- */
+ 
 package nl.strohalm.cyclos.webservices.rest.mobile;
 
 import java.math.BigDecimal;
@@ -25,7 +25,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.controls.mobile.MobileBaseAction;
+import nl.strohalm.cyclos.controls.mobile.MobileConfirmPaymentForm;
+import nl.strohalm.cyclos.controls.mobile.MobileHelper;
 import nl.strohalm.cyclos.controls.mobile.exceptions.MobileException;
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.access.Channel.Credentials;
@@ -45,13 +51,10 @@ import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
 import nl.strohalm.cyclos.utils.RequestHelper;
 import nl.strohalm.cyclos.utils.conversion.UnitsConverter;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionForward;
-
-/**
+*//**
  * Action used to confirm the payment
  * @author luis
- */
+ *//*
 public class MobileConfirmPaymentAction extends MobileBaseAction {
 
     private TransferTypeService   transferTypeService;
@@ -157,9 +160,9 @@ public class MobileConfirmPaymentAction extends MobileBaseAction {
         }
     }
 
-    /**
+    *//**
      * Validate if the paymentDTO was correctly generated
-     */
+     *//*
     private DoPaymentDTO validatePayment(final HttpSession session) {
         final DoPaymentDTO payment = (DoPaymentDTO) session.getAttribute("mobileDoPaymentDTO");
         if (payment == null || payment.getAmount().compareTo(new BigDecimal(0)) != 1 || (!(payment.getTo() instanceof Member)) || payment.getTransferType() == null) {
@@ -168,9 +171,9 @@ public class MobileConfirmPaymentAction extends MobileBaseAction {
         return payment;
     }
 
-    /**
+    *//**
      * Validate and retrieve the transaction password, applying the MD5 hash
-     */
+     *//*
     private String validateTransactionPassword(final MobileActionContext context) {
 
         context.validateTransactionPassword();
@@ -184,3 +187,4 @@ public class MobileConfirmPaymentAction extends MobileBaseAction {
     }
 
 }
+*/

@@ -1,10 +1,7 @@
-package nl.strohalm.cyclos.webservices.rest.loangroups;
+/*package nl.strohalm.cyclos.webservices.rest.loangroups;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,9 +9,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.access.AdminSystemPermission;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.loangroups.EditLoanGroupForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.accounts.loans.LoanGroup;
 import nl.strohalm.cyclos.entities.customization.fields.CustomFieldValue;
 import nl.strohalm.cyclos.entities.customization.fields.LoanGroupCustomField;
@@ -31,6 +25,7 @@ import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.HtmlConverter;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class EditLoanGroupController extends BaseRestController{
 	
@@ -155,7 +150,7 @@ public class EditLoanGroupController extends BaseRestController{
 	        //return context.getInputForward();
 	    }
 
-	 /*  // @Override
+	   // @Override
 	    protected void formAction(final ActionContext context) throws Exception {
 	        final EditLoanGroupForm form = context.getForm();
 	        final LoanGroup loanGroup = getWriteDataBinder().readFromString(form.getLoanGroup());
@@ -169,7 +164,8 @@ public class EditLoanGroupController extends BaseRestController{
 	        final EditLoanGroupForm form = context.getForm();
 	        final LoanGroup loanGroup = getWriteDataBinder().readFromString(form.getLoanGroup());
 	        getLoanGroupService().validate(loanGroup);
-	    }*/
+	    }
 
 
 }
+*/

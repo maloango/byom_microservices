@@ -1,4 +1,4 @@
-package nl.strohalm.cyclos.webservices.rest.members.references;
+/*package nl.strohalm.cyclos.webservices.rest.members.references;
 
 import java.util.Calendar;
 import java.util.Collection;
@@ -13,12 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.hazelcast.impl.Request;
-
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.members.references.MemberReferencesForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.accounts.transactions.Payment;
 import nl.strohalm.cyclos.entities.accounts.transactions.ScheduledPayment;
@@ -46,6 +43,7 @@ import nl.strohalm.cyclos.utils.binding.DataBinderHelper;
 import nl.strohalm.cyclos.utils.conversion.CoercionHelper;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class MemberReferencesController extends BaseRestController{
 	
@@ -381,3 +379,4 @@ public class MemberReferencesController extends BaseRestController{
     }
 
 }
+*/

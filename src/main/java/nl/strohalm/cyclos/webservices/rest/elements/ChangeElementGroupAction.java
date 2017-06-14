@@ -23,9 +23,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseFormAction;
+import nl.strohalm.cyclos.controls.elements.ChangeElementGroupForm;
 import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.remarks.GroupRemark;
@@ -33,8 +36,6 @@ import nl.strohalm.cyclos.services.elements.RemarkService;
 import nl.strohalm.cyclos.utils.EntityHelper;
 import nl.strohalm.cyclos.utils.validation.RequiredError;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Action used to change an element group

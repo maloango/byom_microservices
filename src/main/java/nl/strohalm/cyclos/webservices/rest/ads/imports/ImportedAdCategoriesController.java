@@ -1,13 +1,8 @@
 package nl.strohalm.cyclos.webservices.rest.ads.imports;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,13 +10,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.ads.imports.ImportedAdCategoriesForm;
 import nl.strohalm.cyclos.entities.ads.imports.AdImport;
 import nl.strohalm.cyclos.entities.ads.imports.ImportedAdCategory;
 import nl.strohalm.cyclos.services.ads.AdImportService;
 import nl.strohalm.cyclos.utils.EntityHelper;
-import nl.strohalm.cyclos.utils.binding.MapBean;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller

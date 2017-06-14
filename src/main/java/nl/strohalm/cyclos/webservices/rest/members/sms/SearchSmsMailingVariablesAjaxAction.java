@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.json.simple.JSONObject;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAjaxAction;
@@ -30,9 +33,6 @@ import nl.strohalm.cyclos.controls.members.sms.SearchSmsMailingVariablesAjaxForm
 import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.services.sms.SmsMailingService;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.json.simple.JSONObject;
 
 /**
  * Searches SMS mailing variables and returns a list as an JSON

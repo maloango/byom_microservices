@@ -24,13 +24,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
 import nl.strohalm.cyclos.entities.accounts.cards.CardType;
 import nl.strohalm.cyclos.services.accounts.cards.CardTypeService;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * 

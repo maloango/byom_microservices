@@ -25,6 +25,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.controls.ActionContext;
+import nl.strohalm.cyclos.controls.accounts.details.TransfersAwaitingAuthorizationForm;
 import nl.strohalm.cyclos.entities.accounts.MemberAccount;
 import nl.strohalm.cyclos.entities.accounts.transactions.AuthorizationLevel;
 import nl.strohalm.cyclos.entities.accounts.transactions.AuthorizationLevel.Authorizer;

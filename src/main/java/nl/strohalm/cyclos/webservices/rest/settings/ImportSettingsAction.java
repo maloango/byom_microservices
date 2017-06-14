@@ -23,6 +23,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.upload.FormFile;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
 import nl.strohalm.cyclos.controls.settings.ManageSettingsForm;
@@ -32,11 +37,6 @@ import nl.strohalm.cyclos.entities.settings.Setting.Type;
 import nl.strohalm.cyclos.exceptions.PermissionDeniedException;
 import nl.strohalm.cyclos.services.settings.exceptions.SelectedSettingTypeNotInFileException;
 import nl.strohalm.cyclos.utils.conversion.CoercionHelper;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.upload.FormFile;
 
 /**
  * Action used to import settings from a XML file

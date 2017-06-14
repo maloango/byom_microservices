@@ -25,6 +25,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseFormAction;
@@ -41,8 +43,6 @@ import nl.strohalm.cyclos.services.stats.StatisticalResultDTO;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action for the Simulation of the DRate Configuration, showing the DRate curve in a graph.

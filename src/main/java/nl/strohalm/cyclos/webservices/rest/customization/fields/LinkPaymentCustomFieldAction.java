@@ -22,6 +22,8 @@ package nl.strohalm.cyclos.webservices.rest.customization.fields;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
@@ -31,8 +33,6 @@ import nl.strohalm.cyclos.entities.customization.fields.PaymentCustomField;
 import nl.strohalm.cyclos.services.customization.PaymentCustomFieldService;
 import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.EntityHelper;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to link an existing custom field to another payment type

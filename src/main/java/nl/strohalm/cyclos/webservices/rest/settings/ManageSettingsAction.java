@@ -21,12 +21,12 @@ package nl.strohalm.cyclos.webservices.rest.settings;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
 import nl.strohalm.cyclos.entities.settings.Setting;
 import nl.strohalm.cyclos.utils.RequestHelper;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to build the import / export settings

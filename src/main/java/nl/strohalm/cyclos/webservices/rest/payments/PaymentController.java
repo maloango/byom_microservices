@@ -1,57 +1,26 @@
 package nl.strohalm.cyclos.webservices.rest.payments;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.payments.PaymentForm;
-import nl.strohalm.cyclos.controls.payments.SchedulingType;
-import nl.strohalm.cyclos.entities.access.Channel;
-import nl.strohalm.cyclos.entities.accounts.AccountOwner;
-import nl.strohalm.cyclos.entities.accounts.Currency;
-import nl.strohalm.cyclos.entities.accounts.SystemAccountOwner;
-import nl.strohalm.cyclos.entities.accounts.transactions.TransferTypeQuery;
-import nl.strohalm.cyclos.entities.groups.MemberGroup;
-import nl.strohalm.cyclos.entities.groups.MemberGroupSettings;
-import nl.strohalm.cyclos.entities.members.Element;
-import nl.strohalm.cyclos.entities.members.Member;
-import nl.strohalm.cyclos.entities.settings.LocalSettings;
-import nl.strohalm.cyclos.services.elements.ElementService;
-import nl.strohalm.cyclos.services.groups.GroupService;
-import nl.strohalm.cyclos.services.permissions.PermissionService;
-import nl.strohalm.cyclos.services.settings.SettingsService;
-import nl.strohalm.cyclos.services.transactions.DoPaymentDTO;
-import nl.strohalm.cyclos.services.transactions.ScheduledPaymentDTO;
-import nl.strohalm.cyclos.services.transactions.TransactionContext;
-import nl.strohalm.cyclos.utils.ActionHelper;
-import nl.strohalm.cyclos.utils.EntityHelper;
-import nl.strohalm.cyclos.utils.TimePeriod;
-import nl.strohalm.cyclos.utils.binding.BeanBinder;
-import nl.strohalm.cyclos.utils.binding.BeanCollectionBinder;
-import nl.strohalm.cyclos.utils.binding.DataBinder;
-import nl.strohalm.cyclos.utils.binding.MapBean;
-import nl.strohalm.cyclos.utils.binding.PropertyBinder;
-import nl.strohalm.cyclos.utils.conversion.AccountOwnerConverter;
-import nl.strohalm.cyclos.utils.conversion.CoercionHelper;
-import nl.strohalm.cyclos.utils.conversion.IdConverter;
-import nl.strohalm.cyclos.utils.validation.ValidationException;
-import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import nl.strohalm.cyclos.controls.ActionContext;
+import nl.strohalm.cyclos.controls.payments.PaymentForm;
+import nl.strohalm.cyclos.entities.accounts.AccountOwner;
+import nl.strohalm.cyclos.entities.members.Element;
+import nl.strohalm.cyclos.entities.members.Member;
+import nl.strohalm.cyclos.services.elements.ElementService;
+import nl.strohalm.cyclos.services.groups.GroupService;
+import nl.strohalm.cyclos.services.permissions.PermissionService;
+import nl.strohalm.cyclos.services.settings.SettingsService;
+import nl.strohalm.cyclos.utils.binding.MapBean;
+import nl.strohalm.cyclos.utils.conversion.IdConverter;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class PaymentController extends BaseRestController {

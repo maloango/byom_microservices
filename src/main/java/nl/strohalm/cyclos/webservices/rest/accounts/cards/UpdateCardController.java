@@ -3,26 +3,19 @@ package nl.strohalm.cyclos.webservices.rest.accounts.cards;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.accounts.cards.CardForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
-import nl.strohalm.cyclos.entities.access.Channel.Credentials;
 import nl.strohalm.cyclos.entities.accounts.cards.Card;
 import nl.strohalm.cyclos.entities.accounts.cards.Card.Relationships;
 import nl.strohalm.cyclos.entities.accounts.cards.CardType.CardSecurityCode;
 import nl.strohalm.cyclos.services.access.AccessService;
-import nl.strohalm.cyclos.services.access.exceptions.BlockedCredentialsException;
-import nl.strohalm.cyclos.services.access.exceptions.InvalidCredentialsException;
 import nl.strohalm.cyclos.services.accounts.cards.CardService;
 import nl.strohalm.cyclos.utils.validation.RequiredError;
 import nl.strohalm.cyclos.utils.validation.ValidationError;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class UpdateCardController extends BaseRestController {
@@ -131,7 +124,7 @@ public class UpdateCardController extends BaseRestController {
 		
 		
 	}
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+/*	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
 	@ResponseBody
 	public UpdateCardResponseDTO handleSubmit(final @RequestBody UpdateCardRequestDTO form) throws Exception {
 		
@@ -182,7 +175,7 @@ public class UpdateCardController extends BaseRestController {
 			}
 		}
 
-	}
+	}*/
 
 	private boolean isTransactionPasswordEnabled() {
 		// TODO Auto-generated method stub

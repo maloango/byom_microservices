@@ -1,11 +1,11 @@
 
 package nl.strohalm.cyclos.webservices.rest;
 
-import nl.strohalm.cyclos.entities.members.imports.MemberImport;
-import nl.strohalm.cyclos.utils.StringValuedEnum;
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.Collection;
+
+import nl.strohalm.cyclos.entities.members.imports.MemberImport;
+import nl.strohalm.cyclos.utils.StringValuedEnum;
 
 /**
  * Contains temporary data for an json payload

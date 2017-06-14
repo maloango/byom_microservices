@@ -19,12 +19,12 @@
  */
 package nl.strohalm.cyclos.webservices.rest.payments.scheduled;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.accounts.details.ViewScheduledPaymentAction;
 import nl.strohalm.cyclos.entities.accounts.transactions.ScheduledPayment;
 import nl.strohalm.cyclos.utils.ActionHelper;
-
-import org.apache.struts.action.ActionForward;
 
 public class UnblockScheduledPaymentAction extends ViewScheduledPaymentAction {
 

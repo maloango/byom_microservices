@@ -29,8 +29,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.access.LoginForm;
+import nl.strohalm.cyclos.controls.mobile.MobileBaseAction;
+import nl.strohalm.cyclos.controls.mobile.MobileHelper;
 import nl.strohalm.cyclos.controls.mobile.exceptions.InvalidUserForMobileException;
 import nl.strohalm.cyclos.controls.mobile.exceptions.MobileException;
 import nl.strohalm.cyclos.entities.access.Channel;
@@ -67,14 +77,6 @@ import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.LoginHelper;
 import nl.strohalm.cyclos.utils.MessageHelper;
 import nl.strohalm.cyclos.utils.RequestHelper;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 
 /**
  * Action used for login in mobile access

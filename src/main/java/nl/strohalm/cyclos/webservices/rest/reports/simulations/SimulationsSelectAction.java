@@ -19,10 +19,10 @@
  */
 package nl.strohalm.cyclos.webservices.rest.reports.simulations;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action for choosing a Simulation in the buttoned form

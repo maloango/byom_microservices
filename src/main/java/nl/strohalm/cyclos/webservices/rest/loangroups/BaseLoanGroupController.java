@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.accounts.loans.LoanGroup;
 import nl.strohalm.cyclos.entities.customization.fields.LoanGroupCustomField;
 import nl.strohalm.cyclos.services.customization.LoanGroupCustomFieldService;
 import nl.strohalm.cyclos.services.loangroups.LoanGroupService;
 import nl.strohalm.cyclos.utils.CustomFieldHelper;
 import nl.strohalm.cyclos.utils.binding.MapBean;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class BaseLoanGroupController extends BaseRestController{
 

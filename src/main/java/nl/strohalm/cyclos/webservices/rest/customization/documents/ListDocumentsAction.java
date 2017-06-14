@@ -23,14 +23,14 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
 import nl.strohalm.cyclos.entities.customization.documents.Document;
 import nl.strohalm.cyclos.entities.customization.documents.DocumentQuery;
 import nl.strohalm.cyclos.services.customization.DocumentService;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to list the documents

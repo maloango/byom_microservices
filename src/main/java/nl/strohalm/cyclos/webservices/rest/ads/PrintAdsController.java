@@ -1,17 +1,7 @@
 package nl.strohalm.cyclos.webservices.rest.ads;
 
-import java.util.Calendar;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.stereotype.Controller;
 
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.entities.ads.AbstractAdQuery;
-import nl.strohalm.cyclos.entities.ads.Ad;
-import nl.strohalm.cyclos.entities.ads.AdCategory;
-import nl.strohalm.cyclos.utils.RelationshipHelper;
-import nl.strohalm.cyclos.utils.TimePeriod;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller

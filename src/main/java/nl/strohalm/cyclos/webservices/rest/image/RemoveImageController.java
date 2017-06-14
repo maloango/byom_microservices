@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.BaseAjaxAction.ContentType;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.ads.Ad;
 import nl.strohalm.cyclos.entities.customization.images.AdImage;
 import nl.strohalm.cyclos.entities.customization.images.Image;
@@ -18,6 +17,7 @@ import nl.strohalm.cyclos.servlets.ImageByIdServlet;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
 import nl.strohalm.cyclos.utils.customizedfile.CustomizedFileHandler;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class RemoveImageController extends BaseRestController {
 	private ImageService          imageService;

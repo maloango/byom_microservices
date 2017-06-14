@@ -21,7 +21,15 @@ package nl.strohalm.cyclos.webservices.rest.access.channels;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
 import nl.strohalm.cyclos.access.MemberPermission;
@@ -39,11 +47,6 @@ import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Action used to prepare the external access screen, where an admin can change
@@ -177,7 +180,7 @@ public class ManageExternalAccessController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/manageExternalAccess", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/manageExternalAccess", method = RequestMethod.PUT)
 	@ResponseBody
 	public ManageExternalAccessResponseDto ManageExternalAccess(
 			@RequestBody final ManageExternalAccessRequestDto form,

@@ -23,13 +23,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
 import nl.strohalm.cyclos.entities.members.printsettings.ReceiptPrinterSettings;
 import nl.strohalm.cyclos.services.preferences.ReceiptPrinterSettingsService;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to list all receipt printer settings for the currently logged member

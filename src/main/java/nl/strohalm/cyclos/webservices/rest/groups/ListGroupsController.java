@@ -22,7 +22,6 @@ import nl.strohalm.cyclos.access.Permission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.groups.ListGroupsForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.accounts.MemberAccountType;
 import nl.strohalm.cyclos.entities.accounts.transactions.PaymentFilter;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
@@ -38,6 +37,7 @@ import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class ListGroupsController extends BaseRestController {

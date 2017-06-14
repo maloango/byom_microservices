@@ -1,35 +1,11 @@
 package nl.strohalm.cyclos.webservices.rest.reports.members.list;
 
-import java.math.BigDecimal;
-import java.util.AbstractList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.stereotype.Controller;
 
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.reports.members.list.MembersListReportDTO;
-import nl.strohalm.cyclos.controls.reports.members.list.MembersListReportForm;
-import nl.strohalm.cyclos.controls.reports.members.list.MembersListReportHandler;
-import nl.strohalm.cyclos.controls.reports.members.list.MembersListReportVOIterator;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
-import nl.strohalm.cyclos.entities.access.User;
-import nl.strohalm.cyclos.entities.accounts.AccountType;
-import nl.strohalm.cyclos.entities.ads.Ad;
-import nl.strohalm.cyclos.entities.groups.MemberGroup;
-import nl.strohalm.cyclos.entities.members.Reference;
-import nl.strohalm.cyclos.entities.reports.MembersReportVO;
-import nl.strohalm.cyclos.entities.settings.LocalSettings;
-import nl.strohalm.cyclos.services.settings.SettingsService;
-import nl.strohalm.cyclos.utils.SpringHelper;
-import nl.strohalm.cyclos.utils.binding.BeanBinder;
-import nl.strohalm.cyclos.utils.conversion.Converter;
-import nl.strohalm.cyclos.utils.csv.CSVWriter;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class ExportMembersListReportToCsvController extends BaseRestController{
-	//private SettingsService settingsService;
+	/*//private SettingsService settingsService;
 
 	//class AccountTypeConverter implements Converter<Map<AccountType, BigDecimal>> {
 
@@ -219,5 +195,5 @@ public class ExportMembersListReportToCsvController extends BaseRestController{
         }
 
         return csv;
-    }
+    }*/
 }

@@ -1,20 +1,18 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.external.filemappings;
 
-import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.external.filemappings.EditFileMappingForm;
 import nl.strohalm.cyclos.entities.accounts.external.ExternalAccount;
 import nl.strohalm.cyclos.entities.accounts.external.filemapping.CSVFileMapping;
 import nl.strohalm.cyclos.entities.accounts.external.filemapping.CustomFileMapping;
-import nl.strohalm.cyclos.entities.accounts.external.filemapping.FieldMapping;
 import nl.strohalm.cyclos.entities.accounts.external.filemapping.FileMapping;
 import nl.strohalm.cyclos.entities.accounts.external.filemapping.FileMappingWithFields;
 import nl.strohalm.cyclos.services.accounts.external.ExternalAccountService;
@@ -23,23 +21,12 @@ import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
-import nl.strohalm.cyclos.utils.ActionHelper;
-import nl.strohalm.cyclos.utils.RelationshipHelper;
-import nl.strohalm.cyclos.utils.RequestHelper;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
-import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-
-import org.apache.struts.action.ActionForward;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class EditFileMappingController extends BaseRestController {
@@ -148,7 +135,7 @@ public class EditFileMappingController extends BaseRestController {
 		this.fileMappingService = fileMappingService;
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/editFileMapping", method = RequestMethod.POST)
 	@ResponseBody
 	protected EditFileMappingResponseDto handleSubmit(
 			@RequestBody EditFileMappingRequestDto form) throws Exception {

@@ -3,11 +3,13 @@ package nl.strohalm.cyclos.webservices.rest.accounts.currencies;
 import java.math.BigDecimal;
 import java.util.Calendar;
 
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.accounts.currencies.EditCurrencyForm;
 import nl.strohalm.cyclos.entities.accounts.ARateParameters;
 import nl.strohalm.cyclos.entities.accounts.Currency;
@@ -21,21 +23,11 @@ import nl.strohalm.cyclos.services.accounts.rates.RateService;
 import nl.strohalm.cyclos.services.accounts.rates.WhatRate;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
-import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-import nl.strohalm.cyclos.webservices.rest.accounts.accounttypes.RemoveAccountTypeController.RemoveAccountTypeRequestDto;
-import nl.strohalm.cyclos.webservices.rest.accounts.accounttypes.RemoveAccountTypeController.RemoveAccountTypeResponseDto;
-
-import org.apache.struts.action.ActionForward;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class EditCurrencyController extends BaseRestController implements
@@ -113,7 +105,7 @@ public class EditCurrencyController extends BaseRestController implements
 		}
 	}
 
-	@RequestMapping(value = "/admin/editCurrency", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editCurrency", method = RequestMethod.PUT)
 	@ResponseBody
 	protected EditCurrencyResponseDto handleSubmit(
 			@RequestBody EditCurrencyForm form) throws Exception {

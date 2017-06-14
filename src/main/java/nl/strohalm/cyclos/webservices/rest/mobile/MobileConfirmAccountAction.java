@@ -16,12 +16,16 @@
     along with Cyclos; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
- */
+ 
 package nl.strohalm.cyclos.webservices.rest.mobile;
 
 import java.util.Map;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.controls.mobile.MobileBaseAction;
+import nl.strohalm.cyclos.controls.mobile.MobileConfirmAccountForm;
 import nl.strohalm.cyclos.entities.accounts.Account;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.accounts.MemberAccount;
@@ -30,8 +34,6 @@ import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.services.accounts.AccountDTO;
 import nl.strohalm.cyclos.services.accounts.AccountService;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
-
-import org.apache.struts.action.ActionForward;
 
 public class MobileConfirmAccountAction extends MobileBaseAction {
 
@@ -61,4 +63,4 @@ public class MobileConfirmAccountAction extends MobileBaseAction {
         return context.findForward("success");
     }
 
-}
+}*/

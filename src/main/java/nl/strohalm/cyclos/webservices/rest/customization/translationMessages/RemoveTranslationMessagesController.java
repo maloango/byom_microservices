@@ -1,14 +1,11 @@
 package nl.strohalm.cyclos.webservices.rest.customization.translationMessages;
 
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.customization.translationMessages.RemoveTranslationMessagesForm;
 import nl.strohalm.cyclos.services.customization.TranslationMessageService;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 

@@ -22,14 +22,14 @@ package nl.strohalm.cyclos.webservices.rest.loans;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.loans.ManageExpiredStatusForm;
 import nl.strohalm.cyclos.entities.accounts.loans.Loan;
 import nl.strohalm.cyclos.entities.accounts.loans.LoanPayment;
 import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to manage an expired loan status

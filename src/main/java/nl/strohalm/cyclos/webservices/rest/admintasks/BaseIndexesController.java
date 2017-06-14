@@ -2,7 +2,7 @@ package nl.strohalm.cyclos.webservices.rest.admintasks;
 
 import org.springframework.stereotype.Controller;
 
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class BaseIndexesController extends BaseRestController

@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.customization.files.EditCustomizedFileForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.customization.files.CustomizedFile;
 import nl.strohalm.cyclos.entities.customization.files.CustomizedFileQuery;
 import nl.strohalm.cyclos.services.customization.CustomizedFileService;
@@ -28,6 +27,7 @@ import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.CoercionConverter;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class EditCustomizedFileController extends BaseRestController {
 	private CustomizedFileService      customizedFileService;

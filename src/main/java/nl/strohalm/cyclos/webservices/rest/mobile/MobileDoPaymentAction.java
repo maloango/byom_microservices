@@ -16,7 +16,7 @@
     along with Cyclos; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
- */
+ 
 package nl.strohalm.cyclos.webservices.rest.mobile;
 
 import java.math.BigDecimal;
@@ -26,7 +26,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.controls.mobile.MobileBaseAction;
+import nl.strohalm.cyclos.controls.mobile.MobileDoPaymentForm;
+import nl.strohalm.cyclos.controls.mobile.MobileHelper;
 import nl.strohalm.cyclos.controls.mobile.exceptions.MobileException;
 import nl.strohalm.cyclos.entities.access.MemberUser;
 import nl.strohalm.cyclos.entities.access.User;
@@ -46,13 +52,10 @@ import nl.strohalm.cyclos.utils.DateHelper;
 import nl.strohalm.cyclos.utils.RequestHelper;
 import nl.strohalm.cyclos.utils.conversion.UnitsConverter;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionForward;
-
-/**
+*//**
  * Action used to perform a payment on mobile access
  * @author luis
- */
+ *//*
 public class MobileDoPaymentAction extends MobileBaseAction {
 
     private ElementService      elementService;
@@ -119,9 +122,9 @@ public class MobileDoPaymentAction extends MobileBaseAction {
         }
     }
 
-    /**
+    *//**
      * Validate the typed amount
-     */
+     *//*
     private BigDecimal validateAmount(final MobileActionContext context) {
         final MobileDoPaymentForm form = context.getForm();
         final UnitsConverter converter = getUnitsConverter(context);
@@ -140,17 +143,17 @@ public class MobileDoPaymentAction extends MobileBaseAction {
         return amount;
     }
 
-    /**
+    *//**
      * Validate the typed description
-     */
+     *//*
     private String validateDescription(final MobileActionContext context) {
         final MobileDoPaymentForm form = context.getForm();
         return StringUtils.trimToNull(form.getDescription());
     }
 
-    /**
+    *//**
      * Ensure the payment can be performed
-     */
+     *//*
     private void validatePayment(final DoPaymentDTO payment) {
         String key = null;
         String arg = null;
@@ -174,9 +177,9 @@ public class MobileDoPaymentAction extends MobileBaseAction {
         }
     }
 
-    /**
+    *//**
      * Validate the typed username
-     */
+     *//*
     private Member validateTo(final MobileActionContext context) {
         final MobileDoPaymentForm form = context.getForm();
         final String username = form.getUsername();
@@ -195,9 +198,9 @@ public class MobileDoPaymentAction extends MobileBaseAction {
         return (Member) user.getElement();
     }
 
-    /**
+    *//**
      * Retrieve the transfer type used for the payment
-     */
+     *//*
     private TransferType validateTransferType(final MobileActionContext context, final AccountOwner to) {
         final TransferTypeQuery query = new TransferTypeQuery();
         query.setUniqueResult();
@@ -215,3 +218,4 @@ public class MobileDoPaymentAction extends MobileBaseAction {
     }
 
 }
+*/

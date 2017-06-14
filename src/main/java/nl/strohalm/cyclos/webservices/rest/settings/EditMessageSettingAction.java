@@ -21,6 +21,9 @@ package nl.strohalm.cyclos.webservices.rest.settings;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseFormAction;
 import nl.strohalm.cyclos.controls.settings.EditMessageSettingForm;
@@ -33,9 +36,6 @@ import nl.strohalm.cyclos.utils.conversion.HtmlConverter;
 import nl.strohalm.cyclos.utils.conversion.StringTrimmerConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.utils.validation.Validator;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to edit the a message setting

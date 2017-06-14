@@ -3,18 +3,15 @@ package nl.strohalm.cyclos.webservices.rest.accounts.authorizationlevels;
 import java.util.HashMap;
 import java.util.Map;
 
-import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.authorizationlevels.RemoveAuthorizationLevelForm;
-import nl.strohalm.cyclos.services.transfertypes.AuthorizationLevelService;
-import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.services.transfertypes.AuthorizationLevelService;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class RemoveAuthorizationLevelController extends BaseRestController {
@@ -67,7 +64,7 @@ public class RemoveAuthorizationLevelController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/removeAuthorizationLevel", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeAuthorizationLevel", method = RequestMethod.DELETE)
 	@ResponseBody
 	public RemoveAuthorizationLevelResponseDTO removeAuthorization(@RequestBody RemoveAuthorizationLevelRequestDTO form)
 			throws Exception {

@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.AbstractActionContext;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.services.alerts.AlertService;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class RemoveAlertsController extends BaseRestController{

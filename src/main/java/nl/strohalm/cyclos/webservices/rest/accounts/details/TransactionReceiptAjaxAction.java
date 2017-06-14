@@ -19,9 +19,12 @@
  */
 package nl.strohalm.cyclos.webservices.rest.accounts.details;
 
+import org.apache.commons.lang.StringUtils;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseReceiptPrintAjaxAction;
+import nl.strohalm.cyclos.controls.accounts.details.ViewTransactionForm;
 import nl.strohalm.cyclos.entities.accounts.Account;
 import nl.strohalm.cyclos.entities.accounts.MemberAccount;
 import nl.strohalm.cyclos.entities.accounts.SystemAccount;
@@ -30,8 +33,6 @@ import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.entities.members.printsettings.ReceiptPrinterSettings;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
 import nl.strohalm.cyclos.services.transactions.PaymentService;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Action used to get details for printing a transaction in a local receipt printer

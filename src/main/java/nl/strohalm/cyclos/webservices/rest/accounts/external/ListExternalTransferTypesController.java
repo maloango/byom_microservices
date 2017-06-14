@@ -2,17 +2,17 @@ package nl.strohalm.cyclos.webservices.rest.accounts.external;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.entities.accounts.external.ExternalAccount;
 import nl.strohalm.cyclos.entities.accounts.external.ExternalTransferType;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferTypeService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
-
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 public class ListExternalTransferTypesController {
 	// later will be the implementation if required..
@@ -46,7 +46,7 @@ public class ListExternalTransferTypesController {
 
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/listExternalTransferTypes", method = RequestMethod.GET)
 	@ResponseBody
 	protected ListExternalTransferTypesResponseDto executeAction(
 			@RequestBody ListExternalTransferTypesRequestDto form)

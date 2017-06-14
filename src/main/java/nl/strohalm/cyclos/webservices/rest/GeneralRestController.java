@@ -21,6 +21,11 @@ package nl.strohalm.cyclos.webservices.rest;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.access.Channel.Credentials;
 import nl.strohalm.cyclos.entities.access.PrincipalType;
@@ -35,11 +40,6 @@ import nl.strohalm.cyclos.utils.MessageResolver;
 import nl.strohalm.cyclos.webservices.WebServiceContext;
 import nl.strohalm.cyclos.webservices.model.FieldVO;
 import nl.strohalm.cyclos.webservices.model.ImageVO;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Controller which handles /general paths. This is the only REST service which runs without authentication.

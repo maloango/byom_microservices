@@ -64,7 +64,7 @@ public class SearchTransferImportsController {
 
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/searchTransferImports", method = RequestMethod.POST)
 	@ResponseBody
 	protected SearchTransferImportsResponseDto executeQuery(
 			@RequestBody SearchTransferImportsRequestDto context,

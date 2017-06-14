@@ -1,40 +1,27 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.external;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import nl.strohalm.cyclos.access.AdminSystemPermission;
-import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.external.EditExternalTransferTypeForm;
-import nl.strohalm.cyclos.entities.accounts.external.ExternalAccount;
-import nl.strohalm.cyclos.entities.accounts.external.ExternalTransferType;
-import nl.strohalm.cyclos.entities.accounts.external.ExternalTransferType.Action;
-import nl.strohalm.cyclos.entities.accounts.transactions.TransferType;
-import nl.strohalm.cyclos.entities.accounts.transactions.TransferTypeQuery;
-import nl.strohalm.cyclos.services.accounts.external.ExternalAccountService;
-import nl.strohalm.cyclos.services.accounts.external.ExternalTransferTypeService;
-import nl.strohalm.cyclos.services.permissions.PermissionService;
-import nl.strohalm.cyclos.services.transactions.TransactionContext;
-import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
-import nl.strohalm.cyclos.utils.ActionHelper;
-import nl.strohalm.cyclos.utils.RequestHelper;
-import nl.strohalm.cyclos.utils.binding.BeanBinder;
-import nl.strohalm.cyclos.utils.binding.DataBinder;
-import nl.strohalm.cyclos.utils.binding.PropertyBinder;
-import nl.strohalm.cyclos.utils.conversion.IdConverter;
-import nl.strohalm.cyclos.utils.validation.ValidationException;
-import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.entities.accounts.external.ExternalAccount;
+import nl.strohalm.cyclos.entities.accounts.external.ExternalTransferType;
+import nl.strohalm.cyclos.entities.accounts.external.ExternalTransferType.Action;
+import nl.strohalm.cyclos.entities.accounts.transactions.TransferType;
+import nl.strohalm.cyclos.services.accounts.external.ExternalAccountService;
+import nl.strohalm.cyclos.services.accounts.external.ExternalTransferTypeService;
+import nl.strohalm.cyclos.services.permissions.PermissionService;
+import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
+import nl.strohalm.cyclos.utils.binding.BeanBinder;
+import nl.strohalm.cyclos.utils.binding.DataBinder;
+import nl.strohalm.cyclos.utils.binding.PropertyBinder;
+import nl.strohalm.cyclos.utils.conversion.IdConverter;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class EditExternalTransferTypeController extends BaseRestController {
@@ -118,7 +105,7 @@ public class EditExternalTransferTypeController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editExternalTransferType", method = RequestMethod.PUT)
 	@ResponseBody
 	protected EditExternalTransferTypeResponseDTO handleSubmit(
 			@RequestBody EditExternalTransferTypeRequestDTO form)

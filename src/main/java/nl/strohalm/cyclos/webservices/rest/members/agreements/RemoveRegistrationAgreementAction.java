@@ -19,13 +19,13 @@
  */
 package nl.strohalm.cyclos.webservices.rest.members.agreements;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
 import nl.strohalm.cyclos.controls.members.agreements.RemoveRegistrationAgreementForm;
 import nl.strohalm.cyclos.services.elements.RegistrationAgreementService;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to remove a registration agreement

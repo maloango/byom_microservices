@@ -5,12 +5,12 @@ import java.util.Collection;
 import org.springframework.stereotype.Controller;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.alerts.Alert;
 import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.services.alerts.AlertService;
 import nl.strohalm.cyclos.utils.Period;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class BaseListAlertsController extends BaseRestController {

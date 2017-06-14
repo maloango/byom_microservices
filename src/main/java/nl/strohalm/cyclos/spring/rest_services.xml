@@ -52,7 +52,7 @@
 	<bean id="adCategoriesRestController"
 		class="nl.strohalm.cyclos.webservices.rest.AdCategoriesRestController" />
 
-<!-- Access -->
+	<!-- Access -->
 
 	<bean id="managePasswordsController"
 		class="nl.strohalm.cyclos.webservices.rest.access.ManagePasswordsController" />
@@ -69,7 +69,7 @@
 	<bean id="manageTransactionPasswordController"
 		class="nl.strohalm.cyclos.webservices.rest.access.ManageTransactionPasswordController" />
 
-<!-- Accounts -->
+	<!-- Accounts -->
 
 
 	<bean id="accountFeeLogDetailsController"
@@ -114,6 +114,39 @@
 
 	<!-- details package mapping require -->
 
+	<bean id="editExternalAccountController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.external.EditExternalAccountController" />
+	<bean id="editExternalTransferTypeController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.external.EditExternalTransferTypeController" />
+	<bean id="externalAccountHistoryController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.external.ExternalAccountHistoryController" />
+	<bean id="listExternalAccountsController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.external.ListExternalAccountsController" />
+	<bean id="listExternalTransferTypesController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.external.ListExternalTransferTypesController" />
+	<bean id="overviewExternalAccountsController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.external.OverviewExternalAccountsController" />
+	<bean id="removeExternalAccountController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.external.RemoveExternalAccountController" />
+	<bean id="removeExternalTransferTypeController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.external.RemoveExternalTransferTypeController" />
+
+	<bean id="editFieldMappingController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.external.filemappings.EditFieldMappingController" />
+	<bean id="editFileMappingController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.external.filemappings.EditFileMappingController" />
+	<bean id="removeFieldMappingController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.external.filemappings.RemoveFieldMappingController" />
+	<bean id="setFieldMappingsOrderController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.external.filemappings.SetFieldMappingsOrderController" />
+
+	<bean id="newTransferImportController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.external.transferreports.NewTransferImportController" />
+	<bean id="removeTransferImportController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.external.transferreports.RemoveTransferImportController" />
+	<bean id="searchTransferImportsController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.external.transferreports.SearchTransferImportsController" />
+
 	<bean id="assignPosController"
 		class="nl.strohalm.cyclos.webservices.rest.accounts.pos.AssignPosController" />
 	<bean id="editPosController"
@@ -125,7 +158,101 @@
 	<bean id="searchPosController"
 		class="nl.strohalm.cyclos.webservices.rest.accounts.pos.SearchPosController" />
 
+
+	<bean id="assignPosController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.pos.AssignPosController" />
+	
+
 	<!-- transfer types package mapping require -->
+
+
+
+	<!-- Members -->
+
+	<bean id="activitiesController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.activities.ActivitiesController" />
+
+	<bean id="editRegistrationAgreementController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.agreements.EditRegistrationAgreementController" />
+	<bean id="listRegistrationAgreementsController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.agreements.ListRegistrationAgreementsController" />
+	<bean id="removeRegistrationAgreementController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.agreements.RemoveRegistrationAgreementController" />
+
+	<bean id="memberBulkChangeBrokerController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.bulk.MemberBulkChangeBrokerController" />
+	<bean id="memberBulkChangeChannelsController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.bulk.MemberBulkChangeChannelsController" />
+	<bean id="memberBulkChangeGroupController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.bulk.MemberBulkChangeGroupController" />
+	<bean id="memberBulkGenerateCardController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.bulk.MemberBulkGenerateCardController" />
+
+	<bean id="editCreditLimitController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.creditlimit.EditCreditLimitController" />
+
+	<bean id="importedMembersDetailsController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.imports.ImportedMembersDetailsController" />
+	<bean id="importedMembersSummaryController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.imports.ImportedMembersSummaryController" />
+	<bean id="importMembersController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.imports.ImportMembersController" />
+
+	<bean id="changeMessageStatusController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.messages.ChangeMessageStatusController" />
+	<bean id="editMessageCategoryController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.messages.EditMessageCategoryController" />
+	<bean id="searchMessagesController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.messages.SearchMessagesController" />
+	<bean id="sendMessageController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.messages.SendMessageController" />
+	<bean id="viewMessageController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.messages.ViewMessageController" />
+
+	<bean id="editMemberRecordController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.records.EditMemberRecordController" />
+	<bean id="editMemberRecordTypeController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.records.EditMemberRecordTypeController" />
+	<bean id="listMemberRecordTypesController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.records.ListMemberRecordTypesController" />
+	<bean id="removeMemberRecordController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.records.RemoveMemberRecordController" />
+	<bean id="removeMemberRecordTypeController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.records.RemoveMemberRecordTypeController" />
+	<bean id="searchMemberRecordsController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.records.SearchMemberRecordsController" />
+
+	<bean id="editInfoTextController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.sms.EditInfoTextController" />
+	<bean id="removeInfoTextController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.sms.RemoveInfoTextController" />
+	<bean id="searchInfoTextsController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.sms.SearchInfoTextsController" />
+	<bean id="searchSmsLogsController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.sms.SearchSmsLogsController" />
+	<bean id="searchSmsMailingsController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.sms.SearchSmsMailingsController" />
+	<bean id="sendSmsMailingController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.members.sms.SendSmsMailingController" />
+
+	<!-- payments -->
+
+	<bean id="chargebackPaymentController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.payments.ChargebackPaymentController" />
+	<bean id="confirmPaymentController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.payments.ConfirmPaymentController" />
+	<bean id="paymentController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.payments.PaymentController" />
+	<bean id="selfPaymentController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.payments.SelfPaymentController" />
+	<bean id="successfulPaymentController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.payments.SuccessfulPaymentController" />
+
+	<bean id="successfulPaymentController"
+		class="nl.strohalm.cyclos.webservices.webservices.rest.payments.SuccessfulPaymentController" />
+
+
+
 
 	<bean id="removeAdminController"
 		class="nl.strohalm.cyclos.webservices.rest.admin.removeAdminController" />

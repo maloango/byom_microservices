@@ -1,23 +1,18 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.currencies;
 
 import java.util.Calendar;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.accounts.currencies.ManageCurrencyForm;
-import nl.strohalm.cyclos.entities.accounts.Currency;
-import nl.strohalm.cyclos.services.accounts.CurrencyService;
-import nl.strohalm.cyclos.services.accounts.rates.RateService;
-import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.entities.accounts.Currency;
+import nl.strohalm.cyclos.services.accounts.CurrencyService;
+import nl.strohalm.cyclos.services.accounts.rates.RateService;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class ManageCurrencyController extends BaseRestController {
@@ -60,7 +55,7 @@ public class ManageCurrencyController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/manageCurrency", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/manageCurrency", method = RequestMethod.PUT)
 	@ResponseBody
 	protected ManageCurrencyResponseDTO executeAction(@RequestBody ManageCurrencyRequestDTO form) throws Exception {
 

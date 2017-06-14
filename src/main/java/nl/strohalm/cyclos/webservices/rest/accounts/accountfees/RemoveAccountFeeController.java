@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.accounts.accountfees.RemoveAccountFeeForm;
@@ -26,7 +27,7 @@ public class RemoveAccountFeeController extends BaseRestController {
 		this.accountFeeService = accountFeeService;
 	}
 
-	@RequestMapping(value = "/admin/removeAccountFee", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeAccountFee", method = RequestMethod.DELETE)
 	@ResponseBody
 	protected ActionForward executeAction(final ActionContext context)
 			throws Exception {

@@ -22,6 +22,8 @@ package nl.strohalm.cyclos.webservices.rest.groups.groupFilters;
 import java.io.File;
 import java.util.Collection;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
@@ -30,8 +32,6 @@ import nl.strohalm.cyclos.entities.customization.files.CustomizedFile;
 import nl.strohalm.cyclos.entities.groups.GroupFilter;
 import nl.strohalm.cyclos.services.groups.GroupFilterService;
 import nl.strohalm.cyclos.utils.CustomizationHelper;
-
-import org.apache.struts.action.ActionForward;
 
 public class RemoveGroupFilterAction extends BaseAction {
 

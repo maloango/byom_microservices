@@ -1,33 +1,14 @@
 package nl.strohalm.cyclos.webservices.rest.customization.documents;
 
-import java.util.Calendar;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.customization.documents.ViewDocumentForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
-import nl.strohalm.cyclos.entities.customization.documents.DynamicDocument;
-import nl.strohalm.cyclos.entities.customization.fields.MemberCustomField;
-import nl.strohalm.cyclos.entities.members.Element;
-import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.services.customization.DocumentService;
 import nl.strohalm.cyclos.services.customization.MemberCustomFieldService;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.utils.CustomFieldHelper;
 import nl.strohalm.cyclos.utils.CustomizationHelper;
-import nl.strohalm.cyclos.utils.EntityWithCustomFieldsWrapper;
-import nl.strohalm.cyclos.utils.RequestHelper;
-import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class ViewDynamicDocumentController extends BaseRestController{
 	private DocumentService          documentService;
@@ -97,7 +78,7 @@ public class ViewDynamicDocumentController extends BaseRestController{
 		}
 
 	}
-
+/*
     @RequestMapping(value= "",method = RequestMethod.GET)
     @ResponseBody
     protected ViewDynamicDocumentResponseDTO executeAction(@RequestBody ViewDynamicDocumentRequestDTO  form) throws Exception {
@@ -136,5 +117,5 @@ public class ViewDynamicDocumentController extends BaseRestController{
             return context.getSuccessForward();
         }
     }
-
+*/
 }

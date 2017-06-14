@@ -19,6 +19,8 @@
  */
 package nl.strohalm.cyclos.webservices.rest.guarantees.types;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
@@ -26,8 +28,6 @@ import nl.strohalm.cyclos.controls.accounts.guarantees.types.DeleteGuaranteeType
 import nl.strohalm.cyclos.exceptions.PermissionDeniedException;
 import nl.strohalm.cyclos.services.accounts.guarantees.GuaranteeTypeService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.struts.action.ActionForward;
 
 public class DeleteGuaranteeTypeAction extends BaseAction {
     private GuaranteeTypeService guaranteeTypeService;

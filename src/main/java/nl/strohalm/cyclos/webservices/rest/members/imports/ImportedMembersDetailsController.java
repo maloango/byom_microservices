@@ -18,7 +18,6 @@ import nl.strohalm.cyclos.entities.accounts.MemberAccountType;
 import nl.strohalm.cyclos.entities.members.imports.ImportedMember;
 import nl.strohalm.cyclos.entities.members.imports.ImportedMemberQuery;
 import nl.strohalm.cyclos.entities.members.imports.MemberImport;
-import nl.strohalm.cyclos.entities.members.imports.ImportedMemberQuery.Status;
 import nl.strohalm.cyclos.services.elements.MemberImportService;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;

@@ -22,14 +22,14 @@ package nl.strohalm.cyclos.webservices.rest.authorizationlevels;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
 import nl.strohalm.cyclos.controls.accounts.authorizationlevels.RemoveAuthorizationLevelForm;
 import nl.strohalm.cyclos.services.transfertypes.AuthorizationLevelService;
 import nl.strohalm.cyclos.utils.ActionHelper;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to remove an authorization level

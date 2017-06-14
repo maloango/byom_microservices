@@ -8,6 +8,12 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.accounts.accountfees.AccountFeeLogDetailsForm;
@@ -31,12 +37,6 @@ import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.binding.SimpleCollectionBinder;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class AccountFeeLogDetailsController extends BaseRestController {
@@ -67,7 +67,7 @@ public class AccountFeeLogDetailsController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/viewAccountFeeLogDetails", method = RequestMethod.GET)
+	@RequestMapping(value = "admin/viewAccountFeeLogDetails", method = RequestMethod.GET)
 	@ResponseBody
 	protected AccountFeeLogDetailsResponseDto executeQuery(
 			@RequestBody AccountFeeLogDetailsRequestDto context,

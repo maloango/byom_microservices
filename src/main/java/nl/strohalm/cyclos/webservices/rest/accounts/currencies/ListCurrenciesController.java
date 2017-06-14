@@ -2,7 +2,6 @@ package nl.strohalm.cyclos.webservices.rest.accounts.currencies;
 
 import java.util.List;
 
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +41,7 @@ public class ListCurrenciesController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/listCurrencies", method = RequestMethod.GET)
+	@RequestMapping(value = "admin/listCurrencies", method = RequestMethod.GET)
 	@ResponseBody
 	protected ListCurrenciesResponseDTO executeAction(@RequestBody ListCurrenciesRequestDTO form) throws Exception {
 		// final HttpServletRequest request = context.getRequest();

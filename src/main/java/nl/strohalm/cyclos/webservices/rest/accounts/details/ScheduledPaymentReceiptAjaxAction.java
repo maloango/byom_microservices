@@ -21,6 +21,8 @@ package nl.strohalm.cyclos.webservices.rest.accounts.details;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseReceiptPrintAjaxAction;
@@ -36,8 +38,6 @@ import nl.strohalm.cyclos.entities.settings.LocalSettings;
 import nl.strohalm.cyclos.services.transactions.ScheduledPaymentService;
 import nl.strohalm.cyclos.utils.conversion.CalendarConverter;
 import nl.strohalm.cyclos.utils.conversion.UnitsConverter;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Action used to get details for printing a scheduled payment in a local receipt printer

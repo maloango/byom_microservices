@@ -23,6 +23,9 @@ import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseFormAction;
@@ -46,9 +49,6 @@ import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
 import nl.strohalm.cyclos.utils.validation.RequiredError;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionForward;
 
 public class ConfirmScheduledPaymentAction extends BaseFormAction {
 

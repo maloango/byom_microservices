@@ -23,6 +23,7 @@ import java.util.List;
 
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseQueryAction;
+import nl.strohalm.cyclos.controls.elements.SearchElementsForm;
 import nl.strohalm.cyclos.entities.customization.fields.CustomFieldValue;
 import nl.strohalm.cyclos.entities.customization.fields.MemberCustomField;
 import nl.strohalm.cyclos.entities.groups.Group;

@@ -19,13 +19,13 @@
  */
 package nl.strohalm.cyclos.webservices.rest.members.messages;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
 import nl.strohalm.cyclos.entities.members.messages.MessageCategoryQuery;
 import nl.strohalm.cyclos.services.elements.MessageCategoryService;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Takes care of listing the Message Categories.

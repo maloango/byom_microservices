@@ -1,20 +1,14 @@
 package nl.strohalm.cyclos.webservices.rest.settings;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.entities.settings.Setting;
 import nl.strohalm.cyclos.entities.settings.Setting.Type;
-import nl.strohalm.cyclos.utils.RequestHelper;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-import nl.strohalm.cyclos.webservices.rest.settings.ManageSettingsAction.Action;
 
 @Controller
 public class ManageSettingsController extends BaseRestController {

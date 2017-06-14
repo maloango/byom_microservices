@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class ShowImageController extends BaseRestController {
 	

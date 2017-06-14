@@ -21,6 +21,8 @@ package nl.strohalm.cyclos.webservices.rest;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+
 import nl.strohalm.cyclos.entities.Entity;
 import nl.strohalm.cyclos.entities.access.MemberUser;
 import nl.strohalm.cyclos.entities.access.User;
@@ -32,8 +34,6 @@ import nl.strohalm.cyclos.utils.Pair;
 import nl.strohalm.cyclos.utils.StringHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.model.ServerErrorVO;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Contains helper methods for REST services

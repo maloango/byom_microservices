@@ -24,6 +24,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
 import nl.strohalm.cyclos.access.MemberPermission;
@@ -50,8 +52,6 @@ import nl.strohalm.cyclos.utils.ActionHelper.ByElementExtractor;
 import nl.strohalm.cyclos.utils.CustomFieldHelper;
 import nl.strohalm.cyclos.utils.CustomFieldHelper.Entry;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
-
-import org.apache.struts.action.ActionForward;
 
 public class GuaranteeDetailsAction extends BaseFormAction {
 

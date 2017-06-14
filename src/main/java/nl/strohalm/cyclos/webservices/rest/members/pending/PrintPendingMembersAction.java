@@ -26,6 +26,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.entities.customization.fields.MemberCustomField;
 import nl.strohalm.cyclos.entities.groups.Group;
@@ -35,8 +37,6 @@ import nl.strohalm.cyclos.entities.members.PendingMemberQuery;
 import nl.strohalm.cyclos.utils.EntityHelper;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Action used to print pending members

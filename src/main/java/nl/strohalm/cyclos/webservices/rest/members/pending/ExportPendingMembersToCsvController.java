@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.members.pending.SearchPendingMembersForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.customization.fields.MemberCustomField;
 import nl.strohalm.cyclos.entities.customization.fields.MemberCustomFieldValue;
@@ -31,6 +30,7 @@ import nl.strohalm.cyclos.utils.RelationshipHelper;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.conversion.CustomFieldConverter;
 import nl.strohalm.cyclos.utils.csv.CSVWriter;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class ExportPendingMembersToCsvController extends BaseRestController{
 	private DataBinder<PendingMemberQuery> dataBinder;

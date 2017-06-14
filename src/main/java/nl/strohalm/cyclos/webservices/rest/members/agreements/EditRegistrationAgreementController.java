@@ -1,6 +1,5 @@
 package nl.strohalm.cyclos.webservices.rest.members.agreements;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;

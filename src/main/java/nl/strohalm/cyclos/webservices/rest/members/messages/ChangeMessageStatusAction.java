@@ -19,6 +19,8 @@
  */
 package nl.strohalm.cyclos.webservices.rest.members.messages;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
@@ -27,8 +29,6 @@ import nl.strohalm.cyclos.services.elements.MessageAction;
 import nl.strohalm.cyclos.services.elements.MessageService;
 import nl.strohalm.cyclos.utils.conversion.CoercionHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to change the status for a message list

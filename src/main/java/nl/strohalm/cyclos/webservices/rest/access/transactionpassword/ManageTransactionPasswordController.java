@@ -1,29 +1,21 @@
 package nl.strohalm.cyclos.webservices.rest.access.transactionpassword;
 
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.access.transactionpassword.ManageTransactionPasswordForm;
 import nl.strohalm.cyclos.entities.access.OperatorUser;
-import nl.strohalm.cyclos.entities.access.TransactionPassword;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Operator;
 import nl.strohalm.cyclos.services.access.AccessService;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.elements.ResetTransactionPasswordDTO;
-import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
-import nl.strohalm.cyclos.utils.RequestHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-
-import org.apache.struts.action.ActionForward;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ManageTransactionPasswordController extends BaseRestController {
@@ -89,7 +81,7 @@ public class ManageTransactionPasswordController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/manageTransactionPassword", method = RequestMethod.PUT)
 	@ResponseBody
 	protected ManageTransactionPasswordResponseDto handleSubmit(@RequestBody ManageTransactionPasswordRequestDto form)
 			throws Exception {

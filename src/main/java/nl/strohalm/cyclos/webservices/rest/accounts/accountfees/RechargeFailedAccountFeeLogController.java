@@ -1,6 +1,5 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.accountfees;
 
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,11 +7,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.accountfees.AccountFeeExecutionForm;
 import nl.strohalm.cyclos.entities.accounts.fees.account.AccountFeeLog;
 import nl.strohalm.cyclos.services.accountfees.AccountFeeService;
-import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
@@ -55,7 +51,7 @@ public class RechargeFailedAccountFeeLogController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/rechargeFailedAccountFeeLog", method = RequestMethod.GET)
+	@RequestMapping(value = "admin/rechargeFailedAccountFeeLog", method = RequestMethod.GET)
 	@ResponseBody
 	protected RechargeFailedAccountFeeLogResponseDto executeAction(
 			@RequestBody RechargeFailedAccountFeeLogRequestDto form)

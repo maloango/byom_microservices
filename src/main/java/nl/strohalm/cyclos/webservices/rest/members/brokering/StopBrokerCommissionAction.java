@@ -16,7 +16,7 @@
     along with Cyclos; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
- */
+ 
 package nl.strohalm.cyclos.webservices.rest.members.brokering;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,10 +33,10 @@ import nl.strohalm.cyclos.utils.validation.ValidationException;
 
 import org.apache.struts.action.ActionForward;
 
-/**
+*//**
  * Action used to stop a broker commission
  * @author Jefferson Magno
- */
+ *//*
 public class StopBrokerCommissionAction extends BaseAction {
 
     private CommissionService commissionService;
@@ -69,3 +69,4 @@ public class StopBrokerCommissionAction extends BaseAction {
     }
 
 }
+*/

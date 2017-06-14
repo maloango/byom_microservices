@@ -3,28 +3,24 @@ package nl.strohalm.cyclos.webservices.rest.accounts.external.transferreports;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.external.transferimports.NewTransferImportForm;
-import nl.strohalm.cyclos.entities.accounts.external.ExternalAccount;
-import nl.strohalm.cyclos.entities.accounts.external.ExternalTransferImport;
-import nl.strohalm.cyclos.entities.settings.LocalSettings;
-import nl.strohalm.cyclos.services.accounts.external.ExternalAccountService;
-import nl.strohalm.cyclos.services.accounts.external.ExternalTransferImportService;
-import nl.strohalm.cyclos.services.settings.SettingsService;
-import nl.strohalm.cyclos.utils.ActionHelper;
-import nl.strohalm.cyclos.utils.transactionimport.IllegalTransactionFileFormatException;
-import nl.strohalm.cyclos.utils.validation.ValidationException;
-import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionForward;
 import org.apache.struts.upload.FormFile;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.entities.accounts.external.ExternalAccount;
+import nl.strohalm.cyclos.entities.accounts.external.ExternalTransferImport;
+import nl.strohalm.cyclos.entities.settings.LocalSettings;
+import nl.strohalm.cyclos.services.accounts.external.ExternalAccountService;
+import nl.strohalm.cyclos.services.accounts.external.ExternalTransferImportService;
+import nl.strohalm.cyclos.services.settings.SettingsService;
+import nl.strohalm.cyclos.utils.transactionimport.IllegalTransactionFileFormatException;
+import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class NewTransferImportController extends BaseRestController {
@@ -91,7 +87,7 @@ public class NewTransferImportController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/newTransferImport", method = RequestMethod.POST)
 	@ResponseBody
 	protected NewTransferImportResponseDto executeAction(
 			@RequestBody NewTransferImportRequestDto form) throws Exception {

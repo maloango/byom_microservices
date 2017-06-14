@@ -2,7 +2,7 @@ package nl.strohalm.cyclos.webservices.rest.payments.request;
 
 import org.springframework.stereotype.Controller;
 
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class SearchPaymentRequestsController extends BaseRestController{
 

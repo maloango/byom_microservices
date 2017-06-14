@@ -30,6 +30,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.payments.PaymentForm;
 import nl.strohalm.cyclos.controls.payments.SchedulingType;
@@ -57,9 +60,6 @@ import nl.strohalm.cyclos.utils.conversion.AccountOwnerConverter;
 import nl.strohalm.cyclos.utils.conversion.CoercionHelper;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action for performing payments from an account owner to another one

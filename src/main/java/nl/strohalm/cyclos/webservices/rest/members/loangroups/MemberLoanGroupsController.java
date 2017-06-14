@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.accounts.loans.LoanGroup;
 import nl.strohalm.cyclos.entities.accounts.loans.LoanGroupQuery;
 import nl.strohalm.cyclos.entities.customization.fields.CustomFieldValue;
@@ -22,6 +21,7 @@ import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.loangroups.LoanGroupService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class MemberLoanGroupsController extends BaseRestController{
 	private LoanGroupService loanGroupService;

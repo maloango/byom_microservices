@@ -18,7 +18,6 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.AbstractActionContext;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseQueryForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.ads.Ad;
 import nl.strohalm.cyclos.entities.ads.Ad.TradeType;
@@ -40,6 +39,7 @@ import nl.strohalm.cyclos.utils.binding.MapBean;
 import nl.strohalm.cyclos.utils.conversion.CustomFieldConverter;
 import nl.strohalm.cyclos.utils.csv.CSVWriter;
 import nl.strohalm.cyclos.utils.query.QueryParameters.ResultType;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class ExportAdsToCsvController extends BaseRestController{
 	

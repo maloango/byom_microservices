@@ -1,6 +1,6 @@
 package nl.strohalm.cyclos.webservices.rest.admins;
 
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 public class GetApplicationStatusAjaxContoller extends BaseRestController {
 	

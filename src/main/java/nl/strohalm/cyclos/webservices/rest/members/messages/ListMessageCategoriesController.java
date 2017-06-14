@@ -3,6 +3,12 @@ package nl.strohalm.cyclos.webservices.rest.members.messages;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.entities.members.Element;
@@ -10,12 +16,6 @@ import nl.strohalm.cyclos.entities.members.messages.MessageCategory;
 import nl.strohalm.cyclos.entities.members.messages.MessageCategoryQuery;
 import nl.strohalm.cyclos.services.elements.MessageCategoryService;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ListMessageCategoriesController extends BaseRestController {

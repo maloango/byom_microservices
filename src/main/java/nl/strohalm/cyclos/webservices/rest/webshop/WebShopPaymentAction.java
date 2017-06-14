@@ -16,7 +16,7 @@
     along with Cyclos; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
- */
+ 
 package nl.strohalm.cyclos.webservices.rest.webshop;
 
 import java.util.List;
@@ -66,10 +66,10 @@ import nl.strohalm.cyclos.utils.access.LoggedUser;
 import nl.strohalm.cyclos.utils.validation.RequiredError;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 
-/**
+*//**
  * Action used by a member to confirm a web shop payment
  * @author luis
- */
+ *//*
 public class WebShopPaymentAction extends BasePublicFormAction {
 
     private ChannelService      channelService;
@@ -303,3 +303,4 @@ public class WebShopPaymentAction extends BasePublicFormAction {
         return payment;
     }
 }
+*/

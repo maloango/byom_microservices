@@ -22,9 +22,12 @@ package nl.strohalm.cyclos.webservices.rest.members.brokering;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseFormAction;
+import nl.strohalm.cyclos.controls.members.brokering.ChangeBrokerForm;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.services.elements.BrokeringService;
 import nl.strohalm.cyclos.services.elements.ChangeBrokerDTO;
@@ -34,8 +37,6 @@ import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.ResponseHelper.Status;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to add a member to a broker

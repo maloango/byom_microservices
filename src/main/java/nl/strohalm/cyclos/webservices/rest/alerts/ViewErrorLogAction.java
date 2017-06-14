@@ -20,6 +20,7 @@
 package nl.strohalm.cyclos.webservices.rest.alerts;
 
 import nl.strohalm.cyclos.controls.ActionContext;
+import nl.strohalm.cyclos.controls.alerts.SearchErrorLogForm;
 import nl.strohalm.cyclos.entities.alerts.ErrorLogEntry;
 import nl.strohalm.cyclos.entities.alerts.ErrorLogEntryQuery;
 import nl.strohalm.cyclos.utils.conversion.CoercionHelper;

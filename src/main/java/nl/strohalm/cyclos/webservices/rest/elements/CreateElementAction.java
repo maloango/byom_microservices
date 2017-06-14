@@ -19,9 +19,14 @@
  */
 package nl.strohalm.cyclos.webservices.rest.elements;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseBindingForm;
 import nl.strohalm.cyclos.controls.BaseFormAction;
+import nl.strohalm.cyclos.controls.elements.CreateElementForm;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.customization.fields.CustomField;
 import nl.strohalm.cyclos.entities.customization.fields.CustomFieldValue;
@@ -41,10 +46,6 @@ import nl.strohalm.cyclos.utils.conversion.HtmlConverter;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
 import nl.strohalm.cyclos.utils.validation.PasswordsDontMatchError;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to create an element

@@ -1,4 +1,4 @@
-package nl.strohalm.cyclos.webservices.rest.reports.simulations;
+/*package nl.strohalm.cyclos.webservices.rest.reports.simulations;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +20,6 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.reports.simulations.RateConfigSimulationForm;
 import nl.strohalm.cyclos.controls.reports.statistics.graphs.StatisticalDataProducer;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.accounts.fees.transaction.SimpleTransactionFee;
 import nl.strohalm.cyclos.entities.accounts.fees.transaction.SimpleTransactionFee.ARateRelation;
 import nl.strohalm.cyclos.entities.accounts.fees.transaction.TransactionFee;
@@ -39,7 +37,7 @@ import nl.strohalm.cyclos.utils.RequestHelper;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
-import nl.strohalm.cyclos.webservices.rest.reports.simulations.ARateConfigSimulationController.ARateConfigSimulationRequestDTO;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class ARateConfigSimulationController extends BaseRestController{
 	private DataBinder<ARatedFeeDTO> dataBinder;
@@ -251,3 +249,4 @@ public class ARateConfigSimulationController extends BaseRestController{
     }
 
 }
+*/

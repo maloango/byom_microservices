@@ -28,6 +28,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.entities.accounts.AccountStatus;
 import nl.strohalm.cyclos.entities.accounts.transactions.TransferQuery;
@@ -44,8 +46,6 @@ import nl.strohalm.cyclos.utils.EntityHelper;
 import nl.strohalm.cyclos.utils.Period;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Action used to print transactions

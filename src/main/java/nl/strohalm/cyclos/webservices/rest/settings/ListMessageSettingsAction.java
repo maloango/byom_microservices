@@ -25,12 +25,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
 import nl.strohalm.cyclos.entities.settings.MessageSettings.MessageSettingsEnum;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to list the message settings

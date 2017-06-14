@@ -37,7 +37,7 @@ public class GenerateTransactionPasswordController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.GET, produces = "json/application")
+	@RequestMapping(value = "admin/generateTransactionPassword", method = RequestMethod.GET, produces = "json/application")
 	@ResponseBody
 	protected GenerateTransactionPasswordResponseDTO renderContent(
 			@RequestBody GenerateTransactionPasswordRequestDTO form) throws Exception {

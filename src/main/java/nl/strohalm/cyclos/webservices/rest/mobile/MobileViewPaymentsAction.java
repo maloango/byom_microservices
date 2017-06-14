@@ -16,14 +16,18 @@
     along with Cyclos; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
- */
+ 
 package nl.strohalm.cyclos.webservices.rest.mobile;
 
 import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.controls.mobile.MobileBaseAction;
+import nl.strohalm.cyclos.controls.mobile.MobileViewPaymentsForm;
 import nl.strohalm.cyclos.controls.mobile.exceptions.MobileException;
 import nl.strohalm.cyclos.entities.accounts.transactions.Payment;
 import nl.strohalm.cyclos.entities.accounts.transactions.Transfer;
@@ -33,12 +37,10 @@ import nl.strohalm.cyclos.utils.query.Page;
 import nl.strohalm.cyclos.utils.query.PageParameters;
 import nl.strohalm.cyclos.utils.query.QueryParameters.ResultType;
 
-import org.apache.struts.action.ActionForward;
-
-/**
+*//**
  * Action used to view payments
  * @author luis
- */
+ *//*
 public class MobileViewPaymentsAction extends MobileBaseAction {
 
     private PaymentService paymentService;
@@ -89,3 +91,4 @@ public class MobileViewPaymentsAction extends MobileBaseAction {
     }
 
 }
+*/

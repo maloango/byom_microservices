@@ -1,30 +1,9 @@
 package nl.strohalm.cyclos.webservices.rest.webshop;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-
-import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
-import nl.strohalm.cyclos.controls.webshop.NewWebShopPaymentForm;
-import nl.strohalm.cyclos.controls.webshop.WebShopHelper;
-import nl.strohalm.cyclos.entities.access.Channel;
-import nl.strohalm.cyclos.entities.accounts.transactions.Ticket;
-import nl.strohalm.cyclos.entities.accounts.transactions.WebShopTicket;
-import nl.strohalm.cyclos.entities.exceptions.EntityNotFoundException;
-import nl.strohalm.cyclos.services.transactions.DoPaymentDTO;
-import nl.strohalm.cyclos.services.transactions.TicketService;
-import nl.strohalm.cyclos.services.transactions.TransactionContext;
-import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 public class NewWebShopPaymentController extends BaseRestController{
-	private TicketService ticketService;
+/*	private TicketService ticketService;
 	
 	public static class NewWebShopPaymentRequestDTO{
 		private String            ticket;
@@ -93,5 +72,5 @@ public class NewWebShopPaymentController extends BaseRestController{
     public void setTicketService(final TicketService ticketService) {
         this.ticketService = ticketService;
     }
-
+*/
 }

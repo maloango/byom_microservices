@@ -18,57 +18,13 @@
  */
 package nl.strohalm.cyclos.webservices.rest;
 
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import nl.strohalm.cyclos.entities.access.MemberUser;
-import nl.strohalm.cyclos.entities.access.PrincipalType;
-import nl.strohalm.cyclos.entities.access.User;
-import nl.strohalm.cyclos.entities.accounts.MemberAccountType;
-import nl.strohalm.cyclos.entities.accounts.MemberGroupAccountSettings;
-import nl.strohalm.cyclos.entities.accounts.SystemAccountOwner;
-import nl.strohalm.cyclos.entities.customization.fields.*;
-import nl.strohalm.cyclos.entities.exceptions.EntityNotFoundException;
-import nl.strohalm.cyclos.entities.groups.MemberGroup;
-import nl.strohalm.cyclos.entities.members.Contact;
-import nl.strohalm.cyclos.entities.members.Member;
-import nl.strohalm.cyclos.entities.members.imports.ImportedMember;
-import nl.strohalm.cyclos.entities.members.imports.ImportedMemberRecord;
-import nl.strohalm.cyclos.entities.members.imports.ImportedMemberRecordCustomFieldValue;
-import nl.strohalm.cyclos.entities.members.imports.MemberImport;
-import nl.strohalm.cyclos.entities.members.records.MemberRecordType;
-import nl.strohalm.cyclos.entities.settings.AccessSettings;
-import nl.strohalm.cyclos.entities.settings.LocalSettings;
-import nl.strohalm.cyclos.services.accounts.CreditLimitDTO;
-import nl.strohalm.cyclos.services.customization.MemberCustomFieldService;
-import nl.strohalm.cyclos.services.elements.ContactService;
-import nl.strohalm.cyclos.services.elements.ElementService;
-import nl.strohalm.cyclos.services.elements.ElementServiceLocal;
-import nl.strohalm.cyclos.services.elements.MemberService;
-import nl.strohalm.cyclos.services.fetch.FetchServiceLocal;
-import nl.strohalm.cyclos.services.settings.SettingsServiceLocal;
-import nl.strohalm.cyclos.services.transactions.TransactionContext;
-import nl.strohalm.cyclos.services.transactions.TransferDTO;
-import nl.strohalm.cyclos.utils.CustomFieldHelper;
-import nl.strohalm.cyclos.utils.DateHelper;
-import nl.strohalm.cyclos.utils.access.LoggedUser;
-import nl.strohalm.cyclos.utils.conversion.CalendarConverter;
-import nl.strohalm.cyclos.utils.csv.UnknownColumnException;
-import nl.strohalm.cyclos.utils.validation.*;
-import nl.strohalm.cyclos.webservices.WebServiceContext;
-import nl.strohalm.cyclos.webservices.members.FullTextMemberSearchParameters;
-import nl.strohalm.cyclos.webservices.members.MemberResultPage;
-import nl.strohalm.cyclos.webservices.model.MemberDataVO;
-import nl.strohalm.cyclos.webservices.model.MemberVO;
-import nl.strohalm.cyclos.webservices.model.MyProfileVO;
-import nl.strohalm.cyclos.webservices.model.RegistrationFieldValueVO;
-
-import nl.strohalm.cyclos.webservices.rest.MembersRestPayload;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -78,6 +34,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import nl.strohalm.cyclos.entities.access.MemberUser;
+import nl.strohalm.cyclos.entities.access.PrincipalType;
+import nl.strohalm.cyclos.entities.access.User;
+import nl.strohalm.cyclos.entities.customization.fields.MemberCustomField;
+import nl.strohalm.cyclos.entities.customization.fields.MemberCustomFieldValue;
+import nl.strohalm.cyclos.entities.exceptions.EntityNotFoundException;
+import nl.strohalm.cyclos.entities.groups.MemberGroup;
+import nl.strohalm.cyclos.entities.members.Contact;
+import nl.strohalm.cyclos.entities.members.Member;
+import nl.strohalm.cyclos.services.customization.MemberCustomFieldService;
+import nl.strohalm.cyclos.services.elements.ContactService;
+import nl.strohalm.cyclos.services.elements.ElementService;
+import nl.strohalm.cyclos.services.elements.ElementServiceLocal;
+import nl.strohalm.cyclos.services.elements.MemberService;
+import nl.strohalm.cyclos.services.fetch.FetchServiceLocal;
+import nl.strohalm.cyclos.utils.CustomFieldHelper;
+import nl.strohalm.cyclos.utils.access.LoggedUser;
+import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.WebServiceContext;
+import nl.strohalm.cyclos.webservices.members.FullTextMemberSearchParameters;
+import nl.strohalm.cyclos.webservices.members.MemberResultPage;
+import nl.strohalm.cyclos.webservices.model.MemberDataVO;
+import nl.strohalm.cyclos.webservices.model.MemberVO;
+import nl.strohalm.cyclos.webservices.model.MyProfileVO;
+import nl.strohalm.cyclos.webservices.model.RegistrationFieldValueVO;
 
 /**
  * Controller which handles /members paths

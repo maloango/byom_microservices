@@ -2,11 +2,16 @@ package nl.strohalm.cyclos.webservices.rest.settings;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.settings.EditMessageSettingForm;
 import nl.strohalm.cyclos.entities.settings.MessageSettings;
 import nl.strohalm.cyclos.services.settings.SettingsService;
-import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.PropertyHelper;
 import nl.strohalm.cyclos.utils.TextFormat;
 import nl.strohalm.cyclos.utils.binding.PropertyException;
@@ -15,13 +20,6 @@ import nl.strohalm.cyclos.utils.conversion.StringTrimmerConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.utils.validation.Validator;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionForward;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class EditMessageSettingController extends BaseRestController {

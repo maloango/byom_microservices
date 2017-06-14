@@ -26,8 +26,13 @@ import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseFormAction;
+import nl.strohalm.cyclos.controls.reports.members.transactions.MembersReportHandler;
+import nl.strohalm.cyclos.controls.reports.members.transactions.MembersTransactionsReportDTO;
+import nl.strohalm.cyclos.controls.reports.members.transactions.MembersTransactionsReportForm;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
 import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.entities.members.MemberTransactionSummaryReportData;
@@ -40,8 +45,6 @@ import nl.strohalm.cyclos.utils.SpringHelper;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinderHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.struts.action.ActionForward;
 
 public class MembersTransactionsReportAction extends BaseFormAction {
 

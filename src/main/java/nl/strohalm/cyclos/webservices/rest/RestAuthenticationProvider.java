@@ -25,6 +25,14 @@ import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.access.PrincipalType;
 import nl.strohalm.cyclos.entities.exceptions.EntityNotFoundException;
@@ -41,14 +49,6 @@ import nl.strohalm.cyclos.services.transactions.exceptions.InvalidChannelExcepti
 import nl.strohalm.cyclos.utils.access.LoggedUser;
 import nl.strohalm.cyclos.webservices.WebServiceContext;
 import nl.strohalm.cyclos.webservices.model.ServerErrorVO;
-
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 /**
  * An {@link AuthenticationProvider} which validates the username / password in Cyclos. WARN: Can't throw AuthenticationException cause it returns 401

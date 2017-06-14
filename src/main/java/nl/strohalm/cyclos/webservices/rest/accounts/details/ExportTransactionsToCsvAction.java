@@ -24,6 +24,7 @@ import java.util.List;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseCsvAction;
+import nl.strohalm.cyclos.controls.accounts.details.AccountHistoryForm;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.accounts.Account;
 import nl.strohalm.cyclos.entities.accounts.MemberAccount;

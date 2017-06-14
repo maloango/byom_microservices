@@ -19,11 +19,11 @@
  */
 package nl.strohalm.cyclos.webservices.rest.operators;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.elements.RemoveElementAction;
 import nl.strohalm.cyclos.entities.members.Element.Nature;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to remove an operator

@@ -19,10 +19,10 @@
  */
 package nl.strohalm.cyclos.webservices.rest.admintasks;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.entities.Indexable;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to rebuild all or an specific full-text indexes

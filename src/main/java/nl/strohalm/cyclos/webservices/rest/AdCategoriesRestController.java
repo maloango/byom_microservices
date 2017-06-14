@@ -21,17 +21,17 @@ package nl.strohalm.cyclos.webservices.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.strohalm.cyclos.entities.ads.Ad;
-import nl.strohalm.cyclos.entities.ads.AdCategory;
-import nl.strohalm.cyclos.entities.exceptions.EntityNotFoundException;
-import nl.strohalm.cyclos.services.ads.AdCategoryService;
-import nl.strohalm.cyclos.webservices.model.AdCategoryHierarchicalVO;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import nl.strohalm.cyclos.entities.ads.Ad;
+import nl.strohalm.cyclos.entities.ads.AdCategory;
+import nl.strohalm.cyclos.entities.exceptions.EntityNotFoundException;
+import nl.strohalm.cyclos.services.ads.AdCategoryService;
+import nl.strohalm.cyclos.webservices.model.AdCategoryHierarchicalVO;
 
 /**
  * Controller which handles /adCategories paths

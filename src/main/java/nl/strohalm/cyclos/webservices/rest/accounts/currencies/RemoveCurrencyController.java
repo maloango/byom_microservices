@@ -45,7 +45,7 @@ public class RemoveCurrencyController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/removeCurrency", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeCurrency", method = RequestMethod.DELETE)
 	@ResponseBody
 	protected RemoveCurrencyResponseDTO executeAction(@RequestBody RemoveCurrencyRequestDTO form) throws Exception {
 		final long id = form.getCurrencyId();

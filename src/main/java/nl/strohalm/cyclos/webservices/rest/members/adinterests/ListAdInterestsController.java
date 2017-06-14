@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.accounts.Currency;
 import nl.strohalm.cyclos.entities.ads.Ad;
 import nl.strohalm.cyclos.entities.ads.AdCategory;
@@ -18,6 +17,7 @@ import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.entities.members.adInterests.AdInterest;
 import nl.strohalm.cyclos.entities.members.adInterests.AdInterestQuery;
 import nl.strohalm.cyclos.services.elements.AdInterestService;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class ListAdInterestsController extends BaseRestController{
 	

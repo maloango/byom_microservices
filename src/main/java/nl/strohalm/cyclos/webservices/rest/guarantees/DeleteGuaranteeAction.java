@@ -19,14 +19,14 @@
  */
 package nl.strohalm.cyclos.webservices.rest.guarantees;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
 import nl.strohalm.cyclos.controls.accounts.guarantees.guarantees.DeleteGuaranteeForm;
 import nl.strohalm.cyclos.services.accounts.guarantees.GuaranteeService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.struts.action.ActionForward;
 
 public class DeleteGuaranteeAction extends BaseAction {
     protected GuaranteeService guaranteeService;

@@ -19,6 +19,8 @@
  */
 package nl.strohalm.cyclos.webservices.rest.payments;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.accounts.details.ViewTransactionAction;
 import nl.strohalm.cyclos.controls.payments.ChargebackPaymentForm;
@@ -27,8 +29,6 @@ import nl.strohalm.cyclos.entities.accounts.transactions.Transfer;
 import nl.strohalm.cyclos.services.transactions.exceptions.CreditsException;
 import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to chargeback a payment

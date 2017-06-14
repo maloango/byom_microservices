@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.services.preferences.ReceiptPrinterSettingsService;
 import nl.strohalm.cyclos.utils.RequestHelper;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class RemoveReceiptPrinterSettingsController extends BaseRestController{
 	private ReceiptPrinterSettingsService receiptPrinterSettingsService;

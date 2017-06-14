@@ -1,14 +1,5 @@
-package nl.strohalm.cyclos.webservices.rest.accounts.details;
+/*package nl.strohalm.cyclos.webservices.rest.accounts.details;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,22 +7,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.details.AccountOverviewForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
-import nl.strohalm.cyclos.entities.accounts.Account;
 import nl.strohalm.cyclos.entities.accounts.AccountOwner;
-import nl.strohalm.cyclos.entities.accounts.AccountType;
-import nl.strohalm.cyclos.entities.exceptions.EntityNotFoundException;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
-import nl.strohalm.cyclos.services.accounts.AccountDateDTO;
 import nl.strohalm.cyclos.services.accounts.AccountService;
 import nl.strohalm.cyclos.services.accounts.AccountTypeService;
 import nl.strohalm.cyclos.services.elements.ElementService;
-import nl.strohalm.cyclos.utils.ActionHelper;
-import nl.strohalm.cyclos.utils.RelationshipHelper;
-import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class AccountOverviewController extends BaseRestController {
@@ -133,7 +115,7 @@ public class AccountOverviewController extends BaseRestController {
 
 		final Element loggedElement = form.getElement();
 		// Resolve the account owner we will use
-		/*if (memberId <= 0L || memberId == loggedElement.getId()) {
+		if (memberId <= 0L || memberId == loggedElement.getId()) {
 			owner = form.getAccountOwner();
 			myAccounts = true;
 			if (form.isMember()) {
@@ -198,6 +180,7 @@ public class AccountOverviewController extends BaseRestController {
 		}
 		return overview;
 	}
+
+}
+}
 */
-}
-}

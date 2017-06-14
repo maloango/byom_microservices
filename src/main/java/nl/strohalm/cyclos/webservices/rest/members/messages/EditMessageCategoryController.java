@@ -1,9 +1,6 @@
 package nl.strohalm.cyclos.webservices.rest.members.messages;
 
-import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;

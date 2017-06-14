@@ -1,21 +1,20 @@
 package nl.strohalm.cyclos.webservices.rest.customization.images;
 
-import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.entities.customization.images.Image;
-import nl.strohalm.cyclos.entities.customization.images.Image.Nature;
-import nl.strohalm.cyclos.services.customization.ImageService;
-import nl.strohalm.cyclos.utils.ActionHelper;
-import nl.strohalm.cyclos.utils.ImageHelper.ImageType;
-import nl.strohalm.cyclos.utils.WebImageHelper;
-import nl.strohalm.cyclos.utils.validation.ValidationException;
-import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-
 import org.apache.struts.upload.FormFile;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.entities.customization.images.Image;
+import nl.strohalm.cyclos.entities.customization.images.Image.Nature;
+import nl.strohalm.cyclos.services.customization.ImageService;
+import nl.strohalm.cyclos.utils.ImageHelper.ImageType;
+import nl.strohalm.cyclos.utils.WebImageHelper;
+import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class CustomImagesController extends BaseRestController {

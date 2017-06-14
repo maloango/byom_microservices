@@ -23,6 +23,8 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
@@ -30,8 +32,6 @@ import nl.strohalm.cyclos.controls.BaseAjaxAction.ContentType;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
 import nl.strohalm.cyclos.services.customization.TranslationMessageService;
 import nl.strohalm.cyclos.utils.ResponseHelper;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to export messages into a properties file

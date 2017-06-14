@@ -1,50 +1,28 @@
 package nl.strohalm.cyclos.webservices.rest.operators;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.operators.OperatorProfileForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.Relationship;
 import nl.strohalm.cyclos.entities.access.OperatorUser;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.customization.fields.CustomFieldValue;
 import nl.strohalm.cyclos.entities.customization.fields.OperatorCustomField;
-import nl.strohalm.cyclos.entities.customization.fields.OperatorCustomField.Visibility;
 import nl.strohalm.cyclos.entities.customization.fields.OperatorCustomFieldValue;
 import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.entities.groups.OperatorGroup;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Operator;
 import nl.strohalm.cyclos.services.access.AccessService;
-import nl.strohalm.cyclos.services.access.exceptions.NotConnectedException;
 import nl.strohalm.cyclos.services.customization.OperatorCustomFieldService;
 import nl.strohalm.cyclos.services.elements.ElementService;
-import nl.strohalm.cyclos.services.elements.WhenSaving;
-import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.CustomFieldHelper;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
-import nl.strohalm.cyclos.utils.binding.BeanBinder;
-import nl.strohalm.cyclos.utils.binding.BeanCollectionBinder;
-import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.MapBean;
-import nl.strohalm.cyclos.utils.binding.PropertyBinder;
-import nl.strohalm.cyclos.utils.conversion.HtmlConverter;
-import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
-import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class OperatorProfileController extends BaseRestController{
 	
@@ -163,7 +141,7 @@ public class OperatorProfileController extends BaseRestController{
 			this.customFields = customFields;
 		}
     }
-
+/*
     @RequestMapping(value = "/member/operatorProfile", method = RequestMethod.POST)
     @ResponseBody
     protected OperatorProfileResponseDTO handleDisplay(@RequestBody OperatorProfileRequestDTO form) throws Exception {
@@ -273,5 +251,5 @@ public class OperatorProfileController extends BaseRestController{
         final Operator operator = getWriteDataBinder(context).readFromString(form.getOperator());
         elementService.validate(operator, WhenSaving.PROFILE, false);
     }
-
+*/
 }

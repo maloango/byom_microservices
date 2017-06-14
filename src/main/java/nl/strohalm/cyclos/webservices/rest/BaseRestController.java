@@ -23,13 +23,13 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
-import nl.strohalm.cyclos.utils.Pair;
-import nl.strohalm.cyclos.webservices.model.ServerErrorVO;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import nl.strohalm.cyclos.utils.Pair;
+import nl.strohalm.cyclos.webservices.model.ServerErrorVO;
 
 /**
  * Base class for REST controllers

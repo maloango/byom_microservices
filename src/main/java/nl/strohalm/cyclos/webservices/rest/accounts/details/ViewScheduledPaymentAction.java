@@ -24,9 +24,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts.action.ActionForm;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseFormAction;
+import nl.strohalm.cyclos.controls.accounts.details.ViewTransactionForm;
 import nl.strohalm.cyclos.controls.payments.scheduled.ScheduledPaymentForm;
 import nl.strohalm.cyclos.entities.Relationship;
 import nl.strohalm.cyclos.entities.accounts.AccountOwner;
@@ -46,9 +50,6 @@ import nl.strohalm.cyclos.utils.CustomFieldHelper.Entry;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
 import nl.strohalm.cyclos.utils.validation.RequiredError;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionForm;
 
 /**
  * Action used to view the details of a scheduled payment

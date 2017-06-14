@@ -19,13 +19,14 @@
  */
 package nl.strohalm.cyclos.webservices.rest.elements;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
+import nl.strohalm.cyclos.controls.elements.RemoveElementForm;
 import nl.strohalm.cyclos.entities.exceptions.DaoException;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.struts.action.ActionForward;
 
 public abstract class RemoveElementAction extends BaseAction {
 

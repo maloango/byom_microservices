@@ -26,6 +26,7 @@ public class ManagePasswordsController extends BaseRestController {
 
 	private ElementService elementService;
 	private PermissionService permissionService;
+	
 	public void setElementService(final ElementService elementService) {
 		this.elementService = elementService;
 	}
@@ -136,7 +137,7 @@ public class ManagePasswordsController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/managePasswords", method = RequestMethod.POST)
 	@ResponseBody
 	public ManagePasswordsResponseDto managePasswords(
 			@RequestBody final ManagePasswordsRequestDto form) {

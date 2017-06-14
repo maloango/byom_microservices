@@ -1,6 +1,5 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.external.filemappings;
 
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,11 +7,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.entities.accounts.external.filemapping.FieldMapping;
 import nl.strohalm.cyclos.entities.accounts.external.filemapping.FileMapping;
 import nl.strohalm.cyclos.services.accounts.external.filemapping.FieldMappingService;
-import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
@@ -50,7 +47,7 @@ public class RemoveFieldMappingController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeFieldMapping", method = RequestMethod.DELETE)
 	@ResponseBody
 	protected RemoveFieldMappingResponseDto executeAction(
 			@RequestBody RemoveFieldMappingRequestDto form) throws Exception {

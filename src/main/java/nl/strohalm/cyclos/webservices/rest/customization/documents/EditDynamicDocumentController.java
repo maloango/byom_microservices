@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.customization.documents.DocumentPage;
 import nl.strohalm.cyclos.entities.customization.documents.DynamicDocument;
 import nl.strohalm.cyclos.services.customization.DocumentService;
@@ -21,6 +20,7 @@ import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.CoercionConverter;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class EditDynamicDocumentController extends BaseRestController {
 	

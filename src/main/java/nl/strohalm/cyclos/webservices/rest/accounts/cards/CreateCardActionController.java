@@ -1,6 +1,6 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.cards;
 
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 public class CreateCardActionController extends BaseRestController{
 

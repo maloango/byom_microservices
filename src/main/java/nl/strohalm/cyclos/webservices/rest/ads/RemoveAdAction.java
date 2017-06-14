@@ -19,6 +19,8 @@
  */
 package nl.strohalm.cyclos.webservices.rest.ads;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
@@ -26,8 +28,6 @@ import nl.strohalm.cyclos.controls.ads.AdForm;
 import nl.strohalm.cyclos.services.ads.AdService;
 import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to remove an advertisement

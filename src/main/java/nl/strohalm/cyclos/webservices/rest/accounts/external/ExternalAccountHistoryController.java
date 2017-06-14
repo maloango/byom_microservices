@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.stereotype.Controller;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.entities.accounts.external.ExternalAccount;
@@ -34,8 +36,6 @@ import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-
-import org.springframework.stereotype.Controller;
 
 @Controller
 public class ExternalAccountHistoryController extends BaseRestController
@@ -176,7 +176,7 @@ public class ExternalAccountHistoryController extends BaseRestController
 
 	@Override
 	public void onLocalSettingsUpdate(LocalSettingsEvent event) {
-		// TODO Auto-generated method stub
+	
 		
 	}
 }

@@ -1,65 +1,11 @@
-package nl.strohalm.cyclos.webservices.rest.webshop;
+/*package nl.strohalm.cyclos.webservices.rest.webshop;
 
-import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.restapi.BaseRestController;
-import nl.strohalm.cyclos.controls.webshop.ConfirmWebShopPaymentForm;
-import nl.strohalm.cyclos.controls.webshop.WebShopHelper;
-import nl.strohalm.cyclos.entities.access.Channel;
-import nl.strohalm.cyclos.entities.access.Channel.Credentials;
-import nl.strohalm.cyclos.entities.accounts.AccountOwner;
-import nl.strohalm.cyclos.entities.accounts.Currency;
-import nl.strohalm.cyclos.entities.accounts.transactions.Payment;
-import nl.strohalm.cyclos.entities.accounts.transactions.Ticket;
-import nl.strohalm.cyclos.entities.accounts.transactions.TransferType;
-import nl.strohalm.cyclos.entities.accounts.transactions.WebShopTicket;
-import nl.strohalm.cyclos.entities.customization.fields.PaymentCustomField;
-import nl.strohalm.cyclos.entities.customization.fields.PaymentCustomFieldValue;
-import nl.strohalm.cyclos.entities.exceptions.UnexpectedEntityException;
-import nl.strohalm.cyclos.entities.members.Element;
-import nl.strohalm.cyclos.entities.members.Member;
-import nl.strohalm.cyclos.services.access.AccessService;
-import nl.strohalm.cyclos.services.access.ChannelService;
-import nl.strohalm.cyclos.services.access.exceptions.BlockedCredentialsException;
-import nl.strohalm.cyclos.services.access.exceptions.InvalidCredentialsException;
-import nl.strohalm.cyclos.services.elements.ElementService;
-import nl.strohalm.cyclos.services.transactions.DoPaymentDTO;
-import nl.strohalm.cyclos.services.transactions.PaymentService;
-import nl.strohalm.cyclos.services.transactions.ScheduledPaymentDTO;
-import nl.strohalm.cyclos.services.transactions.TicketService;
-import nl.strohalm.cyclos.services.transactions.TransactionContext;
-import nl.strohalm.cyclos.services.transactions.exceptions.CreditsException;
-import nl.strohalm.cyclos.services.transfertypes.TransactionFeePreviewDTO;
-import nl.strohalm.cyclos.services.transfertypes.TransactionFeeService;
-import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
-import nl.strohalm.cyclos.utils.ActionHelper;
-import nl.strohalm.cyclos.utils.MessageHelper;
-import nl.strohalm.cyclos.utils.access.LoggedUser;
-import nl.strohalm.cyclos.utils.validation.RequiredError;
-import nl.strohalm.cyclos.utils.validation.ValidationException;
 @Controller
-public class ConfirmWebShopPaymentController extends BaseRestController{
-	public static class ShouldValidateTPParameter {
+public class ConfirmWebShopPaymentController extends BaseRestController{*/
+	/*public static class ShouldValidateTPParameter {
         public final ActionMapping       mapping;
         public final ActionForm          actionForm;
         public final HttpServletRequest  request;
@@ -163,9 +109,9 @@ public class ConfirmWebShopPaymentController extends BaseRestController{
     	    private String                              traceNumber;
     	    private boolean                             showScheduledToReceiver;
 
-    	    /**
+    	    *//**
     	     * @see #getTraceData()
-    	     */
+    	     *//*
     	    private String                              traceData;
 
     	    public BigDecimal getAmount() {
@@ -227,13 +173,13 @@ public class ConfirmWebShopPaymentController extends BaseRestController{
     	        return to;
     	    }
 
-    	    /**
+    	    *//**
     	     * Optional.
     	     * @returns the data set by the client making a payment that will be attached to the transfer and sent back when a notification related to this
     	     * payment is issued by Cyclos (likely to the same client).<br>
     	     * It depends on the client side then there is no guarantee of uniqueness between different clients.<br>
     	     * Note: <b>It has nothing to do with the traceNumber field in the parent class (used to tag transactions and query by these value).</b>
-    	     */
+    	     *//*
     	    public String getTraceData() {
     	        return traceData;
     	    }
@@ -418,5 +364,6 @@ public class ConfirmWebShopPaymentController extends BaseRestController{
         }
         return payment;
     }
+    }
+*/
 
-}

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.customization.documents.EditStaticDocumentForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.customization.documents.Document;
 import nl.strohalm.cyclos.entities.customization.documents.StaticDocument;
 import nl.strohalm.cyclos.services.customization.DocumentService;
@@ -26,6 +25,7 @@ import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class EditStaticDocumentController extends BaseRestController {
 	public static <T extends StaticDocument> BeanBinder<T> getDataBinder(final Class<T> type) {

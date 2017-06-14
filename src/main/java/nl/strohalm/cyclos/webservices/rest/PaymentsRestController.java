@@ -28,6 +28,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.access.User.TransactionPasswordStatus;
 import nl.strohalm.cyclos.entities.accounts.AccountOwner;
@@ -79,16 +89,6 @@ import nl.strohalm.cyclos.webservices.model.TransactionFeeVO;
 import nl.strohalm.cyclos.webservices.model.TransferTypeVO;
 import nl.strohalm.cyclos.webservices.rest.TransferTypesRestController.Destination;
 import nl.strohalm.cyclos.webservices.rest.TransferTypesRestController.TransferTypeSearchParams;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Controller which handles /payments paths

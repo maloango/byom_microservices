@@ -22,6 +22,9 @@ package nl.strohalm.cyclos.webservices.rest.customization.translationMessages;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.upload.FormFile;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
@@ -29,9 +32,6 @@ import nl.strohalm.cyclos.controls.customization.translationMessages.ImportTrans
 import nl.strohalm.cyclos.services.customization.MessageImportType;
 import nl.strohalm.cyclos.services.customization.TranslationMessageService;
 import nl.strohalm.cyclos.utils.PropertiesHelper;
-
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.upload.FormFile;
 
 /**
  * Action used to import messages from a properties file

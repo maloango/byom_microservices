@@ -23,6 +23,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.upload.FormFile;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseFormAction;
@@ -34,9 +37,6 @@ import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.ImageHelper.ImageType;
 import nl.strohalm.cyclos.utils.WebImageHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.upload.FormFile;
 
 /**
  * Action used to list the customized images

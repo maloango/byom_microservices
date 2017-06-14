@@ -21,11 +21,11 @@ package nl.strohalm.cyclos.webservices.rest.image;
 
 import javax.servlet.http.HttpServletRequest;
 
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.BaseAction;
-
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+
+import nl.strohalm.cyclos.controls.ActionContext;
+import nl.strohalm.cyclos.controls.BaseAction;
 
 /**
  * Action used to show an image

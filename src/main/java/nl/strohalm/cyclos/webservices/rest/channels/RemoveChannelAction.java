@@ -19,14 +19,14 @@
  */
 package nl.strohalm.cyclos.webservices.rest.channels;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseAction;
 import nl.strohalm.cyclos.controls.channels.RemoveChannelForm;
 import nl.strohalm.cyclos.services.access.ChannelService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
-
-import org.apache.struts.action.ActionForward;
 
 /**
  * Action used to remove a channel

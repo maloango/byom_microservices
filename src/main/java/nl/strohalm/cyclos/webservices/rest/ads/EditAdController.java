@@ -1,4 +1,4 @@
-package nl.strohalm.cyclos.webservices.rest.ads;
+/*package nl.strohalm.cyclos.webservices.rest.ads;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.upload.FormFile;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.ads.AdForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.accounts.Currency;
 import nl.strohalm.cyclos.entities.accounts.MemberAccountType;
@@ -59,6 +56,7 @@ import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
 import nl.strohalm.cyclos.utils.conversion.StringTrimmerConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class EditAdController extends BaseRestController{
 	private AccountTypeService accountTypeService;
@@ -157,9 +155,9 @@ public class EditAdController extends BaseRestController{
         this.currencyService = currencyService;
     }
 
-    /**
+    *//**
      * gets the member
-     */
+     *//*
     protected Member getMember(final ActionContext context) {
         Member member;
         final AdForm form = context.getForm();
@@ -190,10 +188,10 @@ public class EditAdController extends BaseRestController{
         return member;
     }
 
-    /**
+    *//**
      * gets the number of ads for this member
      * @return an int indicating the number of ads
-     */
+     *//*
     protected int getNumberOfAds(final Member member) {
         final Map<Ad.Status, Integer> adMap = getAdService().getNumberOfAds(null, member);
         final Collection<Integer> values = adMap.values();
@@ -466,3 +464,4 @@ public class EditAdController extends BaseRestController{
     }
 
 }
+*/

@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.themes.Theme;
 import nl.strohalm.cyclos.themes.ThemeHandler;
 import nl.strohalm.cyclos.utils.RequestHelper;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class SelectThemeController extends BaseRestController {
 	private ThemeHandler themeHandler;

@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.IndexStatus;
 import nl.strohalm.cyclos.exceptions.PermissionDeniedException;
 import nl.strohalm.cyclos.services.application.ApplicationService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.utils.ClassHelper;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class AdministrativeTasksContoller extends BaseRestController{
 	private ApplicationService applicationService;

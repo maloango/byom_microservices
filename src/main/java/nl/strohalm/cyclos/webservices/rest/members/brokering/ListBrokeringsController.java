@@ -1,4 +1,4 @@
-package nl.strohalm.cyclos.webservices.rest.members.brokering;
+/*package nl.strohalm.cyclos.webservices.rest.members.brokering;
 
 import org.springframework.stereotype.Controller;
 
@@ -8,3 +8,4 @@ public class ListBrokeringsController extends BaseRestController{
 	// implementation will be do later if required 
 
 }
+*/

@@ -21,6 +21,12 @@ package nl.strohalm.cyclos.webservices.rest;
 import java.text.DecimalFormatSymbols;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.access.Channel.Credentials;
 import nl.strohalm.cyclos.entities.accounts.transactions.TransferType;
@@ -35,12 +41,6 @@ import nl.strohalm.cyclos.webservices.model.MemberAccountVO;
 import nl.strohalm.cyclos.webservices.model.MyProfileVO;
 import nl.strohalm.cyclos.webservices.rest.TransferTypesRestController.Destination;
 import nl.strohalm.cyclos.webservices.rest.TransferTypesRestController.TransferTypeSearchParams;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Controller which handles /access paths

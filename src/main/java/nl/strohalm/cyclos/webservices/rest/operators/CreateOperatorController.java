@@ -1,36 +1,17 @@
 package nl.strohalm.cyclos.webservices.rest.operators;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.operators.CreateOperatorForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
-import nl.strohalm.cyclos.entities.access.OperatorUser;
-import nl.strohalm.cyclos.entities.customization.fields.OperatorCustomField;
-import nl.strohalm.cyclos.entities.customization.fields.OperatorCustomFieldValue;
-import nl.strohalm.cyclos.entities.groups.OperatorGroup;
-import nl.strohalm.cyclos.entities.members.Element;
-import nl.strohalm.cyclos.entities.members.Member;
-import nl.strohalm.cyclos.entities.members.Operator;
 import nl.strohalm.cyclos.services.customization.OperatorCustomFieldService;
 import nl.strohalm.cyclos.services.elements.ElementService;
-import nl.strohalm.cyclos.services.elements.WhenSaving;
 import nl.strohalm.cyclos.services.groups.GroupService;
-import nl.strohalm.cyclos.utils.ActionHelper;
-import nl.strohalm.cyclos.utils.transaction.CurrentTransactionData;
-import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class CreateOperatorController extends BaseRestController{
 	private OperatorCustomFieldService operatorCustomFieldService;
@@ -122,7 +103,7 @@ public class CreateOperatorController extends BaseRestController{
    }
     
 
-    @RequestMapping(value ="/member/createOperator",method = RequestMethod.POST)
+  /*  @RequestMapping(value ="/member/createOperator",method = RequestMethod.POST)
     @ResponseBody
     protected CreateOperatorResponseDTO create(@RequestBody Element Element , final CreateOperatorRequestDTO form) {
         //final CreateOperatorForm form = context.getForm();
@@ -220,5 +201,5 @@ public class CreateOperatorController extends BaseRestController{
             operator.setMember(context.getMember());
         }
     }
-
+*/
 }

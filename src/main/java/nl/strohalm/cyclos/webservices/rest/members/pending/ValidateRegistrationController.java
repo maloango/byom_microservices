@@ -1,4 +1,4 @@
-package nl.strohalm.cyclos.webservices.rest.members.pending;
+/*package nl.strohalm.cyclos.webservices.rest.members.pending;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.members.pending.ValidateRegistrationForm;
-import nl.strohalm.cyclos.controls.restapi.BaseRestController;
 import nl.strohalm.cyclos.entities.customization.files.CustomizedFile.Type;
 import nl.strohalm.cyclos.entities.exceptions.EntityNotFoundException;
 import nl.strohalm.cyclos.entities.groups.GroupFilter;
@@ -34,6 +33,7 @@ import nl.strohalm.cyclos.utils.CustomizationHelper.CustomizationData;
 import nl.strohalm.cyclos.utils.MessageHelper;
 import nl.strohalm.cyclos.utils.access.LoggedUser;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class ValidateRegistrationController extends BaseRestController{
 	  private GroupFilterService  groupFilterService;
@@ -230,3 +230,4 @@ public class ValidateRegistrationController extends BaseRestController{
 
 
 
+*/

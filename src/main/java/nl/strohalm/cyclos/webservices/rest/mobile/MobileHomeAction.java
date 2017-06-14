@@ -16,23 +16,25 @@
     along with Cyclos; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
- */
+ 
 package nl.strohalm.cyclos.webservices.rest.mobile;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts.action.ActionForward;
+
 import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.controls.mobile.MobileBaseAction;
+import nl.strohalm.cyclos.controls.mobile.MobileHelper;
 import nl.strohalm.cyclos.entities.accounts.MemberAccount;
 import nl.strohalm.cyclos.entities.accounts.MemberAccountType;
 import nl.strohalm.cyclos.services.accounts.AccountDTO;
 import nl.strohalm.cyclos.services.accounts.AccountService;
 
-import org.apache.struts.action.ActionForward;
-
-/**
+*//**
  * Used to retrieve the home page on mobile access
  * @author luis
- */
+ *//*
 public class MobileHomeAction extends MobileBaseAction {
 
     private AccountService accountService;
@@ -79,3 +81,4 @@ public class MobileHomeAction extends MobileBaseAction {
     }
 
 }
+*/

@@ -79,7 +79,7 @@ public class ResetAndSendPasswordController extends BaseRestController {
 		
 	}
 
-	@RequestMapping(value = "/member/resetAndSendPassword", method = RequestMethod.POST)
+	@RequestMapping(value = "member/resetAndSendPassword", method = RequestMethod.POST)
 	@ResponseBody
     protected ResetAndSendPasswordResponseDto resetAndSendPassword(@RequestBody ResetAndSendPasswordRequestDto form) throws Exception {
        

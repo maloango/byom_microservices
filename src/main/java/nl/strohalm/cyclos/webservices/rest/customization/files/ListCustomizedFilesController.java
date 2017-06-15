@@ -49,7 +49,7 @@ public class ListCustomizedFilesController extends BaseRestController{
     	}
     	}
 
-    @RequestMapping(value = "/admin/listCustomizedFiles" , method  = RequestMethod.GET)
+    @RequestMapping(value = "admin/listCustomizedFiles" , method  = RequestMethod.GET)
     @ResponseBody
     protected ListCustomizedFilesResponseDTO executeAction(@RequestBody ListCustomizedFilesRequestDTO form ) throws Exception {
         final List<Document> docs = documentService.search(new DocumentQuery());

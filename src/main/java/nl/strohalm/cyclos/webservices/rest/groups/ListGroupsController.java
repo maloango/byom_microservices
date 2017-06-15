@@ -253,7 +253,7 @@ public class ListGroupsController extends BaseRestController {
     	
     }
 
-    @RequestMapping(value = "/admin/listGroups" ,method = RequestMethod.GET)
+    @RequestMapping(value = "admin/listGroups" ,method = RequestMethod.GET)
     @ResponseBody
     protected ListGroupsResponseDTO executeQuery(@RequestBody ListGroupsRequestDTO form, final QueryParameters queryParameters) {  
         final GroupQuery groupQuery = (GroupQuery) queryParameters;

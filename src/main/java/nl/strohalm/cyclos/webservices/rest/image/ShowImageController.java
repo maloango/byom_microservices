@@ -37,7 +37,7 @@ public class ShowImageController extends BaseRestController {
 		
 	}
 	
-	 @RequestMapping(value = "/member/showImage" ,method = RequestMethod.GET)
+	 @RequestMapping(value = "member/showImage" ,method = RequestMethod.GET)
 	    protected ShowImageResponse executeAction(@RequestBody ShowImageRequestDTO form) throws Exception {
 	      
 		 ShowImageResponse response = new ShowImageResponse();

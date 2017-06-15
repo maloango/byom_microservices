@@ -161,7 +161,7 @@ public class SetCustomFieldOrderController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/setCustomFieldOrder", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/setCustomFieldOrder", method = RequestMethod.POST)
 	@ResponseBody
 	protected SetCustomFieldOrderResponseDto handleSubmit(@RequestBody SetCustomFieldOrderRequestDto form)
 			throws Exception {

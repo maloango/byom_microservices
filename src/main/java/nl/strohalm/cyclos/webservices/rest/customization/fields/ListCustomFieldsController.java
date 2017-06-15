@@ -96,7 +96,7 @@ public class ListCustomFieldsController extends BaseRestController {
 		
 	}
 
-	@RequestMapping(value = "/admin/listCustomFields", method = RequestMethod.GET)
+	@RequestMapping(value = "admin/listCustomFields", method = RequestMethod.GET)
 	@ResponseBody
 	protected ListCustomFieldsResponseDto executeAction(
 			@RequestBody ListCustomFieldsRequestDto form) throws Exception {

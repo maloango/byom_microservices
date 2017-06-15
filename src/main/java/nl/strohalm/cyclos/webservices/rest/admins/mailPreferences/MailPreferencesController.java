@@ -110,7 +110,7 @@ public class MailPreferencesController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/mailPreferences", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/mailPreferences", method = RequestMethod.POST)
 	@ResponseBody
 	protected void formAction(@RequestBody MailPreferencesRequestDto form) throws Exception {
 		//final MailPreferencesForm form = context.getForm();

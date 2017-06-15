@@ -157,7 +157,7 @@ public class RemoveCustomFieldPossibleValueController extends
 
 	}
 
-	@RequestMapping(value = "/admin/removeCustomFieldPossibleValue", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/removeCustomFieldPossibleValue", method = RequestMethod.POST)
 	@ResponseBody
 	protected RemoveCustomFieldPossibleValueResponseDto executeAction(
 			@RequestBody RemoveCustomFieldPossibleValueRequestDto form)

@@ -371,7 +371,7 @@ public class EditCustomFieldController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/editCustomField", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/editCustomField", method = RequestMethod.POST)
 	@ResponseBody
 	protected EditCustomFieldResponseDto handleSubmit(
 			@RequestBody EditCustomFieldRequestDto form) throws Exception {

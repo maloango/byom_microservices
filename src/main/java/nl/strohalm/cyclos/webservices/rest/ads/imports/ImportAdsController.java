@@ -113,7 +113,7 @@ public class ImportAdsController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.GET)
+	@RequestMapping(value = "admin/importAds", method = RequestMethod.GET)
 	@ResponseBody
 	protected ImportAdsResponseDto handleSubmit(
 			@RequestBody ImportAdsRequestDto form) throws Exception {

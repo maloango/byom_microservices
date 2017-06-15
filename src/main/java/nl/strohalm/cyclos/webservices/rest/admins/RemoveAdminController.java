@@ -47,7 +47,7 @@ public class RemoveAdminController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/removeAdmin", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeAdmin", method = RequestMethod.DELETE)
 	@ResponseBody
 	protected RemoveAdminResponseDTO doRemove(@RequestBody RemoveAdminRequestDTO form, final long id) {
 		RemoveAdminResponseDTO response = new RemoveAdminResponseDTO();

@@ -126,7 +126,7 @@ public class AdministrativeTasksContoller extends BaseRestController{
         this.applicationService = applicationService;
     }
 
-    @RequestMapping(value = "/admin/adminTasks", method = RequestMethod.HEAD)
+    @RequestMapping(value = "admin/adminTasks", method = RequestMethod.HEAD)
     protected AdministrativeTasksResponseDto executeAction(@RequestBody AdministrativeTasksRequestDto form) throws Exception {
         //final HttpServletRequest request = context.getRequest();
 

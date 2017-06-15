@@ -51,7 +51,7 @@ public class RemoveLoanGroupController extends BaseRestController{
     	
     }
     
-    @RequestMapping(value= "/admin/removeLoanGroup", method =RequestMethod.DELETE)
+    @RequestMapping(value= "admin/removeLoanGroup", method =RequestMethod.DELETE)
     @ResponseBody
     protected RemoveLoanGroupResponseDTO executeAction(@RequestBody RemoveLoanGroupRequestDTO form) throws Exception {
     	//String message = null;

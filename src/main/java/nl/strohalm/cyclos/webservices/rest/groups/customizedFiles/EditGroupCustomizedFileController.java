@@ -134,7 +134,7 @@ public class EditGroupCustomizedFileController extends BaseRestController{
 
     }
 
-    @RequestMapping(value = "/member/editGroupCustomizedFile" , method = RequestMethod.POST)
+    @RequestMapping(value = "member/editGroupCustomizedFile" , method = RequestMethod.POST)
     @ResponseBody
     protected EditGroupCustomizedFileResponseDTO handleSubmit(@RequestBody EditGroupCustomizedFileRequestDTO form) throws Exception {
         DataBinder<CustomizedFile> dataBinder;

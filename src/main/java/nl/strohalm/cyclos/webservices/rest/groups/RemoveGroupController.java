@@ -53,7 +53,7 @@ public class RemoveGroupController extends BaseRestController {
     	
     }
 
-    @RequestMapping(value ="/admin/removeGroup" ,method = RequestMethod.DELETE)
+    @RequestMapping(value ="admin/removeGroup" ,method = RequestMethod.DELETE)
     @ResponseBody
     protected RemoveGroupResponseDTO executeAction(@RequestBody RemoveGroupRequestDTO  form) throws Exception {
         final long id = form.getGroupId();

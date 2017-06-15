@@ -130,7 +130,7 @@ public class EditCustomizedFileController extends BaseRestController {
     	
     }
 
-    @RequestMapping(value = "/admin/editCustomizedFile", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/editCustomizedFile", method = RequestMethod.POST)
     @ResponseBody
     protected EditCustomizedFileResposeDTO handleSubmit(@RequestBody EditCustomizedFileRequestDTO  form) throws Exception {
        // final EditCustomizedFileForm form = context.getForm();

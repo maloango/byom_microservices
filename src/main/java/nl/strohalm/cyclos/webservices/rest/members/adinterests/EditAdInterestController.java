@@ -215,7 +215,7 @@ public class EditAdInterestController extends BaseRestController{
     	
     }
     
-    @RequestMapping(value = "/member/editAdInterest", method = RequestMethod.PUT)
+    @RequestMapping(value = "member/editAdInterest", method = RequestMethod.PUT)
     @ResponseBody
     protected EditAdInterestResponseDTO formAction(@RequestBody EditAdInterestRequestDTO form) throws Exception {
         final AdInterest adInterest = resolveAdInterest(null);

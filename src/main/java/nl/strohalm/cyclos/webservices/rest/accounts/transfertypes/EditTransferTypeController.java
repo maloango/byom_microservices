@@ -319,7 +319,7 @@ public class EditTransferTypeController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editTransferType", method = RequestMethod.PUT)
 	@ResponseBody
 	protected EditTransferTypeResponseDto handleSubmit(
 			@RequestBody EditTransferTypeRequestDto form) throws Exception {

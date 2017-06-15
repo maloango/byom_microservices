@@ -58,7 +58,7 @@ public class RemoveTransferTypeController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeTransferType", method = RequestMethod.DELETE)
 	@ResponseBody
 	protected RemoveTransferTypeResponseDto executeAction(
 			@RequestBody RemoveTransferTypeRequestDto form) throws Exception {

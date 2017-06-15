@@ -145,7 +145,7 @@ public class RemoveCustomFieldController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/removeCustomField", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeCustomField", method = RequestMethod.DELETE)
 	@ResponseBody
 	protected RemoveCustomFieldResponseDto executeAction(
 			@RequestBody RemoveCustomFieldRequestDto form) throws Exception {

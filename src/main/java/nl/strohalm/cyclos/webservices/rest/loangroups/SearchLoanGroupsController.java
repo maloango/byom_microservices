@@ -129,7 +129,7 @@ public class SearchLoanGroupsController extends BaseRestController {
     	
     }
 
-    @RequestMapping(value= "/admin/searchLoanGroups", method =RequestMethod.GET)
+    @RequestMapping(value= "admin/searchLoanGroups", method =RequestMethod.GET)
     @ResponseBody
     protected SearchLoanGroupsResponseDTo executeQuery(@RequestBody SearchLoanGroupsRequestDTO form, final QueryParameters queryParameters) {
         final LoanGroupQuery query = (LoanGroupQuery) queryParameters;

@@ -187,7 +187,7 @@ public class EditCustomFieldPossibleValueController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/editCustomFieldPossibleValue", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editCustomFieldPossibleValue", method = RequestMethod.PUT)
 	@ResponseBody
 	protected EditCustomFieldPossibleValueResponseDto handleSubmit(
 			@RequestBody EditCustomFieldPossibleValueRequestDto form)

@@ -1,99 +1,420 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans:beans
-    default-autowire="byName"
-    xmlns="http://www.springframework.org/schema/security" 
-    xmlns:beans="http://www.springframework.org/schema/beans" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:sec="http://www.springframework.org/schema/security" 
-    xsi:schemaLocation="
+<beans:beans default-autowire="byName"
+	xmlns="http://www.springframework.org/schema/security" xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sec="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
     http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-	<beans:bean id="noOpAuthenticationEntryPoint" class="nl.strohalm.cyclos.webservices.rest.NoOpAuthenticationEntryPoint" />
-	<http pattern="/rest/general" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/managePasswords" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/manageExternalAccess" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/generateTransactionPassword" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/manageTransactionPassword" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/viewAccountFeeLogDetails" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/editAccountFee" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/listAccountFeeLog" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/rechargeFailedAccountFeeLog" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/removeAccountFee" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/runAccountFee" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/editAccountType" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/listAccountTypes" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/removeAccountType" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/editAuthorizationLevel" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/removeAuthorizationLevel" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<beans:bean id="noOpAuthenticationEntryPoint"
+		class="nl.strohalm.cyclos.webservices.rest.NoOpAuthenticationEntryPoint" />
+	<http pattern="/rest/general" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<!-- access -->
+	<http pattern="/rest/admin/managePasswords" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/manageExternalAccess" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/generateTransactionPassword"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/manageTransactionPassword"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<!-- accounts -->
+
+	<http pattern="/rest/admin/viewAccountFeeLogDetails"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/editAccountFee" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/listAccountFeeLog" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/rechargeFailedAccountFeeLog"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeAccountFee" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/runAccountFee" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<http pattern="/rest/admin/editAccountType" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/listAccountTypes" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeAccountType" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<http pattern="/rest/admin/editAuthorizationLevel" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeAuthorizationLevel"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<!-- cards -->
+
+	<http pattern="/rest/admin/editCurrency" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/manageCurrency" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeCurrency" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/listCurrencies" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/reinitializeRates" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<!-- details -->
+
+	<http pattern="/rest/admin/editExternalAccount" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/editExternalTransferType"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/listExternalAccounts" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/listExternalTransferTypes"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/overviewExternalAccounts"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeExternalAccount" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeExternalTransferType"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<http pattern="/rest/admin/editFieldMapping" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/editFileMapping" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeFieldMapping" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/SetFieldMappings" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<http pattern="/rest/admin/newTransferImport" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeTransferImport" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/searchTransferImports" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<!-- gaurantees certification and obeligation later-->
+
+	<http pattern="/rest/admin/authorizeGuarantee" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/deleteGuarantee" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/registerGuarantee" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/searchGuarantees" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<http pattern="/rest/admin/deleteGuaranteeType" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/editGuaranteeType" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/listGuaranteeTypes" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<http pattern="/rest/admin/assignPos" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/editPos" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removePos" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/member/searchPos" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<http pattern="/rest/admin/editTransferType" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeTransferType" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<!-- accounts end -->
+
+
+	<!-- admins -->
+	<http pattern="/rest/admin/removeAdmin" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<http pattern="/rest/admin/mailPreferences" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<!-- admintask -->
+	<http pattern="/rest/admin/adminTasks" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<!-- ads -->
+
+
+	<!-- adsimports -->
+	<http pattern="/rest/admin/importAds" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/importedAdCategories" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/importedAdsDetails" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/importedAdsSummary" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<!-- alerts -->
+
+	<!-- channels -->
+	<http pattern="/rest/admin/editChannel" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/listChannels" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeChannel" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<!-- customization open -->
+	<!-- documents -->
+
+	<http pattern="/rest/admin/editCustomField" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/editCustomFieldPossibleValue"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/linkPaymentCustomField" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/listCustomFields" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/moveCustomFieldPossibleValue"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeCustomField" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeCustomFieldPossibleValue"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/setCustomFieldOrder" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+
+
+	<!-- customization end -->
+
+	<!-- fields -->
+	<http pattern="/rest/admin/admin/editCustomField" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/editCustomFieldPossibleValue"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/linkPaymentCustomField" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/moveCustomFieldPossibleValue"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeCustomField" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeCustomFieldPossibleValue"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/setCustomFieldOrder" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+
+	<!-- files -->
+	<http pattern="/rest/admin/editCustomizedFile" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/listCustomizedFiles" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/stopCustomizingFile" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<!-- image -->
+	<http pattern="/rest/admin/customImages" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeCustomImage" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/systemImages" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+
+	<!-- themes -->
 	
 	
-	<http pattern="/rest/admin/editCurrency" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/listCurrencies" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/manageCurrency" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/removeCurrency" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<!-- translationmessage -->
+	<http pattern="/rest/admin/editTranslationMessage" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeTranslationMessages"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/searchTranslationMessages"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
 	
-	<http pattern="/rest/admin/editExternalAccount" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/editExternalTransferType" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/listExternalAccounts" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/listExternalTransferTypes" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/overviewExternalAccounts" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/removeExternalAccount" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/removeExternalTransferType" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<!-- elements -->
 	
-	<http pattern="/rest/admin/editFieldMapping" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/editFileMapping" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/removeFieldMapping" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/SetFieldMappings" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+
+
+
+	<!-- groups -->
 	
-	<http pattern="/rest/admin/newTransferImport" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/removeTransferImport" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/searchTransferImports" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/editGroup"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/listGroups"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeGroup"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+		
+		
+	<http pattern="/rest/admin/editGroupAccountSettings"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeGroupAccount" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+		
+		
+	<http pattern="/rest/admin/editGroupFilter" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/listGroupFilters" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeGroupFilter" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+		
+	<http pattern="/rest/admin/stopCustomizingGroupFilterFile"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+		
+		
+	<http pattern="/rest/admin/editGroupPermissions" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+		
+	<!-- group close -->
 	
-	<http pattern="/rest/admin/assignPos" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/editPos" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/removePos" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	<http pattern="/rest/admin/" create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	<!-- image -->
+	<http pattern="/rest/admin/removeImage"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
 	
 	
+	<!-- invoices -->
+
+	<http pattern="/rest/admin/invoiceDetails" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<!-- loans -->
+	<http pattern="/rest/admin/removeLoanGroup" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
 	
+
 	
-	
-	
-	
-	<beans:bean id="restAuthenticationEntryPoint" class="nl.strohalm.cyclos.webservices.rest.RestAuthenticationEntryPoint" />
-	<http pattern="/rest/**" authentication-manager-ref="restAuthenticationManager" entry-point-ref="restAuthenticationEntryPoint" create-session="stateless">
+	<http pattern="/rest/admin/confirmLoan" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/discardLoan" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/manageLoanExpiredStatus"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/repayLoan" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/searchLoanPayments" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<!-- members -->
+
+	<http pattern="/rest/admin/activities" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<http pattern="/rest/admin/editRegistrationAgreement"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/listRegistrationAgreements"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeRegistrationAgreement"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<http pattern="/rest/admin/memberBulkChangeBroker" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/memberBulkChangeChannels"
+		create-session="stateless" entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/memberBulkChangeGroup" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/memberBulkGenerateCard" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<http pattern="/rest/admin/editCreditLimit" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<http pattern="/rest/admin/importedMembersDetails" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/importedMembersSummary" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/importMembers" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+
+	<http pattern="/rest/admin/changeMessageStatus" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/editMessageCategory" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/listMessageCategories" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeMessageCategory" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<http pattern="/rest/admin/editMemberRecordType" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/listMemberRecordTypes" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeMemberRecord" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeMemberRecordType" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/searchMemberRecords" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+
+	<http pattern="/rest/admin/editInfoText" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/removeInfoText" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/searchInfoTexts" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+
+
+	<!-- payments -->
+
+	<http pattern="/rest/admin/confirmPayment" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<!-- reports -->
+
+	<http pattern="/rest/admin/reportsCurrentState" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+	<http pattern="/rest/admin/membersSmsLogsReport" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+
+	<!-- setting -->
+	<http pattern="/rest/admin/editAccessSettings" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/editAlertSettings" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/editLocalSettings" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/editLogSettings" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/editMailSettings" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/editMailTranslation" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/editMessageSetting" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/exportSettings" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/importSettings" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/listMessageSettings" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+	<http pattern="/rest/admin/manageSettings" create-session="stateless"
+		entry-point-ref="noOpAuthenticationEntryPoint" />
+
+
+
+	<beans:bean id="restAuthenticationEntryPoint"
+		class="nl.strohalm.cyclos.webservices.rest.RestAuthenticationEntryPoint" />
+	<http pattern="/rest/**" authentication-manager-ref="restAuthenticationManager"
+		entry-point-ref="restAuthenticationEntryPoint" create-session="stateless">
 		<http-basic />
 		<intercept-url pattern="/**" access="ROLE_REST" />
 	</http>
 
-	<beans:bean id="restAuthenticationProvider" class="nl.strohalm.cyclos.webservices.rest.RestAuthenticationProvider" />
+	<beans:bean id="restAuthenticationProvider"
+		class="nl.strohalm.cyclos.webservices.rest.RestAuthenticationProvider" />
 	<authentication-manager alias="restAuthenticationManager">
 		<authentication-provider ref="restAuthenticationProvider" />
 	</authentication-manager>

@@ -66,7 +66,7 @@ public class StopCustomizingGroupFileController extends BaseRestController {
 		}
     
 
-    @RequestMapping(value = "/member/stopCustomizingGroupFile" , method = RequestMethod.DELETE)
+    @RequestMapping(value = "member/stopCustomizingGroupFile" , method = RequestMethod.DELETE)
     @ResponseBody
     protected StopCustomizingGroupFileResponseDTO executeAction(@RequestBody StopCustomizingGroupFileRequestDTO form) throws Exception {
         final long id = form.getFileId();

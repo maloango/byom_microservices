@@ -85,7 +85,7 @@ public class ImportedAdCategoriesController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/importedAdCategories", method = RequestMethod.POST)
 	@ResponseBody
 	protected ImportedAdCategoriesResponseDto executeAction(
 			@RequestBody ImportedAdCategoriesRequestDto form) throws Exception {

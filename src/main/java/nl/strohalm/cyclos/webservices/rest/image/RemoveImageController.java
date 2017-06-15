@@ -64,7 +64,7 @@ public class RemoveImageController extends BaseRestController {
     	
     }
 
-    @RequestMapping(value="/admin/removeImage",method=RequestMethod.DELETE)
+    @RequestMapping(value="admin/removeImage",method=RequestMethod.DELETE)
     @ResponseBody
     protected RemoveImageResponseDTO renderContent(@RequestBody RemoveImageRequestDTO form) throws Exception {
         final Long id = form.getId();

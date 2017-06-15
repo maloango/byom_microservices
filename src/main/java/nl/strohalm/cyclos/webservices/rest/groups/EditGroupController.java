@@ -376,7 +376,7 @@ public class EditGroupController extends BaseRestController {
     	
     	
     }
-    @RequestMapping(value = "/admin/editGroup", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/editGroup", method = RequestMethod.POST)
     @ResponseBody
     protected EditGroupResponseDTO handleSubmit(@RequestBody EditGroupRequestDTO form ) throws Exception {
     	 

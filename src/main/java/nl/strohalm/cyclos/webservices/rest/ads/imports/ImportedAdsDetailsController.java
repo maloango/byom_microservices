@@ -65,7 +65,7 @@ public class ImportedAdsDetailsController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.GET)
+	@RequestMapping(value = "admin/importedAdsDetails", method = RequestMethod.GET)
 	@ResponseBody
 	protected ImportedAdsDetailsResponseDto executeQuery(
 			final ImportedAdsDetailsRequestDto context,

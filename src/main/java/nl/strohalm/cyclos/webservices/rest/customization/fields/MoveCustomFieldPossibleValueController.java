@@ -160,7 +160,7 @@ public class MoveCustomFieldPossibleValueController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/moveCustomFieldPossibleValue", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/moveCustomFieldPossibleValue", method = RequestMethod.POST)
 	@ResponseBody
 	protected MoveCustomFieldPossibleValueResponseDto executeAction(
 			@RequestBody final MoveCustomFieldPossibleValueRequestDto form)

@@ -69,7 +69,7 @@ public class LinkPaymentCustomFieldController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/linkPaymentCustomField", method = RequestMethod.POST)
 	@ResponseBody
 	protected LinkPaymentCustomFieldResponseDto executeAction(
 			@RequestBody LinkPaymentCustomFieldRequestDto form)

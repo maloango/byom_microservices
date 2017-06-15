@@ -68,7 +68,7 @@ public class StopCustomizingGroupFilterFileController extends BaseRestController
 			}
 	    }
 
-	    @RequestMapping(value = "" , method = RequestMethod.DELETE)
+	    @RequestMapping(value = "admin/stopCustomizingGroupFilterFile" , method = RequestMethod.DELETE)
 	    @ResponseBody
 	    
 	    protected StopCustomizingGroupFilterFileResponseDTO executeAction(@RequestBody StopCustomizingGroupFilterFileRequestDTO form) throws Exception {

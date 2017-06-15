@@ -139,7 +139,7 @@ public class ListAdInterestsController extends BaseRestController{
 		}
 	}
 	
-	@RequestMapping(value = "/member/listAdInterests", method = RequestMethod.GET)
+	@RequestMapping(value = "member/listAdInterests", method = RequestMethod.GET)
 	@ResponseBody
 	    protected ListAdInterestsResponseDTO executeAction(@RequestBody ListAdInterestsRequestDTO form) throws Exception {
 	        //final Member owner = context.getElement();

@@ -52,7 +52,7 @@ public class ImportedAdsSummaryController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.GET)
+	@RequestMapping(value = "admin/importedAdsSummary", method = RequestMethod.GET)
 	@ResponseBody
 	protected ImportedAdsSummaryResponseDto formAction(
 			@RequestBody ImportedAdsSummaryRequestDto context) throws Exception {

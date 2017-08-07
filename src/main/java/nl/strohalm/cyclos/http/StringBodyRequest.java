@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 
+import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -91,6 +92,20 @@ public class StringBodyRequest extends HttpServletRequestWrapper {
             return in.skip(n);
         }
 
+        @Override
+        public boolean isFinished() {
+            return false;
+        }
+
+        @Override
+        public boolean isReady() {
+            return false;
+        }
+
+        @Override
+        public void setReadListener(ReadListener readListener) {
+
+        }
     }
 
     private String  body;

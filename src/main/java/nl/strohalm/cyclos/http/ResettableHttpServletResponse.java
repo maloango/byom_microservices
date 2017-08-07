@@ -26,13 +26,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
@@ -200,6 +197,16 @@ public class ResettableHttpServletResponse implements HttpServletResponse, Reset
             outputStream = new FileOutputStream(contents);
             servletOutputStream = new ServletOutputStream() {
                 @Override
+                public boolean isReady() {
+                    return false;
+                }
+
+                @Override
+                public void setWriteListener(WriteListener writeListener) {
+
+                }
+
+                @Override
                 public void close() throws IOException {
                     outputStream.close();
                 }
@@ -228,8 +235,23 @@ public class ResettableHttpServletResponse implements HttpServletResponse, Reset
         return servletOutputStream;
     }
 
-    public Integer getStatus() {
+    public int getStatus() {
         return status;
+    }
+
+    @Override
+    public String getHeader(String s) {
+        return null;
+    }
+
+    @Override
+    public Collection<String> getHeaders(String s) {
+        return null;
+    }
+
+    @Override
+    public Collection<String> getHeaderNames() {
+        return null;
     }
 
     @Override
@@ -356,6 +378,11 @@ public class ResettableHttpServletResponse implements HttpServletResponse, Reset
                 wrapped.setContentLength(len);
             }
         });
+    }
+
+    @Override
+    public void setContentLengthLong(long l) {
+
     }
 
     @Override

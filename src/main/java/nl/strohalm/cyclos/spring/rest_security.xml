@@ -6,7 +6,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:sec="http://www.springframework.org/schema/security" 
     xsi:schemaLocation="
-    http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+    http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
 	<beans:bean id="noOpAuthenticationEntryPoint" class="nl.strohalm.cyclos.webservices.rest.NoOpAuthenticationEntryPoint" />
@@ -15,7 +15,7 @@
 	<beans:bean id="restAuthenticationEntryPoint" class="nl.strohalm.cyclos.webservices.rest.RestAuthenticationEntryPoint" />
 	<http pattern="/rest/**" authentication-manager-ref="restAuthenticationManager" entry-point-ref="restAuthenticationEntryPoint" create-session="stateless">
 		<http-basic />
-		<intercept-url pattern="/**" access="ROLE_REST" />
+		<intercept-url pattern="/nl/strohalm/cyclos/setup" access="ROLE_REST" />
 	</http>
 
 	<beans:bean id="restAuthenticationProvider" class="nl.strohalm.cyclos.webservices.rest.RestAuthenticationProvider" />

@@ -157,16 +157,20 @@ public class PaymentController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/payment", method = RequestMethod.POST)
 	@ResponseBody
 	protected PaymentResponseDto handleSubmit(
 			@RequestBody PaymentRequestDto form) throws Exception {
-		// final PaymentForm form = context.getForm();
+		PaymentResponseDto response =null;
+                try{
 		final Map<String, Object> params = new HashMap<String, Object>();
 		params.put("selectMember", form.isSelectMember());
 		params.put("toSystem", form.isToSystem());
 		params.put("from", form.getFrom());
-		PaymentResponseDto response = new PaymentResponseDto(params);
+		response = new PaymentResponseDto(params);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

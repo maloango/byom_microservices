@@ -45,6 +45,10 @@ public class SystemImagesController extends BaseRestController {
 	}
 
 	private ImageService imageService;
+	public final ImageService getImageService() {
+		return imageService;
+	}
+
 	private WebImageHelper webImageHelper;
 
 	@Inject
@@ -88,13 +92,15 @@ public class SystemImagesController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public SystemImagesResponseDto(){
+                }
 	}
 
-	@RequestMapping(value = "/admin/systemImages", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/systemImages", method = RequestMethod.GET)
 	@ResponseBody
-	protected SystemImagesResponseDto formAction(
-			@RequestBody SystemImagesRequestDto form) throws Exception {
-		// final SystemImagesForm form = context.getForm();
+	protected SystemImagesResponseDto formAction(@RequestBody SystemImagesRequestDto form) throws Exception {
+			
+		
 		FormFile upload = null;
 		SystemImagesResponseDto response = new SystemImagesResponseDto();
 		try {
@@ -120,3 +126,16 @@ public class SystemImagesController extends BaseRestController {
 	}
 
 }
+////@Override
+//    @SuppressWarnings("unchecked")
+//    protected void prepareForm(final ActionContext context) throws Exception {
+//        final HttpServletRequest request = context.getRequest();
+//        final SortedSet<SystemImagesAction.SystemImageVO> images = new TreeSet<SystemImagesAction.SystemImageVO>();
+//        final List<SystemImage> systemImages = (List<SystemImage>) imageService.listByNature(Image.Nature.SYSTEM);
+//        for (final SystemImage image : systemImages) {
+//            final String key = "customImage.system." + image.getSimpleName();
+//            images.add(new SystemImagesAction.SystemImageVO(context.message(key), image));
+//        }
+//        request.setAttribute("images", images);
+//    }
+//}

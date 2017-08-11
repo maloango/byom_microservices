@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<endpoints version="2.0" xmlns="http://java.sun.com/xml/ns/jax-ws/ri/runtime">
+  <endpoint implementation="nl.strohalm.cyclos.webservices.members.MemberWebServiceImpl" name="members" url-pattern="/members"/>
+  <endpoint implementation="nl.strohalm.cyclos.webservices.infotexts.InfoTextWebServiceImpl" name="infoTexts" url-pattern="/infoTexts"/>
+  <endpoint implementation="nl.strohalm.cyclos.webservices.access.AccessWebServiceImpl" name="access" url-pattern="/access"/>
+  <endpoint implementation="nl.strohalm.cyclos.webservices.payments.PaymentWebServiceImpl" name="payment" url-pattern="/payment"/>
+  <endpoint implementation="nl.strohalm.cyclos.webservices.accounts.AccountWebServiceImpl" name="account" url-pattern="/account"/>
+  <endpoint implementation="nl.strohalm.cyclos.webservices.pos.PosWebServiceImpl" name="pos" url-pattern="/pos"/>
+  <endpoint implementation="nl.strohalm.cyclos.webservices.ads.AdWebServiceImpl" name="ads" url-pattern="/ads"/>
+  <endpoint implementation="nl.strohalm.cyclos.webservices.webshop.WebShopWebServiceImpl" name="webshop" url-pattern="/webshop"/>
+  <endpoint implementation="nl.strohalm.cyclos.webservices.sms.SmsWebServiceImpl" name="sms" url-pattern="/sms"/>
+  <endpoint implementation="nl.strohalm.cyclos.webservices.fields.FieldWebServiceImpl" name="fields" url-pattern="/fields"/>
+</endpoints>

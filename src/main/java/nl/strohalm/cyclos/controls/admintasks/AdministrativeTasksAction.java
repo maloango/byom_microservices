@@ -55,7 +55,8 @@ public class AdministrativeTasksAction extends BaseAction {
         final HttpServletRequest request = context.getRequest();
 
         final boolean canViewIndexes = permissionService.hasPermission(AdminSystemPermission.TASKS_MANAGE_INDEXES);
-        if (canViewIndexes) {
+        if (!canViewIndexes) {
+        } else {
             final Map<Class<? extends Indexable>, IndexStatus> indexesStatus = applicationService.getFullTextIndexesStatus();
             final Map<String, IndexStatus> indexesStatusAsString = new LinkedHashMap<String, IndexStatus>();
             boolean allOptimized = true;
@@ -88,3 +89,4 @@ public class AdministrativeTasksAction extends BaseAction {
     }
 
 }
+

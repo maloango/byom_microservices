@@ -1,15 +1,13 @@
 package nl.strohalm.cyclos.webservices.rest.loans;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Controller;
 
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.MemberPermission;
@@ -20,6 +18,7 @@ import nl.strohalm.cyclos.controls.loans.BaseLoanActionForm;
 import nl.strohalm.cyclos.controls.loans.LoanDetailsForm;
 import nl.strohalm.cyclos.entities.Relationship;
 import nl.strohalm.cyclos.entities.accounts.MemberAccount;
+import nl.strohalm.cyclos.entities.accounts.external.ExternalTransfer;
 import nl.strohalm.cyclos.entities.accounts.loans.Loan;
 import nl.strohalm.cyclos.entities.accounts.loans.LoanParameters;
 import nl.strohalm.cyclos.entities.accounts.loans.LoanPayment;
@@ -53,6 +52,10 @@ import nl.strohalm.cyclos.utils.validation.RequiredError;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Controller;
+
 @Controller
 public class LoanDetailsController extends BaseRestController {//later
 	protected LoanService loanService;
@@ -64,6 +67,38 @@ public class LoanDetailsController extends BaseRestController {//later
 	private PermissionService permissionService;
 	private SettingsService settingsService;
 
+    public GroupService getGroupService() {
+        return groupService;
+    }
+
+    public void setGroupService(GroupService groupService) {
+        this.groupService = groupService;
+    }
+
+    public ElementService getElementService() {
+        return elementService;
+    }
+
+    public void setElementService(ElementService elementService) {
+        this.elementService = elementService;
+    }
+
+    public PermissionService getPermissionService() {
+        return permissionService;
+    }
+
+    public void setPermissionService(PermissionService permissionService) {
+        this.permissionService = permissionService;
+    }
+
+    public SettingsService getSettingsService() {
+        return settingsService;
+    }
+
+    public void setSettingsService(SettingsService settingsService) {
+        this.settingsService = settingsService;
+    }
+        
 	private CustomFieldHelper customFieldHelper;
 
 	public DataBinder<? extends LoanPaymentDTO> getDataBinder() {
@@ -112,6 +147,117 @@ public class LoanDetailsController extends BaseRestController {//later
 		binder.registerBinder("loanPayment",
 				PropertyBinder.instance(LoanPayment.class, "loanPaymentId"));
 	}
+        
+        public static class PrepareFormRequestDTO{
+             private Calendar             expirationDate;
+    private int                  index;
+    private Loan                 loan;
+    private BigDecimal           repaidAmount     = BigDecimal.ZERO;
+    private Calendar             repaymentDate;
+    private Status               status           = Status.OPEN;
+    private Collection<Transfer> transfers;
+    private BigDecimal           amount;
+    private ExternalTransfer     externalTransfer;
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public BigDecimal getDiscardedAmount() {
+        if (status != Status.DISCARDED) {
+            return BigDecimal.ZERO;
+        }
+        try {
+            return amount.subtract(repaidAmount);
+        } catch (final NullPointerException e) {
+            return BigDecimal.ZERO;
+        }
+    }
+
+    public Calendar getExpirationDate() {
+        return expirationDate;
+    }
+
+    public ExternalTransfer getExternalTransfer() {
+        return externalTransfer;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public Loan getLoan() {
+        return loan;
+    }
+
+    public int getNumber() {
+        return index + 1;
+    }
+
+    public BigDecimal getRemainingAmount() {
+        if (status == null || status.isClosed()) {
+            return BigDecimal.ZERO;
+        }
+        return amount.subtract(repaidAmount);
+    }
+
+    public BigDecimal getRepaidAmount() {
+        return repaidAmount;
+    }
+
+    public Calendar getRepaymentDate() {
+        return repaymentDate;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public Collection<Transfer> getTransfers() {
+        return transfers;
+    }
+
+    public void setAmount(final BigDecimal value) {
+        amount = value;
+    }
+
+    public void setExpirationDate(final Calendar expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public void setExternalTransfer(final ExternalTransfer externalTransfer) {
+        this.externalTransfer = externalTransfer;
+    }
+
+    public void setIndex(final int index) {
+        this.index = index;
+    }
+
+    public void setLoan(final Loan loan) {
+        this.loan = loan;
+    }
+
+    public void setRepaidAmount(final BigDecimal repaidValue) {
+        repaidAmount = repaidValue;
+    }
+
+    public void setRepaymentDate(final Calendar repaymentDate) {
+        this.repaymentDate = repaymentDate;
+    }
+
+    public void setStatus(final Status status) {
+        this.status = status;
+    }
+
+    public void setTransfers(final Collection<Transfer> transfers) {
+        this.transfers = transfers;
+    }
+
+        }
+        
+        public static class PrepareFormResponse{
+            
+        }
 
 	protected void prepareForm(final ActionContext context) throws Exception {
 		final HttpServletRequest request = context.getRequest();
@@ -183,8 +329,7 @@ public class LoanDetailsController extends BaseRestController {//later
 		if (!closed && transfer.getProcessDate() != null) {
 			final Status firstOpenPaymentStatus = firstOpenPayment.getStatus();
 			if ((firstOpenPaymentStatus == LoanPayment.Status.IN_PROCESS)) {
-				// Admins can mark in-process loans as unrecoverable or
-				// recovered
+				
 				if (permissionService
 						.hasPermission(AdminMemberPermission.LOANS_MANAGE_EXPIRED_STATUS)) {
 					canMarkAsRecovered = true;

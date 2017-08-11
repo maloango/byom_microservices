@@ -34,6 +34,18 @@ public class SearchPosController extends BaseRestController {
 	private DataBinder<PosQuery> dataBinder;
 
 	private PosService posService;
+	public final ElementService getElementService() {
+		return elementService;
+	}
+
+	public final void setElementService(ElementService elementService) {
+		this.elementService = elementService;
+	}
+
+	public final PosService getPosService() {
+		return posService;
+	}
+
 	private ElementService elementService;
 
 	// Used to get data and save to database
@@ -74,11 +86,11 @@ public class SearchPosController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "member/searchPos", method = RequestMethod.GET)
+	@RequestMapping(value = "member/searchPos{}", method = RequestMethod.GET)
 	@ResponseBody
-	protected SearchPosResponseDto executeQuery(
-			@RequestBody SearchPosRequestDto form,
-			final QueryParameters queryParameters) {
+	protected SearchPosResponseDto executeQuery(@RequestBody SearchPosRequestDto form,final QueryParameters queryParameters) {
+			
+			
 		final PosQuery query = (PosQuery) queryParameters;
 		final List<Pos> pos = posService.search(query);
 		SearchPosResponseDto response = new SearchPosResponseDto();

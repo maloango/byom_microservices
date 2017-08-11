@@ -27,6 +27,10 @@ import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class ImportedAdsDetailsController extends BaseRestController {
 	private AdImportService adImportService;
+	public final AdImportService getAdImportService() {
+		return adImportService;
+	}
+
 	private DataBinder<ImportedAdQuery> dataBinder;
 
 	public DataBinder<ImportedAdQuery> getDataBinder() {
@@ -70,11 +74,15 @@ public class ImportedAdsDetailsController extends BaseRestController {
 	protected ImportedAdsDetailsResponseDto executeQuery(
 			final ImportedAdsDetailsRequestDto context,
 			final QueryParameters queryParameters) {
-		// final HttpServletRequest request = context.getRequest();
+		ImportedAdsDetailsResponseDto response = null;
+                try{
 		final ImportedAdQuery query = (ImportedAdQuery) queryParameters;
 		final List<ImportedAd> ads = adImportService.searchImportedAds(query);
-		ImportedAdsDetailsResponseDto response = new ImportedAdsDetailsResponseDto(
-				ads);
+		response = new ImportedAdsDetailsResponseDto(ads);}
+                catch(Exception e){
+                    e.printStackTrace();
+                        }
+				
 		return response;
 	}
 
@@ -94,7 +102,14 @@ public class ImportedAdsDetailsController extends BaseRestController {
 		return query;
 	}
 
-	protected boolean willExecuteQuery(final ActionContext context,
+    /**
+     *
+     * @param context
+     * @param queryParameters
+     * @return
+     * @throws Exception
+     */
+    protected boolean willExecuteQuery(final ActionContext context,
 			final QueryParameters queryParameters) throws Exception {
 		return true;
 	}

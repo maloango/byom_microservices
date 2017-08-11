@@ -11,10 +11,15 @@ import nl.strohalm.cyclos.exceptions.PermissionDeniedException;
 import nl.strohalm.cyclos.services.accounts.guarantees.GuaranteeTypeService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class DeleteGuaranteeTypeController extends BaseRestController {
 	private GuaranteeTypeService guaranteeTypeService;
+
+	public final GuaranteeTypeService getGuaranteeTypeService() {
+		return guaranteeTypeService;
+	}
 
 	public static class DeleteGuaranteeTypeRequestDto {
 		private long guaranteeTypeId;
@@ -40,12 +45,12 @@ public class DeleteGuaranteeTypeController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/removeAccountType", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/deleteGuaranteeType{guaranteeTypeId}", method = RequestMethod.GET)
 	@ResponseBody
 	public DeleteGuaranteeTypeResponseDto executeAction(
-			@RequestBody DeleteGuaranteeTypeRequestDto form) throws Exception {
-		// final DeleteGuaranteeTypeForm form = context.getForm();
-		final long id = form.getGuaranteeTypeId();
+			@PathVariable ("guaranteeTypeId") long guaranteeTypeId) throws Exception {
+		// 
+		final long id =guaranteeTypeId ;
 		if (id <= 0L) {
 			throw new ValidationException();
 		}

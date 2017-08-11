@@ -46,11 +46,60 @@ import nl.strohalm.cyclos.utils.binding.DataBinderHelper;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.binding.SimpleCollectionBinder;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
+import org.springframework.web.bind.annotation.PathVariable;
 
 public class SearchGuaranteesController {
 	private DataBinder<GuaranteeQuery> guaranteeDataBinder;
 	private GuaranteeService guaranteeService;
 	private GuaranteeTypeService guaranteeTypeService;
+	public final GroupService getGroupService() {
+		return groupService;
+	}
+
+	public final void setGroupService(GroupService groupService) {
+		this.groupService = groupService;
+	}
+
+	public final ElementService getElementService() {
+		return elementService;
+	}
+
+	public final void setElementService(ElementService elementService) {
+		this.elementService = elementService;
+	}
+
+	public final PermissionService getPermissionService() {
+		return permissionService;
+	}
+
+	public final void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	public final SettingsService getSettingsService() {
+		return settingsService;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
+	public final GuaranteeService getGuaranteeService() {
+		return guaranteeService;
+	}
+
+	public final GuaranteeTypeService getGuaranteeTypeService() {
+		return guaranteeTypeService;
+	}
+
+	public final PaymentCustomFieldService getPaymentCustomFieldService() {
+		return paymentCustomFieldService;
+	}
+
+	public final void setGuaranteeDataBinder(DataBinder<GuaranteeQuery> guaranteeDataBinder) {
+		this.guaranteeDataBinder = guaranteeDataBinder;
+	}
+
 	private PaymentCustomFieldService paymentCustomFieldService;
 	private GroupService groupService;
 	private ElementService elementService;
@@ -81,6 +130,16 @@ public class SearchGuaranteesController {
 	}
 
 	public static class SearchGuaranteesRequestDto {
+            private long guaranteeTypeId;
+
+        public long getGuaranteeTypeId() {
+            return guaranteeTypeId;
+        }
+
+        public void setGuaranteeTypeId(long guaranteeTypeId) {
+            this.guaranteeTypeId = guaranteeTypeId;
+        }
+            
 
 	}
 
@@ -97,20 +156,25 @@ public class SearchGuaranteesController {
 
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/searchGuarantees/{guaranteeTypeId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected SearchGuaranteesResponseDto executeQuery(
-			@RequestBody SearchGuaranteesRequestDto form,
-			final QueryParameters queryParameters) {
-		// final HttpServletRequest request = context.getRequest();
+	protected SearchGuaranteesResponseDto executeQuery(@PathVariable ("guaranteeTypeId")long guaranteeTypeId,final QueryParameters queryParameters) {
+			
+			
+		SearchGuaranteesResponseDto response = null;
+                try{
 		final GuaranteeQuery query = (GuaranteeQuery) queryParameters;
 		query.fetch(RelationshipHelper.nested(
 				Guarantee.Relationships.GUARANTEE_TYPE,
 				GuaranteeType.Relationships.CURRENCY));
 		final List<Guarantee> guarantees = guaranteeService.search(query);
 		boolean executeGuaranteesQuery = true;
-		SearchGuaranteesResponseDto response = new SearchGuaranteesResponseDto(
-				guarantees, executeGuaranteesQuery);
+                 response = new SearchGuaranteesResponseDto(
+				guarantees, executeGuaranteesQuery);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+        
 		return response;
 
 	}

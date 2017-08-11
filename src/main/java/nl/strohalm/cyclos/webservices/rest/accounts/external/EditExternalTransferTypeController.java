@@ -28,6 +28,19 @@ public class EditExternalTransferTypeController extends BaseRestController {
 	private ExternalTransferTypeService externalTransferTypeService;
 	private DataBinder<ExternalTransferType> dataBinder;
 	private TransferTypeService transferTypeService;
+	public final ExternalTransferTypeService getExternalTransferTypeService() {
+		return externalTransferTypeService;
+	}
+
+	public final TransferTypeService getTransferTypeService() {
+		return transferTypeService;
+	}
+
+	public final ExternalAccountService getExternalAccountService() {
+		return externalAccountService;
+	}
+
+
 	private ExternalAccountService externalAccountService;
 	private PermissionService permissionService;
 
@@ -105,7 +118,7 @@ public class EditExternalTransferTypeController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "admin/editExternalTransferType", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editExternalTransferType", method = RequestMethod.POST)
 	@ResponseBody
 	protected EditExternalTransferTypeResponseDTO handleSubmit(
 			@RequestBody EditExternalTransferTypeRequestDTO form)

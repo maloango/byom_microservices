@@ -44,7 +44,7 @@ import nl.strohalm.cyclos.webservices.model.TransferTypeVO;
  * 
  * @author Rinke
  */
-public class TransferTypeServiceSecurity extends BaseServiceSecurity implements TransferTypeService {
+public  class TransferTypeServiceSecurity extends BaseServiceSecurity implements TransferTypeService {
 
     private TransferTypeServiceLocal transferTypeService;
 

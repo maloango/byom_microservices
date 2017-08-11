@@ -11,6 +11,7 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.AbstractActionContext;
 import nl.strohalm.cyclos.services.alerts.AlertService;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class RemoveAlertsController extends BaseRestController{
@@ -30,9 +31,17 @@ public class RemoveAlertsController extends BaseRestController{
     public static class RemoveAlertsRequestDto{
     	
     	private static AbstractActionContext actionMapping;
-		private Long[]            alertIds;
+	private Long[]            alertIds;
         private String            alertType;
 
+        public static AbstractActionContext getActionMapping() {
+            return actionMapping;
+        }
+
+        public static void setActionMapping(AbstractActionContext actionMapping) {
+            RemoveAlertsRequestDto.actionMapping = actionMapping;
+        }
+        
         public Long[] getAlertIds() {
             return alertIds;
         }
@@ -57,8 +66,26 @@ public class RemoveAlertsController extends BaseRestController{
 
     	
     public static class RemoveAlertsResponseDTO{
-    	public String message;
+                public String message;
+                private String            alertType;
+                private Long[]            alertIds;
 
+                public String getAlertType() {
+                    return alertType;
+                }
+
+                public void setAlertType(String alertType) {
+                    this.alertType = alertType;
+                }
+
+                public Long[] getAlertIds() {
+                    return alertIds;
+                }
+
+                public void setAlertIds(Long[] alertIds) {
+                    this.alertIds = alertIds;
+                }
+                
 		public final String getMessage() {
 			return message;
 		}
@@ -75,25 +102,39 @@ public class RemoveAlertsController extends BaseRestController{
 		public final void setMember(boolean isMember) {
 			this.isMember = isMember;
 		}
-    	
-    	
+
+                public boolean isIsMember() {
+                    return isMember;
+                }
+
+                public void setIsMember(boolean isMember) {
+                    this.isMember = isMember;
+                }
+                
+    	public RemoveAlertsResponseDTO(){
+        }
     }
     
-    
-
-    @RequestMapping(value = "/member/manageTransactionPassword", method = RequestMethod.DELETE)
+    @RequestMapping(value = "admin/removeAlerts{alertIds}", method = RequestMethod.GET)
     @ResponseBody
-    protected void executeAction(@RequestBody final RemoveAlertsRequestDto form) throws Exception {
-        // final RemoveAlertsForm form = context.getForm();
-        final boolean isMember = "MEMBER".equals(form.getAlertType());
-        RemoveAlertsResponseDTO response= new RemoveAlertsResponseDTO();
-        alertService.removeAlerts(form.getAlertIds());
+    protected RemoveAlertsResponseDTO executeAction(@PathVariable ("alertIds")long alertIds) throws Exception {
+        RemoveAlertsResponseDTO response = new RemoveAlertsResponseDTO();
+        try{
+        final boolean isMember = "MEMBER".equals(response.getAlertType());
+        alertService.removeAlerts(response.getAlertIds());
         response.setMessage("alert.removed");
         RemoveAlertsRequestDto.findForward(isMember ? "toMember" : "toSystem");
-    }
-
+        response = new RemoveAlertsResponseDTO();}
+        catch(Exception e){
+            e.printStackTrace();
+            
+        }
+    
+        return response;
 	
 	}
-
-
+    }
 }
+
+    
+

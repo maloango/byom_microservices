@@ -43,6 +43,9 @@ public class RemoveAccountTypeController extends BaseRestController {
 	public AccountTypeService getAccountTypeService() {
 		return accountTypeService;
 	}
+        public RemoveAccountTypeController(){
+        }
+
 
 	@Inject
 	public void setAccountTypeService(
@@ -50,26 +53,31 @@ public class RemoveAccountTypeController extends BaseRestController {
 		this.accountTypeService = accountTypeService;
 	}
 
-	@RequestMapping(value = "admin/removeAccountType", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeAccountType", method = RequestMethod.POST)
 	@ResponseBody
 	protected RemoveAccountTypeResponseDto executeAction(
 			@RequestBody RemoveAccountTypeRequestDto form) throws Exception {
-		
+		RemoveAccountTypeResponseDto response = new RemoveAccountTypeResponseDto();
+                try{
 		final long id = form.getAccountTypeId();
 		if (id <= 0) {
 			throw new ValidationException();
 		}
-		RemoveAccountTypeResponseDto respose = new RemoveAccountTypeResponseDto();
-		try {
+		
 			accountTypeService.remove(id);
-			// context.sendMessage("accountType.removed");
-			respose.setMessage("accountType.removed");
-		} catch (final Exception e) {
+			try{
+			response.setMessage("accountType.removed");
+		} 
+                catch (final Exception e) {
+                    e.printStackTrace();
+                }
 
-			// return context.sendError("accountType.error.removing");
-			respose.setMessage("accountType.error.removing");
-		}
-		return respose;
+			response.setMessage("accountType.error.removing");}
+                catch(ValidationException e){
+                    e.printStackTrace();
+                }
+		
+		return response;
 	}
 
 }

@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,11 +32,44 @@ import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class MemberAdsController extends BaseRestController {
 	private AdService adService;
 	private GroupService groupService;
+	public final GroupService getGroupService() {
+		return groupService;
+	}
+
+	public final void setGroupService(GroupService groupService) {
+		this.groupService = groupService;
+	}
+
+	public final ElementService getElementService() {
+		return elementService;
+	}
+
+	public final void setElementService(ElementService elementService) {
+		this.elementService = elementService;
+	}
+
+	public static final PermissionService getPermissionService() {
+		return permissionService;
+	}
+
+	public static final void setPermissionService(PermissionService permissionService) {
+		MemberAdsController.permissionService = permissionService;
+	}
+
+	public final SettingsService getSettingsService() {
+		return settingsService;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
 	private ElementService elementService;
 	private static PermissionService permissionService;
 	private SettingsService settingsService;
@@ -107,7 +139,7 @@ public class MemberAdsController extends BaseRestController {
 	}
 
 	public static class MemberAdsResponseDto {
-		// private String message;
+		
 		Member member;
 		boolean hasImages;
 		boolean myAds;
@@ -116,46 +148,104 @@ public class MemberAdsController extends BaseRestController {
 		boolean brokerViewingAsMember;
 		boolean maxAds;
 
-		public MemberAdsResponseDto(Member member, boolean hasImages,
-				boolean myAds, boolean editable, List<Ad> ads,
-				boolean brokerViewingAsMember, boolean maxAds) {
-			super();
-			// this.message = message;
-			this.member = member;
-			this.hasImages = hasImages;
-			this.myAds = myAds;
-			this.editable = editable;
-			this.ads = ads;
-			this.brokerViewingAsMember = brokerViewingAsMember;
-			this.maxAds = maxAds;
-		}
+        public MemberAdsResponseDto(Member member, boolean hasImages, boolean myAds, boolean editable, List<Ad> ads, boolean brokerViewingAsMember, boolean maxAds) {
+            this.member = member;
+            this.hasImages = hasImages;
+            this.myAds = myAds;
+            this.editable = editable;
+            this.ads = ads;
+            this.brokerViewingAsMember = brokerViewingAsMember;
+            this.maxAds = maxAds;
+        }
+                
+        
+
+        public Member getMember() {
+            return member;
+        }
+
+        public void setMember(Member member) {
+            this.member = member;
+        }
+
+        public boolean isHasImages() {
+            return hasImages;
+        }
+
+        public void setHasImages(boolean hasImages) {
+            this.hasImages = hasImages;
+        }
+
+        public boolean isMyAds() {
+            return myAds;
+        }
+
+        public void setMyAds(boolean myAds) {
+            this.myAds = myAds;
+        }
+
+        public boolean isEditable() {
+            return editable;
+        }
+
+        public void setEditable(boolean editable) {
+            this.editable = editable;
+        }
+
+        public List<Ad> getAds() {
+            return ads;
+        }
+
+        public void setAds(List<Ad> ads) {
+            this.ads = ads;
+        }
+
+        public boolean isBrokerViewingAsMember() {
+            return brokerViewingAsMember;
+        }
+
+        public void setBrokerViewingAsMember(boolean brokerViewingAsMember) {
+            this.brokerViewingAsMember = brokerViewingAsMember;
+        }
+
+        public boolean isMaxAds() {
+            return maxAds;
+        }
+
+        public void setMaxAds(boolean maxAds) {
+            this.maxAds = maxAds;
+        }
+
+
+                public MemberAdsResponseDto(){
+                }
+                        
 
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/memberAds/{memberId}", method = RequestMethod.POST)
 	@ResponseBody
-	protected MemberAdsResponseDto executeAction(
-			@RequestBody MemberAdsRequestDto form) throws Exception {
-		// final MemberAdsForm form = context.getForm();
+	protected MemberAdsRequestDto executeAction(@PathVariable ("memberId") long memberId) throws Exception {
+			
+		
 		Member member;
 		boolean myAds = false;
 		boolean editable = false;
-		// Read only means that the broker is viewing member ads as a common
-		// member
-		final boolean brokerViewingAsMember = form.isReadOnly();
+		MemberAdsRequestDto response= new MemberAdsRequestDto();
+                try{
+		final boolean brokerViewingAsMember = response.isReadOnly();
 
-		// if the memberId parameter is zero or is equals to the logged user or
-		// is equals to the logged operator's member
-		if (form.getMemberId() <= 0
-				|| form.getMemberId() == form.getElement().getId()
-				|| (form.isOperator() && form.getMemberId() == ((Operator) form
+		
+		if (response.getMemberId() <= 0
+				|| response.getMemberId() == response.getElement().getId()
+				|| (response.isOperator() && response.getMemberId() == ((Operator) response
 						.getElement()).getMember().getId())) {
-			if (form.isMember()) {
-				member = (Member) form.getElement();
+			if (response.isMember()) {
+				member = (Member) response.getElement();
 				editable = permissionService
 						.hasPermission(MemberPermission.ADS_PUBLISH);
-			} else if (form.isOperator()) {
-				member = ((Operator) form.getElement()).getMember();
+			} else if (response.isOperator()) {
+				member = ((Operator) response.getElement()).getMember();
 				editable = permissionService
 						.hasPermission(OperatorPermission.ADS_PUBLISH);
 			} else {
@@ -163,7 +253,7 @@ public class MemberAdsController extends BaseRestController {
 			}
 			myAds = true;
 		} else {
-			final Element element = elementService.load(form.getMemberId(),
+			final Element element = elementService.load(response.getMemberId(),
 					Element.Relationships.USER);
 
 			if (!(element instanceof Member)) {
@@ -171,12 +261,12 @@ public class MemberAdsController extends BaseRestController {
 			}
 
 			member = (Member) element;
-			if (form.isMember()) {
+			if (response.isMember()) {
 				editable = !brokerViewingAsMember
-						&& form.isBrokerOf(member)
+						&& response.isBrokerOf(member)
 						&& permissionService
 								.hasPermission(BrokerPermission.ADS_MANAGE);
-			} else if (form.isAdmin()) {
+			} else if (response.isAdmin()) {
 				editable = permissionService
 						.hasPermission(AdminMemberPermission.ADS_MANAGE);
 			}
@@ -189,7 +279,7 @@ public class MemberAdsController extends BaseRestController {
 		query.setOwner(member);
 
 		// Member viewing another member's ads
-		if (!form.isAdmin() && !myAds && !form.isBrokerOf(member)) {
+		if (!response.isAdmin() && !myAds && !response.isBrokerOf(member)) {
 			query.setStatus(Ad.Status.ACTIVE);
 		}
 
@@ -216,9 +306,14 @@ public class MemberAdsController extends BaseRestController {
 		final int maxAdsPerMember = member.getMemberGroup().getMemberSettings()
 				.getMaxAdsPerMember();
 		boolean maxAds = adCount >= maxAdsPerMember;
-		// final HttpServletRequest request = form.getRequest();
-		MemberAdsResponseDto response = new MemberAdsResponseDto(member,
-				hasImages, myAds, editable, ads, brokerViewingAsMember, maxAds);
+		
+                    response = new MemberAdsRequestDto();
+}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+                
+				
 		return response;
 	}
 }

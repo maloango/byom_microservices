@@ -57,6 +57,7 @@ public class LoggedUser {
     private static final String                           SERVICE_CLIENT_KEY = "cyclos.loggedUser.serviceClient";
     private static final String                           POS_KEY            = "cyclos.loggedUser.pos";
     private static final ThreadLocal<Map<String, Object>> ATTRIBUTES         = new ThreadLocal<Map<String, Object>>();
+    
 
     /**
      * Return the current account owner - system when an admin is logged, or the member

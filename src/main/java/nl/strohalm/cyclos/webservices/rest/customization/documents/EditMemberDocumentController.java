@@ -19,6 +19,7 @@ import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.customization.documents.EditMemberDocumentForm;
+import nl.strohalm.cyclos.controls.customization.documents.EditStaticDocumentAction;
 import nl.strohalm.cyclos.controls.customization.documents.EditStaticDocumentForm;
 import nl.strohalm.cyclos.entities.customization.documents.Document;
 import nl.strohalm.cyclos.entities.customization.documents.MemberDocument;
@@ -38,7 +39,29 @@ public class EditMemberDocumentController extends BaseRestController {
 
     private DataBinder<MemberDocument> dataBinder;
     private DocumentService documentService;
-    private PermissionService permissionService;
+    public final DocumentService getDocumentService() {
+		return documentService;
+	}
+
+
+
+	public final void setDocumentService(DocumentService documentService) {
+		this.documentService = documentService;
+	}
+
+
+
+	public final PermissionService getPermissionService() {
+		return permissionService;
+	}
+
+
+
+	public final void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	private PermissionService permissionService;
 
   
 

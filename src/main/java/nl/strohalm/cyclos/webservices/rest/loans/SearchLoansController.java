@@ -11,12 +11,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
@@ -62,6 +56,12 @@ import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class SearchLoansController extends BaseRestController {
@@ -254,6 +254,22 @@ public class SearchLoansController extends BaseRestController {
 		List<Loan> loans;
 		boolean isMultiPayment;
 
+        public List<Loan> getLoans() {
+            return loans;
+        }
+
+        public void setLoans(List<Loan> loans) {
+            this.loans = loans;
+        }
+
+        public boolean isIsMultiPayment() {
+            return isMultiPayment;
+        }
+
+        public void setIsMultiPayment(boolean isMultiPayment) {
+            this.isMultiPayment = isMultiPayment;
+        }
+                
 		public SearchLoansResponseDto(List<Loan> loans, boolean isMultiPayment) {
 			super();
 			this.loans = loans;
@@ -262,13 +278,13 @@ public class SearchLoansController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "member/searchLoans", method = RequestMethod.GET)
 	@ResponseBody
 	protected SearchLoansResponseDto executeQuery(
 			@RequestBody SearchLoansRequestDto form,
 			final QueryParameters queryParameters) {
-		// final SearchLoansForm form = context.getForm();
-		// final HttpServletRequest request = context.getRequest();
+		SearchLoansResponseDto response = null;
+                try{
 		final LoanQuery query = (LoanQuery) queryParameters;
 		final List<Loan> loans = loanService.search(query);
 		boolean isMultiPayment = false;
@@ -281,8 +297,11 @@ public class SearchLoansController extends BaseRestController {
 			}
 		}
 		form.setQueryAlreadyExecuted(true);
-		SearchLoansResponseDto response = new SearchLoansResponseDto(loans,
-				isMultiPayment);
+		response = new SearchLoansResponseDto(loans,
+				isMultiPayment);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

@@ -133,9 +133,11 @@ public class PendingMemberProfileController extends BaseRestController{
 		}
     }
 
-    @RequestMapping(value ="/member/pendingMemberProfile", method = RequestMethod.GET)
+    @RequestMapping(value ="member/pendingMemberProfile", method = RequestMethod.GET)
     @ResponseBody
     protected PendingMemberProfileResponseDTO handleSubmit(@RequestBody PendingMemberProfileRequestDTO form) throws Exception {
+        PendingMemberProfileResponseDTO response =null;
+        try{
         PendingMember pendingMember = elementService.loadPendingMember(form.getPendingMemberId());
         getDataBinder().readInto(pendingMember, form.getPendingMember(), true);
         if (form.isBroker()) {
@@ -143,8 +145,11 @@ public class PendingMemberProfileController extends BaseRestController{
             pendingMember.setBroker(loggedBroker);
         }
         pendingMember = elementService.update(pendingMember);
-        PendingMemberProfileResponseDTO response = new PendingMemberProfileResponseDTO();
-        response.setMessage("pendingMember.updated");
+        response = new PendingMemberProfileResponseDTO();
+        response.setMessage("pendingMember.updated");}
+        catch(Exception e){
+            e.printStackTrace();
+        }
        return response;
     }
 

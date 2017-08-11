@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,11 +20,32 @@ import nl.strohalm.cyclos.services.customization.MemberCustomFieldService;
 import nl.strohalm.cyclos.services.customization.OperatorCustomFieldService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class ListCustomFieldsController extends BaseRestController {
 	private AdCustomFieldService adCustomFieldService;
 	private AdminCustomFieldService adminCustomFieldService;
+	public final AdCustomFieldService getAdCustomFieldService() {
+		return adCustomFieldService;
+	}
+
+	public final AdminCustomFieldService getAdminCustomFieldService() {
+		return adminCustomFieldService;
+	}
+
+	public final LoanGroupCustomFieldService getLoanGroupCustomFieldService() {
+		return loanGroupCustomFieldService;
+	}
+
+	public final MemberCustomFieldService getMemberCustomFieldService() {
+		return memberCustomFieldService;
+	}
+
+	public final OperatorCustomFieldService getOperatorCustomFieldService() {
+		return operatorCustomFieldService;
+	}
+
 	private LoanGroupCustomFieldService loanGroupCustomFieldService;
 	private MemberCustomFieldService memberCustomFieldService;
 	private OperatorCustomFieldService operatorCustomFieldService;
@@ -63,6 +83,16 @@ public class ListCustomFieldsController extends BaseRestController {
 	public static class ListCustomFieldsRequestDto {
 		private String nature;
 		private Member element;
+                private long CustomField;
+                
+        public long getCustomField() {
+            return CustomField;
+        }
+
+        public void setCustomField(long CustomField) {
+            this.CustomField = CustomField;
+        }
+                
 		
 
 		public void setElement(Member element) {
@@ -82,27 +112,48 @@ public class ListCustomFieldsController extends BaseRestController {
 		public void setNature(final String nature) {
 			this.nature = nature;
 		}
+                
 
 	}
 
 	public static class ListCustomFieldsResponseDto {
 		//public String message;
 		public Map<String,Object> map;
+                private Member element;
 
+        public Map<String, Object> getMap() {
+            return map;
+        }
+
+        public void setMap(Map<String, Object> map) {
+            this.map = map;
+        }
+
+        public Member getElement() {
+            return element;
+        }
+
+        public void setElement(Member element) {
+            this.element = element;
+        }
+                
 		public ListCustomFieldsResponseDto(Map<String, Object> map) {
 			super();
 			this.map = map;
 		}
+                public ListCustomFieldsResponseDto(){
+                }
 		
 	}
 
-	@RequestMapping(value = "admin/listCustomFields", method = RequestMethod.GET)
+	@RequestMapping(value = "admin/listCustomFields/{CustomField}", method = RequestMethod.GET)
 	@ResponseBody
-	protected ListCustomFieldsResponseDto executeAction(
-			@RequestBody ListCustomFieldsRequestDto form) throws Exception {
-		CustomField.Nature nature;
+	protected ListCustomFieldsResponseDto executeAction(@PathVariable ("CustomField") long CustomField) throws Exception {
+			
+		CustomField.Nature nature = null;
+                ListCustomFieldsResponseDto response = new ListCustomFieldsResponseDto();
 		try {
-			nature = CustomField.Nature.valueOf(form.getNature());
+			//nature = CustomField.Nature.valueOf(CustomField.getNature());
 		} catch (final Exception e) {
 			throw new ValidationException();
 		}
@@ -114,7 +165,7 @@ public class ListCustomFieldsController extends BaseRestController {
 			// details, not here
 			throw new ValidationException();
 		case OPERATOR:
-			final Member member = (Member) form.getElement();
+			final Member member = (Member) response.getElement();
 			fields = operatorCustomFieldService.list(member);
 			break;
 		default:
@@ -123,7 +174,7 @@ public class ListCustomFieldsController extends BaseRestController {
 		Map<String,Object> param = new HashMap<String, Object>();
 		param.put("customFields", fields);
 		param.put("nature", nature.name());
-		ListCustomFieldsResponseDto response = new ListCustomFieldsResponseDto(param);
+		response = new ListCustomFieldsResponseDto(param);
 		return response;
 	}
 

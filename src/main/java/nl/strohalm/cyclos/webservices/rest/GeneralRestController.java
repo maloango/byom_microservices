@@ -149,7 +149,7 @@ public class GeneralRestController extends BaseRestController {
     @ResponseBody
     public GeneralData getGeneralData() {
         Channel channel = WebServiceContext.getChannel();
-
+        System.out.println("testing general rest controller");
         PrincipalType principalType = channel.getDefaultPrincipalType();
 
         // If the credentials is default, pass LOGIN_PASSWORD, as we want here the access password

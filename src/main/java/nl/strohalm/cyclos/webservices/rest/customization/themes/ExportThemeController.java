@@ -83,7 +83,7 @@ public class ExportThemeController extends BaseRestController{
 		
     }
 
-    @RequestMapping(value ="" , method = RequestMethod.GET)
+    @RequestMapping(value ="admin/importTheme" , method = RequestMethod.GET)
     @ResponseBody
     protected ExportThemeResponseDTO handleSubmit(@RequestBody ExportThemeRequesrDTO form) throws Exception {
         final Theme theme = getDataBinder().readFromString(form.getTheme());
@@ -93,11 +93,8 @@ public class ExportThemeController extends BaseRestController{
         }
         // Set the download headers and content
         ExportThemeResponseDTO response = new ExportThemeResponseDTO(filename, null);
-        /*response.setDownload(response, filename);
-        response.setContentType("application/x-cyclos-theme");
-        themeHandler.export(theme, response.getOutputStream());
-        // Response is complete
-*/        return response;
+        
+          return response;
     }
 
    // @Override

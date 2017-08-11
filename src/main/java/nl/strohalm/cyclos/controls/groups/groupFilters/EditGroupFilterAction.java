@@ -92,6 +92,7 @@ public class EditGroupFilterAction extends BaseFormAction {
         params.put("groupFilterId", groupFilter.getId());
         return ActionHelper.redirectWithParams(context.getRequest(), context.getSuccessForward(), params);
     }
+    
 
     @SuppressWarnings("unchecked")
     @Override

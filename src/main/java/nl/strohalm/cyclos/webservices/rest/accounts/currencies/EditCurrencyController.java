@@ -10,14 +10,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.accounts.currencies.EditCurrencyForm;
 import nl.strohalm.cyclos.entities.accounts.ARateParameters;
 import nl.strohalm.cyclos.entities.accounts.Currency;
 import nl.strohalm.cyclos.entities.accounts.DRateParameters;
 import nl.strohalm.cyclos.entities.accounts.IRateParameters;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
-import nl.strohalm.cyclos.entities.settings.events.LocalSettingsChangeListener;
-import nl.strohalm.cyclos.entities.settings.events.LocalSettingsEvent;
 import nl.strohalm.cyclos.services.accounts.CurrencyService;
 import nl.strohalm.cyclos.services.accounts.rates.RateService;
 import nl.strohalm.cyclos.services.accounts.rates.WhatRate;
@@ -30,18 +27,27 @@ import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
-public class EditCurrencyController extends BaseRestController implements
-		LocalSettingsChangeListener {
+public class EditCurrencyController extends BaseRestController {
+    
 	private CurrencyService currencyService;
 	private RateService rateService;
 	private DataBinder<Currency> dataBinder;
 	private PermissionService permissionService;
 	private SettingsService settingsService;
 
-	@Override
-	public void onLocalSettingsUpdate(final LocalSettingsEvent event) {
-		dataBinder = null;
+	public final CurrencyService getCurrencyService() {
+		return currencyService;
 	}
+
+	public final void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
+	
 
 	@Inject
 	public void setCurrencyService(final CurrencyService currencyService) {
@@ -95,6 +101,7 @@ public class EditCurrencyController extends BaseRestController implements
 
 	public static class EditCurrencyResponseDto {
 		public String message;
+                
 
 		public String getMessage() {
 			return message;
@@ -103,27 +110,35 @@ public class EditCurrencyController extends BaseRestController implements
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public EditCurrencyResponseDto(){
+                }
 	}
 
-	@RequestMapping(value = "admin/editCurrency", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editCurrency", method = RequestMethod.POST)
 	@ResponseBody
-	protected EditCurrencyResponseDto handleSubmit(
-			@RequestBody EditCurrencyForm form) throws Exception {
-		Currency currency = getDataBinder().readFromString(form.getCurrency());
+	protected EditCurrencyResponseDto editCurrency(
+			@RequestBody EditCurrencyRequestDto form) throws Exception {
+		Currency currency =  currencyService.load(form.getCurrencyId());
+                EditCurrencyResponseDto response = new EditCurrencyResponseDto();
+                try{
 		final boolean isInsert = currency.isTransient();
 		final WhatRate whatRate = new WhatRate();
 		whatRate.setaRate(form.isEnableARate());
 		whatRate.setdRate(form.isEnableDRate());
 		whatRate.setiRate(form.isEnableIRate());
-		currency = currencyService.save(currency, whatRate);
-		EditCurrencyResponseDto response = new EditCurrencyResponseDto();
+		 currencyService.save(currency, whatRate);
+		
 		if (isInsert) {
 			response.setMessage("currency.inserted");
 		} else {
-			response.setMessage("currency.modified");
-		}
+			response.setMessage("currency.modified");}
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+                
 		return response;
-	}
+        }
 
 	private DataBinder<Currency> getDataBinder() {
 		if (dataBinder == null) {

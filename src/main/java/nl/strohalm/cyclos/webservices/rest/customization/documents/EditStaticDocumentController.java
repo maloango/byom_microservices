@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
+import nl.strohalm.cyclos.controls.customization.documents.EditStaticDocumentAction;
 import nl.strohalm.cyclos.controls.customization.documents.EditStaticDocumentForm;
 import nl.strohalm.cyclos.entities.customization.documents.Document;
 import nl.strohalm.cyclos.entities.customization.documents.StaticDocument;
@@ -38,7 +39,11 @@ public class EditStaticDocumentController extends BaseRestController {
 
     protected DocumentService          documentService;
 
-    private DataBinder<StaticDocument> dataBinder;
+    public final DocumentService getDocumentService() {
+		return documentService;
+	}
+
+	private DataBinder<StaticDocument> dataBinder;
 
     @Inject
     public void setDocumentService(final DocumentService documentService) {
@@ -109,11 +114,10 @@ public class EditStaticDocumentController extends BaseRestController {
 	}
     
 
-    @RequestMapping(value ="/admin/editStaticDocument" , method = RequestMethod.POST)
+    @RequestMapping(value ="admin/editStaticDocument" , method = RequestMethod.POST)
     @ResponseBody
     protected EditStaticDocumentResponseDTO handleSubmit(@RequestBody EditStaticDocumentRequestDTO form) throws Exception {
-        /*final HttpServletRequest request = context.getRequest();
-        final EditStaticDocumentForm form = context.getForm();*/
+        EditStaticDocumentResponseDTO response = null;
         StaticDocument document = getDataBinder().readFromString(form.getDocument());
         final boolean isInsert = document.getId() == null;
         try {
@@ -121,25 +125,25 @@ public class EditStaticDocumentController extends BaseRestController {
             document = (StaticDocument) documentService.saveStatic(document, upload.getInputStream(), upload.getFileSize(), upload.getFileName(), upload.getContentType());
             String message =null;
             if (isInsert) {
-            	message ="document.inserted";
+                message ="document.inserted";
             }
             else{
-            	message = "document.modified";
-				
-			}
-    	
-        Map<String, Object> param = new HashMap<String, Object>();
-        param.put("documentId", document.getId());
-        EditStaticDocumentResponseDTO response = new EditStaticDocumentResponseDTO(message, param);
-        return response ;
-           
-            /*context.sendMessage(isInsert ? "document.inserted" : "document.modified");
-            request.setAttribute("document", document);
-
-            return ActionHelper.redirectWithParam(request, context.getSuccessForward(), "documentId", document.getId());*/
-        } catch (final IOException e) {
-            throw new CannotUploadFileException(e);
+                message = "document.modified";
+                
+            }
+            
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put("documentId", document.getId());
+            response = new EditStaticDocumentResponseDTO(message, param);}
+        catch(Exception e){
+            e.printStackTrace();
         }
+        return response ;
+        
+        /*context.sendMessage(isInsert ? "document.inserted" : "document.modified");
+        request.setAttribute("document", document);
+        
+        return ActionHelper.redirectWithParam(request, context.getSuccessForward(), "documentId", document.getId());*/
     }
 
     //@Override

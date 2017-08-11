@@ -92,14 +92,15 @@ public class CurrentStateReportController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/reportsCurrentState", method = RequestMethod.POST)
 	@ResponseBody
 	protected CurrentStateReportResponseDto handleSubmit(
 			@RequestBody CurrentStateReportRequestDto form) throws Exception {
-
+                CurrentStateReportResponseDto response = null;
+                try{
 		final CurrentStateReportParameters params = getDataBinder()
 				.readFromString(form.getCurrentStateReport());
-		// no historic record for loans, refs and .. so..
+		
 		Calendar historyTime = null;
 		if (params.getTimePointType() == TimePointType.TIME_POINT_HISTORY) {
 			params.setInvoices(false);
@@ -110,7 +111,10 @@ public class CurrentStateReportController extends BaseRestController {
 		final CurrentStateReportVO report = currentStateReportService
 				.getCurrentStateReport(params);
 		int singleCurrency = report.getCurrencies().size();
-		CurrentStateReportResponseDto response = new CurrentStateReportResponseDto(params, historyTime, singleCurrency, report);
+                 response = new CurrentStateReportResponseDto(params, historyTime, singleCurrency, report);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

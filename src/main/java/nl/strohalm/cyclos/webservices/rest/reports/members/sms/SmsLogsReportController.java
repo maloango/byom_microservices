@@ -7,12 +7,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.reports.members.sms.SmsLogsReportForm;
@@ -33,6 +27,7 @@ import nl.strohalm.cyclos.entities.sms.SmsMailingType;
 import nl.strohalm.cyclos.entities.sms.SmsType;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.groups.GroupService;
+import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.services.sms.SmsLogService;
 import nl.strohalm.cyclos.utils.EntityHelper;
@@ -45,6 +40,12 @@ import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.binding.SimpleCollectionBinder;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class SmsLogsReportController extends BaseRestController {
@@ -111,11 +112,13 @@ public class SmsLogsReportController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/membersSmsLogsReport", method = RequestMethod.POST)
 	@ResponseBody
 	protected SmsLogsReportResponseDto executeQuery(
 			@RequestBody SmsLogsReportRequestDto context,
 			final QueryParameters queryParameters) {
+            SmsLogsReportResponseDto response =null;
+            try{
 		final SmsLogReportQuery query = (SmsLogReportQuery) queryParameters
 				.clone();
 		final SmsLogReportVO report = smsLogService.getSmsLogReport(query);
@@ -124,8 +127,11 @@ public class SmsLogsReportController extends BaseRestController {
 		Map<SmsLogStatus, Integer> totalsByStatus = report.getTotalsByStatus();
 		int total = report.getTotal();
 		List<SmsLog> smsLogs = report.getLogs();
-		SmsLogsReportResponseDto response = new SmsLogsReportResponseDto(
-				totals, totalsByType, totalsByStatus, total, smsLogs);
+		 response = new SmsLogsReportResponseDto(
+				totals, totalsByType, totalsByStatus, total, smsLogs);}
+            catch(Exception e){
+                e.printStackTrace();
+            }
 		return response;
 	}
 

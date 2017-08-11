@@ -5,12 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import nl.strohalm.cyclos.access.AdminAdminPermission;
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
@@ -46,6 +40,12 @@ import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class SearchMemberRecordsController extends BaseRestController {
@@ -130,17 +130,21 @@ public class SearchMemberRecordsController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.GET)
+	@RequestMapping(value = "admin/searchMemberRecords", method = RequestMethod.GET)
 	@ResponseBody
 	protected SearchMemberRecordsResponseDto executeQuery(
 			@RequestBody SearchMemberRecordsRequestDto form,
 			final QueryParameters queryParameters) {
-		// final HttpServletRequest request = context.getRequest();
+		SearchMemberRecordsResponseDto response = null;
+                try{
 		final FullTextMemberRecordQuery query = (FullTextMemberRecordQuery) queryParameters;
 		final List<MemberRecord> memberRecords = memberRecordService
 				.fullTextSearch(query);
-		SearchMemberRecordsResponseDto response = new SearchMemberRecordsResponseDto(
-				memberRecords);
+		response = new SearchMemberRecordsResponseDto(memberRecords);}
+				
+        catch(Exception e){
+            e.printStackTrace();
+}
 		return response;
 	}
 

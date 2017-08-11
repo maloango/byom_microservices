@@ -3,7 +3,6 @@ package nl.strohalm.cyclos.webservices.rest.invoices;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,11 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.invoices.InvoiceDetailsForm;
 import nl.strohalm.cyclos.entities.accounts.transactions.Invoice;
 import nl.strohalm.cyclos.services.transactions.InvoiceService;
-import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.EntityHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
@@ -90,13 +86,17 @@ public class CancelInvoiceController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public CancelInvoiceResponseDto(){
+                    
+                }
 	}
 
-	@RequestMapping(value = "/member/cancelInvoice", method = RequestMethod.DELETE)
+	@RequestMapping(value = "member/cancelInvoice", method = RequestMethod.POST)
 	@ResponseBody
 	protected CancelInvoiceResponseDto executeAction(
 			@RequestBody CancelInvoiceRequestDto form) throws Exception {
-		// final InvoiceDetailsForm form = context.getForm();
+		CancelInvoiceResponseDto response = null;
+                try{
 		String message = null;
 		final long id = form.getInvoiceId();
 		if (id <= 0) {
@@ -106,10 +106,13 @@ public class CancelInvoiceController extends BaseRestController {
 		invoice = invoiceService.cancel(invoice);
 		message = "invoice.cancelled";
 		final Map<String, Object> params = new HashMap<String, Object>();
-		CancelInvoiceResponseDto response = new CancelInvoiceResponseDto(
+		response = new CancelInvoiceResponseDto(
 				message, params);
 		params.put("invoiceId", invoice.getId());
-		params.put("accountFeeLogId", form.getAccountFeeLogId());
+		params.put("accountFeeLogId", form.getAccountFeeLogId());}
+                catch(Exception e){
+                e.printStackTrace();
+                }
 		return response;
 	}
 }

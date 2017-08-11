@@ -52,16 +52,21 @@ public class RemoveReferenceController extends BaseRestController{
     	
     }
 
-    @RequestMapping (value = "/member/removeReference",method = RequestMethod.DELETE)
+    @RequestMapping (value = "member/removeReference",method = RequestMethod.DELETE)
     @ResponseBody
     protected RemoveReferenceResponseDTO executeAction(@RequestBody RemoveReferenceRequestDTO form) throws Exception {
-    	RemoveReferenceResponseDTO response = new RemoveReferenceResponseDTO();
+    	RemoveReferenceResponseDTO response = null;
+        try{
         if (form.getReferenceId() <= 0 || form.getMemberId() <= 0L) {
             throw new ValidationException();
         }
         final Reference reference = referenceService.load(form.getReferenceId());
         referenceService.remove(reference.getId());
         response.setMessage("reference.removed");
+        response = new RemoveReferenceResponseDTO();}
+        catch(Exception e){
+            e.printStackTrace();
+        }
         return response;
     }
 

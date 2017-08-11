@@ -33,6 +33,14 @@ public class ImportAdsController extends BaseRestController {
 	private CurrencyService currencyService;
 	private DataBinder<AdImport> dataBinder;
 
+	public final AdImportService getAdImportService() {
+		return adImportService;
+	}
+
+	public final CurrencyService getCurrencyService() {
+		return currencyService;
+	}
+
 	public DataBinder<AdImport> getDataBinder() {
 		if (dataBinder == null) {
 			final BeanBinder<AdImport> binder = BeanBinder

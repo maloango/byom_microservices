@@ -18,6 +18,11 @@ public class GenerateTransactionPasswordController extends BaseRestController {
 	 * }
 	 */
 	private AccessService accessService;
+	
+
+	public final void setAccessService(AccessService accessService) {
+		this.accessService = accessService;
+	}
 
 	public static class GenerateTransactionPasswordRequestDTO {
 
@@ -34,13 +39,15 @@ public class GenerateTransactionPasswordController extends BaseRestController {
 		public final void setErrorKey(String errorKey) {
 			this.errorKey = errorKey;
 		}
+                public GenerateTransactionPasswordResponseDTO(){}
 
 	}
 
-	@RequestMapping(value = "admin/generateTransactionPassword", method = RequestMethod.GET, produces = "json/application")
+	@RequestMapping(value = "admin/generateTransactionPassword", method = RequestMethod.GET)
 	@ResponseBody
 	protected GenerateTransactionPasswordResponseDTO renderContent(
 			@RequestBody GenerateTransactionPasswordRequestDTO form) throws Exception {
+		System.out.println("testing..........");
 		String transactionPassword = null;
 		String errorKey = null;
 		GenerateTransactionPasswordResponseDTO response = new GenerateTransactionPasswordResponseDTO();

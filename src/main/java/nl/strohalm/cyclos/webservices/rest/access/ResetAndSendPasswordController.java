@@ -58,6 +58,9 @@ public class ResetAndSendPasswordController extends BaseRestController {
 		
 		private long userId;
 		private String message;
+                public ResetAndSendPasswordResponseDto(){
+                    
+                }
 		public ResetAndSendPasswordResponseDto(long userId, String message) {
 			super();
 			this.userId = userId;
@@ -82,7 +85,8 @@ public class ResetAndSendPasswordController extends BaseRestController {
 	@RequestMapping(value = "member/resetAndSendPassword", method = RequestMethod.POST)
 	@ResponseBody
     protected ResetAndSendPasswordResponseDto resetAndSendPassword(@RequestBody ResetAndSendPasswordRequestDto form) throws Exception {
-       
+        ResetAndSendPasswordResponseDto response=new  ResetAndSendPasswordResponseDto();
+        try{
         final long userId = form.getUserId();
         if (userId <= 0L) {
             throw new ValidationException();
@@ -96,9 +100,22 @@ public class ResetAndSendPasswordController extends BaseRestController {
         }
        // context.sendMessage(key);
         
-        ResetAndSendPasswordResponseDto response =new  ResetAndSendPasswordResponseDto(userId, key);
+        response =new  ResetAndSendPasswordResponseDto(userId, key);
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
         
         return response;
     }
+
+    public AccessService getAccessService() {
+        return accessService;
+    }
+
+    public void setAccessService(AccessService accessService) {
+        this.accessService = accessService;
+    }
+    
+    
 
 }

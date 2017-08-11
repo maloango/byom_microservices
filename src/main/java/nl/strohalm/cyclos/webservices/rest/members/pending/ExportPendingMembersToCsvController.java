@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
+import nl.strohalm.cyclos.controls.members.pending.SearchPendingMembersAction;
 import nl.strohalm.cyclos.controls.members.pending.SearchPendingMembersForm;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.customization.fields.MemberCustomField;

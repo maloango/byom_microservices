@@ -51,7 +51,7 @@ public class ListContactsController extends BaseRestController{
 	    	}
 	    }
 
-	    @RequestMapping(value = "/member/contacts", method = RequestMethod.GET)
+	    @RequestMapping(value = "member/contacts", method = RequestMethod.GET)
 	    @ResponseBody
 	    protected ListContactsResponse executeAction(@RequestBody ListContactsRequestDTo form) throws Exception {
 	        //final Member member = (Member) (member) .getAccountOwner();

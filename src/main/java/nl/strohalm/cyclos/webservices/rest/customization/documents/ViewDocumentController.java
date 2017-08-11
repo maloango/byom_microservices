@@ -26,7 +26,11 @@ public class ViewDocumentController extends BaseRestController{
 	 protected DocumentService documentService;
 	    protected ResponseHelper  responseHelper;
 
-	    @Inject
+	    public final DocumentService getDocumentService() {
+			return documentService;
+		}
+
+		@Inject
 	    public void setDocumentService(final DocumentService documentService) {
 	        this.documentService = documentService;
 	    }

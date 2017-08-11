@@ -31,7 +31,7 @@ public class EditReceiptPrinterSettingsController extends BaseRestController{
 	    }
 	    public static class EditReceiptPrinterSettingsRequestDTO{
 	    	
-	    	 private Member            member;
+	    	 private Member               member;
 	    	    private String            name;
 	    	    private String            printerName;
 	    	    private String            beginOfDocCommand;
@@ -108,18 +108,24 @@ public class EditReceiptPrinterSettingsController extends BaseRestController{
 			}
 	    }
 
-	    @RequestMapping(value = "/member/editReceiptPrinterSettings", method = RequestMethod.POST)
+	    @RequestMapping(value = "member/editReceiptPrinterSettings", method = RequestMethod.POST)
 	    @ResponseBody
 	    protected EditReceiptPrinterSettingsResponseDTO handleSubmit(@RequestBody ActionContext form) throws Exception {
 	        final ReceiptPrinterSettings receiptPrinterSettings = read(form);
+                EditReceiptPrinterSettingsResponseDTO response= null;
+                try{
 	        final boolean isInsert = receiptPrinterSettings.isTransient();
 	        receiptPrinterSettingsService.save(receiptPrinterSettings);
-	        EditReceiptPrinterSettingsResponseDTO response = new EditReceiptPrinterSettingsResponseDTO();
+	        //response = new EditReceiptPrinterSettingsResponseDTO();
 	        if (isInsert) {
 	            response.setMessage("receiptPrinterSettings.created");
 	        } else {
 	            response.setMessage("receiptPrinterSettings.modified");
 	        }
+                response = new EditReceiptPrinterSettingsResponseDTO();}
+                catch(Exception e){
+                        e.printStackTrace();
+                        }
 	        return response;
 	    }
 

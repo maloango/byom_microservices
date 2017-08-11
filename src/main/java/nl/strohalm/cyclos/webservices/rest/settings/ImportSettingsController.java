@@ -4,15 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts.upload.FormFile;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
+import nl.strohalm.cyclos.controls.ActionContext;
+import nl.strohalm.cyclos.controls.settings.ManageSettingsForm;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
 import nl.strohalm.cyclos.entities.settings.Setting;
 import nl.strohalm.cyclos.entities.settings.Setting.Type;
@@ -21,6 +14,16 @@ import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.services.settings.exceptions.SelectedSettingTypeNotInFileException;
 import nl.strohalm.cyclos.utils.conversion.CoercionHelper;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.upload.FormFile;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @SuppressWarnings("unchecked")
@@ -66,7 +69,7 @@ public class ImportSettingsController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/importSettings", method = RequestMethod.POST)
 	@ResponseBody
 	protected ImportSettingsResponseDto executeAction(
 			@RequestBody ImportSettingsRequestDto form) throws Exception {
@@ -107,7 +110,7 @@ public class ImportSettingsController extends BaseRestController {
 			message ="manageTranslationMessages";
 			return response;
 		} else {
-			//
+			
 		}
 		return response;
 	}

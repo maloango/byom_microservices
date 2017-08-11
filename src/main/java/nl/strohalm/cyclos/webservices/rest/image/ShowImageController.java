@@ -16,14 +16,14 @@ public class ShowImageController extends BaseRestController {
 	
 	public static class ShowImageRequestDTO{
 
-		public ShowImageResponse getInputForward() {
+		public ShowImageResponseDTO getInputForward() {
 			// TODO Auto-generated method stub
 			return null;
 		}
 		
 	}
 	
-	public static class ShowImageResponse{
+	public static class ShowImageResponseDTO{
 		String message;
 
 		public final String getMessage() {
@@ -38,10 +38,14 @@ public class ShowImageController extends BaseRestController {
 	}
 	
 	 @RequestMapping(value = "member/showImage" ,method = RequestMethod.GET)
-	    protected ShowImageResponse executeAction(@RequestBody ShowImageRequestDTO form) throws Exception {
-	      
-		 ShowImageResponse response = new ShowImageResponse();
-		 response.setMessage(null);
+	    protected ShowImageResponseDTO executeAction(@RequestBody ShowImageRequestDTO form) throws Exception {
+                    ShowImageResponseDTO response = null;
+                    try{
+		 response = new ShowImageResponseDTO();
+		 response.setMessage(null);}
+                    catch(Exception e){
+                        e.printStackTrace();
+                    }
 		 return response;
 	    }
 

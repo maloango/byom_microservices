@@ -42,11 +42,40 @@ import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.binding.SimpleCollectionBinder;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class MailPreferencesController extends BaseRestController {
 	private GuaranteeTypeService guaranteeTypeService;
 	private PreferenceService preferenceService;
+	public final GroupService getGroupService() {
+		return groupService;
+	}
+
+	public final void setGroupService(GroupService groupService) {
+		this.groupService = groupService;
+	}
+
+	public final PermissionService getPermissionService() {
+		return permissionService;
+	}
+
+	public final void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	public final GuaranteeTypeService getGuaranteeTypeService() {
+		return guaranteeTypeService;
+	}
+
+	public final PreferenceService getPreferenceService() {
+		return preferenceService;
+	}
+
+	public final TransferTypeService getTransferTypeService() {
+		return transferTypeService;
+	}
+
 	private TransferTypeService transferTypeService;
 	private DataBinder<AdminNotificationPreference> dataBinder;
 	private GroupService groupService;
@@ -69,7 +98,125 @@ public class MailPreferencesController extends BaseRestController {
 		this.transferTypeService = transferTypeService;
 	}
 
-	public static class MailPreferencesRequestDto {
+	public static final class MailPreferencesRequestDto {
+    private boolean                 applicationErrors;
+    private boolean                 systemInvoices;
+    private Administrator           admin;
+    private Set<TransferType>       transferTypes;
+    private Set<TransferType>       newPendingPayments;
+    private Set<GuaranteeType>      guaranteeTypes;
+    private Set<MessageCategory>    messageCategories;
+    private Set<SystemAlert.Alerts> systemAlerts;
+    private Set<MemberAlert.Alerts> memberAlerts;
+    private Set<MemberGroup>        newMembers;
+
+    public Administrator getAdmin() {
+        return admin;
+    }
+
+    public Set<GuaranteeType> getGuaranteeTypes() {
+        return guaranteeTypes;
+    }
+
+    public Set<MemberAlert.Alerts> getMemberAlerts() {
+        return memberAlerts;
+    }
+
+    public Set<MessageCategory> getMessageCategories() {
+        return messageCategories;
+    }
+
+    public Set<MemberGroup> getNewMembers() {
+        return newMembers;
+    }
+
+    public Set<TransferType> getNewPendingPayments() {
+        return newPendingPayments;
+    }
+
+    public Set<SystemAlert.Alerts> getSystemAlerts() {
+        return systemAlerts;
+    }
+
+    public Set<TransferType> getTransferTypes() {
+        return transferTypes;
+    }
+
+    public boolean isApplicationErrors() {
+        return applicationErrors;
+    }
+
+    public boolean isSystemInvoices() {
+        return systemInvoices;
+    }
+
+    public void setAdmin(final Administrator admin) {
+        this.admin = admin;
+    }
+
+    public void setApplicationErrors(final boolean applicationErrors) {
+        this.applicationErrors = applicationErrors;
+    }
+
+    public void setGuaranteeTypes(final Set<GuaranteeType> guaranteeTypes) {
+        this.guaranteeTypes = guaranteeTypes;
+    }
+
+    public void setMemberAlerts(final Set<MemberAlert.Alerts> memberAlerts) {
+        this.memberAlerts = memberAlerts;
+    }
+
+    public void setMessageCategories(final Set<MessageCategory> messageCategories) {
+        this.messageCategories = messageCategories;
+    }
+
+    public void setNewMembers(final Set<MemberGroup> newMembers) {
+        this.newMembers = newMembers;
+    }
+
+    public void setNewPendingPayments(final Set<TransferType> newPendingPayments) {
+        this.newPendingPayments = newPendingPayments;
+    }
+
+    public void setSystemAlerts(final Set<SystemAlert.Alerts> systemAlerts) {
+        this.systemAlerts = systemAlerts;
+    }
+
+    public void setSystemInvoices(final boolean systemInvoices) {
+        this.systemInvoices = systemInvoices;
+    }
+
+    public void setTransferTypes(final Set<TransferType> transferTypes) {
+        this.transferTypes = transferTypes;
+    }
+
+  
+        public MailPreferencesRequestDto() {
+        setAdminNotificationPreference("transferTypes", Collections.emptyList());
+        setAdminNotificationPreference("newPendingPayments", Collections.emptyList());
+        setAdminNotificationPreference("guaranteeTypes", Collections.emptyList());
+        setAdminNotificationPreference("messageCategories", Collections.emptyList());
+        setAdminNotificationPreference("newMembers", Collections.emptyList());
+        setAdminNotificationPreference("memberAlerts", Collections.emptyList());
+        setAdminNotificationPreference("systemAlerts", Collections.emptyList());
+        
+    }
+
+    public Map<String, Object> getAdminNotificationPreference() {
+        return values;
+    }
+
+    public Object getAdminNotificationPreference(final String key) {
+        return values.get(key);
+    }
+
+    public void setAdminNotificationPreference(final Map<String, Object> map) {
+        values = map;
+    }
+
+    public void setAdminNotificationPreference(final String key, final Object value) {
+        values.put(key, value);
+    }
 		protected Map<String, Object> values;
 
 		public Map<String, Object> getValues() {
@@ -80,22 +227,7 @@ public class MailPreferencesController extends BaseRestController {
 			this.values = values;
 		}
 
-		public Map<String, Object> getAdminNotificationPreference() {
-			return values;
-		}
-
-		public Object getAdminNotificationPreference(final String key) {
-			return values.get(key);
-		}
-
-		public void setAdminNotificationPreference(final Map<String, Object> map) {
-			values = map;
-		}
-
-		public void setAdminNotificationPreference(final String key,
-				final Object value) {
-			values.put(key, value);
-		}
+		
 	}
 
 	public static class MailPreferencesResponseDto {
@@ -108,17 +240,25 @@ public class MailPreferencesController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public MailPreferencesResponseDto(){
+                }
+               
 	}
 
-	@RequestMapping(value = "admin/mailPreferences", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/mailPreferences/{systemInvoices}", method = RequestMethod.GET)
 	@ResponseBody
-	protected void formAction(@RequestBody MailPreferencesRequestDto form) throws Exception {
-		//final MailPreferencesForm form = context.getForm();
-		AdminNotificationPreference notificationPreference = getDataBinder()
-				.readFromString(form.getAdminNotificationPreference());
-		notificationPreference = preferenceService.save(notificationPreference);
-		MailPreferencesResponseDto response = new MailPreferencesResponseDto();
-		response.setMessage("mailPreferences.saved");
+	protected MailPreferencesResponseDto formAction(@PathVariable ("systemInvoices") boolean systemInvoices, PreferenceService notificationPreference) throws Exception {
+		MailPreferencesResponseDto response =null;
+                try{
+		//AdminNotificationPreference notificationPreference = getDataBinder()
+			//	.readFromString(form.getAdminNotificationPreference());
+		notificationPreference = (PreferenceService) preferenceService.save((AdminNotificationPreference) notificationPreference);
+		response = new MailPreferencesResponseDto();
+		response.setMessage("mailPreferences.saved");}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+            return response;
 	}
 
 	protected void prepareForm(final ActionContext context) throws Exception {

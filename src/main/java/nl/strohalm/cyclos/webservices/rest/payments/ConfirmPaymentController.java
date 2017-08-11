@@ -143,13 +143,14 @@ public class ConfirmPaymentController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/confirmPayment", method = RequestMethod.POST)
 	@ResponseBody
 	protected ConfirmPaymentResponseDto handleSubmit(
 			@RequestBody ConfirmPaymentRequestDto form) throws Exception {
-		// final ConfirmPaymentForm form = context.getForm();
+		ConfirmPaymentResponseDto response =null;
+                try{
 		final DoPaymentDTO paymentDTO = validatePayment(form);
-		// Validate the transaction password if needed
+	
 		if (shouldValidateTransactionPassword(form, paymentDTO)) {
 			form.checkTransactionPassword(form.getTransactionPassword());
 		}
@@ -157,7 +158,7 @@ public class ConfirmPaymentController extends BaseRestController {
 		Payment payment;
 		String message = null;
 		Map<String, Object> params = null;
-		ConfirmPaymentResponseDto response = new ConfirmPaymentResponseDto(
+                 response = new ConfirmPaymentResponseDto(
 				params, message);
 		try {
 			payment = paymentService.doPayment(paymentDTO);
@@ -185,7 +186,10 @@ public class ConfirmPaymentController extends BaseRestController {
 			throw new IllegalStateException("Unknown payment type: " + payment);
 		}
 		params.put("selectMember", form.getSelectMember());
-		params.put("from", form.getFrom());
+		params.put("from", form.getFrom());}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 
 		return response;
 	}

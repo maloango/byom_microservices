@@ -2,12 +2,6 @@ package nl.strohalm.cyclos.webservices.rest.members.records;
 
 import java.util.List;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.entities.members.records.MemberRecordType;
@@ -15,6 +9,12 @@ import nl.strohalm.cyclos.entities.members.records.MemberRecordTypeQuery;
 import nl.strohalm.cyclos.services.elements.MemberRecordTypeService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ListMemberRecordTypesController extends BaseRestController {
@@ -46,18 +46,22 @@ public class ListMemberRecordTypesController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/listMemberRecordTypes", method = RequestMethod.GET)
 	@ResponseBody
 	protected ListMemberRecordTypesResponseDto executeAction(
 			@RequestBody ListMemberRecordTypesRequestDto form) throws Exception {
-		// final HttpServletRequest request = context.getRequest();
+		ListMemberRecordTypesResponseDto response =null;
+                try{
 		final List<MemberRecordType> memberRecordTypes = memberRecordTypeService
 				.search(new MemberRecordTypeQuery());
 
 		boolean editable = permissionService
 				.hasPermission(AdminSystemPermission.MEMBER_RECORD_TYPES_MANAGE);
-		ListMemberRecordTypesResponseDto response = new ListMemberRecordTypesResponseDto(
-				memberRecordTypes, editable);
+		response = new ListMemberRecordTypesResponseDto(
+				memberRecordTypes, editable);}
+                                catch(Exception e){
+                                    e.printStackTrace();
+}
 		return response;
 	}
 }

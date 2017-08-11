@@ -1,6 +1,9 @@
 package nl.strohalm.cyclos.webservices.rest.members.messages;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -100,16 +103,17 @@ public class EditMessageCategoryController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/editMessageCategory", method = RequestMethod.POST)
 	@ResponseBody
 	protected EditMessageCategoryResponseDto formAction(
 			@RequestBody EditMessageCategoryRequestDto form) throws Exception {
-		// final EditMessageCategoryForm form = context.getForm();
+		EditMessageCategoryResponseDto response = null;
+                try{
 		final MessageCategory category = getDataBinder().readFromString(
 				form.getMessageCategory());
 		final boolean insert = category.getId() == null;
 		messageCategoryService.save(category);
-		EditMessageCategoryResponseDto response = new EditMessageCategoryResponseDto();
+                //response = new EditMessageCategoryResponseDto();
 		String message = null;
 		if (insert) {
 			message = "messageCategory.inserted";
@@ -117,7 +121,11 @@ public class EditMessageCategoryController extends BaseRestController {
 			return response;
 		} else {
 			message = "messageCategory.modified";
-			response.setMessage(message);
+			response.setMessage(message);}
+                        response = new EditMessageCategoryResponseDto();}
+                catch(Exception e){
+                    e.printStackTrace();
+                        }
 			return response;
 		}
 
@@ -136,11 +144,11 @@ public class EditMessageCategoryController extends BaseRestController {
 	 * messageCategory); }
 	 */
 
-	protected void validateForm(final ActionContext context) {
-		final EditMessageCategoryForm form = context.getForm();
-		final MessageCategory messageCategory = getDataBinder().readFromString(
-				form.getMessageCategory());
-		getMessageCategoryService().validate(messageCategory);
-	}
+//	protected void validateForm(final ActionContext context) {
+//		final EditMessageCategoryForm form = context.getForm();
+//		final MessageCategory messageCategory = getDataBinder().readFromString(
+//				form.getMessageCategory());
+//		getMessageCategoryService().validate(messageCategory);
+//	}
 
-}
+

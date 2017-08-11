@@ -14,8 +14,12 @@ import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class ChangeStatusGuaranteeController extends BaseRestController {
-	// later will be the implementation if required..
+	
 	protected GuaranteeService guaranteeService;
+
+	public final GuaranteeService getGuaranteeService() {
+		return guaranteeService;
+	}
 
 	public static class ChangeStatusGuaranteeRequestDto {
 		private Long guaranteeId;
@@ -46,13 +50,16 @@ public class ChangeStatusGuaranteeController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public ChangeStatusGuaranteeResponseDto(){
+                }
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "", method = RequestMethod.POST)
 	@ResponseBody
 	public ChangeStatusGuaranteeResponseDto executeAction(
 			@RequestBody ChangeStatusGuaranteeRequestDto form) throws Exception {
-		// final ChangeStatusGuaranteeForm form = context.getForm();
+		ChangeStatusGuaranteeResponseDto response = null;
+                try{
 		String message = null;
 		Long guaranteeId = null;
 		try {
@@ -62,8 +69,12 @@ public class ChangeStatusGuaranteeController extends BaseRestController {
 					+ e.getNewstatus();
 		}
 		guaranteeId = form.getGuaranteeId();
-		ChangeStatusGuaranteeResponseDto response = new ChangeStatusGuaranteeResponseDto(
-				message, guaranteeId);
+                 response = new ChangeStatusGuaranteeResponseDto(
+				message, guaranteeId);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+                 
 		return response;
 
 	}

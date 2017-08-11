@@ -237,7 +237,7 @@ public class CancelWebShopPaymentController extends BaseRestController{
 		 
 	}
 
-	@RequestMapping(value = "/webshop/cancel",method = RequestMethod.DELETE)
+	@RequestMapping(value = "webshop/cancel",method = RequestMethod.DELETE)
 	@ResponseBody
     public CancelWebShopPaymentResponseDTO executeAction( final CancelWebShopPaymentResponseDTO form) throws Exception {
         final DoPaymentDTO payment = resolvePayment(form);
@@ -246,7 +246,7 @@ public class CancelWebShopPaymentController extends BaseRestController{
         try {
             ticket = ticketService.cancelWebShopTicket(ticket.getId(), RemoteAddr);
         } catch (final Exception e) {
-            // Ignore
+            e.printStackTrace();
         }
         response.setTicket(ticket);
         return response;

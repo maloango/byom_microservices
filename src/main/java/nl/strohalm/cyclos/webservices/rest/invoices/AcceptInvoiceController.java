@@ -4,6 +4,12 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.accounts.AccountOwner;
@@ -32,14 +38,8 @@ import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-import nl.strohalm.cyclos.webservices.rest.RestHelper;
 import nl.strohalm.cyclos.webservices.utils.RestUserHelper;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class AcceptInvoiceController extends BaseRestController {
@@ -52,6 +52,36 @@ public class AcceptInvoiceController extends BaseRestController {
 	private  AccessService accessService;
 	private GroupService groupService;
 	private RestUserHelper restHelper;
+	
+
+	public final AccessService getAccessService() {
+		return accessService;
+	}
+
+	public final void setAccessService(AccessService accessService) {
+		this.accessService = accessService;
+	}
+
+	public final GroupService getGroupService() {
+		return groupService;
+	}
+
+	public final void setGroupService(GroupService groupService) {
+		this.groupService = groupService;
+	}
+
+	public final PaymentService getPaymentService() {
+		return paymentService;
+	}
+
+	public final PaymentCustomFieldService getPaymentCustomFieldService() {
+		return paymentCustomFieldService;
+	}
+
+	public final TransferTypeService getTransferTypeService() {
+		return transferTypeService;
+	}
+
 
 	private CustomFieldHelper customFieldHelper;
 
@@ -145,7 +175,7 @@ public class AcceptInvoiceController extends BaseRestController {
 				return "error.general";
 			}
 		}
-
+               
 		private long transferTypeId;
 		private String transactionPassword;
 		private long invoiceId;
@@ -214,9 +244,9 @@ public class AcceptInvoiceController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "member/acceptInvoice/{invoiceId}/{memberId}/{accountFeeLogId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected AcceptInvoiceResponseDto handleSubmit(@RequestBody AcceptInvoiceRequestDto form) throws Exception {
+	protected AcceptInvoiceResponseDto handleSubmit(@PathVariable ("invoiceId")long invoiceId,@PathVariable("memberId") long memberId,@PathVariable("accountFeeLogId") long accountFeeLogId) throws Exception {
 		// Initialize Rest Helper
 		User user=null;
 		
@@ -229,11 +259,13 @@ public class AcceptInvoiceController extends BaseRestController {
 		try {
 			// final AcceptInvoiceForm form = context.getForm();
 
-			Invoice invoice = getDataBinder().readFromString(form);
-			final boolean requestTransactionPassword = shouldValidateTransactionPassword(
-					form, invoice, invoice.getTransferType());
+			Invoice invoice = getDataBinder().readFromString(invoiceId);
+			final boolean requestTransactionPassword = shouldValidateTransactionPassword(invoice,transferTypeService);
+					
 			if (requestTransactionPassword) {
-				restHelper.checkTransactionPassword(form.getTransactionPassword());
+                            restHelper.checkTransactionPassword(message);
+                            
+				
 			}
 			invoice = invoiceService.accept(invoice);
 			final Transfer transfer = invoice.getTransfer();
@@ -243,8 +275,8 @@ public class AcceptInvoiceController extends BaseRestController {
 				message = "invoice.accepted";
 			}
 			params.put("invoiceId", invoice.getId());
-			params.put("memberId", form.getMemberId());
-			params.put("accountFeeLogId", form.getAccountFeeLogId());
+			params.put("memberId", invoice.getId());
+			params.put("accountFeeLogId", invoice.getId());
 			return response;
 		} catch (final CreditsException e) {
 			message = "Credit Exception occured";
@@ -255,22 +287,22 @@ public class AcceptInvoiceController extends BaseRestController {
 			 */
 		} catch (final UnexpectedEntityException e) {
 			message = "payment.error.invalidTransferType";
+                        e.printStackTrace();
 			return response;
 		}
 	}
 
 
 	private boolean shouldValidateTransactionPassword(
-			final AcceptInvoiceRequestDto form, Invoice invoice,
-			TransferType transferType) {
+                Invoice invoice, TransferTypeService transferType) {
 		final AccountOwner loggedOwner = restHelper.getAccountOwner();
 		invoice = invoiceService.load(invoice.getId(),
 				Invoice.Relationships.TO_MEMBER);
 		if (loggedOwner.equals(invoice.getToMember())) {
 			// When a logged member accepting an invoice to himself
-			transferType = transferTypeService.load(transferType.getId(),
-					TransferType.Relationships.FROM);
-			return restHelper.isTransactionPasswordEnabled(transferType.getFrom());
+			
+                        transferType=getTransferTypeService();
+			return restHelper.isTransactionPasswordEnabled();
 		} else {
 			return restHelper.isTransactionPasswordEnabled();
 		}

@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,6 +38,7 @@ import nl.strohalm.cyclos.utils.binding.DataBinderHelper;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class EditGuaranteeTypeController extends BaseRestController {
@@ -49,6 +49,34 @@ public class EditGuaranteeTypeController extends BaseRestController {
 
 	private GuaranteeTypeService guaranteeTypeService;
 	private CurrencyService currencyService;
+	public final PermissionService getPermissionService() {
+		return permissionService;
+	}
+
+	public final void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	public final SettingsService getSettingsService() {
+		return settingsService;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
+	public final GuaranteeTypeService getGuaranteeTypeService() {
+		return guaranteeTypeService;
+	}
+
+	public final CurrencyService getCurrencyService() {
+		return currencyService;
+	}
+
+	public final TransferTypeService getTransferTypeService() {
+		return transferTypeService;
+	}
+
 	private TransferTypeService transferTypeService;
 	private PermissionService permissionService;
 	private SettingsService settingsService;
@@ -176,19 +204,24 @@ public class EditGuaranteeTypeController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public EditGuaranteeTypeResponseDto(){
+                }
 
 	}
 
 	/**
 	 * Handles form submission, returning the ActionForward
+     * @param guaranteeTypeId
+     * @return 
+     * @throws java.lang.Exception
 	 */
-	@RequestMapping(value = "", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editGuaranteeType/{guaranteeTypeId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected EditGuaranteeTypeResponseDto handleSubmit(
-			@RequestBody EditGuaranteeTypeRequestDto form) throws Exception {
-		// final EditGuaranteeTypeForm form = context.getForm();
+	protected EditGuaranteeTypeResponseDto handleSubmit(@PathVariable ("guaranteeTypeId")long guaranteeTypeId) throws Exception {
+			
+		
 		GuaranteeType guaranteeType = getDataBinderGuaranteeType()
-				.readFromString(form.getGuaranteeType());
+				.readFromString(guaranteeTypeId);
 		final boolean isInsert = guaranteeType.isTransient();
 		guaranteeType = guaranteeTypeService.save(guaranteeType);
 		EditGuaranteeTypeResponseDto response = new EditGuaranteeTypeResponseDto();
@@ -202,6 +235,8 @@ public class EditGuaranteeTypeController extends BaseRestController {
 
 	/**
 	 * Method use to prepare a form for being displayed
+     * @param context
+     * @throws java.lang.Exception
 	 */
 //not required..
 	protected void prepareForm(final ActionContext context) throws Exception {

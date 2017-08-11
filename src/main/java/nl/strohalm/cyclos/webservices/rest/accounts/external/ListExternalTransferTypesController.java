@@ -25,6 +25,18 @@ public class ListExternalTransferTypesController {
 		this.externalTransferTypeService = externalTransferTypeService;
 	}
 
+	public final PermissionService getPermissionService() {
+		return permissionService;
+	}
+
+	public final void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	public final ExternalTransferTypeService getExternalTransferTypeService() {
+		return externalTransferTypeService;
+	}
+
 	public static class ListExternalTransferTypesRequestDto {
 		public Object getAttribute(String name) {
 			//kindly check with sir..

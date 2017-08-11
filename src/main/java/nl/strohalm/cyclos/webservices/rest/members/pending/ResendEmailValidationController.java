@@ -42,10 +42,12 @@ public class ResendEmailValidationController extends BaseRestController{
 		}
 		
 	}
-	@RequestMapping(value ="/member/resendEmailValidation",method = RequestMethod.POST)
+	@RequestMapping(value ="member/resendEmailValidation",method = RequestMethod.POST)
 	@ResponseBody
 	
     protected ResendEmailValidationResponseDTO executeAction(@RequestBody ResendEmailValidationRequestDTO form) throws Exception {
+        ResendEmailValidationResponseDTO response = null;
+        try{
         final long id = form.getPendingMemberId();
         PendingMember pendingMember;
         try {
@@ -54,8 +56,11 @@ public class ResendEmailValidationController extends BaseRestController{
             throw new ValidationException();
         }
         elementService.resendEmail(pendingMember);
-        ResendEmailValidationResponseDTO response = new ResendEmailValidationResponseDTO();
-        response.setMessage("pendingMember.emailResent");
+        response = new ResendEmailValidationResponseDTO();
+        response.setMessage("pendingMember.emailResent");}
+        catch(Exception e){
+            e.printStackTrace();
+        }
         return response;
     }
 

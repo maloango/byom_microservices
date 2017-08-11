@@ -1,5 +1,6 @@
 package nl.strohalm.cyclos.webservices.rest.members.records;
 
+import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.controls.ActionContext;
+import nl.strohalm.cyclos.controls.members.records.RemoveMemberRecordTypeForm;
 import nl.strohalm.cyclos.exceptions.PermissionDeniedException;
 import nl.strohalm.cyclos.services.elements.MemberRecordTypeService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
@@ -46,12 +49,12 @@ public class RemoveMemberRecordTypeController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeMemberRecordType", method = RequestMethod.DELETE)
 	@ResponseBody
 	protected RemoveMemberRecordTypeResponseDto executeAction(
 			@RequestBody RemoveMemberRecordTypeRequestDto form)
 			throws Exception {
-		// final RemoveMemberRecordTypeForm form = context.getForm();
+		
 		final long id = form.getMemberRecordTypeId();
 		if (id <= 0) {
 			throw new ValidationException();

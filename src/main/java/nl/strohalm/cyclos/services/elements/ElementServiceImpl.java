@@ -749,6 +749,48 @@ public class ElementServiceImpl implements ElementServiceLocal {
         } catch (final EntityNotFoundException e) {
             throw e;
         } catch (final Exception e) {
+            e.printStackTrace();
+            final EntityNotFoundException enfe = new EntityNotFoundException(Member.class);
+            enfe.initCause(e);
+            throw enfe;
+        }
+    }
+    
+    @Override
+    public Element loadByPrincipalForAdminRest(final PrincipalType principalType, String principal, final Relationship... fetch) {
+        try {
+            if (principal == null) {
+                throw new NullPointerException();
+            }
+            final Principal principalEnum = principalType == null ? Principal.USER : principalType.getPrincipal();
+            switch (principalEnum) {
+                case USER:
+                    final User user = loadUser(principal);
+                    return  fetchService.fetch(user.getElement(), fetch);
+                case EMAIL:
+                    return  elementDao.loadByEmail(principal, fetch);
+                case CUSTOM_FIELD:
+                    final MemberCustomField customField = principalType.getCustomField();
+                    if (StringUtils.isNotEmpty(customField.getPattern())) {
+                        principal = StringHelper.removeMask(customField.getPattern(), principal, false);
+                    }
+                    return elementDao.loadByCustomField(customField, principal, fetch);
+                case CARD:
+                    // Use numbers only, avoid conflicts with formatting
+                    final String cardNumber = StringHelper.onlyNumbers(principal);
+                    final Card card = cardService.loadByNumber(new BigInteger(cardNumber), Card.Relationships.OWNER);
+                    final Calendar expirationDate = DateHelper.truncateNextDay(card.getExpirationDate());
+                    final boolean cardExpired = !Calendar.getInstance().getTime().before(expirationDate.getTime());
+                    if (card.getStatus() != Card.Status.ACTIVE || cardExpired) {
+                        throw new EntityNotFoundException("The card " + cardNumber + " is not active or has expired.");
+                    }
+                    return fetchService.fetch(card.getOwner(), fetch);
+            }
+            throw new EntityNotFoundException(Member.class);
+        } catch (final EntityNotFoundException e) {
+            throw e;
+        } catch (final Exception e) {
+            e.printStackTrace();
             final EntityNotFoundException enfe = new EntityNotFoundException(Member.class);
             enfe.initCause(e);
             throw enfe;

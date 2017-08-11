@@ -1,11 +1,7 @@
 package nl.strohalm.cyclos.webservices.rest.settings;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.settings.EditMailSettingsForm;
@@ -15,6 +11,11 @@ import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class EditMailSettingsController extends BaseRestController {
@@ -86,16 +87,21 @@ public class EditMailSettingsController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editMailSettings", method = RequestMethod.PUT)
 	@ResponseBody
 	protected EditMailSettingsResponseDto formAction(
 			final EditMailSettingsRequestDto form) throws Exception {
-		// final EditMailSettingsForm form = context.getForm();
+	
 		MailSettings settings = getDataBinder().readFromString(
 				form.getSetting());
+                EditMailSettingsResponseDto response =null;
+                try{
 		settings = settingsService.save(settings);
-		EditMailSettingsResponseDto response = new EditMailSettingsResponseDto();
-		response.setMessage("settings.mail.modified");
+		 response = new EditMailSettingsResponseDto();
+		response.setMessage("settings.mail.modified");}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

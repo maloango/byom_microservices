@@ -52,11 +52,17 @@ public class RemoveAdInterestsController extends BaseRestController {
     @RequestMapping(value = "member/removeAdInterests", method = RequestMethod.DELETE)
 	@ResponseBody
     protected RemoveAdInterestsResponseDTO executeAction(@RequestBody RemoveAdInterestsRequestDTO form) throws Exception {
-        //final RemoveAdInterestsForm form = context.getForm();
+        RemoveAdInterestsResponseDTO response =null;
+        try{
         final Long[] ids = form.getAdInterestsIds();
         adInterestService.remove(ids);
-        RemoveAdInterestsResponseDTO response = new RemoveAdInterestsResponseDTO();
+        
         response.setMessage("adInterest.removed");
+        response = new RemoveAdInterestsResponseDTO();}
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    
         return response;
 
     }

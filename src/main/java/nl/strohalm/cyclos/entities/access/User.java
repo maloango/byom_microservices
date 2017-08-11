@@ -26,6 +26,7 @@ import nl.strohalm.cyclos.entities.Entity;
 import nl.strohalm.cyclos.entities.Relationship;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.utils.StringValuedEnum;
+import nl.strohalm.cyclos.utils.UserVO;
 
 /**
  * An user is the entity that contains login / password / transaction
@@ -161,5 +162,10 @@ public abstract class User extends Entity {
     @Override
     public String toString() {
         return element == null ? getId() + " - " + getUsername() : element.toString();
+    }
+    
+    @Override
+    public final UserVO readOnlyView() {
+        return new UserVO(getId(), getUsername(), getPasswordDate(),getPasswordBlockedUntil(),getLastLogin());
     }
 }

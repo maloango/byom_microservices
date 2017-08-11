@@ -48,17 +48,20 @@ public class ChangeOperatorGroupController extends BaseRestController{
 		}
 		
 	}
-	 @RequestMapping(value = "/member/changeOperatorGroup",method =RequestMethod.POST)
+	 @RequestMapping(value = "member/changeOperatorGroup",method =RequestMethod.POST)
 	 @ResponseBody
 	    protected ChangeOperatorGroupResponseDTO handleSubmit(@RequestBody ChangeOperatorGroupRequestDTO form) throws Exception {
-	        //final ChangeOperatorGroupForm form = context.getForm();
-	        //final ActionForward forward = ActionHelper.redirectWithParam(form.getRequest(), super.handleSubmit(form), "operatorId", form.getOperatorId());
+	        ChangeOperatorGroupResponseDTO response = null;
+                try{
 	        String key = "changeGroup.operator.changed";
 	        if (CurrentTransactionData.hasMailError()) {
 	            key += ".mailError";
 	        }
-	        ChangeOperatorGroupResponseDTO response = new ChangeOperatorGroupResponseDTO();
-	        response.setMessage(key);
+	         response = new ChangeOperatorGroupResponseDTO();
+	        response.setMessage(key);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 	        return response;
 	    }
 

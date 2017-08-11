@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -72,6 +71,7 @@ import nl.strohalm.cyclos.utils.binding.SimpleCollectionBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class EditTransferTypeController extends BaseRestController {
@@ -79,6 +79,51 @@ public class EditTransferTypeController extends BaseRestController {
 	private AccountTypeService accountTypeService;
 	private GroupService groupService;
 	private ElementService elementService;
+        
+	public final GroupService getGroupService() {
+		return groupService;
+	}
+
+	public final void setGroupService(GroupService groupService) {
+		this.groupService = groupService;
+	}
+
+	public final ElementService getElementService() {
+		return elementService;
+	}
+
+	public final void setElementService(ElementService elementService) {
+		this.elementService = elementService;
+	}
+
+	public final PermissionService getPermissionService() {
+		return permissionService;
+	}
+
+	public final void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	public final SettingsService getSettingsService() {
+		return settingsService;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
+	public final ChannelService getChannelService() {
+		return channelService;
+	}
+
+	public final TransactionFeeService getTransactionFeeService() {
+		return transactionFeeService;
+	}
+
+	public final PaymentCustomFieldService getPaymentCustomFieldService() {
+		return paymentCustomFieldService;
+	}
+
 	private PermissionService permissionService;
 	private SettingsService settingsService;
 	private ChannelService channelService;
@@ -260,6 +305,10 @@ public class EditTransferTypeController extends BaseRestController {
 		this.transferTypeService = transferTypeService;
 	}
 
+    private TransferType retrieveTransferType(long transferTypeId) {
+            return null;
+        
+    }
 	public static class EditTransferTypeRequestDto {
 		private long accountTypeId;
 		private long transferTypeId;
@@ -310,21 +359,40 @@ public class EditTransferTypeController extends BaseRestController {
 		private String message;
 		Map<String, Object> params;
 
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public Map<String, Object> getParams() {
+            return params;
+        }
+
+        public void setParams(Map<String, Object> params) {
+            this.params = params;
+        }
+                
 		public EditTransferTypeResponseDto(String message,
 				Map<String, Object> params) {
 			super();
 			this.message = message;
 			this.params = params;
 		}
+                public EditTransferTypeResponseDto(){
+                }
 
 	}
 
-	@RequestMapping(value = "admin/editTransferType", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editTransferType/{transferTypeId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected EditTransferTypeResponseDto handleSubmit(
-			@RequestBody EditTransferTypeRequestDto form) throws Exception {
-		// final EditTransferTypeForm form = context.getForm();
-		TransferType transferType = retrieveTransferType(form);
+	protected EditTransferTypeResponseDto handleSubmit(@PathVariable ("transferTypeId")  long transferTypeId) throws Exception {
+			
+		EditTransferTypeResponseDto response =null;
+                try{
+		TransferType transferType = retrieveTransferType(transferTypeId);
 		final boolean isInsert = transferType.getId() == null;
 		// String error=null;
 		String message = null;
@@ -339,10 +407,13 @@ public class EditTransferTypeController extends BaseRestController {
 		else
 			message = "transferType.modified";
 		final Map<String, Object> params = new HashMap<String, Object>();
-		params.put("accountTypeId", form.getAccountTypeId());
+		params.put("accountTypeId", transferTypeId);
 		params.put("transferTypeId", transferType.getId());
-		EditTransferTypeResponseDto response = new EditTransferTypeResponseDto(
-				message, params);
+		response = new EditTransferTypeResponseDto(
+				message, params);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

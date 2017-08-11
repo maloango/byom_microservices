@@ -100,12 +100,16 @@ public class ListDocumentsController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/listDocuments", method = RequestMethod.GET)
+	@RequestMapping(value = "admin/listDocuments", method = RequestMethod.GET)
 	@ResponseBody
 	protected ListDocumentsResponseDTO executeAction(@RequestBody ListDocumentsRequestDTO form) throws Exception {
-		// final HttpServletRequest request = context.getRequest();
+		ListDocumentsResponseDTO response = null;
+                try{
 		final List<Document> docs = documentService.search(new DocumentQuery());
-		ListDocumentsResponseDTO response = new ListDocumentsResponseDTO(docs);
+		response = new ListDocumentsResponseDTO(docs);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

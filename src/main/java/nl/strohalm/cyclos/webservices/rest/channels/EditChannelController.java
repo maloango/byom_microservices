@@ -34,12 +34,33 @@ import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class EditChannelController extends BaseRestController {
 	private ChannelService channelService;
 	private DataBinder<Channel> dataBinder;
 	private PermissionService permissionService;
+	public final PermissionService getPermissionService() {
+		return permissionService;
+	}
+
+	public final void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	public final SettingsService getSettingsService() {
+		return settingsService;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
+	public final ChannelService getChannelService() {
+		return channelService;
+	}
+
 	private SettingsService settingsService;
 
 	@Inject
@@ -47,12 +68,17 @@ public class EditChannelController extends BaseRestController {
 		this.channelService = channelService;
 	}
 
+    public Channel resolveChannel(long channelId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+       
+   
 	public static class EditChannelRequestDto {
 		private long channelId;
 		private String[] principalTypes;
 		private String defaultPrincipalType;
 		protected Map<String, Object> values;
-
+                
 		public Map<String, Object> getValues() {
 			return values;
 		}
@@ -105,7 +131,15 @@ public class EditChannelController extends BaseRestController {
 
 	public static class EditChannelResponseDto {
 		public String message;
+                private boolean isTransient;
 
+        public boolean isIsTransient() {
+            return isTransient;
+        }
+
+        public void setIsTransient(boolean isTransient) {
+            this.isTransient = isTransient;
+        }
 		public String getMessage() {
 			return message;
 		}
@@ -113,21 +147,29 @@ public class EditChannelController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public EditChannelResponseDto(){
+                }
 	}
 
-	@RequestMapping(value = "/admin/editChannel", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editChannel/{channelId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected EditChannelResponseDto handleSubmit(
-			@RequestBody EditChannelRequestDto form) throws Exception {
-		Channel channel = resolveChannel(form);
+	protected EditChannelResponseDto handleSubmit(@PathVariable ("channelId")long channelId) throws Exception {
+		
+                Channel channel = resolveChannel(channelId);
+                
+                EditChannelResponseDto response =  new EditChannelResponseDto();
+                try{
 		final boolean isInsert = channel.isTransient();
 		channel = channelService.save(channel);
-		EditChannelResponseDto response = new EditChannelResponseDto();
+		
 		if (isInsert) {
 			response.setMessage("channel.inserted");
 		} else {
 			response.setMessage("channel.modified");
 		}
+                response = new EditChannelResponseDto();}
+                catch(Exception e){
+                }
 		return response;
 	}
 

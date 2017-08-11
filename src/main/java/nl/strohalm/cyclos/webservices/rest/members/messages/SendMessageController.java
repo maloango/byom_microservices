@@ -1,20 +1,12 @@
 package nl.strohalm.cyclos.webservices.rest.members.messages;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.WordUtils;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
@@ -48,6 +40,7 @@ import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.services.preferences.PreferenceService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
+import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.TextFormat;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
@@ -59,6 +52,16 @@ import nl.strohalm.cyclos.utils.conversion.StringTrimmerConverter;
 import nl.strohalm.cyclos.utils.transaction.CurrentTransactionData;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
+import org.apache.struts.action.ActionForward;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class SendMessageController extends BaseRestController {
@@ -196,11 +199,12 @@ public class SendMessageController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST)
+	@RequestMapping(value = "member/sendMessage", method = RequestMethod.POST)
 	@ResponseBody
 	protected SendMessageResponseDto handleSubmit(
 			@RequestBody SendMessageRequestDto form) throws Exception {
-		// final SendMessageForm form = context.getForm();
+		SendMessageResponseDto response = null;
+                try{
 		final long toMemberId = form.getToMemberId();
 
 		// Send the message
@@ -209,7 +213,7 @@ public class SendMessageController extends BaseRestController {
 		// Call the correct service method
 		String errMessage = null;
 		String key = null;
-		SendMessageResponseDto response = new SendMessageResponseDto(key, errMessage, toMemberId);
+		response = new SendMessageResponseDto(key, errMessage, toMemberId);
 		try {
 			 key = "message.sent";
 
@@ -245,7 +249,10 @@ public class SendMessageController extends BaseRestController {
 		// Go back to the correct location
 		if (dto.getInReplyTo() == null && toMemberId > 0L) {
 			return response;
-		}
+		}}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

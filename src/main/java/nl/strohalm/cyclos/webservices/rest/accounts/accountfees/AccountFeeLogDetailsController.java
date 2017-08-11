@@ -27,9 +27,7 @@ import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.services.accountfees.AccountFeeService;
 import nl.strohalm.cyclos.services.elements.ElementService;
-import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
-import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinderHelper;
@@ -43,10 +41,18 @@ public class AccountFeeLogDetailsController extends BaseRestController {
 	private AccountFeeService accountFeeService;
 
 	private DataBinder<MemberAccountFeeLogQuery> dataBinder;
-	private GroupService groupService;
+
 	private ElementService elementService;
 	private PermissionService permissionService;
-	private SettingsService settingsService;
+
+	
+	public final void setElementService(ElementService elementService) {
+		this.elementService = elementService;
+	}
+
+	public final void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
 
 	@Inject
 	public void setAccountFeeService(final AccountFeeService accountFeeService) {
@@ -64,6 +70,8 @@ public class AccountFeeLogDetailsController extends BaseRestController {
 			super();
 			this.members = members;
 		}
+                public AccountFeeLogDetailsResponseDto(){
+                }
 
 	}
 
@@ -72,12 +80,18 @@ public class AccountFeeLogDetailsController extends BaseRestController {
 	protected AccountFeeLogDetailsResponseDto executeQuery(
 			@RequestBody AccountFeeLogDetailsRequestDto context,
 			final QueryParameters queryParameters) {
-		// final HttpServletRequest request = context.getRequest();
+		AccountFeeLogDetailsResponseDto response = null;
+                try{
 		final MemberAccountFeeLogQuery query = (MemberAccountFeeLogQuery) queryParameters;
 		final List<MemberAccountFeeLog> members = accountFeeService
 				.searchMembers(query);
-		AccountFeeLogDetailsResponseDto response = new AccountFeeLogDetailsResponseDto(
-				members);
+		response = new AccountFeeLogDetailsResponseDto(
+				members);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+               
+                
 		return response;
 	}
 

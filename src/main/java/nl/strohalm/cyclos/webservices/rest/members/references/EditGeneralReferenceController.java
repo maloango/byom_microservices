@@ -127,15 +127,20 @@ public class EditGeneralReferenceController extends BaseRestController{
 	}
 	
 
-    @RequestMapping (value = "/member/generalReferenceDetails", method = RequestMethod.POST)
+    @RequestMapping (value = "member/generalReferenceDetails", method = RequestMethod.POST)
     @ResponseBody
     protected EditGeneralReferenceResponseDTO handleSubmit(@RequestBody EditGeneralReferenceRequestDTO form) throws Exception {
         GeneralReference reference = resolveReference(form);
+        EditGeneralReferenceResponseDTO response = null;
+        try{
         final boolean isInsert = reference.isTransient();
         final GeneralReference generalReference = reference;
         reference = referenceService.save(generalReference);
-        EditGeneralReferenceResponseDTO response = new EditGeneralReferenceResponseDTO();
-        response.setMessage("reference." + (isInsert ? "inserted" : "modified"));
+        response = new EditGeneralReferenceResponseDTO();
+        response.setMessage("reference." + (isInsert ? "inserted" : "modified"));}
+        catch(Exception e){
+            e.printStackTrace();
+        }
         return response;
     }
 

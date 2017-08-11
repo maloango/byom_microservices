@@ -88,16 +88,17 @@ public class ChargebackPaymentController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST)
+	@RequestMapping(value = "member/chargebackPayment", method = RequestMethod.POST)
 	@ResponseBody
 	protected ChargebackPaymentResponseDto handleSubmit(
 			@RequestBody ChargebackPaymentRequestDto form) throws Exception {
-		// final ChargebackPaymentForm form = context.getForm();
+		ChargebackPaymentResponseDto response = null;
+                try{
 		final long transferId = form.getTransferId();
 		String message = null;
 		Transfer chargeback = null;
 		Long id = null;
-		ChargebackPaymentResponseDto response = new ChargebackPaymentResponseDto(
+		response = new ChargebackPaymentResponseDto(
 				message, transferId, id);
 		if (transferId <= 0L) {
 			throw new ValidationException();
@@ -113,6 +114,10 @@ public class ChargebackPaymentController extends BaseRestController {
 		}
 		message = "payment.chargedBack";
 		id = chargeback.getId();
+                response = new ChargebackPaymentResponseDto(message, transferId, id);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

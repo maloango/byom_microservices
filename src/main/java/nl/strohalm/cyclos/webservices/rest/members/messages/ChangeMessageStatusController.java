@@ -1,5 +1,6 @@
 package nl.strohalm.cyclos.webservices.rest.members.messages;
 
+import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.controls.ActionContext;
+import nl.strohalm.cyclos.controls.members.messages.ChangeMessageStatusForm;
 import nl.strohalm.cyclos.services.elements.MessageAction;
 import nl.strohalm.cyclos.services.elements.MessageService;
 import nl.strohalm.cyclos.utils.conversion.CoercionHelper;
@@ -55,11 +58,12 @@ public class ChangeMessageStatusController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/changeMessageStatus", method = RequestMethod.PUT)
 	@ResponseBody
 	protected ChangeMessageStatusResponseDto executeAction(
 			@RequestBody ChangeMessageStatusRequestDto form) throws Exception {
-		// final ChangeMessageStatusForm form = context.getForm();
+		ChangeMessageStatusResponseDto response = null;
+                try{
 
 		final MessageAction action = CoercionHelper.coerce(MessageAction.class,
 				form.getAction());
@@ -69,13 +73,17 @@ public class ChangeMessageStatusController extends BaseRestController {
 		}
 
 		messageService.performAction(action, ids);
-		ChangeMessageStatusResponseDto response = new ChangeMessageStatusResponseDto();
+		//response = new ChangeMessageStatusResponseDto();
 		switch (action) {
 		case DELETE:
 		case MOVE_TO_TRASH:
 		case RESTORE:
 			response.setMessage("message.actionPerformed." + action);
 		}
+                response = new ChangeMessageStatusResponseDto();}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 
 		return response;
 	}

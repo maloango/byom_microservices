@@ -2,17 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-   <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
    <groupId>smartbank</groupId>
    <artifactId>core-service</artifactId>
-   <packaging>jar</packaging>
+   <packaging>war</packaging>
    <version>1.0-SNAPSHOT</version>
    <name>SmartBank</name>
    <url>http://struts.apache.org/1.x</url>
-   
-  <!--  <modules>
-        <module>core-service-ui</module>
-    </modules> -->
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -30,6 +26,12 @@
     </properties>
 
     <dependencies>
+<!-- 
+      <dependency>
+			<groupId>smartbank</groupId>
+			<artifactId>core-service</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>     -->
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -683,14 +685,14 @@
                 </configuration>
             </plugin>
 
-        <!--   <plugin>
+          <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-war-plugin</artifactId>
               <version>2.1.1</version>
               <configuration>
                   <webResources>
                       <resource>
-                          this is relative to the pom.xml directory
+                          <!-- this is relative to the pom.xml directory -->
                           <directory>lib</directory>
                       </resource>
                       <resource>
@@ -699,45 +701,15 @@
                              <include>**/*.xml</include>
                              <include>**/*.properties</include>
                          </includes>
-                          this copy XML resources files in the same path as the classes ** Cyclos oddity
-                          this copy properties resources files in the same path as the classes ** Cyclos oddity
+                          <!-- this copy XML resources files in the same path as the classes ** Cyclos oddity -->
+                          <!-- this copy properties resources files in the same path as the classes ** Cyclos oddity -->
                          <targetPath>WEB-INF/classes</targetPath>
                       </resource>
                    </webResources>
 
               </configuration>
-          </plugin> -->
-          
-         <!-- Maven Assembly Plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4.1</version>
-				<configuration>
-					<!-- get all project dependencies -->
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<!-- MainClass in mainfest make a executable jar -->
-					<!-- <archive>
-					  <manifest>
-						<mainClass>com.mkyong.core.utils.App</mainClass>
-					  </manifest>
-					</archive> -->
+          </plugin>
 
-				</configuration>
-				<executions>
-				  <execution>
-					<id>make-assembly</id>
-                                        <!-- bind to the packaging phase -->
-					<phase>package</phase>
-					<goals>
-						<goal>single</goal>
-					</goals>
-				  </execution>
-				</executions>
-			</plugin>
-			
             <plugin>
     			<groupId>org.mortbay.jetty</groupId>
     			<artifactId>maven-jetty-plugin</artifactId>
@@ -747,7 +719,7 @@
     			</configuration>
     	    </plugin>
 
-          <!-- <plugin>
+         <!--  <plugin>
               <groupId>com.spotify</groupId>
               <artifactId>docker-maven-plugin</artifactId>
               <version>${docker.plugin.version}</version>

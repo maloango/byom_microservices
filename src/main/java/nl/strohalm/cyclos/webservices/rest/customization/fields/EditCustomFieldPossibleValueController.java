@@ -41,6 +41,34 @@ public class EditCustomFieldPossibleValueController extends BaseRestController {
 	private AdCustomFieldService adCustomFieldService;
 	private AdminCustomFieldService adminCustomFieldService;
 	private LoanGroupCustomFieldService loanGroupCustomFieldService;
+	public final AdCustomFieldService getAdCustomFieldService() {
+		return adCustomFieldService;
+	}
+
+	public final AdminCustomFieldService getAdminCustomFieldService() {
+		return adminCustomFieldService;
+	}
+
+	public final LoanGroupCustomFieldService getLoanGroupCustomFieldService() {
+		return loanGroupCustomFieldService;
+	}
+
+	public final MemberCustomFieldService getMemberCustomFieldService() {
+		return memberCustomFieldService;
+	}
+
+	public final MemberRecordCustomFieldService getMemberRecordCustomFieldService() {
+		return memberRecordCustomFieldService;
+	}
+
+	public final OperatorCustomFieldService getOperatorCustomFieldService() {
+		return operatorCustomFieldService;
+	}
+
+	public final PaymentCustomFieldService getPaymentCustomFieldService() {
+		return paymentCustomFieldService;
+	}
+
 	private MemberCustomFieldService memberCustomFieldService;
 	private MemberRecordCustomFieldService memberRecordCustomFieldService;
 	private OperatorCustomFieldService operatorCustomFieldService;
@@ -187,12 +215,13 @@ public class EditCustomFieldPossibleValueController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "admin/editCustomFieldPossibleValue", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editCustomFieldPossibleValue", method = RequestMethod.POST)
 	@ResponseBody
 	protected EditCustomFieldPossibleValueResponseDto handleSubmit(
 			@RequestBody EditCustomFieldPossibleValueRequestDto form)
 			throws Exception {
-		// final EditCustomFieldPossibleValueForm form = context.getForm();
+		
+                
 		final Collection<CustomFieldPossibleValue> resolveAllValues = resolveAllValues(form);
 		Boolean isInsert = null;
 		CustomField field = null;
@@ -243,6 +272,7 @@ public class EditCustomFieldPossibleValueController extends BaseRestController {
 			return response;
 		} catch (final DaoException e) {
 			response.setMessage("customField.possibleValue.error.saving");
+                
 			return response;
 		}
 	}

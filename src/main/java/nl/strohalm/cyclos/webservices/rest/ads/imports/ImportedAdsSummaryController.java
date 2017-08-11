@@ -1,5 +1,7 @@
 package nl.strohalm.cyclos.webservices.rest.ads.imports;
 
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.entities.accounts.Currency;
 import nl.strohalm.cyclos.entities.ads.imports.AdImport;
 import nl.strohalm.cyclos.services.accounts.CurrencyService;
 import nl.strohalm.cyclos.services.ads.AdImportService;
@@ -16,6 +19,14 @@ import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class ImportedAdsSummaryController extends BaseRestController {
 	private AdImportService adImportService;
+	public final AdImportService getAdImportService() {
+		return adImportService;
+	}
+
+	public final CurrencyService getCurrencyService() {
+		return currencyService;
+	}
+
 	private CurrencyService currencyService;
 
 	@Inject
@@ -38,6 +49,11 @@ public class ImportedAdsSummaryController extends BaseRestController {
 		public void setImportId(final long importId) {
 			this.importId = importId;
 		}
+
+        public HttpServletRequest getRequest() {
+                    return null;
+          
+        }
 	}
 
 	public static class ImportedAdsSummaryResponseDto {
@@ -56,15 +72,20 @@ public class ImportedAdsSummaryController extends BaseRestController {
 	@ResponseBody
 	protected ImportedAdsSummaryResponseDto formAction(
 			@RequestBody ImportedAdsSummaryRequestDto context) throws Exception {
+                ImportedAdsSummaryResponseDto response =null;
+                try{
 		final AdImport adImport = getImport(context);
 		adImportService.processImport(adImport);
 		String message = "adImport.processed";
-		ImportedAdsSummaryResponseDto response = new ImportedAdsSummaryResponseDto();
-		response.setMessage(message);
+                response = new ImportedAdsSummaryResponseDto();
+		response.setMessage(message);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 
-/*	protected void prepareForm(final ImportedAdsSummaryRequestDto context) throws Exception {
+	protected void prepareForm(final ImportedAdsSummaryRequestDto context) throws Exception {
 		final AdImport adImport = getImport(context);
 		final HttpServletRequest request = context.getRequest();
 		request.setAttribute("adImport", adImport);
@@ -77,7 +98,7 @@ public class ImportedAdsSummaryController extends BaseRestController {
 			request.setAttribute("singleCurrency", currencies.get(0));
 		}
 	}
-*/
+
 	private AdImport getImport(final ImportedAdsSummaryRequestDto form) {
 		// final ImportedAdsSummaryForm form = context.getForm();
 		try {

@@ -19,6 +19,10 @@ public class RemoveTranslationMessagesController extends BaseRestController {
 		this.translationMessageService = translationMessageService;
 	}
 
+	public final TranslationMessageService getTranslationMessageService() {
+		return translationMessageService;
+	}
+
 	public static class RemoveTranslationMessagesRequestDto {
 		private Long[] messageIds;
 
@@ -41,17 +45,25 @@ public class RemoveTranslationMessagesController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+               
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/removeTranslationMessages", method = RequestMethod.POST)
 	@ResponseBody
 	protected RemoveTranslationMessagesResponseDto executeAction(
 			final RemoveTranslationMessagesRequestDto form) throws Exception {
-		// final RemoveTranslationMessagesForm form = context.getForm();
+		RemoveTranslationMessagesResponseDto response =null;
+                try{
 		translationMessageService.remove(form.getMessageIds());
 		String message = "translationMessage.removed";
-		RemoveTranslationMessagesResponseDto response = new RemoveTranslationMessagesResponseDto();
-		response.setMessage(message);
+                
+		response = new RemoveTranslationMessagesResponseDto();
+                response.setMessage(message);}
+		catch(Exception e){
+                    e.printStackTrace();
+                            
+}
+               
 		return response;
 	}
 }

@@ -24,10 +24,18 @@ public class ManageTransactionPasswordController extends BaseRestController {
 	private AccessService accessService;
 	private ElementService elementService;
 
+	public final void setAccessService(AccessService accessService) {
+		this.accessService = accessService;
+	}
+
+	public final void setElementService(ElementService elementService) {
+		this.elementService = elementService;
+	}
+
 	public static class ManageTransactionPasswordRequestDto {
 		private long userId;
 		private boolean block;
-		private boolean embed;
+		// private boolean embed;
 
 		public long getUserId() {
 			return userId;
@@ -37,28 +45,28 @@ public class ManageTransactionPasswordController extends BaseRestController {
 			return block;
 		}
 
+		public void setBlock(final boolean block) {
+			this.block = block;
+		}
+/*
 		public boolean isEmbed() {
 			return embed;
 		}
 
-		public void setBlock(final boolean block) {
-			this.block = block;
-		}
-
 		public void setEmbed(final boolean standalone) {
 			embed = standalone;
-		}
+		}*/
 
 		public void setUserId(final long userId) {
 			this.userId = userId;
 		}
 	}
 
-	public static class ManageTransactionPasswordResponseDto {
+	public static class ManageTransactionPasswordResponseDTO {
 		private String message;
 		private Long userId;
 
-		public ManageTransactionPasswordResponseDto(String message, Long userId) {
+		public ManageTransactionPasswordResponseDTO(String message, Long userId) {
 			super();
 			this.message = message;
 			this.userId = userId;
@@ -79,13 +87,16 @@ public class ManageTransactionPasswordController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public ManageTransactionPasswordResponseDTO(){
+                }
 	}
 
-	@RequestMapping(value = "admin/manageTransactionPassword", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/manageTransactionPassword", method = RequestMethod.POST)
 	@ResponseBody
-	protected ManageTransactionPasswordResponseDto handleSubmit(@RequestBody ManageTransactionPasswordRequestDto form)
+	protected ManageTransactionPasswordResponseDTO handleSubmit(@RequestBody ManageTransactionPasswordRequestDto form)
 			throws Exception {
 		// final ManageTransactionPasswordForm form = context.getForm();
+		System.out.println("Request came testing ++++ processing");
 		User user = retrieveUser(form);
 		final boolean block = form.isBlock();
 		final ResetTransactionPasswordDTO dto = new ResetTransactionPasswordDTO();
@@ -98,17 +109,17 @@ public class ManageTransactionPasswordController extends BaseRestController {
 		else
 			message = "transactionPassword.reset";
 		Long userId = user.getId();
-		ManageTransactionPasswordResponseDto response = new ManageTransactionPasswordResponseDto(message, userId);
+		ManageTransactionPasswordResponseDTO response = new ManageTransactionPasswordResponseDTO(message, userId);
 		return response;
 	}
 
 	private User retrieveUser(final ManageTransactionPasswordRequestDto form) {
-	//	final HttpServletRequest request = context.getRequest();
-		/*if (request.getAttribute("element") != null) {
-			// The element may be already retrieved on the manage
-			// passwordsaction
-			return ((Element) request.getAttribute("element")).getUser();
-		}*/
+		// final HttpServletRequest request = context.getRequest();
+		/*
+		 * if (request.getAttribute("element") != null) { // The element may be
+		 * already retrieved on the manage // passwordsaction return ((Element)
+		 * request.getAttribute("element")).getUser(); }
+		 */
 
 		// final ManageTransactionPasswordForm form = context.getForm();
 		User user;

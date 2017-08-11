@@ -42,14 +42,15 @@ public class RemoveRegistrationAgreementController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/removeRegistrationAgreement", method = RequestMethod.DELETE)
 	@ResponseBody
 	protected RemoveRegistrationAgreementResponseDto executeAction(
 			@RequestBody RemoveRegistrationAgreementRequestDto form)
 			throws Exception {
-		// final RemoveRegistrationAgreementForm form = context.getForm();
+		RemoveRegistrationAgreementResponseDto response =null;
+                try{
 		String message = null;
-		RemoveRegistrationAgreementResponseDto response = new RemoveRegistrationAgreementResponseDto();
+		
 		try {
 			registrationAgreementService.remove(form
 					.getRegistrationAgreementId());
@@ -57,6 +58,10 @@ public class RemoveRegistrationAgreementController extends BaseRestController {
 		} catch (final Exception e) {
 			message = "registrationAgreement.error.removing";
 		}
+                response = new RemoveRegistrationAgreementResponseDto(); }
+        catch(Exception e){
+            e.printStackTrace();
+}
 		return response;
 	}
 }

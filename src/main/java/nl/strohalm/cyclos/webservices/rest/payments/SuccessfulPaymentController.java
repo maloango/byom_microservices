@@ -110,11 +110,12 @@ public class SuccessfulPaymentController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "member/successfulPayment", method = RequestMethod.POST)
 	@ResponseBody
 	protected SuccessfulPaymentResponseDto executeAction(
 			@RequestBody SuccessfulPaymentRequestDto form) throws Exception {
-		// final SuccessfulPaymentForm form = context.getForm();
+		SuccessfulPaymentResponseDto response = null;
+                try{
 		final long transferId = form.getTransferId();
 		if (transferId <= 0L) {
 			throw new ValidationException();
@@ -167,10 +168,13 @@ public class SuccessfulPaymentController extends BaseRestController {
 		if (toMember != null) {
 			toMemberId = toMember.getId();
 		}
-		SuccessfulPaymentResponseDto response = new SuccessfulPaymentResponseDto(
+                 response = new SuccessfulPaymentResponseDto(
 				toSystem, selfPayment, pendingAuthorization, selectMember,
 				nextAttempt, transfer, relatedMemberId, fromMemberId,
-				toMemberId);
+				toMemberId);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 }

@@ -1,17 +1,14 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.accountfees;
 
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.accountfees.RemoveAccountFeeForm;
 import nl.strohalm.cyclos.services.accountfees.AccountFeeService;
-import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 public class RemoveAccountFeeController extends BaseRestController {
@@ -26,20 +23,56 @@ public class RemoveAccountFeeController extends BaseRestController {
 	public void setAccountFeeService(final AccountFeeService accountFeeService) {
 		this.accountFeeService = accountFeeService;
 	}
+        public static class RemoveAccountFeeRequestDTO{
+            private long              accountTypeId;
+            private long              accountFeeId;
 
-	@RequestMapping(value = "admin/removeAccountFee", method = RequestMethod.DELETE)
+    public long getAccountFeeId() {
+        return accountFeeId;
+    }
+
+    public long getAccountTypeId() {
+        return accountTypeId;
+    }
+
+    public void setAccountFeeId(final long accountFeeId) {
+        this.accountFeeId = accountFeeId;
+    }
+
+    public void setAccountTypeId(final long accountTypeId) {
+        this.accountTypeId = accountTypeId;
+    }
+        }
+        
+        public static class RemoveAccountFeeResponseDTO{
+            String message;
+            
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+            public RemoveAccountFeeResponseDTO(){}
+        }
+
+	@RequestMapping(value = "admin/removeAccountFee", method = RequestMethod.POST)
 	@ResponseBody
-	protected ActionForward executeAction(final ActionContext context)
+	protected RemoveAccountFeeResponseDTO executeAction(@RequestBody RemoveAccountFeeRequestDTO form)
 			throws Exception {
-		final RemoveAccountFeeForm form = context.getForm();
+            RemoveAccountFeeResponseDTO response = new RemoveAccountFeeResponseDTO();
+            String message;
+            message = null;
 		try {
 			accountFeeService.remove(form.getAccountFeeId());
-			context.sendMessage("accountFee.removed");
+			response.setMessage("accountFee.removed");
 		} catch (final Exception e) {
-			context.sendMessage("accountFee.error.removing");
+			response.setMessage("accountFee.error.removing");
 		}
-		return ActionHelper.redirectWithParam(context.getRequest(),
-				context.getSuccessForward(), "accountTypeId",
-				form.getAccountTypeId());
+            return response;
+		
+				
 	}
 }

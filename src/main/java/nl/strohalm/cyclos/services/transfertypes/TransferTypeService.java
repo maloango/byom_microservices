@@ -1,4 +1,4 @@
-/*
+/* 
     This file is part of Cyclos (www.cyclos.org).
     A project of the Social Trade Organisation (www.socialtrade.org).
 
@@ -16,7 +16,7 @@
     along with Cyclos; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
- */
+*/
 package nl.strohalm.cyclos.services.transfertypes;
 
 import java.util.List;
@@ -30,9 +30,9 @@ import nl.strohalm.cyclos.services.Service;
 import nl.strohalm.cyclos.webservices.model.TransferTypeVO;
 
 /**
- * Service interface for transfer types
- * @author luis
- */
+* Service interface for transfer types
+* @author luis
+*/
 public interface TransferTypeService extends Service {
 
     /**

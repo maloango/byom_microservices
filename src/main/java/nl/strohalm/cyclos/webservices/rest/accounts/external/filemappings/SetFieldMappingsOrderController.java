@@ -17,6 +17,14 @@ public class SetFieldMappingsOrderController extends BaseRestController {
 	private FieldMappingService fieldMappingService;
 	private FileMappingService fileMappingService;
 
+	public final FieldMappingService getFieldMappingService() {
+		return fieldMappingService;
+	}
+
+	public final FileMappingService getFileMappingService() {
+		return fileMappingService;
+	}
+
 	@Inject
 	public void setFieldMappingService(
 			final FieldMappingService fieldMappingService) {
@@ -60,20 +68,31 @@ public class SetFieldMappingsOrderController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+
+            /**
+             *
+             */
+            public SetFieldMappingsOrderResponseDto(){
+        }
 	}
 
 	@RequestMapping(value = "admin/SetFieldMappings", method = RequestMethod.POST)
 	@ResponseBody
 	protected SetFieldMappingsOrderResponseDto handleSubmit(
 			@RequestBody SetFieldMappingsOrderRequestDto form) throws Exception {
-		// final SetFieldMappingsOrderForm form = context.getForm();
+		SetFieldMappingsOrderResponseDto response = null;
+                try{
 		final long fileMappingId = form.getFileMappingId();
 		final FileMapping fileMapping = fileMappingService.load(fileMappingId,
 				FileMapping.Relationships.EXTERNAL_ACCOUNT);
 		final Long externalAccountId = fileMapping.getAccount().getId();
 		fieldMappingService.setOrder(form.getFieldsIds());
-		SetFieldMappingsOrderResponseDto response = new SetFieldMappingsOrderResponseDto();
+		//SetFieldMappingsOrderResponseDto response = new SetFieldMappingsOrderResponseDto();
 		response.setMessage("fieldMapping.orderModified");
+                response = new SetFieldMappingsOrderResponseDto();}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

@@ -3,7 +3,6 @@ package nl.strohalm.cyclos.webservices.rest.accounts.pos;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -12,11 +11,16 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.exceptions.PermissionDeniedException;
 import nl.strohalm.cyclos.services.accounts.pos.PosService;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class RemovePosController extends BaseRestController {
 
 	private PosService posService;
+
+	public final PosService getPosService() {
+		return posService;
+	}
 
 	@Inject
 	public void setPosService(final PosService posService) {
@@ -26,7 +30,7 @@ public class RemovePosController extends BaseRestController {
 	public static class RemovePosRequestDto {
 		// POS Pk
 		private long id;
-		// POS identifier set by the admin/broker
+		// POS identifier set b;y the admin/broker
 		private String posId;
 		private long memberId;
 		private String operation;
@@ -120,13 +124,12 @@ public class RemovePosController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "admin/removePos", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removePos/{memberId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected RemovePosResponseDto executeAction(
-			@RequestBody RemovePosRequestDto form) throws Exception {
+	protected RemovePosResponseDto executeAction(@PathVariable ("memberId") long memberId) throws Exception {
+			
 
-		// final EditPosForm form = context.getForm();
-		final long id = form.getId();
+		final long id = memberId;
 		String message;
 		RemovePosResponseDto response = new RemovePosResponseDto();
 		try {
@@ -138,6 +141,7 @@ public class RemovePosController extends BaseRestController {
 		} catch (final Exception e) {
 			message = "pos.error.removing";
 			response.setMessage(message);
+                        e.printStackTrace();
 		}
 		return response;
 	}

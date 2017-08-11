@@ -21,6 +21,10 @@ import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class RemoveDocumentController extends BaseRestController{
 
+	public final DocumentService getDocumentService() {
+		return documentService;
+	}
+
 	private DocumentService     documentService;
     private CustomizationHelper customizationHelper;
 
@@ -90,7 +94,8 @@ public class RemoveDocumentController extends BaseRestController{
     @RequestMapping(value ="/admin/removeDocument" , method = RequestMethod.DELETE)
     @ResponseBody
     protected RemoveDocumentResponseDTO executeAction(@RequestBody RemoveDocumentRequestDTo form) throws Exception {
-    	
+            RemoveDocumentResponseDTO response = null;
+            try{
           final long id = form.getDocumentId();
           if (id <= 0L) {
               throw new ValidationException();
@@ -115,8 +120,12 @@ public class RemoveDocumentController extends BaseRestController{
           } else { // document instance of StaticDocument
               forwardName = "listDocuments";
           }
-          RemoveDocumentResponseDTO response =new RemoveDocumentResponseDTO(memberId);
-         response.setMessage("document.removed");
+          response =new RemoveDocumentResponseDTO(memberId);
+         response.setMessage("document.removed");}
+            
+           catch(Exception e){
+               e.printStackTrace();
+           }
           return response;
       }
 

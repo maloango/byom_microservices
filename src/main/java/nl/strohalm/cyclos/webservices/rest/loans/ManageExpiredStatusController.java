@@ -4,11 +4,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import nl.strohalm.cyclos.entities.Relationship;
 import nl.strohalm.cyclos.entities.access.AdminUser;
 import nl.strohalm.cyclos.entities.access.TransactionPassword;
@@ -39,6 +34,11 @@ import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ManageExpiredStatusController extends BaseRestController {
@@ -200,7 +200,7 @@ public class ManageExpiredStatusController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/manageLoanExpiredStatus", method = RequestMethod.POST)
 	@ResponseBody
 	protected ManageExpiredStatusResponseDto handleSubmit(
 			final ManageExpiredStatusRequestDto form) throws Exception {

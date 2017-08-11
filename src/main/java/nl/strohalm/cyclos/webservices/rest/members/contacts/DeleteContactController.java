@@ -73,15 +73,21 @@ public class DeleteContactController extends BaseRestController{
 	   
    }
 
-    @RequestMapping(value = "/member/deleteContact", method = RequestMethod.DELETE)
+    @RequestMapping(value = "member/deleteContact", method = RequestMethod.DELETE)
     @ResponseBody
     protected DeleteContactResponseDTO executeAction(@RequestBody DeleteContactRequestDTO form) throws Exception {
+        DeleteContactResponseDTO response = null;
+        try{
         if (form.getId() <= 0) {
             throw new ValidationException();
         }
         contactService.remove(form.getId());
-        DeleteContactResponseDTO response = new DeleteContactResponseDTO();
+        
         response.setMessage("contact.removed");
+        response = new DeleteContactResponseDTO();}
+        catch(Exception e){
+            e.printStackTrace();
+        }
         return response;
     }
 

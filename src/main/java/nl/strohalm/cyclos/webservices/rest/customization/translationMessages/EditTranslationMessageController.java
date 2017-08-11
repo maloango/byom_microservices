@@ -1,8 +1,8 @@
 package nl.strohalm.cyclos.webservices.rest.customization.translationMessages;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,11 +24,17 @@ import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.validation.UniqueError;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class EditTranslationMessageController extends BaseRestController {
 
 	private TranslationMessageService translationMessageService;
+        
+	public final TranslationMessageService getTranslationMessageService() {
+		return translationMessageService;
+	}
+
 	private DataBinder<TranslationMessage> dataBinder;
 
 	public DataBinder<TranslationMessage> getDataBinder() {
@@ -101,9 +107,11 @@ public class EditTranslationMessageController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public EditTranslationMessageResponseDto(){
+                }
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/editTranslationMessage", method = RequestMethod.POST)
 	@ResponseBody
 	protected EditTranslationMessageResponseDto formAction(
 			@RequestBody EditTranslationMessageRequestDto form)
@@ -131,19 +139,52 @@ public class EditTranslationMessageController extends BaseRestController {
 		}
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final EditTranslationMessageForm form = context.getForm();
-		final long id = form.getMessageId();
-		final boolean isInsert = id <= 0L;
+        public static class PrepareFormResponseDto{
+           private  TranslationMessage message;
+            private boolean isInsert;
+
+        public TranslationMessage getMessage() {
+            return message;
+        }
+
+        public void setMessage(TranslationMessage message) {
+            this.message = message;
+        }
+
+       
+
+        public boolean isIsInsert() {
+            return isInsert;
+        }
+
+        public void setIsInsert(boolean isInsert) {
+            this.isInsert = isInsert;
+        }
+            public PrepareFormResponseDto(){
+            }
+            
+        }
+        
+        @RequestMapping(value = "admin/editTranslationMessage/{messageId}", method = RequestMethod.GET)
+	@ResponseBody
+	protected PrepareFormResponseDto prepareForm(@PathVariable("messageId") Long messageId ) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final EditTranslationMessageForm form = context.getForm();
+//		final long id = form.getMessageId();
+              PrepareFormResponseDto response=new PrepareFormResponseDto();
+		final boolean isInsert = messageId <= 0L;
 		if (!isInsert) {
+                    Map<String, Object>  message=new HashMap<String,Object>();
 			final TranslationMessage translationMessage = translationMessageService
-					.load(id);
+					.load(messageId);
 			getDataBinder()
-					.writeAsString(form.getMessage(), translationMessage);
-			request.setAttribute("message", translationMessage);
+					.writeAsString(message, translationMessage);
+			//request.setAttribute("message", translationMessage);
+                        response.setMessage(translationMessage);
 		}
-		request.setAttribute("isInsert", isInsert);
+		//request.setAttribute("isInsert", isInsert);
+                response.setIsInsert(isInsert);
+                return response;
 	}
 
 	protected void validateForm(final ActionContext context) {

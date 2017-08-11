@@ -25,6 +25,10 @@ import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 public class SearchTranslationMessagesController extends BaseRestController {
 
 	private TranslationMessageService translationMessageService;
+	public final TranslationMessageService getTranslationMessageService() {
+		return translationMessageService;
+	}
+
 	private DataBinder<TranslationMessageQuery> dataBinder;
 
 	public DataBinder<TranslationMessageQuery> getDataBinder() {
@@ -50,32 +54,45 @@ public class SearchTranslationMessagesController extends BaseRestController {
 		this.translationMessageService = translationMessageService;
 	}
 
-	public static class SearchTranslationMessagesRequestDto {
-
-	}
+//	public static class SearchTranslationMessagesRequestDto {
+//
+//	}
 
 	public static class SearchTranslationMessagesResponseDto {
 		private List<TranslationMessage> translationMessages;
 
 		public SearchTranslationMessagesResponseDto(
 				List<TranslationMessage> translationMessages) {
-			super();
+			
 			this.translationMessages = translationMessages;
 		}
 
+        public List<TranslationMessage> getTranslationMessages() {
+            return translationMessages;
+        }
+
+        public void setTranslationMessages(List<TranslationMessage> translationMessages) {
+            this.translationMessages = translationMessages;
+        }
+                
+                
+
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/searchTranslationMessages", method = RequestMethod.POST)
 	@ResponseBody
 	protected SearchTranslationMessagesResponseDto executeQuery(
-			@RequestBody SearchTranslationMessagesRequestDto form,
-			final QueryParameters queryParameters) {
-		// final HttpServletRequest request = context.getRequest();
-		final TranslationMessageQuery query = (TranslationMessageQuery) queryParameters;
+			@RequestBody TranslationMessageQuery form) {
+		SearchTranslationMessagesResponseDto response =null;
+                try{
+		final TranslationMessageQuery query = (TranslationMessageQuery) form;
 		final List<TranslationMessage> translationMessages = translationMessageService
 				.search(query);
-		SearchTranslationMessagesResponseDto response = new SearchTranslationMessagesResponseDto(
-				translationMessages);
+		 response = new SearchTranslationMessagesResponseDto(translationMessages);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+		          System.out.println("Sending response  "+response.toString());		
 		return response;
 	}
 

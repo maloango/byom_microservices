@@ -36,6 +36,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.access.PrincipalType;
 import nl.strohalm.cyclos.entities.exceptions.EntityNotFoundException;
+import nl.strohalm.cyclos.entities.members.Administrator;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.services.access.AccessServiceLocal;
@@ -90,26 +91,42 @@ public class RestAuthenticationProvider implements AuthenticationProvider {
         // Validate the user
         String usernameToVerify = principal;
         Member member = null;
+       // User user=null;
+       Administrator admin=null;
+        Element elem =null;
         try {
-            member = elementService.loadByPrincipal(principalType, principal, Element.Relationships.USER, Element.Relationships.GROUP);
+             elem = elementService.loadByPrincipalForAdminRest(principalType, principal, Element.Relationships.USER, Element.Relationships.GROUP);
+           if(elem instanceof Administrator)
+               admin=(Administrator)elem;
+           else
+              member =(Member)elem;
+           
+           if(member!=null)
             usernameToVerify = member.getUsername();
+           else
+              usernameToVerify = admin.getUsername(); 
         } catch (final EntityNotFoundException e) {
+            e.printStackTrace();
             usernameToVerify = "";
         }
         // Verify username
+         if(member!=null) {
         try {
             accessService.verifyLogin(null, usernameToVerify, remoteAddr);
         } catch (UserNotFoundException e) {
             sendError("Invalid username / password", INVALID_CREDENTIALS);
             throw new InvalidCredentialsException();
         }
-
+         }
+        if(member!=null) {
         // Check if the channel is enabled for the specific member
         if (!accessService.isChannelEnabledForMember(channel, member)) {
             sendError("Channel disabled for the member", CHANNEL_DISABLED);
             throw new InvalidChannelException(member.getUsername(), channel.getInternalName());
         }
 
+        }
+        if(member!=null) {
         // Check the credentials
         try {
             accessService.checkCredentials(channel, member.getMemberUser(), credentials, remoteAddr, null);
@@ -120,10 +137,17 @@ public class RestAuthenticationProvider implements AuthenticationProvider {
             sendError("Invalid username / password", INVALID_CREDENTIALS);
             throw e;
         }
-
+        }
+        
         // Initialize the LoggedUser, so it is accessible from the services
+        if(member!=null) {
         WebServiceContext.setRestMember(member);
         LoggedUser.init(member.getUser(), remoteAddr);
+        }else{
+      //  WebServiceContext.setRestMember(elem);
+        
+        LoggedUser.init(admin.getUser(), remoteAddr);  
+        }
 
         // Authentication succeeded
         Collection<SimpleGrantedAuthority> authority = Collections.singleton(new SimpleGrantedAuthority("ROLE_REST"));

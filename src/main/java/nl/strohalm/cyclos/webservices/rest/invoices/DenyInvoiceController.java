@@ -1,21 +1,17 @@
 package nl.strohalm.cyclos.webservices.rest.invoices;
 
-import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.invoices.InvoiceDetailsForm;
-import nl.strohalm.cyclos.entities.accounts.transactions.Invoice;
-import nl.strohalm.cyclos.services.transactions.InvoiceService;
-import nl.strohalm.cyclos.utils.ActionHelper;
-import nl.strohalm.cyclos.utils.EntityHelper;
-import nl.strohalm.cyclos.utils.validation.ValidationException;
-import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.entities.accounts.transactions.Invoice;
+import nl.strohalm.cyclos.services.transactions.InvoiceService;
+import nl.strohalm.cyclos.utils.EntityHelper;
+import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class DenyInvoiceController extends BaseRestController {
@@ -88,11 +84,12 @@ public class DenyInvoiceController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/member/denyInvoice", method = RequestMethod.GET)
+	@RequestMapping(value = "member/denyInvoice", method = RequestMethod.GET)
 	@ResponseBody
 	protected DenyInvoiceResponseDto executeAction(
 			@RequestBody DenyInvoiceRequestDto form) throws Exception {
-		// final InvoiceDetailsForm form = context.getForm();
+		DenyInvoiceResponseDto response = null;
+                try{
 		String message = null;
 		final long id = form.getInvoiceId();
 		if (id <= 0) {
@@ -102,8 +99,11 @@ public class DenyInvoiceController extends BaseRestController {
 		invoice = invoiceService.deny(invoice);
 		message = "invoice.denied";
 		Long invoiceId = invoice.getId();
-		DenyInvoiceResponseDto response = new DenyInvoiceResponseDto(message,
-				invoiceId);
+		response = new DenyInvoiceResponseDto(message,
+				invoiceId);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 }

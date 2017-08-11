@@ -41,6 +41,26 @@ import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 public class ExternalAccountHistoryController extends BaseRestController
 		implements LocalSettingsChangeListener {
 	private PermissionService permissionService;
+	public final SettingsService getSettingsService() {
+		return settingsService;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
+	public final ExternalAccountService getExternalAccountService() {
+		return externalAccountService;
+	}
+
+	public final ExternalTransferImportService getExternalTransferImportService() {
+		return externalTransferImportService;
+	}
+
+	public final ExternalTransferService getExternalTransferService() {
+		return externalTransferService;
+	}
+
 	private SettingsService settingsService;
 	public PermissionService getPermissionService() {
 		return permissionService;

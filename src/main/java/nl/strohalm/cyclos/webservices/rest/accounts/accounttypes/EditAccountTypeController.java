@@ -32,6 +32,7 @@ import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+//import static org.apache.commons.httpclient.URI.param;
 
 @Controller
 public class EditAccountTypeController extends BaseRestController {
@@ -44,6 +45,36 @@ public class EditAccountTypeController extends BaseRestController {
 	private ReadWriteLock lock = new ReentrantReadWriteLock(true);
 	private SettingsService settingsService;
 	private PermissionService permissionService;
+
+    public CurrencyService getCurrencyService() {
+        return currencyService;
+    }
+
+    public SettingsService getSettingsService() {
+        return settingsService;
+    }
+
+    public PermissionService getPermissionService() {
+        return permissionService;
+    }
+        
+	
+
+	public final void setDataBinders(Map<AccountType.Nature, DataBinder<? extends AccountType>> dataBinders) {
+		this.dataBinders = dataBinders;
+	}
+
+	public final void setLock(ReadWriteLock lock) {
+		this.lock = lock;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
+	public final void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
 
 	public AccountFeeService getAccountFeeService() {
 		return accountFeeService;
@@ -123,7 +154,7 @@ public class EditAccountTypeController extends BaseRestController {
 
 	public static class EditAccountTypeRequestDTO {
 		private long accountTypeId;
-		protected Map<String, Object> values;
+		protected Map<String, Object> values=new HashMap<String,Object>();
 
 		public Map<String, Object> getValues() {
 			return values;
@@ -160,32 +191,63 @@ public class EditAccountTypeController extends BaseRestController {
 
 	public static class EditAccountTypeResponseDTO {
 		String message;
-		Map<String, Object> param;
+		Map<String, Object> param=new HashMap<String,Object>();
 
 		public EditAccountTypeResponseDTO(String message, Map<String, Object> param) {
 			super();
 			this.message = message;
 			this.param = param;
 		}
+                public EditAccountTypeResponseDTO(){
+                }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public Map<String, Object> getParam() {
+            return param;
+        }
+
+        public void setParam(Map<String, Object> param) {
+            this.param = param;
+        }
+                
+                
 
 	}
 
-	@RequestMapping(value = "admin/editAccountType", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editAccountType", method = RequestMethod.POST)
 	@ResponseBody
 	protected EditAccountTypeResponseDTO handleSubmit(@RequestBody EditAccountTypeRequestDTO form) throws Exception {
-		// final EditAccountTypeForm form = context.getForm();
+            System.out.println("Request Came");  
+            String message;	
+               EditAccountTypeResponseDTO response = null;
+                try{
 		AccountType accountType = resolveAccountType(form);
+                Map<String, Object> param = new HashMap<String, Object>();
+		param.put("accountTypeId", accountType.getId());
+                
+                
 		final boolean isInsert = accountType.getId() == null;
 		accountType = accountTypeService.save(accountType);
-		String message = null;
+		//String message = null;
 		if (isInsert) {
 			message = "accountType.inserted";
 		} else {
 			message = "accountType.modified";
 		}
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("accountTypeId", accountType.getId());
-		EditAccountTypeResponseDTO response = new EditAccountTypeResponseDTO(message, param);
+
+		response = new EditAccountTypeResponseDTO(message, param);
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+	
 		return response;
 	}
 
@@ -211,3 +273,4 @@ public class EditAccountTypeController extends BaseRestController {
 		return getDataBinder(nature).readFromString(form.getAccountType());
 	}
 }
+// having prepared form to complete later full implementation 

@@ -44,6 +44,10 @@ public abstract class Image extends Entity {
             }
         }
 
+        public static Nature valueOf(Nature nature) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
         private final String value;
 
         private Nature(final String value) {

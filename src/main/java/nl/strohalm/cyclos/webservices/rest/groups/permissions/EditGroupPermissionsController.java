@@ -48,10 +48,12 @@ import nl.strohalm.cyclos.utils.conversion.PermissionConverter;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class EditGroupPermissionsController extends BaseRestController {
 	private GroupService groupService;
+	
 
 	public GroupService getGroupService() {
 		return groupService;
@@ -398,33 +400,37 @@ public class EditGroupPermissionsController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/editGroupPermissions", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editGroupPermissions/{groupId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected EditGroupPermissionsResponseDto handleSubmit(
-			@RequestBody EditGroupPermissionsRequestDto form) throws Exception {
-		// final EditGroupPermissionsForm form = context.getForm();
-		final long id = form.getGroupId();
+	protected EditGroupPermissionsResponseDto handleSubmit(@PathVariable ("groupId") long groupId) throws Exception {
+			
+		EditGroupPermissionsResponseDto response = null;
+                try{
+		final long id = groupId;
 		if (id <= 0L) {
 			throw new ValidationException();
 		}
 		final Group group = groupService.load(id);
 		GroupPermissionsDTO<?> permissions;
 		if (group instanceof AdminGroup) {
-			permissions = getAdminDataBinder().readFromString(
-					form.getPermission());
+			//permissions = getAdminDataBinder().readFromString(form.getPermission());
+			permissions = getAdminDataBinder().readFromString(groupId);		
 		} else if (group instanceof BrokerGroup) {
-			permissions = getBrokerDataBinder().readFromString(
-					form.getPermission());
+			permissions = getBrokerDataBinder().readFromString(groupId);
+					
 		} else if (group instanceof MemberGroup) {
-			permissions = getMemberDataBinder().readFromString(
-					form.getPermission());
+			permissions = getMemberDataBinder().readFromString(groupId);
+					
 		} else {
 			throw new ValidationException();
 		}
 		groupService.setPermissions(permissions);
 		String message = "permission.modified";
-		EditGroupPermissionsResponseDto response = new EditGroupPermissionsResponseDto(
-				message, id);
+		response = new EditGroupPermissionsResponseDto(
+				message, id);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 
 		return response;
 	}

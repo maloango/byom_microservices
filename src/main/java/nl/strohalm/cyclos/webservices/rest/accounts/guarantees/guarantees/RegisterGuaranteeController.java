@@ -7,12 +7,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.accounts.guarantees.guarantees.RegisterGuaranteeForm;
@@ -41,9 +35,36 @@ import nl.strohalm.cyclos.utils.conversion.HtmlConverter;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 public class RegisterGuaranteeController {
 	private GuaranteeTypeService guaranteeTypeService;
 	private GuaranteeService guaranteeService;
+	public final SettingsService getSettingsService() {
+		return settingsService;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
+	public final GuaranteeTypeService getGuaranteeTypeService() {
+		return guaranteeTypeService;
+	}
+
+	public final GuaranteeService getGuaranteeService() {
+		return guaranteeService;
+	}
+
+	public final PaymentCustomFieldService getPaymentCustomFieldService() {
+		return paymentCustomFieldService;
+	}
+
 	private PaymentCustomFieldService paymentCustomFieldService;
 	private DataBinder<Guarantee> dataBinder;
 	private SettingsService settingsService;
@@ -126,13 +147,14 @@ public class RegisterGuaranteeController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/registerGuarantee{guaranteeTypeId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected RegisterGuaranteeResponseDto handleSubmit(
-			@RequestBody RegisterGuaranteeRequestDto form) throws Exception {
-		// final RegisterGuaranteeForm form = context.getForm();
-		Guarantee guarantee = getDataBinder().readFromString(
-				form.getGuarantee());
+	protected RegisterGuaranteeResponseDto handleSubmit(@PathVariable ("guaranteeTypeId")long guaranteeTypeId) throws Exception {
+			
+		RegisterGuaranteeResponseDto response =null;
+                try{
+		Guarantee guarantee = getDataBinder().readFromString(guaranteeTypeId);
+				
 		final boolean isInsert = guarantee.isTransient();
 		guarantee = guaranteeService.registerGuarantee(guarantee);
 		String message = null;
@@ -142,8 +164,11 @@ public class RegisterGuaranteeController {
 		} else {
 			message = "guarantee.modified";
 		}
-		RegisterGuaranteeResponseDto response = new RegisterGuaranteeResponseDto(
-				message, guaranteeId);
+		 response = new RegisterGuaranteeResponseDto(message, guaranteeId);
+				}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

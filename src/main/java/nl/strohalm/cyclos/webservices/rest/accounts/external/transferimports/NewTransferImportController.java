@@ -21,11 +21,24 @@ import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.utils.transactionimport.IllegalTransactionFileFormatException;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class NewTransferImportController extends BaseRestController {
 
 	private ExternalAccountService externalAccountService;
+	public final ExternalAccountService getExternalAccountService() {
+		return externalAccountService;
+	}
+
+	public final ExternalTransferImportService getExternalTransferImportService() {
+		return externalTransferImportService;
+	}
+
+	public final SettingsService getSettingsService() {
+		return settingsService;
+	}
+
 	private ExternalTransferImportService externalTransferImportService;
 	private SettingsService settingsService;
 
@@ -67,7 +80,7 @@ public class NewTransferImportController extends BaseRestController {
 	}
 
 	public static class NewTransferImportResponseDto {
-		private String message;
+		String message;
 		private long transferImportId;
 
 		public long getTransferImportId() {
@@ -85,19 +98,20 @@ public class NewTransferImportController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public NewTransferImportResponseDto(){
+                }
 	}
 
-	@RequestMapping(value = "admin/newTransferImport", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/newTransferImport/{externalAccountId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected NewTransferImportResponseDto executeAction(
-			@RequestBody NewTransferImportRequestDto form) throws Exception {
+	protected NewTransferImportResponseDto executeAction(@PathVariable ("externalAccountId")long externalAccountId,FormFile file) throws Exception {
+			
 		final LocalSettings settings = settingsService.getLocalSettings();
-		// final NewTransferImportForm form = context.getForm();
-		final long externalAccountId = form.getExternalAccountId();
+		final long Id = externalAccountId;
 		if (externalAccountId <= 0L) {
 			throw new ValidationException();
 		}
-		final FormFile file = form.getFile();
+		
 		if (file == null || file.getFileSize() == 0) {
 			throw new ValidationException();
 		}
@@ -122,8 +136,7 @@ public class NewTransferImportController extends BaseRestController {
 				message = "externalTransferImport.error.format.detailed";
 				response.setMessage(message);
 				return response;
-				// externalTransferImport.error.format.detailed;e.getLine(),
-				// e.getColumn(), e.getField(), e.getValue());
+				
 			} else {
 				message = "externalTransferImport.error.format.general";
 				response.setMessage(message);
@@ -132,7 +145,9 @@ public class NewTransferImportController extends BaseRestController {
 		} catch (final Exception e) {
 			message = "externalTransferImport.error.importing";
 			response.setMessage(message);
+                        e.printStackTrace();
 			return response;
+                        
 		}
 
 	}

@@ -2,11 +2,6 @@ package nl.strohalm.cyclos.webservices.rest.members.agreements;
 
 import java.util.List;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
@@ -14,6 +9,12 @@ import nl.strohalm.cyclos.entities.members.RegistrationAgreement;
 import nl.strohalm.cyclos.services.elements.RegistrationAgreementService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ListRegistrationAgreementsController extends BaseRestController {
@@ -28,6 +29,24 @@ public class ListRegistrationAgreementsController extends BaseRestController {
 	}
 
 	public static class ListRegistrationAgreementsRequestDto {
+             private String            name;
+             private String            contents;
+
+    public String getContents() {
+        return contents;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setContents(final String contents) {
+        this.contents = contents;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
 
 	}
 
@@ -62,18 +81,22 @@ public class ListRegistrationAgreementsController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.GET)
+	@RequestMapping(value = "admin/listRegistrationAgreements", method = RequestMethod.GET)
 	@ResponseBody
 	protected ListRegistrationAgreementsResponseDto executeAction(
 			@RequestBody ListRegistrationAgreementsRequestDto form)
 			throws Exception {
-		// final HttpServletRequest request = context.getRequest();
+		ListRegistrationAgreementsResponseDto response =null;
+                try{
 		final List<RegistrationAgreement> registrationAgreements = registrationAgreementService
 				.listAll();
 		boolean editableHasPermission = permissionService
 				.hasPermission(AdminSystemPermission.REGISTRATION_AGREEMENTS_MANAGE);
-		ListRegistrationAgreementsResponseDto response = new ListRegistrationAgreementsResponseDto(
-				registrationAgreements, editableHasPermission);
+		response = new ListRegistrationAgreementsResponseDto(
+				registrationAgreements, editableHasPermission);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 }

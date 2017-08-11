@@ -31,6 +31,7 @@ import nl.strohalm.cyclos.utils.conversion.PermissionConverter;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class EditOperatorGroupPermissionsController extends BaseRestController {
@@ -160,25 +161,31 @@ public class EditOperatorGroupPermissionsController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public EditOperatorGroupPermissionsResponseDto(){
+                }
 	}
 
-	@RequestMapping(value = "/member/editGroupPermissions", method = RequestMethod.POST)
+	@RequestMapping(value = "member/editGroupPermissions/{groupId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected EditOperatorGroupPermissionsResponseDto handleSubmit(
-			@RequestBody EditOperatorGroupPermissionsRequestDto form)
-			throws Exception {
-		// final EditGroupPermissionsForm form = context.getForm();
-		final long id = form.getGroupId();
+	protected EditOperatorGroupPermissionsResponseDto handleSubmit(@PathVariable ("groupId") long groupId)throws Exception {
+			
+			
+		EditOperatorGroupPermissionsResponseDto response =new EditOperatorGroupPermissionsResponseDto();
+                try{
+		final long id = groupId;
 		if (id <= 0L) {
 			throw new ValidationException();
 		}
-		final OperatorGroupPermissionsDTO dto = getDataBinder().readFromString(
-				form.getPermission());
+		final OperatorGroupPermissionsDTO dto = getDataBinder().readFromString(groupId);
+				
 		groupService.setPermissions(dto);
 
 		String message = "permission.modified";
-		EditOperatorGroupPermissionsResponseDto response = new EditOperatorGroupPermissionsResponseDto(
-				message, id);
+		response = new EditOperatorGroupPermissionsResponseDto(
+				message, id);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

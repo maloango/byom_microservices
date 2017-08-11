@@ -1,13 +1,13 @@
 package nl.strohalm.cyclos.webservices.rest.admins;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class RemoveAdminController extends BaseRestController {
@@ -24,7 +24,7 @@ public class RemoveAdminController extends BaseRestController {
 
 	public static class RemoveAdminRequestDTO {
 		private long id;
-
+                
 		public final long getId() {
 			return id;
 		}
@@ -45,18 +45,27 @@ public class RemoveAdminController extends BaseRestController {
 		public final void setMessage(String message) {
 			this.message = message;
 		}
+                public RemoveAdminResponseDTO(){
+                }
+               
 	}
 
-	@RequestMapping(value = "admin/removeAdmin", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeAdmin/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	protected RemoveAdminResponseDTO doRemove(@RequestBody RemoveAdminRequestDTO form, final long id) {
+	protected RemoveAdminResponseDTO doRemove(@PathVariable ("id") long id) {
 		RemoveAdminResponseDTO response = new RemoveAdminResponseDTO();
 		try {
+                        
 			elementService.remove(id);
 			response.setMessage("changeGroup.admin.permanentlyRemovedMessage");
+                        
 			return response;
+                    
 		} catch (final Exception e) {
+                       // Can't remove active admin
 			response.setMessage("changeGroup.error.remove.activeAdmin");
+                       // e.printStackTrace();
+                        
 			return response;
 		}
 	}

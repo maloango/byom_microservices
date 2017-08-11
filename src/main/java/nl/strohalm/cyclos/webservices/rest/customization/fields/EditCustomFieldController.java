@@ -93,6 +93,42 @@ public class EditCustomFieldController extends BaseRestController {
 	private AdCustomFieldService adCustomFieldService;
 	private AdminCustomFieldService adminCustomFieldService;
 	private LoanGroupCustomFieldService loanGroupCustomFieldService;
+	public final AdCustomFieldService getAdCustomFieldService() {
+		return adCustomFieldService;
+	}
+
+	public final AdminCustomFieldService getAdminCustomFieldService() {
+		return adminCustomFieldService;
+	}
+
+	public final LoanGroupCustomFieldService getLoanGroupCustomFieldService() {
+		return loanGroupCustomFieldService;
+	}
+
+	public final MemberCustomFieldService getMemberCustomFieldService() {
+		return memberCustomFieldService;
+	}
+
+	public final MemberRecordCustomFieldService getMemberRecordCustomFieldService() {
+		return memberRecordCustomFieldService;
+	}
+
+	public final OperatorCustomFieldService getOperatorCustomFieldService() {
+		return operatorCustomFieldService;
+	}
+
+	public final PaymentCustomFieldService getPaymentCustomFieldService() {
+		return paymentCustomFieldService;
+	}
+
+	public final MemberRecordTypeService getMemberRecordTypeService() {
+		return memberRecordTypeService;
+	}
+
+	public final TransferTypeService getTransferTypeService() {
+		return transferTypeService;
+	}
+
 	private MemberCustomFieldService memberCustomFieldService;
 	private MemberRecordCustomFieldService memberRecordCustomFieldService;
 	private OperatorCustomFieldService operatorCustomFieldService;
@@ -375,7 +411,8 @@ public class EditCustomFieldController extends BaseRestController {
 	@ResponseBody
 	protected EditCustomFieldResponseDto handleSubmit(
 			@RequestBody EditCustomFieldRequestDto form) throws Exception {
-		// final EditCustomFieldForm form = context.getForm();
+		EditCustomFieldResponseDto response =null;
+                try{
 		final CustomField.Nature nature = getNature(form);
 		CustomField field = getDataBinder(nature).readFromString(
 				form.getField());
@@ -400,12 +437,15 @@ public class EditCustomFieldController extends BaseRestController {
 			params.put("transferTypeId", paymentField.getTransferType().getId());
 			break;
 		}
-		EditCustomFieldResponseDto response = new EditCustomFieldResponseDto();
+		response = new EditCustomFieldResponseDto();
 		if (isInsert) {
 			response.setMessage("customField.inserted");
 		} else {
 			response.setMessage("customField.modified");
-		}
+		}}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

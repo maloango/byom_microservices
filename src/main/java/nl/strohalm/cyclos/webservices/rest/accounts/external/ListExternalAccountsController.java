@@ -23,6 +23,14 @@ public class ListExternalAccountsController extends BaseRestController {
 		this.permissionService = permissionService;
 	}
 
+	public final ExternalAccountService getExternalAccountService() {
+		return externalAccountService;
+	}
+
+	public final PermissionService getPermissionService() {
+		return permissionService;
+	}
+
 	private PermissionService permissionService;
 
 	@Inject

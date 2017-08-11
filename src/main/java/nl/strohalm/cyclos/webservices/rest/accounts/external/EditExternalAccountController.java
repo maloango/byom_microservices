@@ -3,7 +3,6 @@ package nl.strohalm.cyclos.webservices.rest.accounts.external;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,11 +18,21 @@ import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class EditExternalAccountController extends BaseRestController {
 	private ExternalAccountService externalAccountService;
 	private DataBinder<ExternalAccount> dataBinder;
+        
+	public final ExternalAccountService getExternalAccountService() {
+		return externalAccountService;
+	}
+
+	public final AccountTypeService getAccountTypeService() {
+		return accountTypeService;
+	}
+
 	private AccountTypeService accountTypeService;
 
 	@Inject
@@ -74,23 +83,29 @@ public class EditExternalAccountController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public EditExternalAccountResponseDto(){}
 	}
 
-	@RequestMapping(value = "admin/editExternalAccount", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editExternalAccount/{externalAccountId}", method = RequestMethod.GET)
 	@ResponseBody
 	protected EditExternalAccountResponseDto handleSubmit(
-			@RequestBody EditExternalAccountRequestDto form) throws Exception {
+			@PathVariable ("externalAccountId") long externalAccountId) throws Exception {
 
-		ExternalAccount externalAccount = getDataBinder().readFromString(
-				form.getExternalAccount());
+		ExternalAccount externalAccount = getDataBinder().readFromString(externalAccountId);
+				
+                EditExternalAccountResponseDto response = new EditExternalAccountResponseDto();
+                try{
 		final boolean isInsert = externalAccount.isTransient();
 		externalAccount = externalAccountService.save(externalAccount);
-		EditExternalAccountResponseDto response = new EditExternalAccountResponseDto();
+		
 		if (isInsert) {
 			response.setMessage("externalAccount.inserted");
 		} else {
 			response.setMessage("externalAccount.modified");
-		}
+		}}
+                catch(Exception e){
+                        e.printStackTrace();
+                        }
 		return response;
 	}
 

@@ -23,8 +23,10 @@ import java.util.Calendar;
 
 import nl.strohalm.cyclos.entities.Relationship;
 import nl.strohalm.cyclos.entities.access.OperatorUser;
+import nl.strohalm.cyclos.entities.access.PrincipalType;
 import nl.strohalm.cyclos.entities.exceptions.EntityNotFoundException;
 import nl.strohalm.cyclos.entities.groups.MemberGroup;
+import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.FullTextElementQuery;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.entities.members.RegisteredMember;
@@ -77,5 +79,7 @@ public interface ElementServiceLocal extends ElementService {
      */
     // FIXME - Don't forget that the client should be obtained by LoggedUser.serviceClient()
     RegisteredMember registerMemberByWebService(ServiceClient client, Member member, String remoteAddress);
+    
+    Element loadByPrincipalForAdminRest(final PrincipalType principalType, String principal, final Relationship... fetch);
 
 }

@@ -32,7 +32,7 @@ public class RemoveReceiptPrinterSettingsController extends BaseRestController{
 			// TODO Auto-generated method stub
 			return null;
 		}
-		private Long              id;
+		private Long id;
 
         public Long getId() {
             return id;
@@ -61,13 +61,14 @@ public class RemoveReceiptPrinterSettingsController extends BaseRestController{
     	
     }
 
-    @RequestMapping(value = "/member/removeReceiptPrinterSettings", method = RequestMethod.DELETE)
+    @RequestMapping(value = "member/removeReceiptPrinterSettings", method = RequestMethod.DELETE)
     @ResponseBody
     protected RemoveReceiptPrinterSettingsResponseDTO executeAction(@RequestBody RemoveReceiptPrinterSettingsRequestDTO  form) throws Exception {
-       
+       RemoveReceiptPrinterSettingsResponseDTO response = null;
+       try{
         final Long id = form.getId();
         receiptPrinterSettingsService.remove(id);
-        RemoveReceiptPrinterSettingsResponseDTO response = new RemoveReceiptPrinterSettingsResponseDTO();
+        //RemoveReceiptPrinterSettingsResponseDTO response = new RemoveReceiptPrinterSettingsResponseDTO();
         response.setMessage("receiptPrinterSettings.removed");
         final String currentReceiptPrinter = RequestHelper.getCookieValue((ServletRequest) form, "receiptPrinterId");
         // If the member removes a printer he's currently using, clear the cookie. We cannot, however, do this for cookies on other clients.
@@ -78,6 +79,10 @@ public class RemoveReceiptPrinterSettingsController extends BaseRestController{
             cookie.setPath(((HttpServletRequest) form).getContextPath());
             response.addCookie(cookie);
         }
+        response = new RemoveReceiptPrinterSettingsResponseDTO();}
+       catch(Exception e){
+           e.printStackTrace();
+       }
         return response;
     }
 

@@ -8,12 +8,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -27,8 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import nl.strohalm.cyclos.access.MemberPermission;
 import nl.strohalm.cyclos.access.Permission;
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.groups.EditGroupForm;
+import nl.strohalm.cyclos.controls.groups.ListGroupsAction;
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.access.TransactionPassword;
 import nl.strohalm.cyclos.entities.access.User;
@@ -70,7 +69,6 @@ import nl.strohalm.cyclos.services.transactions.TransactionContext;
 import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
 import nl.strohalm.cyclos.utils.CustomizationHelper;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
-import nl.strohalm.cyclos.utils.RequestHelper;
 import nl.strohalm.cyclos.utils.TimePeriod;
 import nl.strohalm.cyclos.utils.TimePeriod.Field;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
@@ -83,8 +81,10 @@ import nl.strohalm.cyclos.utils.binding.SimpleCollectionBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.query.PageHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.WebServiceContext;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 import nl.strohalm.cyclos.webservices.utils.RestUserHelper;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class EditGroupController extends BaseRestController {
@@ -104,7 +104,39 @@ public class EditGroupController extends BaseRestController {
     }
 
     private CustomizationHelper                            customizationHelper;
-    private AccountTypeService                             accountTypeService;
+    public final AccessService getAccessService() {
+		return accessService;
+	}
+
+	public final void setAccessService(AccessService accessService) {
+		this.accessService = accessService;
+	}
+
+	public final SettingsService getSettingsService() {
+		return settingsService;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
+	public final RegistrationAgreementService getRegistrationAgreementService() {
+		return registrationAgreementService;
+	}
+
+	public final TransferTypeService getTransferTypeService() {
+		return transferTypeService;
+	}
+
+	public final CardTypeService getCardTypeService() {
+		return cardTypeService;
+	}
+
+	public final ChannelService getChannelService() {
+		return channelService;
+	}
+
+	private AccountTypeService                         accountTypeService;
     private RegistrationAgreementService                   registrationAgreementService;
     private CustomizedFileService                          customizedFileService;
     private TransferTypeService                            transferTypeService;
@@ -353,7 +385,7 @@ public class EditGroupController extends BaseRestController {
 
 
 
-		private boolean isBrokerGroup;
+	private boolean isBrokerGroup;
     	private boolean isOperatorGroup;
     	private boolean usesPin;
     	public String message;
@@ -406,20 +438,36 @@ public class EditGroupController extends BaseRestController {
             customizationHelper.updateFile(physicalFile, file);
         }
 
-       // context.sendMessage(isInsert ? "group.inserted" : "group.modified");
+      
         
         EditGroupResponseDTO response=new EditGroupResponseDTO(isInsert ? "group.inserted" : "group.modified",String.valueOf(group.getId()));
         return response;
         
-        //return ActionHelper.redirectWithParam(context.getRequest(), context.getSuccessForward(), "groupId", group.getId());
+        
+    }
+    
+    public static class PrepareFormResponseDTO{
+        public HashMap<String,Object> response=new HashMap<String,Object>();
+
+        public HashMap<String, Object> getResponse() {
+            return response;
+        }
+
+        public void setResponse(HashMap<String, Object> response) {
+            this.response = response;
+        }
+        
+        
     }
 
-  //  @Override
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected void prepareForm(final ActionContext context) throws Exception {
-        final HttpServletRequest request = context.getRequest();
-        final EditGroupForm form = context.getForm();
-        final long id = form.getGroupId();
+  // isAdmin value 0 = Member , 1= admin
+    @RequestMapping(value = "admin/editGroup/{groupId}/{isAdmin}", method = RequestMethod.GET)
+    @ResponseBody
+    public PrepareFormResponseDTO prepareForm(@PathVariable("groupId") long groupId,@PathVariable("isAdmin") int isAdmin) throws Exception {
+        PrepareFormResponseDTO preFormResp=new PrepareFormResponseDTO();
+       try{
+         HashMap<String,Object> response=new HashMap<String,Object>();
+        final long id = groupId;
         boolean editable = false;
         boolean canManageFiles = false;
 
@@ -429,9 +477,9 @@ public class EditGroupController extends BaseRestController {
         if (isInsert) {
             // Prepare for insert
             List<Group.Nature> natures = new ArrayList<Group.Nature>();
-            if (context.isAdmin()) {
+            if (isAdmin==1) {
                 // Put in the request the name of permission used to manage a type of group
-                request.setAttribute("permissionByNature", permissionByNature);
+                response.put("permissionByNature", permissionByNature);
 
                 for (final Group.Nature nature : permissionByNature.keySet()) {
                     final Permission permission = permissionByNature.get(nature);
@@ -442,14 +490,14 @@ public class EditGroupController extends BaseRestController {
             } else {
                 // It's a member inserting an operator group
                 final GroupQuery groupQuery = new GroupQuery();
-                groupQuery.setMember((Member) context.getElement());
+                groupQuery.setMember((Member) WebServiceContext.getMember());
                 final List<OperatorGroup> baseGroups = (List<OperatorGroup>) groupService.search(groupQuery);
-                request.setAttribute("baseGroups", baseGroups);
-                request.setAttribute("isOperatorGroup", true);
+                response.put("baseGroups", baseGroups);
+                response.put("isOperatorGroup", true);
                 natures = Collections.singletonList(Group.Nature.OPERATOR);
             }
-            request.setAttribute("natures", natures);
-            RequestHelper.storeEnum(request, Group.Status.class, "status");
+            response.put("natures", natures);
+            response.put("status", Group.Status.class );
             editable = true;
         } else {
             // Prepare for modify
@@ -458,38 +506,38 @@ public class EditGroupController extends BaseRestController {
             final boolean isBrokerGroup = BrokerGroup.class.isAssignableFrom(group.getNature().getGroupClass());
             final boolean isOperatorGroup = OperatorGroup.class.isAssignableFrom(group.getNature().getGroupClass());
             if (group.getStatus().isEnabled()) {
-                request.setAttribute("deactivationTimePeriodFields", Arrays.asList(Field.SECONDS, Field.MINUTES, Field.HOURS, Field.DAYS));
-                request.setAttribute("passwordExpiresAfterFields", Arrays.asList(Field.DAYS, Field.WEEKS, Field.MONTHS, Field.YEARS));
-                RequestHelper.storeEnum(request, TransactionPassword.class, "transactionPasswords");
+                response.put("deactivationTimePeriodFields", Arrays.asList(Field.SECONDS, Field.MINUTES, Field.HOURS, Field.DAYS));
+                response.put("passwordExpiresAfterFields", Arrays.asList(Field.DAYS, Field.WEEKS, Field.MONTHS, Field.YEARS));
+               response.put("transactionPasswords", TransactionPassword.class);
                 if (isMemberGroup) {
                     final MemberGroup memberGroup = (MemberGroup) group;
 
                     // Check if the group has access to a channel that uses pin
                     final boolean usesPin = groupService.usesPin(memberGroup);
-                    request.setAttribute("usesPin", usesPin);
+                    response.put("usesPin", usesPin);
 
                     // Retrieve the registration agreements
                     final List<RegistrationAgreement> registrationAgreements = registrationAgreementService.listAll();
-                    request.setAttribute("registrationAgreements", registrationAgreements);
+                    response.put("registrationAgreements", registrationAgreements);
 
                     // Retrieve the associated accounts
-                    request.setAttribute("timePeriodFields", Arrays.asList(Field.DAYS, Field.WEEKS, Field.MONTHS, Field.YEARS));
+                    response.put("timePeriodFields", Arrays.asList(Field.DAYS, Field.WEEKS, Field.MONTHS, Field.YEARS));
                     final MemberAccountTypeQuery atQuery = new MemberAccountTypeQuery();
                     atQuery.setRelatedToGroup(memberGroup);
-                    request.setAttribute("accountTypes", accountTypeService.search(atQuery));
+                    response.put("accountTypes", accountTypeService.search(atQuery));
 
                     // Sort the message types using their messages
                     final List<Type> messageTypes = Arrays.asList(Message.Type.values());
                     final Comparator cmp = new Comparator() {
                         @Override
                         public int compare(final Object o1, final Object o2) {
-                            final String msg1 = context.message("message.type." + o1);
-                            final String msg2 = context.message("message.type." + o2);
+                            final String msg1 =   o1.toString(); //context.message("message.type." + o1);
+                            final String msg2 =  o2.toString();  //context.message("message.type." + o2);
                             return msg1.compareTo(msg2);
                         }
                     };
                     Collections.sort(messageTypes, cmp);
-                    request.setAttribute("messageTypes", messageTypes);
+                    response.put("messageTypes", messageTypes);
 
                     // we create a wrapper ArrayList because the list must implement the remove method
                     final List<Type> smsMessageTypes = new ArrayList<Type>(Arrays.asList(Message.Type.values()));
@@ -508,58 +556,58 @@ public class EditGroupController extends BaseRestController {
                         }
                     });
                     Collections.sort(smsMessageTypes, cmp);
-                    request.setAttribute("smsMessageTypes", smsMessageTypes);
+                    response.put("smsMessageTypes", smsMessageTypes);
 
                     // Store the possible groups for expiration
                     final GroupQuery query = new GroupQuery();
                     query.setNatures(Group.Nature.MEMBER, Group.Nature.BROKER);
                     final List<? extends Group> groups = groupService.search(query);
                     groups.remove(group);
-                    request.setAttribute("possibleExpirationGroups", groups);
-                    request.setAttribute("expirationTimeFields", Arrays.asList(TimePeriod.Field.DAYS, TimePeriod.Field.WEEKS, TimePeriod.Field.MONTHS, TimePeriod.Field.YEARS));
+                    response.put("possibleExpirationGroups", groups);
+                    response.put("expirationTimeFields", Arrays.asList(TimePeriod.Field.DAYS, TimePeriod.Field.WEEKS, TimePeriod.Field.MONTHS, TimePeriod.Field.YEARS));
 
                     // Store transfer types for SMS charge
                     final TransferTypeQuery ttQuery = new TransferTypeQuery();
                     ttQuery.setFromGroups(Collections.singletonList(memberGroup));
                     ttQuery.setToNature(AccountType.Nature.SYSTEM);
                     final List<TransferType> smsChargeTransferTypes = transferTypeService.search(ttQuery);
-                    request.setAttribute("smsChargeTransferTypes", smsChargeTransferTypes);
+                    response.put("smsChargeTransferTypes", smsChargeTransferTypes);
 
-                    request.setAttribute("smsAdditionalChargedPeriodFields", Arrays.asList(Field.DAYS, Field.WEEKS, Field.MONTHS));
+                    response.put("smsAdditionalChargedPeriodFields", Arrays.asList(Field.DAYS, Field.WEEKS, Field.MONTHS));
 
                     // Retrieve the card types
-                    request.setAttribute("cardTypes", cardTypeService.listAll());
+                    response.put("cardTypes", cardTypeService.listAll());
                 }
                 if (isBrokerGroup) {
                     // Retrieve the possible groups for registered members by broker
                     final GroupQuery query = new GroupQuery();
                     query.setNatures(Group.Nature.MEMBER, Group.Nature.BROKER);
                     query.setStatus(Group.Status.NORMAL);
-                    request.setAttribute("memberGroups", groupService.search(query));
+                    response.put("memberGroups", groupService.search(query));
                 }
                 if (isMemberGroup || isBrokerGroup) {
-                    RequestHelper.storeEnum(request, MemberGroupSettings.ExternalAdPublication.class, "externalAdPublications");
+                    response.put("externalAdPublications", MemberGroupSettings.ExternalAdPublication.class);
                 }
                 if (isOperatorGroup) {
                     // Load the associated transaction types for the max amount per day
                     group = groupService.load(group.getId(), RelationshipHelper.nested(OperatorGroup.Relationships.MEMBER, Element.Relationships.GROUP), OperatorGroup.Relationships.MAX_AMOUNT_PER_DAY_BY_TRANSFER_TYPE, OperatorGroup.Relationships.MAX_AMOUNT_PER_DAY_BY_TRANSFER_TYPE);
                     final OperatorGroup operatorGroup = (OperatorGroup) group;
-                    request.setAttribute("transferTypes", operatorGroup.getMember().getGroup().getTransferTypes());
+                    response.put("transferTypes", operatorGroup.getMember().getGroup().getTransferTypes());
                 }
 
                 // Retrieve the associated customized files
                 final CustomizedFileQuery cfQuery = new CustomizedFileQuery();
                 cfQuery.setGroup(group);
-                request.setAttribute("customizedFiles", customizedFileService.search(cfQuery));
+                response.put("customizedFiles", customizedFileService.search(cfQuery));
 
                 // Check whether the login page name will be shown
-                request.setAttribute("showLoginPageName", customizationHelper.isAnyFileRelatedToLoginPage(group.getCustomizedFiles()));
+                response.put("showLoginPageName", customizationHelper.isAnyFileRelatedToLoginPage(group.getCustomizedFiles()));
             }
-            getDataBinder(group.getNature()).writeAsString(form.getGroup(), group);
-            request.setAttribute("group", group);
-            request.setAttribute("isMemberGroup", isMemberGroup);
-            request.setAttribute("isBrokerGroup", isBrokerGroup);
-            request.setAttribute("isOperatorGroup", isOperatorGroup);
+            getDataBinder(group.getNature()).writeAsString(group, group);
+            response.put("group", group);
+            response.put("isMemberGroup", isMemberGroup);
+            response.put("isBrokerGroup", isBrokerGroup);
+            response.put("isOperatorGroup", isOperatorGroup);
 
             if (isMemberGroup) {
                 // Show scheduling options when there's a schedulable transfer type
@@ -568,21 +616,21 @@ public class EditGroupController extends BaseRestController {
                 ttQuery.setContext(TransactionContext.PAYMENT);
                 ttQuery.setGroup(group);
                 ttQuery.setSchedulable(true);
-                request.setAttribute("showScheduling", PageHelper.getTotalCount(transferTypeService.search(ttQuery)) > 0);
+                response.put("showScheduling", PageHelper.getTotalCount(transferTypeService.search(ttQuery)) > 0);
 
                 // Channels that the group of member have access
                 final Collection<Channel> channels = channelService.list();
                 // The "web" channel can not be customized by the user, so it should not be sent to the JSP page
                 final Channel webChannel = channelService.loadByInternalName(Channel.WEB);
                 channels.remove(webChannel);
-                request.setAttribute("channels", channels);
+                response.put("channels", channels);
 
-                RequestHelper.storeEnum(request, EmailValidation.class, "emailValidations");
+                 response.put("emailValidations", EmailValidation.class);
             }
 
-            if (context.isAdmin()) {
-                AdminGroup adminGroup = context.getGroup();
-                adminGroup = groupService.load(adminGroup.getId(), AdminGroup.Relationships.MANAGES_GROUPS);
+            if (isAdmin==1) {
+               // AdminGroup adminGroup = WebServiceContext.
+              AdminGroup adminGroup = groupService.load(groupId, AdminGroup.Relationships.MANAGES_GROUPS);
                 if (permissionService.hasPermission(permissionByNature.get(group.getNature())) && (Group.Nature.ADMIN.equals(group.getNature()) || adminGroup.getManagesGroups().contains(group))) {
                     editable = true;
                 }
@@ -593,10 +641,19 @@ public class EditGroupController extends BaseRestController {
             canManageFiles = customizedFileService.canViewOrManageInGroup(group);
         }
 
-        request.setAttribute("isInsert", isInsert);
-        request.setAttribute("editable", editable);
-        request.setAttribute("canManageFiles", canManageFiles);
-        RequestHelper.storeEnum(request, PasswordPolicy.class, "passwordPolicies");
+        response.put("isInsert", isInsert);
+        response.put("editable", editable);
+        response.put("canManageFiles", canManageFiles);
+        response.put("passwordPolicies", PasswordPolicy.class);
+        
+        preFormResp.setResponse(response);
+       }
+       catch(Exception e){
+               e.printStackTrace();
+               }
+       
+        
+        return preFormResp;
     }
 
     //@Override

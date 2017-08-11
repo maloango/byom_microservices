@@ -15,6 +15,10 @@ import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 public class RechargeFailedAccountFeeLogController extends BaseRestController {
 	private AccountFeeService accountFeeService;
 
+	public final AccountFeeService getAccountFeeService() {
+		return accountFeeService;
+	}
+
 	@Inject
 	public void setAccountFeeService(final AccountFeeService accountFeeService) {
 		this.accountFeeService = accountFeeService;
@@ -41,10 +45,28 @@ public class RechargeFailedAccountFeeLogController extends BaseRestController {
 		}
 	}
 
-	public static class RechargeFailedAccountFeeLogResponseDto {
+	public static class RechargeFailedAccountFeeLogResponseDTO {
 		private Long accountFeeLogId;
+                private Long getID;
 
-		public RechargeFailedAccountFeeLogResponseDto(Long accountFeeLogId) {
+        public Long getAccountFeeLogId() {
+            return accountFeeLogId;
+        }
+
+        public void setAccountFeeLogId(Long accountFeeLogId) {
+            this.accountFeeLogId = accountFeeLogId;
+        }
+
+        public Long getGetID() {
+            return getID;
+        }
+
+        public void setGetID(Long getID) {
+            this.getID = getID;
+        }
+                public RechargeFailedAccountFeeLogResponseDTO(){}
+
+		public RechargeFailedAccountFeeLogResponseDTO(Long accountFeeLogId) {
 			super();
 			this.accountFeeLogId = accountFeeLogId;
 		}
@@ -53,16 +75,19 @@ public class RechargeFailedAccountFeeLogController extends BaseRestController {
 
 	@RequestMapping(value = "admin/rechargeFailedAccountFeeLog", method = RequestMethod.GET)
 	@ResponseBody
-	protected RechargeFailedAccountFeeLogResponseDto executeAction(
-			@RequestBody RechargeFailedAccountFeeLogRequestDto form)
+	protected RechargeFailedAccountFeeLogResponseDTO executeAction(
+			@RequestBody RechargeFailedAccountFeeLogRequestDto form, Long accountFeeLogId)
 			throws Exception {
-		// final AccountFeeExecutionForm form = context.getForm();
+            RechargeFailedAccountFeeLogResponseDTO response = new RechargeFailedAccountFeeLogResponseDTO(accountFeeLogId);
+				
+		try{
 		final AccountFeeLog log = accountFeeService.loadLog(form
 				.getAccountFeeLogId());
 		accountFeeService.rechargeFailed(log);
-		Long accountFeeLogId = log.getId();
-		RechargeFailedAccountFeeLogResponseDto response = new RechargeFailedAccountFeeLogResponseDto(
-				accountFeeLogId);
+		response = new RechargeFailedAccountFeeLogResponseDTO(accountFeeLogId);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

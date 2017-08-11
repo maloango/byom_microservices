@@ -5,12 +5,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.settings.EditAccessSettingsForm;
 import nl.strohalm.cyclos.entities.settings.AccessSettings;
@@ -22,6 +16,12 @@ import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinderHelper;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class EditAccessSettingsController extends BaseRestController {
@@ -111,15 +111,20 @@ public class EditAccessSettingsController extends BaseRestController {
 			this.message = message;
 		}
 	}
-	@RequestMapping(value = "", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/editAccessSettings", method = RequestMethod.POST)
 	@ResponseBody
 	protected EditAccessSettingsResponseDto formAction(@RequestBody EditAccessSettingsRequestDto form) throws Exception {
-		//final EditAccessSettingsForm form = context.getForm();
+		
 		AccessSettings settings = getDataBinder().readFromString(
 				form.getSetting());
+                EditAccessSettingsResponseDto response =null;
+                try{
 		settings = settingsService.save(settings);
-		EditAccessSettingsResponseDto response=new EditAccessSettingsResponseDto();
-		response.setMessage("settings.access.modified");
+                response=new EditAccessSettingsResponseDto();
+		response.setMessage("settings.access.modified");}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

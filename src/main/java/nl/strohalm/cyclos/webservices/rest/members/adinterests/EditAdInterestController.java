@@ -218,10 +218,12 @@ public class EditAdInterestController extends BaseRestController{
     @RequestMapping(value = "member/editAdInterest", method = RequestMethod.PUT)
     @ResponseBody
     protected EditAdInterestResponseDTO formAction(@RequestBody EditAdInterestRequestDTO form) throws Exception {
+        EditAdInterestResponseDTO response = null;
+        try{
         final AdInterest adInterest = resolveAdInterest(null);
         final boolean isInsert = adInterest.isTransient();
         adInterestService.save(adInterest);
-        EditAdInterestResponseDTO response = new EditAdInterestResponseDTO();
+        
         String message = null;
         if (isInsert) {
         	message = "adInterest.inserted";
@@ -230,7 +232,10 @@ public class EditAdInterestController extends BaseRestController{
         else{
         	message = "adInterest.modified";
         }
-        //context.sendMessage(isInsert ? "adInterest.inserted" : "adInterest.modified");
+        response = new EditAdInterestResponseDTO();}
+        catch(Exception e){
+                e.printStackTrace();
+                }
         return response;
     }
    

@@ -20,6 +20,7 @@ import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.loangroups.LoanGroupService;
+import nl.strohalm.cyclos.utils.access.LoggedUser;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
@@ -129,18 +130,28 @@ public class SearchLoanGroupsController extends BaseRestController {
     	
     }
 
-    @RequestMapping(value= "admin/searchLoanGroups", method =RequestMethod.GET)
+    @RequestMapping(value= "admin/searchLoanGroups", method =RequestMethod.POST)
     @ResponseBody
     protected SearchLoanGroupsResponseDTo executeQuery(@RequestBody SearchLoanGroupsRequestDTO form, final QueryParameters queryParameters) {
-        final LoanGroupQuery query = (LoanGroupQuery) queryParameters;
+        SearchLoanGroupsResponseDTo  response = new SearchLoanGroupsResponseDTo();
+        try{
+       final LoanGroupQuery query = (LoanGroupQuery) queryParameters;
         final List<LoanGroup> loanGroups = loanGroupService.search(query);
-        SearchLoanGroupsResponseDTo response = new SearchLoanGroupsResponseDTo();
-        //response.getRequest().setAttribute("loanGroups", loanGroups);
+            LoggedUser.setAttribute("loanGroups", loanGroups);
+            response= executeQuery(form, queryParameters);
+    }
+        catch(Exception e){
+            e.printStackTrace();
+        }
         return response;
     }
+    
+    
+    @RequestMapping(value="",method =RequestMethod.POST)
+    @ResponseBody
 
-  //  @Override
-    protected QueryParameters prepareForm(final ActionContext context) {
+ 
+    public QueryParameters prepareForm(final ActionContext context) {
         final SearchLoanGroupsForm form = context.getForm();
         final LoanGroupQuery query = getDataBinder().readFromString(form.getQuery());
         if (query.getMember() instanceof EntityReference) {

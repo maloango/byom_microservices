@@ -36,6 +36,7 @@ import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class EditPosController extends BaseRestController {
@@ -282,8 +283,127 @@ public class EditPosController extends BaseRestController {
 		String message;
 		Map<String, Object> params;
 		String userName;
+                private boolean isInsert;
+                private boolean hasMemberPos;
+                private boolean isRegularUser;
+                private boolean canAssign;
+                private boolean canBlock;
+                private boolean canChangeParameters;
+                private boolean canChangePin;
+                private boolean canDiscard;
+                private boolean canUnassign;
+                private boolean canUnblock;
+                private boolean canUnblockPin;
+                private boolean editable;
+                private boolean isDiscarded;
 
-		public void setMessage(String message) {
+        public boolean isIsInsert() {
+            return isInsert;
+        }
+
+        public void setIsInsert(boolean isInsert) {
+            this.isInsert = isInsert;
+        }
+
+        public boolean isHasMemberPos() {
+            return hasMemberPos;
+        }
+
+        public void setHasMemberPos(boolean hasMemberPos) {
+            this.hasMemberPos = hasMemberPos;
+        }
+
+        public boolean isIsRegularUser() {
+            return isRegularUser;
+        }
+
+        public void setIsRegularUser(boolean isRegularUser) {
+            this.isRegularUser = isRegularUser;
+        }
+
+        public boolean isCanAssign() {
+            return canAssign;
+        }
+
+        public void setCanAssign(boolean canAssign) {
+            this.canAssign = canAssign;
+        }
+
+        public boolean isCanBlock() {
+            return canBlock;
+        }
+
+        public void setCanBlock(boolean canBlock) {
+            this.canBlock = canBlock;
+        }
+
+        public boolean isCanChangeParameters() {
+            return canChangeParameters;
+        }
+
+        public void setCanChangeParameters(boolean canChangeParameters) {
+            this.canChangeParameters = canChangeParameters;
+        }
+
+        public boolean isCanChangePin() {
+            return canChangePin;
+        }
+
+        public void setCanChangePin(boolean canChangePin) {
+            this.canChangePin = canChangePin;
+        }
+
+        public boolean isCanDiscard() {
+            return canDiscard;
+        }
+
+        public void setCanDiscard(boolean canDiscard) {
+            this.canDiscard = canDiscard;
+        }
+
+        public boolean isCanUnassign() {
+            return canUnassign;
+        }
+
+        public void setCanUnassign(boolean canUnassign) {
+            this.canUnassign = canUnassign;
+        }
+
+        public boolean isCanUnblock() {
+            return canUnblock;
+        }
+
+        public void setCanUnblock(boolean canUnblock) {
+            this.canUnblock = canUnblock;
+        }
+
+        public boolean isCanUnblockPin() {
+            return canUnblockPin;
+        }
+
+        public void setCanUnblockPin(boolean canUnblockPin) {
+            this.canUnblockPin = canUnblockPin;
+        }
+
+        public boolean isEditable() {
+            return editable;
+        }
+
+        public void setEditable(boolean editable) {
+            this.editable = editable;
+        }
+
+        public boolean isIsDiscarded() {
+            return isDiscarded;
+        }
+
+        public void setIsDiscarded(boolean isDiscarded) {
+            this.isDiscarded = isDiscarded;
+        }
+                
+                                        
+
+		public void setMessage(String message) { 
 			this.message = message;
 		}
 
@@ -297,18 +417,17 @@ public class EditPosController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "admin/editPos", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editPos/{posId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected EditPosResponseDto handleSubmit(
-			@RequestBody EditPosRequestDto form) throws Exception {
+	protected EditPosResponseDto handleSubmit(@PathVariable("posId") String posId, int Id) throws Exception {
+			
 
-		// final EditPosForm form = context.getForm();
-		// final HttpServletRequest request = context.getRequest();
-		final Pos pos = getWriteDataBinder().readFromString(form.getPos());
+		
+		final Pos pos = getWriteDataBinder().readFromString(posId);
 		String message = null;
 		EditPosResponseDto response = new EditPosResponseDto();
 		try {
-			final String operation = form.getOperation();
+			final String operation = posId;
 			if (operation.equals("block")) {
 				final MemberPos persistedMemberPos = memberPosService.load(pos
 						.getMemberPos().getId());
@@ -331,8 +450,8 @@ public class EditPosController extends BaseRestController {
 				response.setMessage(message);
 				return response;
 			} else if (operation.equals("assign")) {
-				final Member member = elementService.load(Long.parseLong(form
-						.getAssignTo()));
+				final Member member = elementService.load(Long.parseLong(posId));
+						
 				posService.assignPos(member, pos.getId());
 				message = "pos.assigned";
 				String userName = member.getUsername();
@@ -342,7 +461,7 @@ public class EditPosController extends BaseRestController {
 			} else if (operation.equals("changePin")) {
 				final MemberPos persistedMemberPos = memberPosService.load(pos
 						.getMemberPos().getId());
-				memberPosService.changePin(persistedMemberPos, form.getPin());
+				memberPosService.changePin(persistedMemberPos, posId);
 				message = "pos.pinChanged";
 				response.setMessage(message);
 				return response;
@@ -395,8 +514,8 @@ public class EditPosController extends BaseRestController {
 
 			final Map<String, Object> params = new HashMap<String, Object>();
 			params.put("id", pos.getId());
-			if (form.getMemberId() > 0) {
-				params.put("memberId", form.getMemberId());
+			if (Id > 0) {
+				params.put("memberId", posId);
 			}
 			response.setParams(params);
 			return response;

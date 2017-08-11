@@ -3,9 +3,7 @@ package nl.strohalm.cyclos.webservices.rest.customization.fields;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,12 +24,45 @@ import nl.strohalm.cyclos.services.customization.PaymentCustomFieldService;
 import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class RemoveCustomFieldController extends BaseRestController {
 	private TransferTypeService transferTypeService;
 	private AdCustomFieldService adCustomFieldService;
 	private AdminCustomFieldService adminCustomFieldService;
+	public final TransferTypeService getTransferTypeService() {
+		return transferTypeService;
+	}
+
+	public final AdCustomFieldService getAdCustomFieldService() {
+		return adCustomFieldService;
+	}
+
+	public final AdminCustomFieldService getAdminCustomFieldService() {
+		return adminCustomFieldService;
+	}
+
+	public final LoanGroupCustomFieldService getLoanGroupCustomFieldService() {
+		return loanGroupCustomFieldService;
+	}
+
+	public final MemberCustomFieldService getMemberCustomFieldService() {
+		return memberCustomFieldService;
+	}
+
+	public final MemberRecordCustomFieldService getMemberRecordCustomFieldService() {
+		return memberRecordCustomFieldService;
+	}
+
+	public final OperatorCustomFieldService getOperatorCustomFieldService() {
+		return operatorCustomFieldService;
+	}
+
+	public final PaymentCustomFieldService getPaymentCustomFieldService() {
+		return paymentCustomFieldService;
+	}
+
 	private LoanGroupCustomFieldService loanGroupCustomFieldService;
 	private MemberCustomFieldService memberCustomFieldService;
 	private MemberRecordCustomFieldService memberRecordCustomFieldService;
@@ -135,7 +166,32 @@ public class RemoveCustomFieldController extends BaseRestController {
 
 	public static class RemoveCustomFieldResponseDto {
 		public String message;
+                private long transferTypeId;
+                private long memberRecordTypeId;
+                private long customField;
 
+        public long getCustomField() {
+            return customField;
+        }
+
+        public void setCustomField(long customField) {
+            this.customField = customField;
+        }
+
+        public long getMemberRecordTypeId() {
+            return memberRecordTypeId;
+        }
+
+        public void setMemberRecordTypeId(long memberRecordTypeId) {
+            this.memberRecordTypeId = memberRecordTypeId;
+        }
+        public long getTransferTypeId() {
+            return transferTypeId;
+        }
+
+        public void setTransferTypeId(long transferTypeId) {
+            this.transferTypeId = transferTypeId;
+        }
 		public String getMessage() {
 			return message;
 		}
@@ -145,37 +201,36 @@ public class RemoveCustomFieldController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "admin/removeCustomField", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeCustomField/{customField}", method = RequestMethod.GET)
 	@ResponseBody
-	protected RemoveCustomFieldResponseDto executeAction(
-			@RequestBody RemoveCustomFieldRequestDto form) throws Exception {
-		// final RemoveCustomFieldForm form = context.getForm();
-		final long id = form.getFieldId();
+	protected RemoveCustomFieldResponseDto executeAction(@PathVariable ("customField") long customField) throws Exception {
+		RemoveCustomFieldResponseDto response = null;
+		try {
+		final long id = customField;
 		if (id <= 0) {
 			throw new ValidationException();
 		}
-		final Nature nature = getNature(form);
-		ActionForward forward;
+		final Nature nature = null;
+		
 		final Map<String, Object> params = new HashMap<String, Object>();
 		params.put("nature", nature);
-		RemoveCustomFieldResponseDto response = new RemoveCustomFieldResponseDto();
-		try {
+		response = new RemoveCustomFieldResponseDto();
+		
 			final BaseCustomFieldService<CustomField> service = resolveService(nature);
 			service.remove(id);
 			switch (nature) {
 			case PAYMENT:
-				final TransferType transferType = transferTypeService.load(form
-						.getTransferTypeId());
-				// forward = context.findForward("editTransferType");
+				final TransferType transferType = transferTypeService.load(response.getTransferTypeId());
+				
 				params.put("transferTypeId", transferType.getId());
 				params.put("accountTypeId", transferType.getFrom().getId());
 				break;
 			case MEMBER_RECORD:
-				// forward = context.findForward("editMemberRecordType");
-				params.put("memberRecordTypeId", form.getMemberRecordTypeId());
+				
+				params.put("memberRecordTypeId", response.getMemberRecordTypeId());
 				break;
 			default:
-				// forward = context.getSuccessForward();
+				
 				break;
 			}
 			response.setMessage("customField.removed");

@@ -6,12 +6,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.loans.ConfirmLoanForm;
@@ -59,6 +53,12 @@ import nl.strohalm.cyclos.utils.validation.RequiredError;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 @Controller
 public class ConfirmLoanController extends BaseRestController {
 	private LoanService loanService;
@@ -72,6 +72,38 @@ public class ConfirmLoanController extends BaseRestController {
 	private PermissionService permissionService;
 	private SettingsService settingsService;
 
+    public GroupService getGroupService() {
+        return groupService;
+    }
+
+    public void setGroupService(GroupService groupService) {
+        this.groupService = groupService;
+    }
+
+    public ElementService getElementService() {
+        return elementService;
+    }
+
+    public void setElementService(ElementService elementService) {
+        this.elementService = elementService;
+    }
+
+    public PermissionService getPermissionService() {
+        return permissionService;
+    }
+
+    public void setPermissionService(PermissionService permissionService) {
+        this.permissionService = permissionService;
+    }
+
+    public SettingsService getSettingsService() {
+        return settingsService;
+    }
+
+    public void setSettingsService(SettingsService settingsService) {
+        this.settingsService = settingsService;
+    }
+        
 	private CustomFieldHelper customFieldHelper;
 
 	@Inject
@@ -215,7 +247,7 @@ public class ConfirmLoanController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/confirmLoan", method = RequestMethod.POST)
 	@ResponseBody
 	protected ConfirmLoanResponseDto handleSubmit(
 			final ConfirmLoanRequestDto form) throws Exception {
@@ -262,16 +294,13 @@ public class ConfirmLoanController extends BaseRestController {
 			throws Exception {
 		final GrantLoanDTO loan = validateLoan(context);
 
-		// Check for transaction password
-		// final HttpServletRequest request = context.getRequest();
+		
 		final boolean requestTransactionPassword = context
 				.isTransactionPasswordEnabled();
 		if (requestTransactionPassword) {
 			context.validateTransactionPassword();
 		}
-		// request.setAttribute("requestTransactionPassword",requestTransactionPassword);
-
-		// Fetch related data
+		
 		final Member member = elementService.load(loan.getMember().getId(),
 				Element.Relationships.USER);
 		final TransferType transferType = transferTypeService.load(loan
@@ -286,12 +315,10 @@ public class ConfirmLoanController extends BaseRestController {
 		loan.setLoanGroup(loanGroup);
 		loan.setMember(member);
 		loan.setTransferType(transferType);
-		// request.setAttribute("unitsPattern",
-		// transferType.getFrom().getCurrency().getPattern());
+		
 
 		if (loanGroup != null) {
-			// Ensure the responsible is the first member shown and the list
-			// will be sorted
+			
 			final List<Member> membersInGroup = new ArrayList<Member>(
 					loanGroup.getMembers());
 			final LocalSettings localSettings = settingsService
@@ -300,7 +327,7 @@ public class ConfirmLoanController extends BaseRestController {
 					localSettings.getMemberComparator());
 			membersInGroup.remove(member);
 			membersInGroup.add(0, member);
-			// request.setAttribute("membersInGroup", membersInGroup);
+			
 		}
 
 		// Get the loan payments
@@ -320,9 +347,7 @@ public class ConfirmLoanController extends BaseRestController {
 			payments = loanService.calculatePaymentProjection(projection);
 			break;
 		}
-		// request.setAttribute("payments", payments);
-
-		// Return the custom field values
+		
 		final Collection<PaymentCustomFieldValue> customValues = loan
 				.getCustomValues();
 		if (customValues != null) {
@@ -330,8 +355,7 @@ public class ConfirmLoanController extends BaseRestController {
 					.list(transferType, false);
 			final Collection<Entry> entries = customFieldHelper.buildEntries(
 					customFields, customValues);
-			// Load the value for enumerated and member values, since this
-			// collection was built from direct databinding with ids only
+			
 			for (final Entry entry : entries) {
 				final CustomField field = entry.getField();
 				final CustomFieldValue fieldValue = entry.getValue();
@@ -354,22 +378,15 @@ public class ConfirmLoanController extends BaseRestController {
 				}
 
 			}
-			// request.setAttribute("customFields", entries);
+			
 		}
 
-		// Store the transaction fees
-		// final TransactionFeePreviewDTO preview =
-		// transactionFeeService.preview(context.getAccountOwner(), member,
-		// transferType, amount);
-		// request.setAttribute("finalAmount", preview.getFinalAmount());
-		// request.setAttribute("fees", preview.getFees());
-
-		// Check if would require authorization
+		
 		final DoPaymentDTO payment = new DoPaymentDTO();
 		payment.setTransferType(loan.getTransferType());
 		payment.setAmount(loan.getAmount());
 		payment.setTo(member);
-		// request.setAttribute("wouldRequireAuthorization",paymentService.wouldRequireAuthorization(payment));
+		
 	}
 
 	protected void validateForm(final ActionContext context) {

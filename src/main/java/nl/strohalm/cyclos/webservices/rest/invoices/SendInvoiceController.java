@@ -78,6 +78,26 @@ public class SendInvoiceController extends BaseRestController {
 	private ElementService elementService;
 	private SettingsService settingsService;
 
+	public final ElementService getElementService() {
+		return elementService;
+	}
+
+	public final void setElementService(ElementService elementService) {
+		this.elementService = elementService;
+	}
+
+	public final SettingsService getSettingsService() {
+		return settingsService;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
+	public final CurrencyService getCurrencyService() {
+		return currencyService;
+	}
+
 	public AccountTypeService getAccountTypeService() {
 		return accountTypeService;
 	}
@@ -460,11 +480,11 @@ public class SendInvoiceController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/sendInvoice", method = RequestMethod.POST)
 	@ResponseBody
 	protected SendInvoiceResponseDto handleSubmit(
 			@RequestBody SendInvoiceRequestDto form) throws Exception {
-		// final SendInvoiceForm form = context.getForm();
+		
 		final boolean fromProfile = !form.isToSystem()
 				&& !form.isSelectMember();
 		String message = null;
@@ -497,6 +517,7 @@ public class SendInvoiceController extends BaseRestController {
 			return response;
 		} catch (final SendingInvoiceWithMultipleTransferTypesWithCustomFields e) {
 			message = "invoice.error.sendingWithMultipleTransferTypesWithCustomFields";
+                
 			return response;
 		}
 	}

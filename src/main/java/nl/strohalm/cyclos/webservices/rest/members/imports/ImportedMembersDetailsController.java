@@ -18,6 +18,7 @@ import nl.strohalm.cyclos.entities.accounts.MemberAccountType;
 import nl.strohalm.cyclos.entities.members.imports.ImportedMember;
 import nl.strohalm.cyclos.entities.members.imports.ImportedMemberQuery;
 import nl.strohalm.cyclos.entities.members.imports.MemberImport;
+import nl.strohalm.cyclos.entities.members.imports.ImportedMemberQuery.Status;
 import nl.strohalm.cyclos.services.elements.MemberImportService;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
@@ -112,17 +113,21 @@ public class ImportedMembersDetailsController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/importedMembersDetails", method = RequestMethod.GET)
 	@ResponseBody
 	protected ImportedMembersDetailsResponseDto executeQuery(
 			@RequestBody ImportedMembersDetailsRequestDto form,
 			final QueryParameters queryParameters) {
-		// final HttpServletRequest request = context.getRequest();
+		ImportedMembersDetailsResponseDto response = null;
+                try{
 		final ImportedMemberQuery query = (ImportedMemberQuery) queryParameters;
 		final List<ImportedMember> members = memberImportService
 				.searchImportedMembers(query);
-		ImportedMembersDetailsResponseDto response = new ImportedMembersDetailsResponseDto(
-				members);
+		response = new ImportedMembersDetailsResponseDto(
+				members);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

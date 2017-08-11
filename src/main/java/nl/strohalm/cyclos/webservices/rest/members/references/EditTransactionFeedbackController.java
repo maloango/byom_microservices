@@ -256,15 +256,16 @@ public class EditTransactionFeedbackController extends BaseRestController{
 		}
     }
 
-    @RequestMapping(value ="/member/transactionFeedbackDetails",method = RequestMethod.POST)
+    @RequestMapping(value ="member/transactionFeedbackDetails",method = RequestMethod.POST)
     @ResponseBody
     protected EditTransactionFeedbackResponseDTO handleSubmit(@RequestBody EditTransactionFeedbackRequestDTO form) throws Exception {
-   
+        EditTransactionFeedbackResponseDTO response = null;
+        try{
         final long memberId = form.getMemberId();
         TransactionFeedback feedback = resolveReference(form);
         final TransactionFeedbackAction tfa = referenceService.getPossibleAction(feedback);
         feedback = referenceService.save(feedback);
-        EditTransactionFeedbackResponseDTO response = new EditTransactionFeedbackResponseDTO();
+        response = new EditTransactionFeedbackResponseDTO();
 
         switch (tfa) {
             case COMMENTS:
@@ -281,12 +282,15 @@ public class EditTransactionFeedbackController extends BaseRestController{
         }
         final Map<String, Object> params = new HashMap<String, Object>();
         params.put("memberId", memberId);
-        params.put("referenceId", feedback.getId());
+        params.put("referenceId", feedback.getId());}
+        catch(Exception e){
+            e.printStackTrace();
+                }
         return response;
     }
 
    private TransactionFeedback resolveReference(EditTransactionFeedbackRequestDTO form) {
-		// TODO Auto-generated method stub
+		// TODO Auto-genera/ted method stub
 		return null;
 	}
 // @Override

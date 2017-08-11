@@ -21,6 +21,10 @@ public class ImportedAdCategoriesController extends BaseRestController {
 
 	private AdImportService adImportService;
 
+	public final AdImportService getAdImportService() {
+		return adImportService;
+	}
+
 	@Inject
 	public void setAdImportService(final AdImportService adImportService) {
 		this.adImportService = adImportService;
@@ -89,15 +93,21 @@ public class ImportedAdCategoriesController extends BaseRestController {
 	@ResponseBody
 	protected ImportedAdCategoriesResponseDto executeAction(
 			@RequestBody ImportedAdCategoriesRequestDto form) throws Exception {
-		// final ImportedAdCategoriesForm form = context.getForm();
+		ImportedAdCategoriesResponseDto response = null;
+                try{
 		final AdImport adImport = EntityHelper.reference(AdImport.class,
 				form.getImportId());
-		// final HttpServletRequest request = context.getRequest();
+	
 
 		List<ImportedAdCategory> categories = adImportService
 				.getNewCategories(adImport);
-		ImportedAdCategoriesResponseDto response = new ImportedAdCategoriesResponseDto(
-				categories);
+		response = new ImportedAdCategoriesResponseDto(
+				categories);}
+                catch(Exception e){
+                        e.printStackTrace();
+                        }
+                        
 		return response;
 	}
+        
 }

@@ -18,6 +18,7 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.AbstractActionContext;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseQueryForm;
+import nl.strohalm.cyclos.controls.ads.SearchAdsAction;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.ads.Ad;
 import nl.strohalm.cyclos.entities.ads.Ad.TradeType;
@@ -246,7 +247,7 @@ public class ExportAdsToCsvController extends BaseRestController{
 			}
 	    }
 
-	    @RequestMapping(value = "/admin/exportAdsToCsv",method = RequestMethod.GET)
+	    @RequestMapping(value = "admin/exportAdsToCsv",method = RequestMethod.GET)
 	    @ResponseBody
 	    protected ExportAdsToCsvResponseDTO executeQuery(@RequestBody ExportAdsToCsvRequestDTO context) {
 	        

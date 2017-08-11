@@ -3,18 +3,24 @@ package nl.strohalm.cyclos.webservices.rest.settings;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.struts.upload.FormFile;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import javax.servlet.http.HttpServletResponse;
 
 import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.controls.ActionContext;
+import nl.strohalm.cyclos.controls.BaseAjaxAction.ContentType;
+import nl.strohalm.cyclos.controls.settings.ManageSettingsForm;
 import nl.strohalm.cyclos.entities.settings.Setting;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.utils.ResponseHelper;
 import nl.strohalm.cyclos.utils.conversion.CoercionHelper;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.upload.FormFile;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ExportSettingsController extends BaseRestController {
@@ -59,7 +65,7 @@ public class ExportSettingsController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/exportSettings", method = RequestMethod.POST)
 	@ResponseBody
 	protected ExportSettingsResponseDto executeAction(
 			final ExportSettingsRequestDto form) throws Exception {
@@ -68,16 +74,7 @@ public class ExportSettingsController extends BaseRestController {
 				Setting.Type.class, List.class, form.getType());
 
 		final String xml = settingsService.exportToXml(types);
-		// final HttpServletResponse response = context.getResponse();
-
-		// Prepare the response
-		// response.setContentType(ContentType.XML.getContentType());
-		//responseHelper.setDownload(response, "settings.xml");
-
-		// Write the properties file to the output stream
-		// response.getWriter().write(xml);
-		// kindly check later
-		// The response is complete
+		
 		return null;
 	}
 

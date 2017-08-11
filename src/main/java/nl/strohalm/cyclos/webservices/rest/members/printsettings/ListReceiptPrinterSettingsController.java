@@ -116,13 +116,17 @@ public class ListReceiptPrinterSettingsController extends BaseRestController{
 		}
     }
 
-    @RequestMapping(value = "/member/listReceiptPrinterSettings",method =RequestMethod.GET)
+    @RequestMapping(value = "member/listReceiptPrinterSettings",method =RequestMethod.GET)
     @ResponseBody
     protected ListReceiptPrinterSettingsResponseDTO executeAction(@RequestBody ListReceiptPrinterSettingsResponseDTO form) throws Exception {
-        
+        ListReceiptPrinterSettingsResponseDTO response = null;
+        try{
         final List<ReceiptPrinterSettings> receiptPrinterSettings = receiptPrinterSettingsService.list();
-        ListReceiptPrinterSettingsResponseDTO response = new ListReceiptPrinterSettingsResponseDTO(receiptPrinterSettings);
-        response.setMessage("receiptPrinterSettings", receiptPrinterSettings);
+        response = new ListReceiptPrinterSettingsResponseDTO(receiptPrinterSettings);
+        response.setMessage("receiptPrinterSettings", receiptPrinterSettings);}
+        catch(Exception e){
+            e.printStackTrace();
+        }
         return response;
         
     }

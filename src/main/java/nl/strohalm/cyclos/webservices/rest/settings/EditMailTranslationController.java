@@ -1,12 +1,7 @@
 package nl.strohalm.cyclos.webservices.rest.settings;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.settings.EditMailTranslationForm;
@@ -17,6 +12,12 @@ import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.HtmlConverter;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class EditMailTranslationController extends BaseRestController {
@@ -109,16 +110,21 @@ public class EditMailTranslationController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editMailTranslation", method = RequestMethod.PUT)
 	@ResponseBody
 	protected EditMailTranslationResponseDto formAction(
 			@RequestBody EditMailTranslationRequestDto form) throws Exception {
-		// final EditMailTranslationForm form = context.getForm();
+		
 		MailTranslation settings = getDataBinder().readFromString(
 				form.getSetting());
+                EditMailTranslationResponseDto response =null;
+                try{
 		settings = settingsService.save(settings);
-		EditMailTranslationResponseDto response = new EditMailTranslationResponseDto();
-		response.setMessage("settings.mailTranslation.modified");
+                 response = new EditMailTranslationResponseDto();
+		response.setMessage("settings.mailTranslation.modified");}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

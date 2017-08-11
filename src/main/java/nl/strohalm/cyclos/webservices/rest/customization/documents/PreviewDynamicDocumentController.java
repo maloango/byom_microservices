@@ -17,6 +17,10 @@ public class PreviewDynamicDocumentController extends BaseRestController {
 	private DocumentService documentService;
 	private CustomizationHelper customizationHelper;
 
+	public final DocumentService getDocumentService() {
+		return documentService;
+	}
+
 	@Inject
 	public void setCustomizationHelper(final CustomizationHelper customizationHelper) {
 		this.customizationHelper = customizationHelper;
@@ -55,10 +59,8 @@ public class PreviewDynamicDocumentController extends BaseRestController {
 	@RequestMapping(value = "/admin/previewDynamicDocument", method = RequestMethod.GET)
 	@ResponseBody
 	protected PreviewDynamicDocumentResponseDTO executeAction(PreviewDynamicDocumentRequestDTO form) throws Exception {
-		/*
-		 * final HttpServletRequest request = context.getRequest(); final
-		 * PreviewDocumentForm form = context.getForm();
-		 */
+		PreviewDynamicDocumentResponseDTO response =null;
+                try{
 		final long documentId = form.getDocumentId();
 
 		DynamicDocument document;
@@ -71,7 +73,10 @@ public class PreviewDynamicDocumentController extends BaseRestController {
 			customizationHelper.formFile(document).getName();
 		}
 		final String documentPageName = customizationHelper.documentFile(document).getName();
-		PreviewDynamicDocumentResponseDTO response = new PreviewDynamicDocumentResponseDTO(document, documentPageName);
+		response = new PreviewDynamicDocumentResponseDTO(document, documentPageName);}
+                catch(Exception e){
+                e.printStackTrace();
+                }
 		return response;
 	}
 

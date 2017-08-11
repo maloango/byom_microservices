@@ -1,19 +1,27 @@
 package nl.strohalm.cyclos.webservices.rest.members.activities;
 
+import javax.servlet.http.HttpServletRequest;
+
+import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.controls.ActionContext;
+import nl.strohalm.cyclos.controls.members.activities.ActivitiesForm;
+import nl.strohalm.cyclos.entities.ads.Ad;
+import nl.strohalm.cyclos.entities.members.Element;
+import nl.strohalm.cyclos.entities.members.Member;
+import nl.strohalm.cyclos.entities.members.Reference;
+import nl.strohalm.cyclos.services.elements.ActivitiesVO;
+import nl.strohalm.cyclos.services.elements.ElementService;
+import nl.strohalm.cyclos.services.elements.MemberService;
+import nl.strohalm.cyclos.utils.RequestHelper;
+import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.entities.members.Element;
-import nl.strohalm.cyclos.entities.members.Member;
-import nl.strohalm.cyclos.services.elements.ActivitiesVO;
-import nl.strohalm.cyclos.services.elements.ElementService;
-import nl.strohalm.cyclos.services.elements.MemberService;
-import nl.strohalm.cyclos.utils.validation.ValidationException;
-import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class ActivitiesController extends BaseRestController {
@@ -96,10 +104,12 @@ public class ActivitiesController extends BaseRestController {
 			this.member = member;
 			this.activities = activities;
 		}
+               public ActivitiesResponseDto(){
+                }
 
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/activities", method = RequestMethod.POST)
 	@ResponseBody
 	protected ActivitiesResponseDto executeAction(
 			@RequestBody ActivitiesRequestDto form) throws Exception {

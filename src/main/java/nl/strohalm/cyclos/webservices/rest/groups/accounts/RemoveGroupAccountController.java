@@ -58,7 +58,7 @@ public class RemoveGroupAccountController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/removeGroupAccount", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeGroupAccount", method = RequestMethod.DELETE)
 	@ResponseBody
 	protected RemoveGroupAccountResponseDto executeAction(
 			@RequestBody RemoveGroupAccountRequestDto form) throws Exception {

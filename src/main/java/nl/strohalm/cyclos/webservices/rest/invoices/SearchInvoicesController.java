@@ -1,15 +1,15 @@
 package nl.strohalm.cyclos.webservices.rest.invoices;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.invoices.SearchInvoicesForm;
 import nl.strohalm.cyclos.entities.EntityReference;
 import nl.strohalm.cyclos.entities.accounts.AccountOwner;
 import nl.strohalm.cyclos.entities.accounts.SystemAccountOwner;
@@ -18,6 +18,7 @@ import nl.strohalm.cyclos.entities.accounts.transactions.InvoiceQuery;
 import nl.strohalm.cyclos.entities.accounts.transactions.TransferType;
 import nl.strohalm.cyclos.entities.accounts.transactions.TransferTypeQuery;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
+import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.entities.members.Operator;
@@ -31,13 +32,15 @@ import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.services.transactions.InvoiceService;
 import nl.strohalm.cyclos.services.transactions.TransactionContext;
 import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
-import nl.strohalm.cyclos.utils.RequestHelper;
+import nl.strohalm.cyclos.utils.Period;
 import nl.strohalm.cyclos.utils.TransformedIteratorList;
+import nl.strohalm.cyclos.utils.access.LoggedUser;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinderHelper;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.AccountOwnerConverter;
+import nl.strohalm.cyclos.utils.conversion.CoercionHelper;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
 import nl.strohalm.cyclos.utils.conversion.Transformer;
 import nl.strohalm.cyclos.utils.query.Page;
@@ -45,8 +48,10 @@ import nl.strohalm.cyclos.utils.query.PageImpl;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import static org.apache.commons.httpclient.util.URIUtil.getQuery;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -57,6 +62,30 @@ public class SearchInvoicesController extends BaseRestController {
 	private ElementService elementService;
 	private SettingsService settingsService;
 	private GroupService groupService;
+
+	public final ElementService getElementService() {
+		return elementService;
+	}
+
+	public final void setElementService(ElementService elementService) {
+		this.elementService = elementService;
+	}
+
+	public final SettingsService getSettingsService() {
+		return settingsService;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
+	public final GroupService getGroupService() {
+		return groupService;
+	}
+
+	public final void setGroupService(GroupService groupService) {
+		this.groupService = groupService;
+	}
 
 	public static class Entry {
 		private Invoice invoice;
@@ -93,6 +122,22 @@ public class SearchInvoicesController extends BaseRestController {
 		private AccountOwner owner;
 		private LocalSettings localSettings;
 
+        public AccountOwner getOwner() {
+            return owner;
+        }
+
+        public void setOwner(AccountOwner owner) {
+            this.owner = owner;
+        }
+
+        public LocalSettings getLocalSettings() {
+            return localSettings;
+        }
+
+        public void setLocalSettings(LocalSettings localSettings) {
+            this.localSettings = localSettings;
+        }
+                
 		public TransformInvoiceInEntry(final AccountOwner owner) {
 			this.owner = owner;
 			localSettings = settingsService.getLocalSettings();
@@ -202,7 +247,140 @@ public class SearchInvoicesController extends BaseRestController {
 	}
 
 	public static class SearchInvoicesRequestDto {
+            private AccountOwner            owner;
+    private AccountOwner            relatedOwner;
+    private Collection<MemberGroup> groups;
+    private String                  description;
+    private InvoiceQuery.Direction               direction;
+    private Period                  period;
+    private Period                  paymentPeriod;
+    private Invoice.Status          status;
+    private TransferType            transferType;
+    private String                  transactionNumber;
+    private Element                 by;
+    private boolean                 advanced;
+    
+    
 
+    
+
+    public long getMemberId() {
+        return CoercionHelper.coerce(Long.TYPE, getQuery("owner"));
+    }
+
+    public boolean isAdvanced() {
+        return advanced;
+    }
+
+    public void setAdvanced(final boolean advanced) {
+        this.advanced = advanced;
+    }
+
+    public void setMemberId(final long memberId) {
+        setQuery("owner", memberId);
+    }
+
+    public Element getBy() {
+        return by;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public InvoiceQuery.Direction getDirection() {
+        return direction;
+    }
+
+    public Collection<MemberGroup> getGroups() {
+        return groups;
+    }
+
+    public Member getMember() {
+        return owner instanceof Member ? (Member) owner : null;
+    }
+
+    public AccountOwner getOwner() {
+        return owner;
+    }
+
+    public Period getPaymentPeriod() {
+        return paymentPeriod;
+    }
+
+    public Period getPeriod() {
+        return period;
+    }
+
+    public Member getRelatedMember() {
+        return relatedOwner instanceof Member ? (Member) relatedOwner : null;
+    }
+
+    public AccountOwner getRelatedOwner() {
+        return relatedOwner;
+    }
+
+    public Invoice.Status getStatus() {
+        return status;
+    }
+
+    public String getTransactionNumber() {
+        return transactionNumber;
+    }
+
+    public TransferType getTransferType() {
+        return transferType;
+    }
+
+    public void setBy(final Element by) {
+        this.by = by;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    public void setDirection(final InvoiceQuery.Direction direction) {
+        this.direction = direction;
+    }
+
+    public void setGroups(final Collection<MemberGroup> groups) {
+        this.groups = groups;
+    }
+
+    public void setOwner(final AccountOwner owner) {
+        this.owner = owner;
+    }
+
+    public void setPaymentPeriod(final Period paymentPeriod) {
+        this.paymentPeriod = paymentPeriod;
+    }
+
+    public void setPeriod(final Period period) {
+        this.period = period;
+    }
+
+    public void setRelatedOwner(final AccountOwner relatedOwner) {
+        this.relatedOwner = relatedOwner;
+    }
+
+    public void setStatus(final Invoice.Status status) {
+        this.status = status;
+    }
+
+    public void setTransactionNumber(final String transactionNumber) {
+        this.transactionNumber = transactionNumber;
+    }
+
+    public void setTransferType(final TransferType transferType) {
+        this.transferType = transferType;
+    }
+
+        public void setQuery(String owner, long memberId) {
+            
+        }
+
+        
 	}
 
 	public static class SearchInvoicesResponseDto {
@@ -214,11 +392,13 @@ public class SearchInvoicesController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/searchInvoices", method = RequestMethod.POST)
 	@ResponseBody
 	protected SearchInvoicesResponseDto executeQuery(
 			@RequestBody SearchInvoicesRequestDto form,
 			final QueryParameters queryParameters) {
+                SearchInvoicesResponseDto response = null;
+                try{
 		final InvoiceQuery query = (InvoiceQuery) queryParameters;
 		final List<Invoice> invoices = invoiceService.search(query);
 		final TransformInvoiceInEntry transformer = new TransformInvoiceInEntry(
@@ -230,46 +410,103 @@ public class SearchInvoicesController extends BaseRestController {
 			entries = new PageImpl<Entry>(queryParameters.getPageParameters(),
 					page.getTotalCount(), new LinkedList<Entry>(entries));
 		}
-		SearchInvoicesResponseDto response = new SearchInvoicesResponseDto();
-		response.setEntries(entries);
+		response = new SearchInvoicesResponseDto();
+		response.setEntries(entries);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
+        public static class PrepareFormResponseDTO{
+             public HashMap<String,Object> response=new HashMap<String,Object>();
+             private boolean myInvoices;
+             private boolean member;
+             private boolean byBroker;
+             private boolean transferTypes;
+            
+        public boolean isMyInvoices() {
+            return myInvoices;
+        }
 
-	protected QueryParameters prepareForm(final ActionContext context) {
-		final HttpServletRequest request = context.getRequest();
-		final SearchInvoicesForm form = context.getForm();
-		final InvoiceQuery query = getDataBinder().readFromString(
-				form.getQuery());
+        public void setMyInvoices(boolean myInvoices) {
+            this.myInvoices = myInvoices;
+        }
 
-		final Element loggedElement = context.getElement();
+        public boolean isMember() {
+            return member;
+        }
+
+        public void setMember(boolean member) {
+            this.member = member;
+        }
+
+        public boolean isByBroker() {
+            return byBroker;
+        }
+
+        public void setByBroker(boolean byBroker) {
+            this.byBroker = byBroker;
+        }
+
+        public boolean isTransferTypes() {
+            return transferTypes;
+        }
+
+        public void setTransferTypes(boolean transferTypes) {
+            this.transferTypes = transferTypes;
+        }
+             
+
+        public HashMap<String, Object> getResponse() {
+            return response;
+        }
+
+        public void setResponse(HashMap<String, Object> response) {
+            this.response = response;
+        }
+             
+        }
+        @RequestMapping(value = "admin/searchInvoices/{memberId}", method = RequestMethod.GET)
+	@ResponseBody
+	public PrepareFormResponseDTO prepareForm(@PathVariable ("memberId") long memberId, boolean myInvoices) {
+		
+            PrepareFormResponseDTO prepareFormRes = new PrepareFormResponseDTO();
+            try{
+                HashMap<String,Object> response=new HashMap<String,Object>();
+            
+		
+            final InvoiceQuery query = getDataBinder().readFromString(memberId);
+				
+
+		final Element loggedElement =  LoggedUser.element();  //WebServiceContext.g
 		// Set the initial parameters
 		if (query.getOwner() == null) {
-			final AccountOwner owner = context.getAccountOwner();
+			final AccountOwner owner = LoggedUser.accountOwner();//context.getAccountOwner();
 			query.setOwner(owner);
-			form.setQuery("memberId",
-					owner instanceof Member ? ((Member) owner).getId()
-							.toString() : "0");
+			//query.setQuery("memberId",owner instanceof Member ? ((Member) owner).getId()
+							
+					
 		}
 		if (query.getDirection() == null) {
 			query.setDirection(InvoiceQuery.Direction.INCOMING);
-			form.setQuery("direction", InvoiceQuery.Direction.INCOMING.name());
+			//form.setQuery("direction", InvoiceQuery.Direction.INCOMING.name());
 		}
-		if (context.isAdmin()) {
-			AdminGroup adminGroup = context.getGroup();
+		if (LoggedUser.isAdministrator()) {
+			AdminGroup adminGroup = LoggedUser.group();
 			adminGroup = groupService.load(adminGroup.getId(),
 					AdminGroup.Relationships.MANAGES_GROUPS);
 			query.setGroups(adminGroup.getManagesGroups());
-			form.setAdvanced(true);
+			//form.setAdvanced(true);
 		}
 
 		// Retrieve the data we need
 		Member member = null;
-		boolean myInvoices = false;
+		//boolean myInvoices = false;
 		boolean byBroker = false;
 		boolean byOperator = false;
 		final AccountOwner owner = query.getOwner();
 		if (owner instanceof SystemAccountOwner) {
-			if (context.isAdmin()) {
+			if (LoggedUser.isAdministrator()) {
 				myInvoices = true;
 			} else {
 				throw new ValidationException();
@@ -278,10 +515,10 @@ public class SearchInvoicesController extends BaseRestController {
 			member = elementService.load(((Member) owner).getId(),
 					Element.Relationships.USER);
 			myInvoices = loggedElement.equals(member);
-			byBroker = context.isBrokerOf(member);
-			byOperator = context.isOperator()
+			//byBroker = LoggedUser;
+			byOperator = LoggedUser.isOperator()
 					&& member.equals(((Operator) loggedElement).getMember());
-			if (!context.isAdmin() && !myInvoices && !byBroker && !byOperator) {
+			if (!LoggedUser.isAdministrator() && !myInvoices && !byBroker && !byOperator) {
 				throw new ValidationException();
 			}
 		}
@@ -290,8 +527,8 @@ public class SearchInvoicesController extends BaseRestController {
 		final TransferTypeQuery ttQuery = new TransferTypeQuery();
 		ttQuery.setContext(TransactionContext.PAYMENT);
 		ttQuery.setFromOrToOwner(owner);
-		if (context.isAdmin()) {
-			AdminGroup adminGroup = context.getGroup();
+		if (LoggedUser.isAdministrator()) {
+			AdminGroup adminGroup = LoggedUser.group();
 			adminGroup = groupService.load(adminGroup.getId(),
 					AdminGroup.Relationships.MANAGES_GROUPS);
 			ttQuery.setFromOrToGroups(adminGroup.getManagesGroups());
@@ -310,25 +547,29 @@ public class SearchInvoicesController extends BaseRestController {
 		}
 
 		// Lists the operators when member
-		if (context.isMember() && form.isAdvanced()) {
+		if (LoggedUser.isAdministrator()&& LoggedUser.isMember()) {
 			final OperatorQuery oq = new OperatorQuery();
-			oq.setMember((Member) context.getElement());
+			oq.setMember((Member) LoggedUser.element());
 			final List<? extends Element> operators = elementService.search(oq);
-			request.setAttribute("operators", operators);
+			response.put("operators", operators);
 		}
 
 		// Store the request attributes
-		request.setAttribute("myInvoices", myInvoices);
-		request.setAttribute("member", member);
-		request.setAttribute("byBroker", byBroker);
-		request.setAttribute("transferTypes", transferTypes);
-		RequestHelper.storeEnum(request, InvoiceQuery.Direction.class,
-				"directions");
-		RequestHelper.storeEnum(request, Invoice.Status.class, "status");
-
-		form.setMemberId((member == null) ? 0L : member.getId());
-		return query;
-	}
+		response.put("myInvoices", myInvoices);
+		response.put("member", member);
+		response.put("byBroker", byBroker);
+		response.put("transferTypes", transferTypes);
+		
+		
+		loggedElement.getId();
+		prepareFormRes.setResponse(response);
+            }
+                catch(Exception e){
+                        
+                        }
+            return prepareFormRes;
+        }
+	
 
 	protected boolean willExecuteQuery(final ActionContext context,
 			final QueryParameters queryParameters) throws Exception {

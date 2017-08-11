@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,6 +14,7 @@ import nl.strohalm.cyclos.entities.customization.fields.PaymentCustomField;
 import nl.strohalm.cyclos.services.customization.PaymentCustomFieldService;
 import nl.strohalm.cyclos.utils.EntityHelper;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class LinkPaymentCustomFieldController extends BaseRestController {
@@ -22,6 +22,10 @@ public class LinkPaymentCustomFieldController extends BaseRestController {
 	// later will be the implementation if required..
 
 	private PaymentCustomFieldService paymentCustomFieldService;
+
+	public final PaymentCustomFieldService getPaymentCustomFieldService() {
+		return paymentCustomFieldService;
+	}
 
 	@Inject
 	public void setPaymentCustomFieldService(
@@ -61,6 +65,40 @@ public class LinkPaymentCustomFieldController extends BaseRestController {
 
 	public static class LinkPaymentCustomFieldResponseDto {
 		Map<String, Object> parameters;
+                private long transferTypeId;
+		private long customFieldId;
+                private long accountTypeId;
+
+        public long getAccountTypeId() {
+            return accountTypeId;
+        }
+
+        public void setAccountTypeId(long accountTypeId) {
+            this.accountTypeId = accountTypeId;
+        }
+        public Map<String, Object> getParameters() {
+            return parameters;
+        }
+
+        public void setParameters(Map<String, Object> parameters) {
+            this.parameters = parameters;
+        }
+
+        public long getTransferTypeId() {
+            return transferTypeId;
+        }
+
+        public void setTransferTypeId(long transferTypeId) {
+            this.transferTypeId = transferTypeId;
+        }
+
+        public long getCustomFieldId() {
+            return customFieldId;
+        }
+
+        public void setCustomFieldId(long customFieldId) {
+            this.customFieldId = customFieldId;
+        }
 
 		public LinkPaymentCustomFieldResponseDto(Map<String, Object> parameters) {
 			super();
@@ -69,24 +107,28 @@ public class LinkPaymentCustomFieldController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "admin/linkPaymentCustomField", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/linkPaymentCustomField/{customFieldId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected LinkPaymentCustomFieldResponseDto executeAction(
-			@RequestBody LinkPaymentCustomFieldRequestDto form)
+	protected LinkPaymentCustomFieldResponseDto executeAction(@PathVariable ("customFieldId") long customFieldId )
 			throws Exception {
-		// final LinkPaymentCustomFieldForm form = context.getForm();
+			
+		LinkPaymentCustomFieldResponseDto response =null;
+                try{
 		final TransferType transferType = EntityHelper.reference(
-				TransferType.class, form.getTransferTypeId());
+				TransferType.class, response.getTransferTypeId());
 		final PaymentCustomField customField = EntityHelper.reference(
-				PaymentCustomField.class, form.getCustomFieldId());
+				PaymentCustomField.class, response.getCustomFieldId());
 
 		paymentCustomFieldService.link(transferType, customField);
 
 		final Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("transferTypeId", form.getTransferTypeId());
-		parameters.put("accountTypeId", form.getAccountTypeId());
-		LinkPaymentCustomFieldResponseDto response = new LinkPaymentCustomFieldResponseDto(
-				parameters);
+		parameters.put("transferTypeId", response.getTransferTypeId());
+		parameters.put("accountTypeId", response.getAccountTypeId());
+		response = new LinkPaymentCustomFieldResponseDto(
+				parameters);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 }

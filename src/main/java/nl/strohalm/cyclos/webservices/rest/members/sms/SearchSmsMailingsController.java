@@ -4,12 +4,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
 import nl.strohalm.cyclos.annotations.Inject;
@@ -21,6 +15,7 @@ import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
+import nl.strohalm.cyclos.entities.sms.SmsLog;
 import nl.strohalm.cyclos.entities.sms.SmsMailing;
 import nl.strohalm.cyclos.entities.sms.SmsMailingQuery;
 import nl.strohalm.cyclos.services.elements.ElementService;
@@ -35,6 +30,12 @@ import nl.strohalm.cyclos.utils.binding.DataBinderHelper;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class SearchSmsMailingsController extends BaseRestController {
@@ -72,18 +73,23 @@ public class SearchSmsMailingsController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "member/searchSmsMailings", method = RequestMethod.GET)
 	@ResponseBody
 	protected SearchSmsMailingsResponseDto executeQuery(
 			@RequestBody SearchSmsMailingsRequestDto form,
 			final QueryParameters queryParameters) {
+            SearchSmsMailingsResponseDto response = null;
+            try{
 		final SmsMailingQuery query = (SmsMailingQuery) queryParameters;
 		query.fetch(SmsMailing.Relationships.BY,
 				SmsMailing.Relationships.GROUPS);
 		final List<SmsMailing> smsMailings = smsMailingService.search(query);
-		// final HttpServletRequest request = context.getRequest();
-		SearchSmsMailingsResponseDto response = new SearchSmsMailingsResponseDto(
-				smsMailings);
+		
+		 response = new SearchSmsMailingsResponseDto(
+				smsMailings);}
+            catch(Exception e){
+                e.printStackTrace();
+            }
 		return response;
 	}
 

@@ -12,11 +12,16 @@ import nl.strohalm.cyclos.exceptions.PermissionDeniedException;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferTypeService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class RemoveExternalTransferTypeController extends BaseRestController {
 
 	private ExternalTransferTypeService externalTransferTypeService;
+
+	public final ExternalTransferTypeService getExternalTransferTypeService() {
+		return externalTransferTypeService;
+	}
 
 	@Inject
 	public void setExternalTransferTypeService(
@@ -48,13 +53,12 @@ public class RemoveExternalTransferTypeController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "admin/removeExternalTransferType", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeExternalTransferType/{ExternalTransferTypeId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected RemoveExternalTransferTypeResponseDto executeAction(
-			@RequestBody RemoveExternalTransferTypeRequestDto form)
+	protected RemoveExternalTransferTypeResponseDto executeAction(@PathVariable ("ExternalTransferTypeId") long ExternalTransferTypeId)
 			throws Exception {
 		// final RemoveExternalTransferTypeForm form = context.getForm();
-		final long id = form.getExternalTransferTypeId();
+		final long id = ExternalTransferTypeId;
 		if (id <= 0L) {
 			throw new ValidationException();
 		}
@@ -69,6 +73,7 @@ public class RemoveExternalTransferTypeController extends BaseRestController {
 		} catch (final Exception e) {
 			response.setMessage("externalTransferType.error.removing");
 		}
+                
 		return response;
 
 	}

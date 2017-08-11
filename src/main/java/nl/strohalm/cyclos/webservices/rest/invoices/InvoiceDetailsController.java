@@ -17,6 +17,7 @@ import nl.strohalm.cyclos.entities.accounts.transactions.ScheduledPayment;
 import nl.strohalm.cyclos.entities.accounts.transactions.Transfer;
 import nl.strohalm.cyclos.entities.accounts.transactions.TransferType;
 import nl.strohalm.cyclos.entities.customization.fields.PaymentCustomField;
+import nl.strohalm.cyclos.entities.exceptions.EntityNotFoundException;
 import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.entities.members.Administrator;
 import nl.strohalm.cyclos.entities.members.Element;
@@ -218,15 +219,18 @@ public class InvoiceDetailsController extends BaseRestController {
 			this.transferId = transferId;
 			this.paymentId = paymentId;
 		}
+                public InvoiceDetailsResponseDto(){
+                    
+                }
 
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/invoiceDetails", method = RequestMethod.POST)
 	@ResponseBody
 	protected InvoiceDetailsResponseDto executeAction(
 			@RequestBody InvoiceDetailsRequestDto form) throws Exception {
-		// final HttpServletRequest request = context.getRequest();
-		// final InvoiceDetailsForm form = context.getForm();
+		InvoiceDetailsResponseDto response =null;
+                try{
 		final long id = form.getInvoiceId();
 		if (id <= 0) {
 			throw new ValidationException();
@@ -303,17 +307,23 @@ public class InvoiceDetailsController extends BaseRestController {
 		final boolean canCancel = invoiceService.canCancel(invoice);
 		String unitsPattern = accountType.getCurrency().getPattern();
 		// request.setAttribute("unitsPattern", pattern);
-		InvoiceDetailsResponseDto response = new InvoiceDetailsResponseDto(
+		response = new InvoiceDetailsResponseDto(
 				entries, invoice, member, possibleTransferTypes, toMe, fromMe,
 				canAccept, canDeny, canCancel, showDestinationAccountType,
 				showPerformedBy, showSentBy, unitsPattern, transferId,
-				paymentId);
+				paymentId);}
+                catch(EntityNotFoundException e){
+                    e.printStackTrace();
+                } catch (ValidationException e) {
+                    e.printStackTrace();
+            }
 		return response;
 	}
 
 	/**
 	 * Returns whether the 'performed by' should be shown to the user
 	 */
+        
 	private boolean shouldShowPerformedBy(final InvoiceDetailsRequestDto form,
 			final Invoice invoice) {
 		boolean showPerformedBy = false;

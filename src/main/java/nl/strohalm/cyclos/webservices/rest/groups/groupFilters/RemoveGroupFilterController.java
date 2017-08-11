@@ -19,6 +19,15 @@ import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class RemoveGroupFilterController extends BaseRestController {
 	private GroupFilterService groupFilterService;
+	public final GroupFilterService getGroupFilterService() {
+            
+		return groupFilterService;
+	}
+
+    public CustomizationHelper getCustomizationHelper() {
+        return customizationHelper;
+    }
+
 	private CustomizationHelper customizationHelper;
 
 	@Inject
@@ -58,28 +67,30 @@ public class RemoveGroupFilterController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/removeGroupFilter", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/removeGroupFilter", method = RequestMethod.POST)
 	@ResponseBody
-	protected RemoveGroupFilterResponseDto executeAction(
-			@RequestBody RemoveGroupFilterRequestDto form) throws Exception {
-		// final RemoveGroupFilterForm form = context.getForm();
-
-		// Remove the group filter
+	protected RemoveGroupFilterResponseDto executeAction(@RequestBody RemoveGroupFilterRequestDto form) throws Exception {
+			
+		RemoveGroupFilterResponseDto response = new RemoveGroupFilterResponseDto();
+                try{
 		final long id = form.getGroupFilterId();
-		final GroupFilter groupFilter = groupFilterService.load(id,
-				GroupFilter.Relationships.CUSTOMIZED_FILES);
+		 GroupFilter groupFilter = groupFilterService.load(id,GroupFilter.Relationships.CUSTOMIZED_FILES);
+				
 		final Collection<CustomizedFile> customizedFiles = groupFilter
 				.getCustomizedFiles();
 		groupFilterService.remove(id);
 
-		// Remove the physical customized files for the group
+		
 		for (final CustomizedFile customizedFile : customizedFiles) {
 			final File physicalFile = customizationHelper
 					.customizedFileOf(customizedFile);
 			customizationHelper.deleteFile(physicalFile);
 		}
-		RemoveGroupFilterResponseDto response = new RemoveGroupFilterResponseDto();
-		response.setMessage("groupFilter.removed");
+		response = new RemoveGroupFilterResponseDto();
+		response.setMessage("groupFilter.removed");}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 }

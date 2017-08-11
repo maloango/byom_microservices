@@ -1,19 +1,20 @@
 package nl.strohalm.cyclos.webservices.rest.loangroups;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.services.loangroups.LoanGroupService;
+import static nl.strohalm.cyclos.utils.access.LoggedUser.member;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class RemoveLoanGroupController extends BaseRestController{
 
-	private LoanGroupService loanGroupService;
-
+    private LoanGroupService loanGroupService;
+    
     public LoanGroupService getLoanGroupService() {
         return loanGroupService;
     }
@@ -25,22 +26,21 @@ public class RemoveLoanGroupController extends BaseRestController{
     
     public static class RemoveLoanGroupRequestDTO{
     	private long              loanGroupId;
+        
+    public long getLoanGroupId() {
+        return loanGroupId;
+    }
 
-        public void RemoveLoanGroupForm() {
-        }
-
-        public long getLoanGroupId() {
-            return loanGroupId;
-        }
-
-        public void setLoanGroupId(final long loanGroupId) {
-            this.loanGroupId = loanGroupId;
-        }
+    public void setLoanGroupId(final long loanGroupId) {
+        this.loanGroupId = loanGroupId;
+    }
     	
     }
     public static class RemoveLoanGroupResponseDTO{
     	String message;
 
+       
+        
 		public final String getMessage() {
 			return message;
 		}
@@ -48,26 +48,32 @@ public class RemoveLoanGroupController extends BaseRestController{
 		public final void setMessage(String message) {
 			this.message = message;
 		}
+                public RemoveLoanGroupResponseDTO(){
+                }
     	
     }
     
-    @RequestMapping(value= "admin/removeLoanGroup", method =RequestMethod.DELETE)
+    @RequestMapping(value= "admin/removeLoanGroup/{loanGroupId}", method =RequestMethod.GET)
     @ResponseBody
-    protected RemoveLoanGroupResponseDTO executeAction(@RequestBody RemoveLoanGroupRequestDTO form) throws Exception {
-    	//String message = null;
+    protected RemoveLoanGroupResponseDTO executeAction(@PathVariable ("loanGroupId") long loanGroupId) throws Exception {
+    	RemoveLoanGroupResponseDTO response = new RemoveLoanGroupResponseDTO();
+        
         try {
-            loanGroupService.remove(form.getLoanGroupId());
-          
-        } catch (final Exception e) {
-        	
-        	RemoveLoanGroupResponseDTO response = new RemoveLoanGroupResponseDTO();
-			
+            loanGroupService.remove(loanGroupId);
+            
+                
+            response.setMessage("loanGroup.removed");
+        } 
+        catch (final Exception e) 
+        {
             response.setMessage("loanGroup.errorRemoving");
-            response.setMessage("loanGroup.errorRemoving");
-            return response;
+            e.printStackTrace();
+           
         }
-        //return context.getSuccessForward();
-		return null;
+        
+       
+          return response;
+		
     }
-
 }
+

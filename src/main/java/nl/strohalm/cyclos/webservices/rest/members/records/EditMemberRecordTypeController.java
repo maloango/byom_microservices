@@ -1,15 +1,11 @@
 package nl.strohalm.cyclos.webservices.rest.members.records;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
@@ -23,6 +19,7 @@ import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.elements.MemberRecordTypeService;
 import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
+import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.RequestHelper;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
@@ -30,6 +27,13 @@ import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.binding.SimpleCollectionBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.apache.struts.action.ActionForward;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class EditMemberRecordTypeController extends BaseRestController {
@@ -102,11 +106,12 @@ public class EditMemberRecordTypeController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editMemberRecordType", method = RequestMethod.PUT)
 	@ResponseBody
 	protected EditMemberRecordTypeResponseDto handleSubmit(
 			@RequestBody EditMemberRecordTypeRequestDto form) throws Exception {
-		// final EditMemberRecordTypeForm form = context.getForm();
+		EditMemberRecordTypeResponseDto response = null;
+                try{
 		MemberRecordType memberRecordType = getDataBinder().readFromString(
 				form.getMemberRecordType());
 		final boolean isInsert = memberRecordType.isTransient();
@@ -118,8 +123,11 @@ public class EditMemberRecordTypeController extends BaseRestController {
 			message = "memberRecordType.modified";
 		}
 		Long id = memberRecordType.getId();
-		EditMemberRecordTypeResponseDto response = new EditMemberRecordTypeResponseDto(
-				message, id);
+		response = new EditMemberRecordTypeResponseDto(
+				message, id);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

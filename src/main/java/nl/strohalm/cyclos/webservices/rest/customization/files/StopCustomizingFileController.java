@@ -1,10 +1,10 @@
 package nl.strohalm.cyclos.webservices.rest.customization.files;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,6 +15,7 @@ import nl.strohalm.cyclos.services.customization.CustomizedFileService;
 import nl.strohalm.cyclos.utils.CustomizationHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class StopCustomizingFileController extends BaseRestController {
 	
@@ -51,8 +52,8 @@ public class StopCustomizingFileController extends BaseRestController {
     
     public static class StopCustomizingResponseDTO{
     	
-    	String message;
-
+                String message;
+                
 		public StopCustomizingResponseDTO(String message) {
 			super();
 			this.message = message;
@@ -65,14 +66,17 @@ public class StopCustomizingFileController extends BaseRestController {
 		public final void setMessage(String message) {
 			this.message = message;
 		}
+                public StopCustomizingResponseDTO(){
+                }
     	
     }
 
-    @RequestMapping(value ="admin/stopCustomizingFile",method = RequestMethod.DELETE)
+    @RequestMapping(value ="admin/stopCustomizingFile/{fileId}",method = RequestMethod.GET)
     @ResponseBody
-    protected StopCustomizingResponseDTO executeAction(@RequestBody StopCustomizingRequestDTO form ) throws Exception {
-        //final StopCustomizingFileForm form = context.getForm();
-        final long id = form.getFileId();
+    protected StopCustomizingResponseDTO executeAction(@PathVariable ("fileId") long fileId) throws Exception {
+        StopCustomizingResponseDTO response =null;
+        try{
+        final long id = fileId;
         if (id <= 0L) {
             throw new ValidationException();
         }
@@ -104,10 +108,15 @@ public class StopCustomizingFileController extends BaseRestController {
                 customizationHelper.deleteFile(customized);
                 break;
         }
-        StopCustomizingResponseDTO response = new StopCustomizingResponseDTO(originalContents);
+        response = new StopCustomizingResponseDTO(originalContents);
 
-        response.setMessage("customizedFile.removed");
-       // return ActionHelper.redirectWithParam(context.getRequest(), context.getSuccessForward(), "type", file.getType());
+        response.setMessage("customizedFile.removed");}
+        catch(IOException e){
+            e.printStackTrace();
+        }   catch (ValidationException e) {
+            e.printStackTrace();
+            }
+       
         return response;
     }
 

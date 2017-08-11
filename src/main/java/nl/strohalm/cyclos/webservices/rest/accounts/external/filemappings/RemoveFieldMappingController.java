@@ -17,6 +17,10 @@ import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 public class RemoveFieldMappingController extends BaseRestController {
 	private FieldMappingService fieldMappingService;
 
+	public final FieldMappingService getFieldMappingService() {
+		return fieldMappingService;
+	}
+
 	@Inject
 	public void setFieldMappingService(
 			final FieldMappingService fieldMappingService) {
@@ -45,13 +49,16 @@ public class RemoveFieldMappingController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public RemoveFieldMappingResponseDto(){
+        }
 	}
 
-	@RequestMapping(value = "admin/removeFieldMapping", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeFieldMapping", method = RequestMethod.POST)
 	@ResponseBody
 	protected RemoveFieldMappingResponseDto executeAction(
 			@RequestBody RemoveFieldMappingRequestDto form) throws Exception {
-		// final RemoveFieldMappingForm form = context.getForm();
+		RemoveFieldMappingResponseDto response = null;
+                try{
 		final long fieldMappingId = form.getFieldMappingId();
 		final FieldMapping fieldMapping = fieldMappingService.load(
 				fieldMappingId, RelationshipHelper.nested(
@@ -60,8 +67,13 @@ public class RemoveFieldMappingController extends BaseRestController {
 		final Long externalAccountId = fieldMapping.getFileMapping()
 				.getAccount().getId();
 		fieldMappingService.remove(fieldMappingId);
-		RemoveFieldMappingResponseDto response = new RemoveFieldMappingResponseDto();
 		response.setMessage("fieldMapping.removed");
+                response = new RemoveFieldMappingResponseDto();
+                }
+               catch(Exception exe){
+                   exe.printStackTrace();
+               
+               }
 		return response;
 	}
 }

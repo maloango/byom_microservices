@@ -132,7 +132,7 @@ public class SelectDocumentController extends BaseRestController{
 	    
 	     
 
-	    @RequestMapping(value = "/member/selectDocument",method = RequestMethod.GET)
+	    @RequestMapping(value = "member/selectDocument",method = RequestMethod.GET)
 	    @ResponseBody
 	    
 	    protected SelectDocumenResponseDTO executeAction(@RequestBody SelectDocumenRequestDTO form) throws Exception {

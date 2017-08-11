@@ -59,6 +59,33 @@ public class EditAccountFeeController extends BaseRestController {
 	private TransferTypeService transferTypeService;
 	private SettingsService settingsService;
 	private GroupService groupService;
+        private RequestHelper requestHelper;
+
+    public RequestHelper getRequestHelper() {
+        return requestHelper;
+    }
+
+    public void setRequestHelper(RequestHelper requestHelper) {
+        this.requestHelper = requestHelper;
+    }
+        
+	
+	public final SettingsService getSettingsService() {
+		return settingsService;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
+	public final GroupService getGroupService() {
+		return groupService;
+	}
+
+	public final void setGroupService(GroupService groupService) {
+		this.groupService = groupService;
+	}
+
 	private DataBinder<AccountFee> dataBinder;
 	private ReadWriteLock lock = new ReentrantReadWriteLock(true);
 
@@ -209,12 +236,53 @@ public class EditAccountFeeController extends BaseRestController {
 		public void setPaymentDirection(final String paymentDirection) {
 			setAccountFee("paymentDirection", paymentDirection);
 		}
+                
 
 	}
 
 	public static class EditAccountFeeResponseDto {
+		
 		private String message;
 		private Map<String, Object> params;
+                private boolean accountFee;
+                private boolean isInsert;
+                private boolean alreadyRan;
+                private boolean accountType;
+                
+
+        public boolean isAccountFee() {
+            return accountFee;
+        }
+
+        public void setAccountFee(boolean accountFee) {
+            this.accountFee = accountFee;
+        }
+
+        public boolean isIsInsert() {
+            return isInsert;
+        }
+
+        public void setIsInsert(boolean isInsert) {
+            this.isInsert = isInsert;
+        }
+
+        public boolean isAlreadyRan() {
+            return alreadyRan;
+        }
+
+        public void setAlreadyRan(boolean alreadyRan) {
+            this.alreadyRan = alreadyRan;
+        }
+
+        public boolean isAccountType() {
+            return accountType;
+        }
+
+        public void setAccountType(boolean accountType) {
+            this.accountType = accountType;
+        }
+                
+                
 
 		public EditAccountFeeResponseDto(String message,
 				Map<String, Object> params) {
@@ -230,6 +298,8 @@ public class EditAccountFeeController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public EditAccountFeeResponseDto(){
+                }
 	}
 
 	@RequestMapping(value = "admin/editAccountFee", method = RequestMethod.POST)
@@ -237,20 +307,32 @@ public class EditAccountFeeController extends BaseRestController {
 	protected EditAccountFeeResponseDto handleSubmit(
 			@RequestBody EditAccountFeeRequestDto form) throws Exception {
 		// final EditAccountFeeForm form = context.getForm();
+                EditAccountFeeResponseDto response = new EditAccountFeeResponseDto();
+               try{
 		AccountFee accountFee = getDataBinder().readFromString(
 				form.getAccountFee());
+                
 		final boolean isInsert = accountFee.getId() == null;
 		accountFee = accountFeeService.save(accountFee);
+                
 		String message = null;
 		if (isInsert)
 			message = "accountFee.inserted";
 		else
 			message = "accountFee.modified";
 		final Map<String, Object> params = new HashMap<String, Object>();
+                
 		params.put("accountTypeId", form.getAccountTypeId());
 		params.put("accountFeeId", accountFee.getId());
-		EditAccountFeeResponseDto response = new EditAccountFeeResponseDto(
-				message, params);
+                
+		//EditAccountFeeResponseDto response = new EditAccountFeeResponseDto(
+				//message, params);
+                                response = new EditAccountFeeResponseDto(message, params);
+               }
+               
+               catch(Exception e){
+                   e.printStackTrace();
+               }
 		return response;
 	}
 

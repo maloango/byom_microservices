@@ -1,7 +1,6 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.guarantees.guarantees;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -10,10 +9,15 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.services.accounts.guarantees.GuaranteeService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class DeleteGuaranteeController extends BaseRestController {
 	protected GuaranteeService guaranteeService;
+
+	public final GuaranteeService getGuaranteeService() {
+		return guaranteeService;
+	}
 
 	public static class DeleteGuaranteeRequestDto {
 		private Long guaranteeId;
@@ -37,19 +41,26 @@ public class DeleteGuaranteeController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public DeleteGuaranteeResponseDto(){
+                }
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/deleteGuarantee{guaranteeId}", method = RequestMethod.GET)
 	@ResponseBody
-	public DeleteGuaranteeResponseDto executeAction(@RequestBody DeleteGuaranteeRequestDto form)
+	public DeleteGuaranteeResponseDto executeAction(@PathVariable ("guaranteeId")long guaranteeId)
 			throws Exception {
-		//final DeleteGuaranteeForm form = context.getForm();
-		if (form.getGuaranteeId() <= 0) {
-			throw new ValidationException();
-		}
-		guaranteeService.remove(form.getGuaranteeId());
 		DeleteGuaranteeResponseDto response = new DeleteGuaranteeResponseDto();
-		response.setMessage("guarantee.removed");
+                try{
+		if (0 <= guaranteeId) {
+		} else {
+                    throw new ValidationException();
+                    }
+		guaranteeService.remove(guaranteeId);
+             response = new DeleteGuaranteeResponseDto();
+		response.setMessage("guarantee.removed");}
+                catch(ValidationException e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

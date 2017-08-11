@@ -56,6 +56,47 @@ public class AuthorizeGuaranteeController extends BaseRestController {
 	private GuaranteeService guaranteeService;
 	private PaymentCustomFieldService paymentCustomFieldService;
 	private DataBinder<Guarantee> dataBinder;
+	public final GroupService getGroupService() {
+		return groupService;
+                
+	}
+
+	public final void setGroupService(GroupService groupService) {
+		this.groupService = groupService;
+	}
+
+	public final ElementService getElementService() {
+		return elementService;
+	}
+
+	public final void setElementService(ElementService elementService) {
+		this.elementService = elementService;
+	}
+
+	public final PermissionService getPermissionService() {
+		return permissionService;
+	}
+
+	public final void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	public final SettingsService getSettingsService() {
+		return settingsService;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
+	public final GuaranteeService getGuaranteeService() {
+		return guaranteeService;
+	}
+
+	public final PaymentCustomFieldService getPaymentCustomFieldService() {
+		return paymentCustomFieldService;
+	}
+
 	private GroupService groupService;
 	private ElementService elementService;
 	private PermissionService permissionService;
@@ -145,11 +186,11 @@ public class AuthorizeGuaranteeController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/authorizeGuarantee", method = RequestMethod.POST)
 	@ResponseBody
 	protected AuthorizeGuaranteeResponseDto handleSubmit(
 			@RequestBody AuthorizeGuaranteeRequestDto form) throws Exception {
-		// final AuthorizeGuaranteeForm form = context.getForm();
+		
 		final Guarantee guarantee = guaranteeService.load(
 				form.getGuaranteeId(), Guarantee.Relationships.GUARANTEE_TYPE);
 		updateGuarantee(form, guarantee);
@@ -173,7 +214,7 @@ public class AuthorizeGuaranteeController extends BaseRestController {
 			 message ="payment.error.invalidTransferType";
 		} catch (final AuthorizedPaymentInPastException e) {
 			 message = "payment.error.authorizedInPast";
-			return response;
+			e.printStackTrace();
 		}
 		return response;
 	}

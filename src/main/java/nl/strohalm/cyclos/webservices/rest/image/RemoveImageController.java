@@ -23,7 +23,11 @@ public class RemoveImageController extends BaseRestController {
 	private ImageService          imageService;
     private CustomizedFileHandler customizedFileHandler;
 
-    @Inject
+    public final ImageService getImageService() {
+		return imageService;
+	}
+
+	@Inject
     public void setCustomizedFileHandler(final CustomizedFileHandler customizedFileHandler) {
         this.customizedFileHandler = customizedFileHandler;
     }
@@ -64,9 +68,11 @@ public class RemoveImageController extends BaseRestController {
     	
     }
 
-    @RequestMapping(value="admin/removeImage",method=RequestMethod.DELETE)
+    @RequestMapping(value="admin/removeImage",method=RequestMethod.POST)
     @ResponseBody
     protected RemoveImageResponseDTO renderContent(@RequestBody RemoveImageRequestDTO form) throws Exception {
+        RemoveImageResponseDTO response = null;
+        try{
         final Long id = form.getId();
         if (id <= 0) {
             throw new ValidationException();
@@ -88,8 +94,11 @@ public class RemoveImageController extends BaseRestController {
         // Remove from cache (will do nothing if cache is not used)
         customizedFileHandler.delete(ImageByIdServlet.IMAGES_CACHE_PATH + "/" + id);
         customizedFileHandler.delete(ImageByIdServlet.THUMBNAILS_CACHE_PATH + "/" + id);
-        RemoveImageResponseDTO reponse = new RemoveImageResponseDTO();
-        return reponse;
+        RemoveImageResponseDTO reponse = new RemoveImageResponseDTO();}
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return response;
     }
 
 

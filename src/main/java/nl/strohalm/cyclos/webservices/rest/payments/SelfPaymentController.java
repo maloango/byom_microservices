@@ -112,7 +112,7 @@ public class SelfPaymentController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "member/selfPayment", method = RequestMethod.POST)
 	@ResponseBody
 	protected AccountOwner getFromOwner(@RequestBody SelfPaymentRequestDto form) {
 		// final SelfPaymentForm form = context.getForm();

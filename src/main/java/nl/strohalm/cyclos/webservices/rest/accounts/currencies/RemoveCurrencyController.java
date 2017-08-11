@@ -1,7 +1,6 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.currencies;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -10,9 +9,14 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.services.accounts.CurrencyService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class RemoveCurrencyController extends BaseRestController {
+	public final CurrencyService getCurrencyService() {
+		return currencyService;
+	}
+
 	private CurrencyService currencyService;
 
 	@Inject
@@ -42,13 +46,14 @@ public class RemoveCurrencyController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public RemoveCurrencyResponseDTO(){}
 
 	}
 
-	@RequestMapping(value = "admin/removeCurrency", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeCurrency/{currencyId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected RemoveCurrencyResponseDTO executeAction(@RequestBody RemoveCurrencyRequestDTO form) throws Exception {
-		final long id = form.getCurrencyId();
+	protected RemoveCurrencyResponseDTO executeAction(@PathVariable ("currencyId")long currencyId) throws Exception {
+		final long id =currencyId;
 		if (id <= 0L) {
 			throw new ValidationException();
 		}
@@ -59,6 +64,7 @@ public class RemoveCurrencyController extends BaseRestController {
 		} catch (final Exception e) {
 			response.setMessage("currency.error.removing");
 		}
+               
 		return response;
 	}
 }

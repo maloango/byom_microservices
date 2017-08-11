@@ -66,4 +66,8 @@ public class CustomizedFileQuery extends QueryParameters {
     public void setType(final CustomizedFile.Type type) {
         this.type = type;
     }
+
+    public void setType(String type) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

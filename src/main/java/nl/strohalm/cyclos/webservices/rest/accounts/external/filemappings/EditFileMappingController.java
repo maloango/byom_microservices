@@ -26,12 +26,53 @@ import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
+import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
 public class EditFileMappingController extends BaseRestController {
 	private GroupService groupService;
 	private ElementService elementService;
+	public final GroupService getGroupService() {
+		return groupService;
+	}
+
+	public final void setGroupService(GroupService groupService) {
+		this.groupService = groupService;
+	}
+
+	public final ElementService getElementService() {
+		return elementService;
+	}
+
+	public final void setElementService(ElementService elementService) {
+		this.elementService = elementService;
+	}
+
+	public final PermissionService getPermissionService() {
+		return permissionService;
+	}
+
+	public final void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	public final SettingsService getSettingsService() {
+		return settingsService;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
+	public final ExternalAccountService getExternalAccountService() {
+		return externalAccountService;
+	}
+
+	public final FileMappingService getFileMappingService() {
+		return fileMappingService;
+	}
+
 	private PermissionService permissionService;
 	private SettingsService settingsService;
 	private ExternalAccountService externalAccountService;
@@ -139,6 +180,8 @@ public class EditFileMappingController extends BaseRestController {
 	@ResponseBody
 	protected EditFileMappingResponseDto handleSubmit(
 			@RequestBody EditFileMappingRequestDto form) throws Exception {
+            EditFileMappingResponseDto response =null;
+            try{
 		final FileMapping fileMapping = resolveFileMapping(form);
 		final boolean isInsert = fileMapping.isTransient();
 		fileMappingService.save(fileMapping);
@@ -149,8 +192,11 @@ public class EditFileMappingController extends BaseRestController {
 		else
 			message = "fileMapping.modified";
 		long externalAccountId = fileMapping.getAccount().getId();
-		EditFileMappingResponseDto response = new EditFileMappingResponseDto(
-				message, externalAccountId);
+		 response = new EditFileMappingResponseDto(
+				message, externalAccountId);}
+            catch(ValidationException ex){
+                ex.printStackTrace();
+            }
 		return response;
 	}
 /*

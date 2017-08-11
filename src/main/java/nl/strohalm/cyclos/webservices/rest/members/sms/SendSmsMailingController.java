@@ -4,12 +4,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
 import nl.strohalm.cyclos.access.Permission;
@@ -34,6 +28,12 @@ import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.binding.SimpleCollectionBinder;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class SendSmsMailingController extends BaseRestController {
@@ -106,11 +106,12 @@ public class SendSmsMailingController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "member/sendSmsMailing", method = RequestMethod.POST)
 	@ResponseBody
 	protected SendSmsMailingResponseDto formAction(
 			@RequestBody SendSmsMailingRequestDto form) throws Exception {
-		// final SendSmsMailingForm form = context.getForm();
+		SendSmsMailingResponseDto response =null;
+                try{
 		final SmsMailing smsMailing = getDataBinder().readFromString(
 				form.getSmsMailing());
 		Permission permission;
@@ -130,8 +131,11 @@ public class SendSmsMailingController extends BaseRestController {
 		smsMailingService.send(smsMailing);
 
 		message = "smsMailing.sent";
-		SendSmsMailingResponseDto response = new SendSmsMailingResponseDto();
-		response.setMessage(message);
+		response = new SendSmsMailingResponseDto();
+		response.setMessage(message);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

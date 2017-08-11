@@ -99,10 +99,12 @@ public class ViewMessageController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.POST)
+	@RequestMapping(value = "operator/viewMessage", method = RequestMethod.GET)
 	@ResponseBody
 	protected ViewMessageResponseDto executeAction(
 			@RequestBody ViewMessageRequestDto form) throws Exception {
+            ViewMessageResponseDto response  = null;
+            try{
 		long id = form.getMessageId();
 		if (id <= 0L) {
 			final Long lastMessageId = (Long) form.getLastMessageId();
@@ -126,17 +128,23 @@ public class ViewMessageController extends BaseRestController {
 		boolean canReplyMessage = false;
 		boolean canManageMessage = false;
 		canManageMessage = messageService.canManage(message);
-		ViewMessageResponseDto response = new ViewMessageResponseDto(
-				lastMessageId, message, canReplyMessage, canManageMessage);
+		
 		if (message.getFromMember() == null) { // the message came from
 												// administration
 			canReplyMessage = messageService.canSendToAdmin();
 		} else { // the message came from another member
 			canReplyMessage = messageService.canSendToMember(message
-					.getFromMember());
+					.getFromMember());}
+                        response = new ViewMessageResponseDto(
+				lastMessageId, message, canReplyMessage, canManageMessage);
+                }
+                catch(Exception e){
+                        e.printStackTrace();
+                        }
 
-		}
+		
 		return response;
 	}
-
 }
+
+

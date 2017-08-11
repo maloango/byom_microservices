@@ -1,16 +1,22 @@
 package nl.strohalm.cyclos.webservices.rest.members.imports;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.controls.ActionContext;
+import nl.strohalm.cyclos.controls.members.imports.ImportedMembersSummaryForm;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.members.imports.MemberImport;
 import nl.strohalm.cyclos.services.elements.MemberImportService;
 import nl.strohalm.cyclos.services.transactions.exceptions.CreditsException;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
+import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 @Controller
@@ -56,13 +62,14 @@ public class ImportedMembersSummaryController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/importedMembersSummary", method = RequestMethod.POST)
 	@ResponseBody
-	protected void formAction(final ImportedMembersSummaryRequestDto form)
+	protected ImportedMembersSummaryResponseDto formAction(@RequestBody ImportedMembersSummaryRequestDto form)
 			throws Exception {
 		// final ImportedMembersSummaryForm form = context.getForm();
 		final MemberImport memberImport = getImport(form);
 		String message=null;
+		ImportedMembersSummaryResponseDto response = new ImportedMembersSummaryResponseDto();
 		try {
 			memberImportService.processImport(memberImport,
 					form.isSendActivationMail());
@@ -72,6 +79,8 @@ public class ImportedMembersSummaryController extends BaseRestController {
 			message=e.toString(); 
 		}
 		message = "memberImport.processed";
+		response.setMessage(message);
+		return response;
 	}
 
 /*	protected void prepareForm(final ActionContext context) throws Exception {

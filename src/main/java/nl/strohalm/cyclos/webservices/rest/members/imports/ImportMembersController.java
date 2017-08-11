@@ -5,12 +5,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.struts.upload.FormFile;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.members.imports.ImportMembersForm;
@@ -30,6 +24,12 @@ import nl.strohalm.cyclos.utils.csv.UnknownColumnException;
 import nl.strohalm.cyclos.utils.validation.RequiredError;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.apache.struts.upload.FormFile;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ImportMembersController extends BaseRestController {
@@ -101,11 +101,12 @@ public class ImportMembersController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/importMembers", method = RequestMethod.POST)
 	@ResponseBody
 	protected ImportMembersResponseDto handleSubmit(
 			final ImportMembersRequestDto form) throws Exception {
-		// final ImportMembersForm form = context.getForm();
+		ImportMembersResponseDto response = null;
+                try{
 		final FormFile upload = form.getUpload();
 		if (upload == null || upload.getFileSize() == 0) {
 			throw new ValidationException("upload", "memberImport.file",
@@ -114,7 +115,7 @@ public class ImportMembersController extends BaseRestController {
 		MemberImport memberImport = getDataBinder().readFromString(
 				form.getImport());
 		String message = null;
-		ImportMembersResponseDto response = new ImportMembersResponseDto();
+		response = new ImportMembersResponseDto();
 		try {
 			memberImport = memberImportService.importMembers(memberImport,
 					upload.getInputStream());
@@ -123,10 +124,13 @@ public class ImportMembersController extends BaseRestController {
 			return response;
 		} catch (final UnknownColumnException e) {
 			message = "general.error.csv.unknownColumn";
-			response.setMessage(message);
+			response.setMessage(message);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 			return response;
 		} finally {
-			upload.destroy();
+			response.notifyAll();
 		}
 	}
 

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
+import nl.strohalm.cyclos.dao.access.UserDAO;
 import nl.strohalm.cyclos.entities.access.AdminUser;
 import nl.strohalm.cyclos.entities.access.MemberUser;
 import nl.strohalm.cyclos.entities.access.OperatorUser;
@@ -18,6 +19,7 @@ import nl.strohalm.cyclos.entities.members.Operator;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
+import nl.strohalm.cyclos.utils.access.LoggedUser;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
@@ -26,6 +28,7 @@ public class ManagePasswordsController extends BaseRestController {
 
 	private ElementService elementService;
 	private PermissionService permissionService;
+        private UserDAO userDAO;
 	
 	public void setElementService(final ElementService elementService) {
 		this.elementService = elementService;
@@ -33,6 +36,16 @@ public class ManagePasswordsController extends BaseRestController {
 	public void setPermissionService(final PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
+
+    public UserDAO getUserDAO() {
+        return userDAO;
+    }
+
+    public void setUserDAO(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
+        
+        
 
 	public static class ManagePasswordsRequestDto {
 		private long userId;
@@ -72,18 +85,23 @@ public class ManagePasswordsController extends BaseRestController {
 		private boolean canChangePassword;
 		private boolean canResetPassword;
 		private boolean canManageTransactionPassword;
-		private User user;
+		//private User user;
+                
 
 		public ManagePasswordsResponseDto(boolean ofAdmin, boolean ofOperator,
 				boolean canChangePassword, boolean canResetPassword,
-				boolean canManageTransactionPassword, User user) {
+				boolean canManageTransactionPassword) {
 			super();
 			this.ofAdmin = ofAdmin;
 			this.ofOperator = ofOperator;
 			this.canChangePassword = canChangePassword;
 			this.canResetPassword = canResetPassword;
 			this.canManageTransactionPassword = canManageTransactionPassword;
-			this.user = user;
+			//this.user = user;
+		}
+		
+		public ManagePasswordsResponseDto(){
+			
 		}
 
 		public boolean isOfAdmin() {
@@ -127,20 +145,17 @@ public class ManagePasswordsController extends BaseRestController {
 			this.canManageTransactionPassword = canManageTransactionPassword;
 		}
 
-		public User getUser() {
-			return user;
-		}
-
-		public void setUser(User user) {
-			this.user = user;
-		}
-
 	}
 
 	@RequestMapping(value = "admin/managePasswords", method = RequestMethod.POST)
 	@ResponseBody
 	public ManagePasswordsResponseDto managePasswords(
 			@RequestBody final ManagePasswordsRequestDto form) {
+		System.out.println("Request came, doing processing");
+		ManagePasswordsResponseDto response=new ManagePasswordsResponseDto();
+   
+     try {
+    	 System.out.println("Inside Try "+"==  "+LoggedUser.hasUser()+" "+LoggedUser.accountOwner());
 
 		final long userId = form.getUserId();
 		User user = null;
@@ -148,12 +163,14 @@ public class ManagePasswordsController extends BaseRestController {
 			if (userId > 0L) {
 				user = elementService.loadUser(userId, RelationshipHelper
 						.nested(User.Relationships.ELEMENT,
-								Element.Relationships.GROUP));
+								Element.Relationships.USER));
+                                 
 			}
 			if (user == null) {
 				throw new Exception();
 			}
 		} catch (final Exception e) {
+                    e.printStackTrace();
 			throw new ValidationException();
 		}
 
@@ -217,12 +234,16 @@ public class ManagePasswordsController extends BaseRestController {
 			}
 		}
 
-		ManagePasswordsResponseDto reponse = new ManagePasswordsResponseDto(
+		   response = new ManagePasswordsResponseDto(
 				user instanceof AdminUser, user instanceof OperatorUser,
 				canChangePassword, canResetPassword,
-				canManageTransactionPassword, user);
+				canManageTransactionPassword);
+		
+ 	} catch (Exception e) {
+		e.printStackTrace();
+	}
 
-		return reponse;
+		return response;
 	}
 
 }

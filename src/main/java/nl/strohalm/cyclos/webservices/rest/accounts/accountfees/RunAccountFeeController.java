@@ -1,7 +1,6 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.accountfees;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -10,10 +9,15 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.entities.accounts.fees.account.AccountFee;
 import nl.strohalm.cyclos.services.accountfees.AccountFeeService;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class RunAccountFeeController extends BaseRestController {
 	private AccountFeeService accountFeeService;
+
+	public final AccountFeeService getAccountFeeService() {
+		return accountFeeService;
+	}
 
 	@Inject
 	public void setAccountFeeService(final AccountFeeService accountFeeService) {
@@ -42,7 +46,8 @@ public class RunAccountFeeController extends BaseRestController {
 	}
 
 	public static class RunAccountFeeResponseDto {
-		private String message;
+		 String message;
+               
 
 		public RunAccountFeeResponseDto(String message) {
 			super();
@@ -56,18 +61,31 @@ public class RunAccountFeeController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                 public RunAccountFeeResponseDto(){
+                 }
 	}
-
-	@RequestMapping(value = "admin/runAccountFee", method = RequestMethod.POST)
+        // due to error flow missing flow later will be implement 
+	@RequestMapping(value = "admin/runAccountFee/{accountFeeId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected RunAccountFeeResponseDto executeAction(
-			@RequestBody RunAccountFeeRequestDto form) throws Exception {
-		// final AccountFeeExecutionForm form = context.getForm();
-		final AccountFee fee = accountFeeService.load(form.getAccountFeeId());
+	protected RunAccountFeeResponseDto executeAction(@PathVariable("accountFeeId") Long accountFeeId 
+			 ) throws Exception {
+		RunAccountFeeResponseDto response = new RunAccountFeeResponseDto();
+                
+                try {
+		final AccountFee fee = accountFeeService.load(accountFeeId);
 		accountFeeService.chargeManual(fee);
-		String message = "accountFee.action.running";
-		RunAccountFeeResponseDto response = new RunAccountFeeResponseDto(
-				message);
+                
+                    response.setMessage("accountFee.action.running");
+                    response.message = toString();
+                    
+                    
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                    
+                }
+		
+				
 		return response;
 	}
 }

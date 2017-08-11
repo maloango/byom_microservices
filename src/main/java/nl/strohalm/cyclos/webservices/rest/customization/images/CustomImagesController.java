@@ -2,7 +2,6 @@ package nl.strohalm.cyclos.webservices.rest.customization.images;
 
 import org.apache.struts.upload.FormFile;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,6 +14,7 @@ import nl.strohalm.cyclos.utils.ImageHelper.ImageType;
 import nl.strohalm.cyclos.utils.WebImageHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class CustomImagesController extends BaseRestController {
@@ -60,6 +60,23 @@ public class CustomImagesController extends BaseRestController {
 	public static class CustomImagesResponseDto {
 		public String message;
 		public Nature nature;
+                public FormFile upload;
+
+        public FormFile getUpload() {
+            return upload;
+        }
+
+        public void setUpload(FormFile upload) {
+            this.upload = upload;
+        }
+
+        public Nature getNature() {
+            return nature;
+        }
+
+        public void setNature(Nature nature) {
+            this.nature = nature;
+        }
 		
 
 		public String getMessage() {
@@ -69,19 +86,20 @@ public class CustomImagesController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public CustomImagesResponseDto(){
+                }
 	}
 
-	@RequestMapping(value = "/admin/customImages", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/customImages/{nature}", method = RequestMethod.GET)
 	@ResponseBody
-	protected CustomImagesResponseDto handleSubmit(
-			@RequestBody CustomImagesRequestDto form) throws Exception {
-		//final CustomImagesForm form = context.getForm();
-		Image.Nature nature = null;
+	protected CustomImagesResponseDto handleSubmit(@PathVariable ("nature") Nature nature) throws Exception {
+			
+               
 		FormFile upload = null;
 		CustomImagesResponseDto response = new CustomImagesResponseDto();
 		try {
 			try {
-				nature = Image.Nature.valueOf(form.getNature());
+				nature = Image.Nature.valueOf(response.getNature());
 			} catch (final Exception e) {
 				throw new ValidationException();
 			}
@@ -89,7 +107,7 @@ public class CustomImagesController extends BaseRestController {
 				throw new ValidationException();
 			}
 
-			upload = form.getUpload();
+			upload = response.getUpload();
 			final ImageType type = ImageType.getByContentType(upload
 					.getContentType());
 			final Image image = imageService.save(nature, type,

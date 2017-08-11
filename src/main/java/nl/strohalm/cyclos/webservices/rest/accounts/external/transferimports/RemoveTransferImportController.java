@@ -11,10 +11,15 @@ import nl.strohalm.cyclos.entities.exceptions.UnexpectedEntityException;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferImportService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class RemoveTransferImportController extends BaseRestController {
 	private ExternalTransferImportService externalTransferImportService;
+
+	public final ExternalTransferImportService getExternalTransferImportService() {
+		return externalTransferImportService;
+	}
 
 	@Inject
 	public void setExternalTransferImportService(
@@ -44,14 +49,16 @@ public class RemoveTransferImportController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public RemoveTransferImportResponseDto(){
+                }
 	}
-
-	@RequestMapping(value = "admin/removeTransferImport", method = RequestMethod.DELETE)
+        
+	@RequestMapping(value = "admin/removeTransferImport/{transferImportId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected RemoveTransferImportResponseDto executeAction(
-			@RequestBody RemoveTransferImportRequestDto form) throws Exception {
-		//final RemoveTransferImportForm form = context.getForm();
-		final long id = form.getTransferImportId();
+	protected RemoveTransferImportResponseDto executeAction(@PathVariable ("transferImportId") long transferImportId) throws Exception {
+			
+		
+		final long id = transferImportId;
 		if (id <= 0L) {
 			throw new ValidationException();
 		}
@@ -59,8 +66,9 @@ public class RemoveTransferImportController extends BaseRestController {
 		try {
 			externalTransferImportService.remove(id);
 			response.setMessage("externalTransferImport.removed");
-		} catch (final UnexpectedEntityException e) {
+		} catch (Exception e) {
 			response.setMessage("externalTransferImport.error.removing");
+                        e.printStackTrace();
 		}
 		return response;
 	}

@@ -10,13 +10,23 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.entities.accounts.Currency;
+import nl.strohalm.cyclos.entities.accounts.transactions.SysOutTransferListener;
 import nl.strohalm.cyclos.services.accounts.CurrencyService;
 import nl.strohalm.cyclos.services.accounts.rates.RateService;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class ManageCurrencyController extends BaseRestController {
 	private CurrencyService currencyService;
+	public final CurrencyService getCurrencyService() {
+		return currencyService;
+	}
+
+	public final RateService getRateService() {
+		return rateService;
+	}
+
 	private RateService rateService;
 
 	@Inject
@@ -31,6 +41,7 @@ public class ManageCurrencyController extends BaseRestController {
 
 	public static class ManageCurrencyRequestDTO {
 		private long currencyId;
+                
 
 		public long getCurrencyId() {
 			return currencyId;
@@ -41,10 +52,37 @@ public class ManageCurrencyController extends BaseRestController {
 		}
 	}
 
+   
+
+        
 	public static class ManageCurrencyResponseDTO {
-		Currency currency;
-		boolean ratesEnabled;
-		Calendar pendingRateInitProgression;
+		private Currency currency;
+		private boolean ratesEnabled;
+		private Calendar pendingRateInitProgression;
+
+        public Currency getCurrency() {
+            return currency;
+        }
+
+        public void setCurrency(Currency currency) {
+            this.currency = currency;
+        }
+
+        public boolean isRatesEnabled() {
+            return ratesEnabled;
+        }
+
+        public void setRatesEnabled(boolean ratesEnabled) {
+            this.ratesEnabled = ratesEnabled;
+        }
+
+        public Calendar getPendingRateInitProgression() {
+            return pendingRateInitProgression;
+        }
+
+        public void setPendingRateInitProgression(Calendar pendingRateInitProgression) {
+            this.pendingRateInitProgression = pendingRateInitProgression;
+        }
 
 		public ManageCurrencyResponseDTO(Currency currency, boolean ratesEnabled, Calendar pendingRateInitProgression) {
 			super();
@@ -53,14 +91,19 @@ public class ManageCurrencyController extends BaseRestController {
 			this.pendingRateInitProgression = pendingRateInitProgression;
 		}
 
+      public ManageCurrencyResponseDTO(){
+      }
+
 	}
 
-	@RequestMapping(value = "admin/manageCurrency", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/manageCurrency/{currencyId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected ManageCurrencyResponseDTO executeAction(@RequestBody ManageCurrencyRequestDTO form) throws Exception {
+	protected ManageCurrencyResponseDTO executeAction(@PathVariable ("currencyId")long currencyId) throws Exception {
 
-		// final ManageCurrencyForm manageForm = form.getForm();
-		final long id = form.getCurrencyId();
+		ManageCurrencyResponseDTO response = new ManageCurrencyResponseDTO();
+			         System.out.println("ManageCurrency is running........");	
+                try{
+		final long id = currencyId;
 		final boolean isInsert = id <= 0L;
 		Currency currency;
 		if (isInsert) {
@@ -70,12 +113,13 @@ public class ManageCurrencyController extends BaseRestController {
 		}
 		// request.setAttribute("currency", currency);
 		final boolean ratesEnabled = rateService.isAnyRateEnabled(currency, null);
-		// request.setAttribute("ratesEnabled", ratesEnabled);
-		// get the progress on any pending rate initialization
 		final Calendar pendingRateInitProgression = rateService.checkPendingRateInitializations(currency);
-		// request.setAttribute("pendingRateInit", pendingRateInitProgression);
-		ManageCurrencyResponseDTO response = new ManageCurrencyResponseDTO(currency, ratesEnabled,
-				pendingRateInitProgression);
+		
+		response = new ManageCurrencyResponseDTO(currency, ratesEnabled, pendingRateInitProgression);
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

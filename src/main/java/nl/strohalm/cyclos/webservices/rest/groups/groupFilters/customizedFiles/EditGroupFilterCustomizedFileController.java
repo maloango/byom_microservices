@@ -30,11 +30,28 @@ import nl.strohalm.cyclos.utils.conversion.CoercionConverter;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class EditGroupFilterCustomizedFileController extends BaseRestController{
 	 private CustomizedFileService      customizedFileService;
 	    private GroupFilterService         groupFilterService;
-	    private DataBinder<CustomizedFile> dataBinder;
+	    public final PermissionService getPermissionService() {
+			return permissionService;
+		}
+
+		public final void setPermissionService(PermissionService permissionService) {
+			this.permissionService = permissionService;
+		}
+
+		public final CustomizedFileService getCustomizedFileService() {
+			return customizedFileService;
+		}
+
+		public final GroupFilterService getGroupFilterService() {
+			return groupFilterService;
+		}
+
+		private DataBinder<CustomizedFile> dataBinder;
 	    private CustomizationHelper        customizationHelper;
 	    private PermissionService permissionService;
 
@@ -109,21 +126,68 @@ public class EditGroupFilterCustomizedFileController extends BaseRestController{
 	    
 	    public static class EditGroupFilterCustomizedResponseDTO{
 	    	String message;
+                private boolean hasPermission;
+                private boolean isInsert;
+                private boolean editable;
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public boolean isHasPermission() {
+            return hasPermission;
+        }
+
+        public void setHasPermission(boolean hasPermission) {
+            this.hasPermission = hasPermission;
+        }
+
+        public boolean isIsInsert() {
+            return isInsert;
+        }
+
+        public void setIsInsert(boolean isInsert) {
+            this.isInsert = isInsert;
+        }
+
+        public boolean isEditable() {
+            return editable;
+        }
+
+        public void setEditable(boolean editable) {
+            this.editable = editable;
+        }
+
+        public Map<String, Object> getParam() {
+            return param;
+        }
+
+        public void setParam(Map<String, Object> param) {
+            this.param = param;
+        }
+                
 	    	Map<String,Object>param;
 	    	public EditGroupFilterCustomizedResponseDTO(String message,Map<String,Object>param){
 	    		super();
 	    		this.message = message;
 	    		this.param = param;
 	    	}
+                public EditGroupFilterCustomizedResponseDTO(){
+                }
 	    	
 	    }
 
-	    @RequestMapping(value = "member/editGroupCustomizedFile" ,method = RequestMethod.POST)
+	    @RequestMapping(value = "admin/editGroupFilterCustomizedFile" ,method = RequestMethod.POST)
 	    @ResponseBody
 	    protected EditGroupFilterCustomizedResponseDTO handleSubmit(@RequestBody EditGroupFilterCustomizedRequestDTO form ) throws Exception {
 	        CustomizedFile file = getDataBinder().readFromString(form.getFile());
 	        final GroupFilter groupFilter = groupFilterService.load(file.getGroupFilter().getId());
-	        // Ensure the file has a group filter
+	        EditGroupFilterCustomizedResponseDTO response =null;
+                try{
 	        if (groupFilter == null) {
 	            throw new ValidationException();
 	        }
@@ -147,32 +211,74 @@ public class EditGroupFilterCustomizedFileController extends BaseRestController{
 	        
 	        params.put("fileId", file.getId());
 	        params.put("groupFilterId", groupFilter.getId());
-	        EditGroupFilterCustomizedResponseDTO response = new EditGroupFilterCustomizedResponseDTO(message, params);
+	        response = new EditGroupFilterCustomizedResponseDTO(message, params);}
+                catch(ValidationException e){
+                    e.printStackTrace();
+                }
 	        return response;
 	    }
 
 	    //@Override
-	    protected void prepareForm(final ActionContext context) throws Exception {
-	        final EditGroupFilterCustomizedFileForm form = context.getForm();
-	        final HttpServletRequest request = context.getRequest();
+            public static class PrepareFormResponseDTO{
+                public HashMap<String, Object> response = new HashMap<String, Object>();
+                private boolean isInsert;
+                private boolean editable;
+
+        public boolean isIsInsert() {
+            return isInsert;
+        }
+
+        public void setIsInsert(boolean isInsert) {
+            this.isInsert = isInsert;
+        }
+
+        public boolean isEditable() {
+            return editable;
+        }
+
+        public void setEditable(boolean editable) {
+            this.editable = editable;
+        }
+                
+
+        public HashMap<String, Object> getResponse() {
+            return response;
+        }
+
+        public void setResponse(HashMap<String, Object> response) {
+            this.response = response;
+        }
+                public PrepareFormResponseDTO(){
+                    
+                }
+            }
+	@RequestMapping(value = "admin/editGroupFilterCustomizedFile/{groupFilterId}/{fileId}", method = RequestMethod.GET)
+	@ResponseBody
+           
+            protected PrepareFormResponseDTO prepareForm(@PathVariable ("groupFilterId") long groupFilterId, @PathVariable("fileId") long fileId) throws Exception {
+	        
+                PrepareFormResponseDTO preFormResp=new PrepareFormResponseDTO();
+                try{
+                    
+                HashMap<String,Object> response=new HashMap<String,Object>();
 
 	        final boolean editable = permissionService.hasPermission(AdminSystemPermission.GROUP_FILTERS_MANAGE_CUSTOMIZED_FILES);
 
 	        // Retrieve the group filter
-	        final long groupFilterId = form.getGroupFilterId();
+	        final long Id = groupFilterId;
 	        if (groupFilterId <= 0L) {
 	            throw new ValidationException();
 	        }
 	        final GroupFilter groupFilter = groupFilterService.load(groupFilterId);
 
-	        final long id = form.getFileId();
+	        final long id = fileId;
 	        final boolean isInsert = id <= 0L;
 	        CustomizedFile file;
 	        if (isInsert) {
 	            file = new CustomizedFile();
 	            file.setGroupFilter(groupFilter);
 	            // Prepare the possible types
-	            request.setAttribute("types", Arrays.asList(CustomizedFile.Type.STATIC_FILE, CustomizedFile.Type.STYLE));
+	            response.put("types", Arrays.asList(CustomizedFile.Type.STATIC_FILE, CustomizedFile.Type.STYLE));
 	        } else {
 	            // Retrieve the file
 	            file = customizedFileService.load(id);
@@ -181,12 +287,21 @@ public class EditGroupFilterCustomizedFileController extends BaseRestController{
 	                throw new ValidationException();
 	            }
 	        }
-	        request.setAttribute("file", file);
-	        getDataBinder().writeAsString(form.getFile(), file);
-	        request.setAttribute("group", groupFilter);
-	        request.setAttribute("isInsert", isInsert);
-	        request.setAttribute("editable", editable);
-	    }
+                getDataBinder().writeAsString(file,file);
+	        response.put("file", file);
+	        response.put("group", groupFilter);
+	        response.put("isInsert", isInsert);
+	        response.put("editable", editable);
+                
+                preFormResp.setResponse(response);
+               }
+                catch(ValidationException e){
+                    e.printStackTrace();
+                }
+                return preFormResp;
+            }
+                
+	   
 
 	   // @Override
 	    protected void validateForm(final ActionContext context) {

@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.apache.struts.upload.FormFile;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,6 +12,7 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.services.ads.AdService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class RemoveAdController extends BaseRestController {
@@ -32,7 +32,7 @@ public class RemoveAdController extends BaseRestController {
 		private long memberId;
 		private FormFile picture;
 		private String pictureCaption;
-
+                
 		public Map<String, Object> getAd() {
 			return values;
 		}
@@ -92,7 +92,7 @@ public class RemoveAdController extends BaseRestController {
 		}
 
 		public boolean isAdmin() {
-			// TODO Auto-generated method stub
+			
 			return false;
 		}
 	}
@@ -100,7 +100,26 @@ public class RemoveAdController extends BaseRestController {
 	public static class RemoveAdResponseDto {
 		private String message;
 		long memberId;
+                private boolean isAdmin;
+                private long Id;
 
+        public boolean isAdmin() {
+            return isAdmin;
+        }
+
+        public void setIsAdmin(boolean isAdmin) {
+            this.isAdmin = isAdmin;
+        }
+
+        public long getId() {
+            return Id;
+        }
+
+        public void setId(long Id) {
+            this.Id = Id;
+        }
+                
+              
 		public long getMemberId() {
 			return memberId;
 		}
@@ -112,40 +131,50 @@ public class RemoveAdController extends BaseRestController {
 		public String getMessage() {
 			return message;
 		}
-
+                
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public RemoveAdResponseDto(){
+                }
+
+
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.DELETE)
+	@RequestMapping(value = "admin/removeAd/{memberId}", method = RequestMethod.GET)
 	@ResponseBody
-	protected RemoveAdResponseDto executeAction(
-			@RequestBody RemoveAdRequestDto form) throws Exception {
-		// final AdForm form = context.getForm();
-		String message=null;
-		long memberId;
+	protected RemoveAdResponseDto executeAction(@PathVariable ("memberId") long memberId) throws Exception {
+			
 		RemoveAdResponseDto response = new RemoveAdResponseDto();
-		if (form.getId() <= 0) {
+                try{
+		String message=null;
+		
+		//response = new RemoveAdResponseDto();
+		if (response.getId() <= 0) {
 			throw new ValidationException();
 		}
 		// Remove the advertisement
-		adService.remove(form.getId());
+		adService.remove(response.getId());
 		message ="ad.removed";
 		response.setMessage(message);
-		if (form.isAdmin()) {
-			if (form.getMemberId() > 0) {
-				memberId =form.getMemberId();
+		if (response.isAdmin()) {
+			if (response.getMemberId() > 0) {
+				memberId =response.getMemberId();
 				response.setMemberId(memberId);
 				return response;
 			} else {
-				//return 
+				
 			}
 		} else {
-			memberId =form.getMemberId();
-			response.setMemberId(memberId);
-			return response;
-		}
+			memberId =response.getMemberId();
+			response.setMemberId(memberId);}
+                        response = new RemoveAdResponseDto();}
+                        
+                catch(Exception e){
+                        e.printStackTrace();
+                        }
+			
+		
 		return response;
 	}
 }

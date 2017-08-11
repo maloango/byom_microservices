@@ -32,6 +32,42 @@ public class SetCustomFieldOrderController extends BaseRestController {
 	private AdminCustomFieldService adminCustomFieldService;
 	private LoanGroupCustomFieldService loanGroupCustomFieldService;
 	private MemberCustomFieldService memberCustomFieldService;
+	public final AdCustomFieldService getAdCustomFieldService() {
+		return adCustomFieldService;
+	}
+
+	public final AdminCustomFieldService getAdminCustomFieldService() {
+		return adminCustomFieldService;
+	}
+
+	public final LoanGroupCustomFieldService getLoanGroupCustomFieldService() {
+		return loanGroupCustomFieldService;
+	}
+
+	public final MemberCustomFieldService getMemberCustomFieldService() {
+		return memberCustomFieldService;
+	}
+
+	public final MemberRecordCustomFieldService getMemberRecordCustomFieldService() {
+		return memberRecordCustomFieldService;
+	}
+
+	public final OperatorCustomFieldService getOperatorCustomFieldService() {
+		return operatorCustomFieldService;
+	}
+
+	public final PaymentCustomFieldService getPaymentCustomFieldService() {
+		return paymentCustomFieldService;
+	}
+
+	public final MemberRecordTypeService getMemberRecordTypeService() {
+		return memberRecordTypeService;
+	}
+
+	public final TransferTypeService getTransferTypeService() {
+		return transferTypeService;
+	}
+
 	private MemberRecordCustomFieldService memberRecordCustomFieldService;
 	private OperatorCustomFieldService operatorCustomFieldService;
 	private PaymentCustomFieldService paymentCustomFieldService;
@@ -165,7 +201,7 @@ public class SetCustomFieldOrderController extends BaseRestController {
 	@ResponseBody
 	protected SetCustomFieldOrderResponseDto handleSubmit(@RequestBody SetCustomFieldOrderRequestDto form)
 			throws Exception {
-		//final SetCustomFieldOrderForm form = context.getForm();
+		
 		CustomField.Nature nature;
 		try {
 			nature = CustomField.Nature.valueOf(form.getNature());

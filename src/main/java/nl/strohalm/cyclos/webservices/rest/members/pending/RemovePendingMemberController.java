@@ -47,16 +47,21 @@ public class RemovePendingMemberController extends BaseRestController{
 		
 	}
 
-	@RequestMapping(value = "/member/removePendingMember",method= RequestMethod.DELETE)
+	@RequestMapping(value = "member/removePendingMember",method= RequestMethod.DELETE)
 	@ResponseBody
     protected RemovePendingMemberResponseDTO executeAction(@RequestBody RemovePendingMemberRequestDTO form) throws Exception {
+        RemovePendingMemberResponseDTO response = null;
+        try{
         final long id = form.getPendingMemberId();
         if (id <= 0L) {
             throw new ValidationException();
         }
         elementService.removePendingMembers(id);
-        RemovePendingMemberResponseDTO response = new RemovePendingMemberResponseDTO();
-        response.setMessage("pendingMember.removed");
+        response = new RemovePendingMemberResponseDTO();
+        response.setMessage("pendingMember.removed");}
+        catch(Exception e){
+            e.printStackTrace();
+        }
         return response;
     }
 

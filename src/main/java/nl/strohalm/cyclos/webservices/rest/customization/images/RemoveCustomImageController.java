@@ -56,28 +56,27 @@ public class RemoveCustomImageController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/removeCustomImage", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/removeCustomImage", method = RequestMethod.POST)
 	@ResponseBody
 	protected RemoveCustomImageResponseDto executeAction(
 			@RequestBody RemoveCustomImageRequestDto form) throws Exception {
-		// final RemoveCustomImageForm form = context.getForm();
+		RemoveCustomImageResponseDto response = null;
+                try{
 		final long id = form.getImageId();
 		final Image image = imageService.load(id);
 		imageService.remove(image.getId());
-		RemoveCustomImageResponseDto response = new RemoveCustomImageResponseDto();
+		
 		response.setMessage("customImage.removed");
 
 		// Remove the local file if a custom or style image
 		if (image.getNature() != Nature.SYSTEM) {
 			webImageHelper.remove(image);
 		}
+                response = new RemoveCustomImageResponseDto();}
+                catch(Exception e){
+                        e.printStackTrace();
+                        }
 
-		// final HttpServletRequest request = context.getRequest();
-		/*
-		 * return ActionHelper.redirectWithParam(request,
-		 * context.getSuccessForward(), "nature",
-		 * StringHelper.removeMarkupTags(request.getParameter("nature")));
-		 */
 		return response;
 	}
 }

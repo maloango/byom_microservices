@@ -66,13 +66,17 @@ public class StopCustomizingGroupFilterFileController extends BaseRestController
 			public void setMessage(String message) {
 				this.message = message;
 			}
+                        public StopCustomizingGroupFilterFileResponseDTO(){
+                            
+                        }
 	    }
 
-	    @RequestMapping(value = "admin/stopCustomizingGroupFilterFile" , method = RequestMethod.DELETE)
+	    @RequestMapping(value = "admin/stopCustomizingGroupFilterFile" , method = RequestMethod.POST)
 	    @ResponseBody
 	    
 	    protected StopCustomizingGroupFilterFileResponseDTO executeAction(@RequestBody StopCustomizingGroupFilterFileRequestDTO form) throws Exception {
-	       
+	       StopCustomizingGroupFilterFileResponseDTO response = new StopCustomizingGroupFilterFileResponseDTO();
+               try{
 	        final long id = form.getFileId();
 	        final long groupFilterId = form.getGroupFilterId();
 	        if (id <= 0L || groupFilterId <= 0L) {
@@ -86,8 +90,11 @@ public class StopCustomizingGroupFilterFileController extends BaseRestController
 	        // Remove the physical file
 	        final File physicalFile = customizationHelper.customizedFileOf(file);
 	        customizationHelper.deleteFile(physicalFile);
-	        StopCustomizingGroupFilterFileResponseDTO response = new StopCustomizingGroupFilterFileResponseDTO();
-			response.setMessage("groupFilter.customizedFiles.removed");
+	        response = new StopCustomizingGroupFilterFileResponseDTO();
+			response.setMessage("groupFilter.customizedFiles.removed");}
+                        catch(ValidationException e){
+                            e.printStackTrace();
+                        }
 			return response;
 
 	        //return ActionHelper.redirectWithParam(context.getRequest(), context.getSuccessForward(), "groupFilterId", groupFilterId);

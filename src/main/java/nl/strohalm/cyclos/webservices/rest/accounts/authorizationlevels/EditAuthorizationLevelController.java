@@ -37,6 +37,18 @@ public class EditAuthorizationLevelController extends BaseRestController impleme
 
 	private SettingsService settingsService;
 	private AuthorizationLevelService authorizationLevelService;
+	public final AuthorizationLevelService getAuthorizationLevelService() {
+		return authorizationLevelService;
+	}
+
+	public final TransferTypeService getTransferTypeService() {
+		return transferTypeService;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
 	private TransferTypeService transferTypeService;
 	private DataBinder<AuthorizationLevel> dataBinder;
 	private ReadWriteLock lock = new ReentrantReadWriteLock(true);
@@ -86,6 +98,15 @@ public class EditAuthorizationLevelController extends BaseRestController impleme
 
 	public static class EditAuthorizationLevelRequestDTO {
 		private long authorizationLevelId;
+                private long transferTypeId;
+
+        public long getTransferTypeId() {
+            return transferTypeId;
+        }
+
+        public void setTransferTypeId(long transferTypeId) {
+            this.transferTypeId = transferTypeId;
+        }
 		protected Map<String, Object> values;
 
 		public Map<String, Object> getValues() {
@@ -125,20 +146,46 @@ public class EditAuthorizationLevelController extends BaseRestController impleme
 		String message;
 		Map<String, Object> params;
 
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public Map<String, Object> getParams() {
+            return params;
+        }
+
+        public void setParams(Map<String, Object> params) {
+            this.params = params;
+        }
+                
+               
+
 		public EditAuthorizationLevelResponseDTO(String message, Map<String, Object> params) {
 			super();
 			this.message = message;
 			this.params = params;
 		}
 
+        private EditAuthorizationLevelResponseDTO(Object object) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
 	}
 
-	@RequestMapping(value = "admin/editAuthorizationLevel", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editAuthorizationLevel", method = RequestMethod.POST)
 	@ResponseBody
 	protected EditAuthorizationLevelResponseDTO handleSubmit(@RequestBody EditAuthorizationLevelRequestDTO form)
 			throws Exception {
-		// final EditAuthorizationLevelForm form = context.getForm();
-		AuthorizationLevel authorizationLevel = getDataBinder().readFromString(form.getAuthorizationLevel());
+		
+               AuthorizationLevel authorizationLevel = getDataBinder().readFromString(form.getAuthorizationLevel());
+                EditAuthorizationLevelResponseDTO response = new EditAuthorizationLevelResponseDTO(null);
+                try{
+		
+                
 		final boolean isInsert = authorizationLevel.isTransient();
 		authorizationLevel = authorizationLevelService.save(authorizationLevel);
 		String message = null;
@@ -147,13 +194,19 @@ public class EditAuthorizationLevelController extends BaseRestController impleme
 		} else {
 			message = "authorizationLevel.modified";
 		}
+                
+                
 		final Map<String, Object> params = new HashMap<String, Object>();
 		TransferType transferType = authorizationLevel.getTransferType();
 		transferType = transferTypeService.load(transferType.getId(), TransferType.Relationships.FROM);
 		final Long accountTypeId = transferType.getFrom().getId();
 		params.put("transferTypeId", transferType.getId());
 		params.put("accountTypeId", accountTypeId);
-		EditAuthorizationLevelResponseDTO response = new EditAuthorizationLevelResponseDTO(message, params);
+		response = new EditAuthorizationLevelResponseDTO(message, params);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+                
 		return response;
 	}
 

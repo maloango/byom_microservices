@@ -135,7 +135,8 @@ public class EditCustomizedFileController extends BaseRestController {
     protected EditCustomizedFileResposeDTO handleSubmit(@RequestBody EditCustomizedFileRequestDTO  form) throws Exception {
        // final EditCustomizedFileForm form = context.getForm();
         CustomizedFile customizedFile = getDataBinder().readFromString(form.getFile());
-
+        EditCustomizedFileResposeDTO response = null;
+        try{
         if (customizedFile.isConflict() && form.isResolveConflicts()) {
             customizedFile.setOriginalContents(customizedFile.getNewContents());
             customizedFile.setNewContents(null);
@@ -144,10 +145,6 @@ public class EditCustomizedFileController extends BaseRestController {
         final String originalContents = FileUtils.readFileToString(originalFile);
 
         final File physicalFile = customizationHelper.customizedFileOf(customizedFile.getType(), customizedFile.getName());
-        // FIXME If this code is really not needed, delete those comments
-        // if (customizedFile.getType() == CustomizedFile.Type.APPLICATION_PAGE) {
-        // physicalFile.delete();
-        // }
 
         final boolean isInsert = customizedFile.getId() == null;
         if (isInsert) {
@@ -167,13 +164,11 @@ public class EditCustomizedFileController extends BaseRestController {
 		}
         
         param.put("fileId", customizedFile.getId());
-        EditCustomizedFileResposeDTO response = new EditCustomizedFileResposeDTO(message, param);
+        response = new EditCustomizedFileResposeDTO(message, param);}
+        catch(Exception e){
+            e.printStackTrace();
+        }
         return response;
-		//return null;
-
-        //context.sendMessage(isInsert ? "customizedFile.customized" : "customizedFile.modified");
-
-        //return ActionHelper.redirectWithParam(context.getRequest(), context.getSuccessForward(), "fileId", customizedFile.getId());
     }
 
    // @Override

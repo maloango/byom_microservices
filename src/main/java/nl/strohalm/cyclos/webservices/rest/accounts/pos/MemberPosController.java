@@ -26,6 +26,18 @@ import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 public class MemberPosController extends BaseRestController {
 
 	private DataBinder<MemberPos> dataBinder;
+	public final PermissionService getPermissionService() {
+		return permissionService;
+	}
+
+	public final void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	public final ElementService getElementService() {
+		return elementService;
+	}
+
 	private ElementService elementService;
 	private PermissionService permissionService;
 	public void setElementService(ElementService elementService) {

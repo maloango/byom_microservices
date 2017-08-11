@@ -46,7 +46,7 @@ public class RemoveOperatorController extends BaseRestController{
 		}
 	}
 
-	@RequestMapping(value = "/member/changeOperatorGroup", method = RequestMethod.DELETE )
+	@RequestMapping(value = "member/changeOperatorGroup", method = RequestMethod.DELETE )
 	@ResponseBody
     protected RemoveOperatorResponseDTo doRemove(@RequestBody RemoveOperatorRequestDTO   form, Long id) {
         try {

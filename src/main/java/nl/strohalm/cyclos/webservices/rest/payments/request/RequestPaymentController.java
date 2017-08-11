@@ -182,7 +182,7 @@ public class RequestPaymentController extends BaseRestController{
 	    	
 	    }
 
-	    @RequestMapping(value= "/operator/requestPayment",method = RequestMethod.GET)
+	    @RequestMapping(value= "operator/requestPayment",method = RequestMethod.GET)
 	    @ResponseBody
 	    protected RequestPaymentResponseDT formAction(@RequestBody RequestPaymentRequestDTO form) throws Exception {
 	        ticket = resolveTicket(form);

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import nl.strohalm.cyclos.access.Permission;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
+import nl.strohalm.cyclos.controls.groups.ListGroupsAction;
 import nl.strohalm.cyclos.controls.groups.customizedFiles.EditGroupCustomizedFileForm;
 import nl.strohalm.cyclos.entities.customization.files.CustomizedFile;
 import nl.strohalm.cyclos.entities.groups.Group;
@@ -31,11 +32,25 @@ import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class EditGroupCustomizedFileController extends BaseRestController{
+    
 
 	private CustomizedFileService      customizedFileService;
-    private DataBinder<CustomizedFile> memberDataBinder;
+    public final GroupService getGroupService() {
+		return groupService;
+	}
+
+	public final void setGroupService(GroupService groupService) {
+		this.groupService = groupService;
+	}
+
+	public final void setMemberDataBinder(DataBinder<CustomizedFile> memberDataBinder) {
+		this.memberDataBinder = memberDataBinder;
+	}
+
+	private DataBinder<CustomizedFile> memberDataBinder;
     private DataBinder<CustomizedFile> adminDataBinder;
     private CustomizationHelper        customizationHelper;
     private GroupService groupService;
@@ -125,12 +140,31 @@ public class EditGroupCustomizedFileController extends BaseRestController{
     public static class EditGroupCustomizedFileResponseDTO{
     	
     	String message;
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public Map<String, Object> getParam() {
+            return param;
+        }
+
+        public void setParam(Map<String, Object> param) {
+            this.param = param;
+        }
+        
 		Map<String, Object> param;
 		public EditGroupCustomizedFileResponseDTO(String message, Map<String, Object> param) {
 			super();
 			this.message = message;
 			this.param = param;
 		}
+                public EditGroupCustomizedFileResponseDTO(){
+                }
 
     }
 
@@ -138,6 +172,8 @@ public class EditGroupCustomizedFileController extends BaseRestController{
     @ResponseBody
     protected EditGroupCustomizedFileResponseDTO handleSubmit(@RequestBody EditGroupCustomizedFileRequestDTO form) throws Exception {
         DataBinder<CustomizedFile> dataBinder;
+        EditGroupCustomizedFileResponseDTO response = null;
+        try{
         if (form.isAdmin()) {
             dataBinder = getAdminDataBinder();
         } else {
@@ -173,32 +209,92 @@ public class EditGroupCustomizedFileController extends BaseRestController{
         
         params.put("fileId", file.getId());
         params.put("groupId", group.getId());
-        EditGroupCustomizedFileResponseDTO response = new EditGroupCustomizedFileResponseDTO(message, params);
-        return response;
-		}
-      
-    //@Override
-    protected void prepareForm(final ActionContext context) throws Exception {
-        final EditGroupCustomizedFileForm form = context.getForm();
-        final HttpServletRequest request = context.getRequest();
+       response = new EditGroupCustomizedFileResponseDTO(message, params);}
+        catch(ValidationException e){
+            e.printStackTrace();
+            
+        }
+            return response;
+    }
+
+        
+   public static class PrepareFormResponseDto{
+       String message;
+       private boolean group;
+       private boolean isInsert;
+       private boolean editable;
+       public HashMap<String,Object> response=new HashMap<String,Object>();
+
+        public HashMap<String, Object> getResponse() {
+            return response;
+        }
+
+        public void setResponse(HashMap<String, Object> response) {
+            this.response = response;
+        }
+       
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public boolean isGroup() {
+            return group;
+        }
+
+        public void setGroup(boolean group) {
+            this.group = group;
+        }
+
+        public boolean isIsInsert() {
+            return isInsert;
+        }
+
+        public void setIsInsert(boolean isInsert) {
+            this.isInsert = isInsert;
+        }
+
+        public boolean isEditable() {
+            return editable;
+        }
+
+        public void setEditable(boolean editable) {
+            this.editable = editable;
+        }
+        public PrepareFormResponseDto(){
+        }
+
+   }
+   @RequestMapping(value = "member/editGroupCustomizedFile/{groupId}", method = RequestMethod.GET)
+   @ResponseBody
+    
+    public PrepareFormResponseDto prepareForm(@PathVariable ("groupId") long groupId,@PathVariable("isAdmin") int isAdmin) throws Exception {
+      PrepareFormResponseDto preFormResp = new PrepareFormResponseDto();
+      try{
+      HashMap<String,Object> response=new HashMap<String,Object>();
 
         boolean editable = false;
 
         // Retrieve the group
-        final long groupId = form.getGroupId();
+        final Map<Group.Nature, Permission> permissionByNature = ListGroupsAction.getManageGroupPermissionByNatureMap();
+        final long Id = groupId;
         if (groupId <= 0L) {
             throw new ValidationException();
         }
         final Group group = groupService.load(groupId);
 
-        final long id = form.getFileId();
+        final long id = groupId;
         final boolean isInsert = id <= 0L;
         CustomizedFile file;
         if (isInsert) {
             file = new CustomizedFile();
             file.setGroup(group);
             // Prepare the possible types
-            request.setAttribute("types", Arrays.asList(CustomizedFile.Type.STATIC_FILE, CustomizedFile.Type.STYLE));
+            response.put("types", Arrays.asList(CustomizedFile.Type.STATIC_FILE, CustomizedFile.Type.STYLE));
             editable = true;
         } else {
             // Retrieve the file
@@ -210,20 +306,30 @@ public class EditGroupCustomizedFileController extends BaseRestController{
             editable = customizedFileService.canViewOrManageInGroup(group);
 
         }
-        request.setAttribute("file", file);
+        response.put("file", file);
         DataBinder<CustomizedFile> dataBinder;
-        if (context.isAdmin()) {
+        if (isAdmin==1) {
             dataBinder = getAdminDataBinder();
         } else {
             dataBinder = getMemberDataBinder();
         }
-        dataBinder.writeAsString(form.getFile(), file);
-        request.setAttribute("group", group);
-        request.setAttribute("isInsert", isInsert);
-        request.setAttribute("editable", editable);
+      
+      dataBinder.writeAsString(group, group);
+          Object put = response.put("group", group);
+        response.put("isInsert", isInsert);
+        response.put("editable", editable);
+        
+         preFormResp.setResponse(response);
+       }
+       catch(ValidationException e){
+               e.printStackTrace();
+               }
+       
+        
+        return preFormResp;
     }
 
-   // @Override
+   
     protected void validateForm(final ActionContext context) {
         final EditGroupCustomizedFileForm form = context.getForm();
         DataBinder<CustomizedFile> dataBinder;

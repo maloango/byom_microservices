@@ -16,6 +16,10 @@ import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class RemoveAuthorizationLevelController extends BaseRestController {
 	private AuthorizationLevelService authorizationLevelService;
+        
+	public final AuthorizationLevelService getAuthorizationLevelService() {
+		return authorizationLevelService;
+	}
 
 	@Inject
 	public void setAuthorizationLevelService(final AuthorizationLevelService authorizationLevelService) {
@@ -56,20 +60,41 @@ public class RemoveAuthorizationLevelController extends BaseRestController {
 		String message;
 		Map<String, Object> params;
 
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public Map<String, Object> getParams() {
+            return params;
+        }
+
+        public void setParams(Map<String, Object> params) {
+            this.params = params;
+        }
+               
+
 		public RemoveAuthorizationLevelResponseDTO(String message, Map<String, Object> params) {
 			super();
 			this.message = message;
 			this.params = params;
 		}
+                 public RemoveAuthorizationLevelResponseDTO(){
+                 }
 
-	}
+        }
 
-	@RequestMapping(value = "admin/removeAuthorizationLevel", method = RequestMethod.DELETE)
+
+	@RequestMapping(value = "admin/removeAuthorizationLevel", method = RequestMethod.POST)
 	@ResponseBody
 	public RemoveAuthorizationLevelResponseDTO removeAuthorization(@RequestBody RemoveAuthorizationLevelRequestDTO form)
 			throws Exception {
-
-		// final RemoveAuthorizationLevelForm form = context.getForm();
+            RemoveAuthorizationLevelResponseDTO response = null;
+            try{
+		
 		String message = null;
 		try {
 			authorizationLevelService.remove(form.getAuthorizationLevelId());
@@ -80,7 +105,11 @@ public class RemoveAuthorizationLevelController extends BaseRestController {
 		final Map<String, Object> params = new HashMap<String, Object>();
 		params.put("accountTypeId", form.getAccountTypeId());
 		params.put("transferTypeId", form.getTransferTypeId());
-		RemoveAuthorizationLevelResponseDTO response = new RemoveAuthorizationLevelResponseDTO(message, params);
+                 response = new RemoveAuthorizationLevelResponseDTO(message, params);}
+            catch(Exception e){
+                e.printStackTrace();// display line by line  error and print 
+            }
 		return response;
 	}
 }
+

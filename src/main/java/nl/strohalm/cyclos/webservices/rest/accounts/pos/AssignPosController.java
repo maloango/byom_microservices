@@ -3,7 +3,6 @@ package nl.strohalm.cyclos.webservices.rest.accounts.pos;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,11 +19,20 @@ import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.utils.transaction.CurrentTransactionData;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class AssignPosController extends BaseRestController {
 	private PosService posService;
 	private ElementService elementService;
+
+	public final PosService getPosService() {
+		return posService;
+	}
+
+	public final ElementService getElementService() {
+		return elementService;
+	}
 
 	public void setElementService(ElementService elementService) {
 		this.elementService = elementService;
@@ -155,15 +163,17 @@ public class AssignPosController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public AssignPosResponseDto(){}
 	}
 
-	@RequestMapping(value = "admin/assignPos", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/assignPos{posId}", method = RequestMethod.POST)
 	@ResponseBody
-	protected AssignPosResponseDto handleSubmit(
-			@RequestBody AssignPosRequestDto form) throws Exception {
-		// final EditPosForm form = context.getForm();
-		final String posId = form.getPosId();
-		final long memberId = form.getMemberId();
+	protected AssignPosResponseDto handleSubmit(@PathVariable ("posId")String posId,long memberId) throws Exception {
+			
+		AssignPosResponseDto response = null;
+                try{
+		final String Id =posId;
+		//final long Id = memberId;
 		if (memberId <= 0) {
 			throw new PermissionDeniedException();
 		}
@@ -172,7 +182,7 @@ public class AssignPosController extends BaseRestController {
 		Pos pos;
 		String message = null;
 		String userName = null;
-		AssignPosResponseDto response = new AssignPosResponseDto(message,
+		response = new AssignPosResponseDto(message,
 				userName, memberId);
 		try {
 			pos = posService.loadByPosId(posId);
@@ -187,8 +197,12 @@ public class AssignPosController extends BaseRestController {
 			pos = posService.save(pos);
 			pos = posService.assignPos(member, pos.getId());
 			message = "pos.createdAndAssigned";
-			userName = member.getUsername();
+			userName = member.getUsername();}
 		}
+                catch(EntityNotFoundException e){
+                    e.printStackTrace();
+                } catch (PermissionDeniedException e) {
+            }
 
 		return response;
 	}

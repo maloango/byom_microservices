@@ -9,12 +9,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
@@ -59,6 +53,12 @@ import nl.strohalm.cyclos.utils.binding.SimpleCollectionBinder;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class SearchLoanPaymentsController extends BaseRestController {
@@ -202,6 +202,14 @@ public class SearchLoanPaymentsController extends BaseRestController {
 	public static class SearchLoanPaymentsResponseDto {
 		private List<LoanPayment> loanPayments;
 
+        public List<LoanPayment> getLoanPayments() {
+            return loanPayments;
+        }
+
+        public void setLoanPayments(List<LoanPayment> loanPayments) {
+            this.loanPayments = loanPayments;
+        }
+                
 		public SearchLoanPaymentsResponseDto(List<LoanPayment> loanPayments) {
 			super();
 			this.loanPayments = loanPayments;
@@ -209,18 +217,21 @@ public class SearchLoanPaymentsController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/searchLoanPayments", method = RequestMethod.POST)
 	@ResponseBody
 	protected SearchLoanPaymentsResponseDto executeQuery(
 			@RequestBody SearchLoanPaymentsRequestDto form,
 			final QueryParameters queryParameters) {
-		// final SearchLoanPaymentsForm form = context.getForm();
-		// final HttpServletRequest request = context.getRequest();
+		SearchLoanPaymentsResponseDto response = null;
+                try{
 		final LoanPaymentQuery query = (LoanPaymentQuery) queryParameters;
 		final List<LoanPayment> loanPayments = loanService.search(query);
 		form.setQueryAlreadyExecuted(true);
-		SearchLoanPaymentsResponseDto response = new SearchLoanPaymentsResponseDto(
-				loanPayments);
+		response = new SearchLoanPaymentsResponseDto(
+				loanPayments);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

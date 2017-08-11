@@ -54,6 +54,42 @@ public class EditFieldMappingController extends BaseRestController {
 	private GroupService groupService;
 	private ElementService elementService;
 	private PermissionService permissionService;
+	public final GroupService getGroupService() {
+		return groupService;
+	}
+
+	public final void setGroupService(GroupService groupService) {
+		this.groupService = groupService;
+	}
+
+	public final PermissionService getPermissionService() {
+		return permissionService;
+	}
+
+	public final void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	public final SettingsService getSettingsService() {
+		return settingsService;
+	}
+
+	public final void setSettingsService(SettingsService settingsService) {
+		this.settingsService = settingsService;
+	}
+
+	public final MemberCustomFieldService getMemberCustomFieldService() {
+		return memberCustomFieldService;
+	}
+
+	public final FieldMappingService getFieldMappingService() {
+		return fieldMappingService;
+	}
+
+	public final FileMappingService getFileMappingService() {
+		return fileMappingService;
+	}
+
 	private SettingsService settingsService;
 
 	private CustomFieldHelper customFieldHelper;
@@ -172,13 +208,16 @@ public class EditFieldMappingController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public EditFieldMappingResponseDto(){}
 	}
 
-	@RequestMapping(value = "admin/editFieldMapping", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editFieldMapping", method = RequestMethod.POST)
 	@ResponseBody
 	protected EditFieldMappingResponseDto handleSubmit(
 			@RequestBody EditFieldMappingRequestDto form) throws Exception {
-		// final EditFieldMappingForm form = context.getForm();
+            EditFieldMappingResponseDto response = null;
+				
+            try{
 		FieldMapping fieldMapping = getDataBinder().readFromString(
 				form.getFieldMapping());
 		final boolean isInsert = fieldMapping.isTransient();
@@ -190,8 +229,10 @@ public class EditFieldMappingController extends BaseRestController {
 			message = "fieldMapping.modified";
 		final Long externalAccountId = fieldMapping.getFileMapping()
 				.getAccount().getId();
-		EditFieldMappingResponseDto response = new EditFieldMappingResponseDto(
-				message, externalAccountId);
+		response = new EditFieldMappingResponseDto(message, externalAccountId);}
+                catch(ValidationException ex){
+                    ex.printStackTrace();
+                }
 		return response;
 	}
 

@@ -54,7 +54,27 @@ public class ListGroupsController extends BaseRestController {
 
     private DataBinder<GroupQuery> dataBinder;
     private PermissionService permissionService;
-    private GroupService groupService;
+    public final PermissionService getPermissionService() {
+		return permissionService;
+	}
+
+	public final void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+
+	public final GroupService getGroupService() {
+		return groupService;
+	}
+
+	public final void setGroupService(GroupService groupService) {
+		this.groupService = groupService;
+	}
+
+	public final GroupFilterService getGroupFilterService() {
+		return groupFilterService;
+	}
+
+	private GroupService groupService;
 
     public DataBinder<GroupQuery> getDataBinder() {
         if (dataBinder == null) {
@@ -249,11 +269,12 @@ public class ListGroupsController extends BaseRestController {
 		public final void setMessage(String message) {
 			this.message = message;
 		}
-    	
+    	public ListGroupsResponseDTO(){
+        }
     	
     }
 
-    @RequestMapping(value = "admin/listGroups" ,method = RequestMethod.GET)
+    @RequestMapping(value = "admin/listGroups" ,method = RequestMethod.POST)
     @ResponseBody
     protected ListGroupsResponseDTO executeQuery(@RequestBody ListGroupsRequestDTO form, final QueryParameters queryParameters) {  
         final GroupQuery groupQuery = (GroupQuery) queryParameters;
@@ -261,18 +282,11 @@ public class ListGroupsController extends BaseRestController {
 		final List<? extends Group> groups = groupService.search(groupQuery);
         @SuppressWarnings("unchecked")
 		ListGroupsResponseDTO response = new ListGroupsResponseDTO((List<Group>) groupQuery);
-       //response.setAttribute("groups", groups);
+       
         return response;
         
         
     }
-
-    //@Override
-    protected Integer pageSize(final ActionContext context) {
-        return Integer.MAX_VALUE;
-    }
-    
-    
 
     //@Override
     protected GroupQuery prepareForm(final ActionContext context) {

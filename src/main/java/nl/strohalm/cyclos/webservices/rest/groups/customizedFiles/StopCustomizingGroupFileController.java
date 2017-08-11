@@ -3,7 +3,6 @@ package nl.strohalm.cyclos.webservices.rest.groups.customizedFiles;
 import java.io.File;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,6 +13,7 @@ import nl.strohalm.cyclos.services.customization.CustomizedFileService;
 import nl.strohalm.cyclos.utils.CustomizationHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class StopCustomizingGroupFileController extends BaseRestController {
 	private CustomizedFileService customizedFileService;
@@ -63,14 +63,19 @@ public class StopCustomizingGroupFileController extends BaseRestController {
 		public void setMessage(String message) {
 			this.message = message;
 		}
-		}
+                public StopCustomizingGroupFileResponseDTO(){
+                }
+	}
     
 
-    @RequestMapping(value = "member/stopCustomizingGroupFile" , method = RequestMethod.DELETE)
+    @RequestMapping(value = "member/stopCustomizingGroupFilterFile/{fileId}/{groupId}" , method = RequestMethod.GET)
     @ResponseBody
-    protected StopCustomizingGroupFileResponseDTO executeAction(@RequestBody StopCustomizingGroupFileRequestDTO form) throws Exception {
-        final long id = form.getFileId();
-        final long groupId = form.getGroupId();
+    protected StopCustomizingGroupFileResponseDTO executeAction(@PathVariable ("fileId") long fileId,@PathVariable ("groupId") long groupId) throws Exception {
+        StopCustomizingGroupFileResponseDTO response =new StopCustomizingGroupFileResponseDTO();
+        try{
+        final long id = fileId;
+        final long Id;
+            Id = groupId;
         if (id <= 0L || groupId <= 0L) {
             throw new ValidationException();
         }
@@ -82,8 +87,13 @@ public class StopCustomizingGroupFileController extends BaseRestController {
      // Remove the physical file
         final File physicalFile = customizationHelper.customizedFileOf(file);
         customizationHelper.deleteFile(physicalFile);
-        StopCustomizingGroupFileResponseDTO response = new StopCustomizingGroupFileResponseDTO();
-		response.setMessage("group.customizedFiles.removed");
+        
+	response.setMessage("group.customizedFiles.removed");
+        response = new StopCustomizingGroupFileResponseDTO();
+      }
+        catch(ValidationException e){
+            e.printStackTrace();
+        }
 		return response;
 
     }

@@ -33,6 +33,34 @@ public class MoveCustomFieldPossibleValueController extends BaseRestController {
 	private AdminCustomFieldService adminCustomFieldService;
 	private LoanGroupCustomFieldService loanGroupCustomFieldService;
 	private MemberCustomFieldService memberCustomFieldService;
+	public final AdCustomFieldService getAdCustomFieldService() {
+		return adCustomFieldService;
+	}
+
+	public final AdminCustomFieldService getAdminCustomFieldService() {
+		return adminCustomFieldService;
+	}
+
+	public final LoanGroupCustomFieldService getLoanGroupCustomFieldService() {
+		return loanGroupCustomFieldService;
+	}
+
+	public final MemberCustomFieldService getMemberCustomFieldService() {
+		return memberCustomFieldService;
+	}
+
+	public final MemberRecordCustomFieldService getMemberRecordCustomFieldService() {
+		return memberRecordCustomFieldService;
+	}
+
+	public final OperatorCustomFieldService getOperatorCustomFieldService() {
+		return operatorCustomFieldService;
+	}
+
+	public final PaymentCustomFieldService getPaymentCustomFieldService() {
+		return paymentCustomFieldService;
+	}
+
 	private MemberRecordCustomFieldService memberRecordCustomFieldService;
 	private OperatorCustomFieldService operatorCustomFieldService;
 	private PaymentCustomFieldService paymentCustomFieldService;
@@ -165,7 +193,8 @@ public class MoveCustomFieldPossibleValueController extends BaseRestController {
 	protected MoveCustomFieldPossibleValueResponseDto executeAction(
 			@RequestBody final MoveCustomFieldPossibleValueRequestDto form)
 			throws Exception {
-		// final MoveCustomFieldPossibleValueForm form = context.getForm();
+		MoveCustomFieldPossibleValueResponseDto response = null;
+                try{
 		final BaseCustomFieldService<CustomField> service = resolveService(getNature(form));
 		final CustomFieldPossibleValue oldValue = service
 				.loadPossibleValue(form.getOldValueId());
@@ -190,9 +219,12 @@ public class MoveCustomFieldPossibleValueController extends BaseRestController {
 			parameters.put("memberRecordTypeId", memberRecordType.getId());
 			break;
 		}
-		MoveCustomFieldPossibleValueResponseDto response = new MoveCustomFieldPossibleValueResponseDto(
+		response = new MoveCustomFieldPossibleValueResponseDto(
 				"customField.valuesMoved", affected, oldValue.getValue(),
-				newValue.getValue());
+				newValue.getValue());}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

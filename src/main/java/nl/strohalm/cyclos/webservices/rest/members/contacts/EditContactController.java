@@ -96,13 +96,19 @@ public class EditContactController extends BaseRestController{
 	    	
 	    }
 
-	    @RequestMapping(value = "/member/editContact", method = RequestMethod.PUT)
+	    @RequestMapping(value = "member/editContact", method = RequestMethod.PUT)
 	    @ResponseBody
 	    protected EditContactResponseDTO formAction(@RequestBody EditContactRequestDTO form) throws Exception {
+                EditContactResponseDTO response = null;
+                try{
 	        final Contact contact = dataBinder.readFromString(form.getContact());
 	        contactService.save(contact);
-	        EditContactResponseDTO response = new EditContactResponseDTO();
+	        
 	        response.setMessage("contact.modified");
+                response = new EditContactResponseDTO();}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 	        return response;
 	    }
 

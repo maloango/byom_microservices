@@ -27,7 +27,7 @@
 	<bean id="alertService" class="nl.strohalm.cyclos.services.alerts.AlertServiceSecurity" /> 
 	<bean id="applicationService" class="nl.strohalm.cyclos.services.application.ApplicationServiceSecurity" /> 
 
-				<bean id="rateService" class="nl.strohalm.cyclos.services.accounts.rates.RateServiceSecurityMock" />
+	<bean id="rateService" class="nl.strohalm.cyclos.services.accounts.rates.RateServiceSecurityMock" />
 			
 	<bean id="authorizationLevelService" class="nl.strohalm.cyclos.services.transfertypes.AuthorizationLevelServiceSecurity" /> 
 	<bean id="brokeringService" class="nl.strohalm.cyclos.services.elements.BrokeringServiceSecurity" /> 

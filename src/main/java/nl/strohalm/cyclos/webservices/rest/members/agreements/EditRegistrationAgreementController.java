@@ -1,5 +1,6 @@
 package nl.strohalm.cyclos.webservices.rest.members.agreements;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -86,20 +87,25 @@ public class EditRegistrationAgreementController extends BaseRestController {
 			this.message = message;
 		}
 	}
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/editRegistrationAgreement", method = RequestMethod.POST)
 	@ResponseBody
 	protected EditRegistrationAgreementResponseDto formAction(@RequestBody EditRegistrationAgreementRequestDto form) throws Exception {
-		//final EditRegistrationAgreementForm form = context.getForm();
+		EditRegistrationAgreementResponseDto response= null;
+                try{
 		final RegistrationAgreement registrationAgreement = getDataBinder()
 				.readFromString(form);
 		final boolean isInsert = registrationAgreement.isTransient();
 		registrationAgreementService.save(registrationAgreement);
-		EditRegistrationAgreementResponseDto response = new EditRegistrationAgreementResponseDto();
+		
 		if (isInsert) {
 			response.setMessage("registrationAgreement.inserted");
 		} else {
 			response.setMessage("registrationAgreement.modified");
 		}
+                response = new EditRegistrationAgreementResponseDto(); }
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 		return response;
 	}
 

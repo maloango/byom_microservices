@@ -1,18 +1,15 @@
 package nl.strohalm.cyclos.webservices.rest.members.bulk;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
@@ -31,6 +28,13 @@ import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.MapBean;
 import nl.strohalm.cyclos.utils.binding.SimpleCollectionBinder;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+
+import org.apache.struts.action.ActionMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class MemberBulkChangeChannelsController extends BaseRestController {
@@ -226,14 +230,12 @@ public class MemberBulkChangeChannelsController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "/admin/managePasswords", method = RequestMethod.PUT)
+	@RequestMapping(value = "admin/memberBulkChangeChannels", method = RequestMethod.PUT)
 	@ResponseBody
 	protected MemberBulkChangeChannelsResponseDto formAction(
 			@RequestBody MemberBulkChangeChannelsRequestDto form)
 			throws Exception {
-		// final MemberBulkActionsForm form = context.getForm();
-
-		// Read the user input
+		
 		final ChangeChannelsBean changeChanelsBean = getBeanBinder()
 				.readFromString(form.getChangeChannels());
 		final FullTextMemberQuery query = getDataBinder().readFromString(

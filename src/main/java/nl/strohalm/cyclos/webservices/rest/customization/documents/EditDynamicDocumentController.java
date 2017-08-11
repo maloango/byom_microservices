@@ -118,12 +118,13 @@ public class EditDynamicDocumentController extends BaseRestController {
 
 	}
 
-    @RequestMapping(value ="/admin/editDynamicDocument",method =RequestMethod.POST)
+    @RequestMapping(value ="admin/editDynamicDocument",method =RequestMethod.POST)
     @ResponseBody
     protected EditDynamicDocumentResponseDTO handleSubmit(@RequestBody  EditDynamicDocumentRequestDTO form) throws Exception {
-       // final HttpServletRequest request = context.getRequest();
-        //final EditDynamicDocumentForm form = form.getForm();
+        
         DynamicDocument document = getDataBinder().readFromString(form.getDocument());
+        EditDynamicDocumentResponseDTO response = null;
+        try{
         final boolean isInsert = document.getId() == null;
         document = (DynamicDocument) documentService.saveDynamic(document);
 
@@ -145,7 +146,10 @@ public class EditDynamicDocumentController extends BaseRestController {
         	}
         //Map<String, Object> param = new HashMap<String, Object>();
         param.put("documentId", document.getId());
-        EditDynamicDocumentResponseDTO response = new EditDynamicDocumentResponseDTO(message, param);
+        response = new EditDynamicDocumentResponseDTO(message, param);}
+        catch(Exception e){
+            e.printStackTrace();
+        }
         return response;
     }
     

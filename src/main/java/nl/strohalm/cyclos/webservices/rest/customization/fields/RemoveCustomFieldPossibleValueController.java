@@ -32,6 +32,34 @@ public class RemoveCustomFieldPossibleValueController extends
 		BaseRestController {
 	private AdCustomFieldService adCustomFieldService;
 	private AdminCustomFieldService adminCustomFieldService;
+	public final AdCustomFieldService getAdCustomFieldService() {
+		return adCustomFieldService;
+	}
+
+	public final AdminCustomFieldService getAdminCustomFieldService() {
+		return adminCustomFieldService;
+	}
+
+	public final LoanGroupCustomFieldService getLoanGroupCustomFieldService() {
+		return loanGroupCustomFieldService;
+	}
+
+	public final MemberCustomFieldService getMemberCustomFieldService() {
+		return memberCustomFieldService;
+	}
+
+	public final MemberRecordCustomFieldService getMemberRecordCustomFieldService() {
+		return memberRecordCustomFieldService;
+	}
+
+	public final OperatorCustomFieldService getOperatorCustomFieldService() {
+		return operatorCustomFieldService;
+	}
+
+	public final PaymentCustomFieldService getPaymentCustomFieldService() {
+		return paymentCustomFieldService;
+	}
+
 	private LoanGroupCustomFieldService loanGroupCustomFieldService;
 	private MemberCustomFieldService memberCustomFieldService;
 	private MemberRecordCustomFieldService memberRecordCustomFieldService;
@@ -154,6 +182,8 @@ public class RemoveCustomFieldPossibleValueController extends
 		public void setParams(Map<String, Object> params) {
 			this.params = params;
 		}
+                public RemoveCustomFieldPossibleValueResponseDto(){
+                }
 
 	}
 
@@ -162,7 +192,8 @@ public class RemoveCustomFieldPossibleValueController extends
 	protected RemoveCustomFieldPossibleValueResponseDto executeAction(
 			@RequestBody RemoveCustomFieldPossibleValueRequestDto form)
 			throws Exception {
-		// final RemoveCustomFieldPossibleValueForm form = context.getForm();
+		RemoveCustomFieldPossibleValueResponseDto response = new RemoveCustomFieldPossibleValueResponseDto();
+                try{
 		final long id = form.getPossibleValueId();
 		if (id <= 0) {
 			throw new ValidationException();
@@ -196,8 +227,11 @@ public class RemoveCustomFieldPossibleValueController extends
 		params.put("fieldId", form.getFieldId());
 		params.put("nature", nature);
 
-		RemoveCustomFieldPossibleValueResponseDto response = new RemoveCustomFieldPossibleValueResponseDto(
-				key, nature, params);
+                response = new RemoveCustomFieldPossibleValueResponseDto(
+				key, nature, params);}
+                catch(ValidationException e){
+                            e.printStackTrace();
+                        }
 		return response;
 
 	}

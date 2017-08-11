@@ -37,6 +37,7 @@ public class EditGroupAccountSettingsController extends BaseRestController
 	private DataBinder<MemberGroupAccountSettings> dataBinder;
 	private SettingsService settingsService;
 	private GroupService groupService;
+	
 
 	public GroupService getGroupService() {
 		return groupService;
@@ -201,14 +202,17 @@ public class EditGroupAccountSettingsController extends BaseRestController
 		public void setMessage(String message) {
 			this.message = message;
 		}
+                public EditGroupAccountSettingsResponseDto(){
+                }
 	}
 
-	@RequestMapping(value = "/admin/editGroupAccountSettings", method = RequestMethod.POST)
+	@RequestMapping(value = "admin/editGroupAccountSettings", method = RequestMethod.POST)
 	@ResponseBody
 	protected EditGroupAccountSettingsResponseDto handleSubmit(
 			@RequestBody EditGroupAccountSettingsRequestDto form)
 			throws Exception {
-		// final EditGroupAccountSettingsForm form = context.getForm();
+		EditGroupAccountSettingsResponseDto response = null;
+                try{
 		MemberGroupAccountSettings groupAccountSettings = getDataBinder()
 				.readFromString(form.getSetting());
 		final boolean isInsert = groupAccountSettings.getId() == null;
@@ -226,8 +230,11 @@ public class EditGroupAccountSettingsController extends BaseRestController
 		params.put("groupId", groupAccountSettings.getGroup().getId());
 		params.put("accountTypeId", groupAccountSettings.getAccountType()
 				.getId());
-		EditGroupAccountSettingsResponseDto response = new EditGroupAccountSettingsResponseDto(
-				message, params);
+		response = new EditGroupAccountSettingsResponseDto(
+				message, params);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 
 		return response;
 	}

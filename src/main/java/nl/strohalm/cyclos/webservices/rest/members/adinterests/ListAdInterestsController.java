@@ -142,11 +142,15 @@ public class ListAdInterestsController extends BaseRestController{
 	@RequestMapping(value = "member/listAdInterests", method = RequestMethod.GET)
 	@ResponseBody
 	    protected ListAdInterestsResponseDTO executeAction(@RequestBody ListAdInterestsRequestDTO form) throws Exception {
-	        //final Member owner = context.getElement();
+	        ListAdInterestsResponseDTO response = null;
+                try{
 	        final AdInterestQuery query = new AdInterestQuery();
 	        query.setOwner(owner);
 	        final List<AdInterest> adInterests = adInterestService.search(query);
-	        ListAdInterestsResponseDTO response = new ListAdInterestsResponseDTO(adInterests);
+	        response = new ListAdInterestsResponseDTO(adInterests);}
+                catch(Exception e){
+                    e.printStackTrace();
+                }
 	        return response;
 	
 	       

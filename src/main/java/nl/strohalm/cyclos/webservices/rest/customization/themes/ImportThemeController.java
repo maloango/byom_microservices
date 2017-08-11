@@ -43,10 +43,12 @@ public class ImportThemeController extends BaseRestController {
 		public final void setMessage(String message) {
 			this.message = message;
 		}
+                public ImportThemeResponseDTO(){
+                }
 
 	}
 
-	@RequestMapping(value = "/admin/importTheme", method = RequestMethod.GET)
+	@RequestMapping(value = "admin/importTheme", method = RequestMethod.POST)
 	@ResponseBody
 	protected ImportThemeResponseDTO executeAction(@RequestBody ImportThemeRequestDTO form) throws Exception {
 		final FormFile upload = form.getUpload();

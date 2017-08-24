@@ -12,6 +12,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/lib" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
@@ -183,7 +185,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.google.code:kaptcha:2.3">
         <CLASSES>
-          <root url="jar://lib/kaptcha-2.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/kaptcha-2.3.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -192,7 +194,7 @@
     <orderEntry type="module-library">
       <library name="Maven: javastat:javastat:1.0">
         <CLASSES>
-          <root url="jar://lib/javastat.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/javastat.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -201,7 +203,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.mullassery:imaging:1.0">
         <CLASSES>
-          <root url="jar://lib/pmiw.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/pmiw.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -210,7 +212,7 @@
     <orderEntry type="module-library">
       <library name="Maven: JSci:JSci-core:1.0">
         <CLASSES>
-          <root url="jar://lib/JSci-core.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/JSci-core.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -219,7 +221,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.cj.toggle:toggleTag:1.0">
         <CLASSES>
-          <root url="jar://lib/toggletag.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/toggletag.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

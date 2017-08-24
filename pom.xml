@@ -439,35 +439,35 @@
             <artifactId>kaptcha</artifactId>
             <version>2.3</version>
             <scope>system</scope>
-            <systemPath>lib/kaptcha-2.3.jar</systemPath>
+            <systemPath>${project.basedir}/lib/kaptcha-2.3.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>javastat</groupId>
             <artifactId>javastat</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>lib/javastat.jar</systemPath>
+            <systemPath>${project.basedir}/lib/javastat.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.mullassery</groupId>
             <artifactId>imaging</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>lib/pmiw.jar</systemPath>
+            <systemPath>${project.basedir}/lib/pmiw.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>JSci</groupId>
             <artifactId>JSci-core</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>lib/JSci-core.jar</systemPath>
+            <systemPath>${project.basedir}/lib/JSci-core.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.cj.toggle</groupId>
             <artifactId>toggleTag</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>lib/toggletag.jar</systemPath>
+            <systemPath>${project.basedir}/lib/toggletag.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

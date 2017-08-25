@@ -96,7 +96,8 @@ public class GroupServiceSecurity extends BaseServiceSecurity implements GroupSe
     @Override
     public <T extends Group> T load(final Long id, final Relationship... fetch) {
         T group = groupService.<T> load(id, fetch);
-        checkView(group);
+       // System.out.println("---------------------- "+group);
+      //  checkView(group);
         return group;
     }
 

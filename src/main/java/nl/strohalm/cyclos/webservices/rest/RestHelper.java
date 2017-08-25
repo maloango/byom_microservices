@@ -50,6 +50,7 @@ public class RestHelper {
      * Returns the {@link ServerErrorVO} bean and the status code representing the given exception
      */
     public static Pair<ServerErrorVO, Integer> resolveError(final Throwable t) {
+        t.printStackTrace();
         if (t instanceof EntityNotFoundException) {
             return Pair.of(handleEntityNotFound((EntityNotFoundException) t), HttpServletResponse.SC_NOT_FOUND);
         } else if (t instanceof IllegalArgumentException) {

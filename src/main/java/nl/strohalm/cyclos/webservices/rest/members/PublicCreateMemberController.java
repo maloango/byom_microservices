@@ -47,7 +47,9 @@ import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.utils.CustomFieldHelper;
 import nl.strohalm.cyclos.utils.MessageResolver;
+import nl.strohalm.cyclos.utils.access.LoggedUser;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
+import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
@@ -340,11 +342,9 @@ public class PublicCreateMemberController extends BaseRestController {
     public CreateMemberResponse publicCreateMember(HttpServletRequest request,@RequestBody CreatePublicMemberRequest form) {
         System.out.println("Request came for member creation");
         CreateMemberResponse response = null;
-        
+      
         try{
-        //final CreateMemberForm form = (CreateMemberForm) createMemberForm;
-       
-
+        
         // Check the captcha challenge
        
         // Save the member
@@ -356,8 +356,9 @@ public class PublicCreateMemberController extends BaseRestController {
        memberUser.setPassword(form.getPassword());
        memberUser.setUsername(form.getUsername());
        member.setUser(memberUser);
-       
-       member.setGroup(groupService.load(form.getGroupId(),Group.Relationships.ELEMENTS));
+       //ReferenceConverter.instance(Group.class).
+      
+       member.setGroup(groupService.load(form.getGroupId(),Group.Relationships.PERMISSIONS));
        
        List<MemberCustomFieldValue> customFieldValue=new ArrayList<MemberCustomFieldValue>();
        
@@ -422,7 +423,7 @@ public class PublicCreateMemberController extends BaseRestController {
        customField10.setField(memberCustomFieldService.load(10L));
        customFieldValue.add(customField10);
         
-        
+            System.out.println("Validating Form ----------");
         response=validateForm(member, form.isManualPassword(), form.getConfirmPassword());
         if(response==null){
             response=new CreateMemberResponse();
@@ -432,18 +433,27 @@ public class PublicCreateMemberController extends BaseRestController {
         
         RegisteredMember registeredMember;
         try {
+             System.out.println("Registering Member ----------");
             registeredMember = (RegisteredMember) elementService.register(member, false, request.getRemoteAddr());
+             if(registeredMember==null){
+                 response.setStatus(200);
+                 response.setMessage("Sending Email error");
+             }
         } catch (final UsernameAlreadyInUseException e) {
+            e.printStackTrace();
 //            final ActionForward actionForward = ActionHelper.sendError(mapping, request, response, "createMember.public.alreadyExists");
 //            session.setAttribute("forceBack", "forceBack");
 //            return actionForward;
-            response.setStatus(500);
+            response.setStatus(200);
             response.setMessage(messageResolver.message("createMember.public.alreadyExists", member.getUsername()));
            return response;
-        } catch (final MailSendingException e) {
+        } catch (MailSendingException e) {
+            e.printStackTrace();
            // return ActionHelper.sendError(mapping, request, response, "createMember.public.errorSendingMail");
-          response.setStatus(500);
+             response.setStatus(200);
+             System.out.println("Setting response message");
             response.setMessage(messageResolver.message("createMember.public.errorSendingMail", member.getEmail()));
+            System.out.println("Returnning response");
             return response;
         }
 
@@ -479,45 +489,7 @@ public class PublicCreateMemberController extends BaseRestController {
         }
     }
 
-//    @Override
-//    protected void prepareForm(final ActionMapping mapping, final ActionForm actionForm, final HttpServletRequest request, final HttpServletResponse response) {
-//        final CreateMemberForm form = (CreateMemberForm) actionForm;
-//        MemberGroup group;
-//        try {
-//            group = groupService.load(form.getGroupId());
-//            if (!group.isInitialGroup()) {
-//                throw new Exception();
-//            }
-//        } catch (final Exception e) {
-//            throw new ValidationException();
-//        }
-//        // Get the custom fields
-//        final List<MemberCustomField> customFields = customFieldHelper.onlyForGroup(memberCustomFieldService.list(), group);
-//        for (final Iterator<MemberCustomField> it = customFields.iterator(); it.hasNext();) {
-//            final MemberCustomField field = it.next();
-//            boolean use = true;
-//            // Only use fields that are visible and editable by members
-//            final Access visibility = field.getVisibilityAccess();
-//            if (visibility != null && !visibility.granted(group, true, false, true, false)) {
-//                use = false;
-//            } else {
-//                // Check if the field can be updated
-//                final Access update = field.getUpdateAccess();
-//                if (update != null && !update.granted(group, true, false, true, false)) {
-//                    use = false;
-//                }
-//            }
-//            // Remove the field from list if not used
-//            if (!use) {
-//                it.remove();
-//            }
-//        }
-//        request.setAttribute("formAction", mapping.getPath());
-//        request.setAttribute("customFields", customFields);
-//        request.setAttribute("isPublic", true);
-//        request.setAttribute("allowSetPassword", true);
-//        request.setAttribute("group", group);
-//    }
+
     protected CreateMemberResponse validateForm(final Member member,boolean manualPassword,String confirmPassword) throws ValidationException {
       //  final CreateMemberForm form = (CreateMemberForm) actionForm;
 

@@ -249,7 +249,7 @@ public class ElementServiceSecurity extends BaseServiceSecurity implements Eleme
                     .check();
         }
         // Check the initial group
-        PermissionHelper.checkContains((Collection<Group>) getPossibleInitialGroups(element), element.getGroup());
+     //   PermissionHelper.checkContains((Collection<Group>) getPossibleInitialGroups(element), element.getGroup());
 
         return elementService.register(element, forceChangePassword, remoteAddress);
     }

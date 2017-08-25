@@ -1011,7 +1011,8 @@ public class ElementServiceImpl implements ElementServiceLocal {
             return pendingMemberDao.update(pendingMember);
         } finally {
             if (CurrentTransactionData.hasMailError()) {
-                throw new MailSendingException("Email validation for " + pendingMember.getName());
+            //    throw new MailSendingException("Email validation for " + pendingMember.getName());
+            return null;
             }
         }
     }

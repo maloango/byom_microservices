@@ -221,7 +221,7 @@
 	<util:property-path id="configuration" path="&amp;sessionFactory.configuration"/>
 
 	<!-- Declared hibernate properties on the Cyclos configuration file -->
-	<util:properties id="hibernateProperties" location="classpath:/cyclos.properties" />
+	<util:properties id="hibernateProperties" location="classpath:cyclos.properties" />
 
 	<!-- Transaction related beans -->
 	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager"/>

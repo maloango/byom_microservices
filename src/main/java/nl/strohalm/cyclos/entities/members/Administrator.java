@@ -28,6 +28,7 @@ import nl.strohalm.cyclos.entities.accounts.SystemAccountOwner;
 import nl.strohalm.cyclos.entities.customization.fields.AdminCustomField;
 import nl.strohalm.cyclos.entities.customization.fields.AdminCustomFieldValue;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
+import nl.strohalm.cyclos.utils.AdministratorVO;
 import nl.strohalm.cyclos.utils.CustomFieldsContainer;
 
 /**
@@ -84,5 +85,11 @@ public class Administrator extends Element implements CustomFieldsContainer<Admi
 
     public void setCustomValues(final Collection<AdminCustomFieldValue> customValues) {
         this.customValues = customValues;
+    }
+    
+    public  AdministratorVO getAdministratorVo() {
+       // Administrator admin=getAdminUser().getAdministrator()
+                
+        return new AdministratorVO(getAdminGroup().getName(), getUsername(), getName(),getEmail(),getId());
     }
 }

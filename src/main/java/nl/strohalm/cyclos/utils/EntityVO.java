@@ -79,6 +79,9 @@ public class EntityVO extends DataObject implements Comparable<EntityVO> {
     public long getId() {
         return id;
     }
+     public long setId(long id) {
+        return this.id=id;
+    }
 
     public String getName() {
         return name;

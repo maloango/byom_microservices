@@ -479,7 +479,7 @@ public class PublicCreateMemberController extends BaseRestController {
         }
       //  session.removeAttribute("forceBack");
       //  ActionHelper.sendError(mapping, request, response, message, registeredMember.getUsername());
-         response.setMessage(messageResolver.message("createMember.public.errorSendingMail", registeredMember.getUsername()));
+         response.setMessage(messageResolver.message(message, registeredMember.getUsername()));
         return response;
         }catch (Exception ex) {
             ex.printStackTrace();

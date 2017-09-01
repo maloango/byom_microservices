@@ -56,6 +56,8 @@
 	<!-- access open -->
 	<bean id="managePasswordsController"
 		class="nl.strohalm.cyclos.webservices.rest.access.ManagePasswordsController" />
+        <bean id="changePasswordController"
+		class="nl.strohalm.cyclos.webservices.rest.access.ChangePasswordController" />
 
 	<bean id="resetAndSendPasswordController"
 		class="nl.strohalm.cyclos.webservices.rest.access.ResetAndSendPasswordController" />
@@ -180,6 +182,7 @@
 		class="nl.strohalm.cyclos.webservices.rest.admins.RemoveAdminController" />
         <bean id="adminProfileController"
 		class="nl.strohalm.cyclos.webservices.rest.admins.AdminProfileController" />
+        
 
 	<!--adminmailpreferences-->
 	<bean id="mailPreferencesController"

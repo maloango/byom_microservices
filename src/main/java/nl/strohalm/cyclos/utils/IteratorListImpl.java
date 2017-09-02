@@ -158,7 +158,12 @@ public class IteratorListImpl<E> implements IteratorList<E> {
 
     @Override
     public int size() {
-        throw new UnsupportedOperationException();
+          final List<E> list = new LinkedList<E>();
+        for (final E e : this) {
+            list.add(e);
+        }
+        return list.size();
+      //  throw new UnsupportedOperationException();
     }
 
     @Override

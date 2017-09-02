@@ -224,6 +224,9 @@
                 class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveAlertsController"/>
         <bean id="removeErrorLogEntriesController"
                 class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveErrorLogEntriesController"/>
+         <bean id="listSystemAlertsController"
+                class="nl.strohalm.cyclos.webservices.rest.alerts.ListSystemAlertsController"/>
+        
 	
                 <!--customization open documents-->
 

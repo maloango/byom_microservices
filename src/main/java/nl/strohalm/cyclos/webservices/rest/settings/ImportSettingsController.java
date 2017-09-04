@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.settings.ManageSettingsForm;
+//import nl.strohalm.cyclos.controls.settings.ManageSettingsForm;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
 import nl.strohalm.cyclos.entities.settings.Setting;
 import nl.strohalm.cyclos.entities.settings.Setting.Type;

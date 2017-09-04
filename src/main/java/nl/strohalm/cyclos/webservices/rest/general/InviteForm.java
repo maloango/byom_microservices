@@ -19,7 +19,6 @@
  */
 package nl.strohalm.cyclos.webservices.rest.general;
 
-import nl.strohalm.cyclos.controls.general.*;
 import org.apache.struts.action.ActionForm;
 
 /**

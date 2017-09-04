@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.ads.SearchAdsForm;
+//import nl.strohalm.cyclos.controls.ads.SearchAdsForm;
 import nl.strohalm.cyclos.entities.accounts.Currency;
 import nl.strohalm.cyclos.entities.ads.AbstractAdQuery;
 import nl.strohalm.cyclos.entities.ads.Ad;
@@ -239,150 +239,150 @@ public class SearchAdsController extends BaseRestController {
 		return response;
 	}
 
-	protected AbstractAdQuery prepareForm(final ActionContext context) {
-		final HttpServletRequest request = context.getRequest();
-		final SearchAdsForm form = context.getForm();
-
-		// Store the attributes we need for the search
-		RequestHelper.storeEnum(request, Ad.TradeType.class, "tradeTypes");
-		request.setAttribute("lastAdsForTradeType", form.isLastAds());
-
-		if (context.isAdmin()) {
-			request.setAttribute("editable", true);
-			RequestHelper.storeEnum(request, Ad.Status.class, "status");
-		}
-
-		// Store the categories
-		final TradeType tradeType = CoercionHelper.coerce(TradeType.class, form
-				.getQuery().get("tradeType"));
-		int rootCategoryCount;
-		if (settingsService.getLocalSettings().isShowCountersInAdCategories()) {
-			final AdCategoryWithCounterQuery counterQuery = new AdCategoryWithCounterQuery();
-			counterQuery.setTradeType(tradeType);
-			final List<AdCategoryWithCounterVO> categories = adService
-					.getCategoriesWithCounters(counterQuery);
-			rootCategoryCount = categories.size();
-			request.setAttribute("categories", categories);
-			request.setAttribute("showCounters", true);
-		} else {
-			final List<AdCategory> categories = adCategoryService.listRoot();
-			rootCategoryCount = categories.size();
-			request.setAttribute("categories", categories);
-		}
-		request.setAttribute("splitCategoriesAt", rootCategoryCount / 2);
-
-		if (form.isLastAds() || form.isCategoryOnly()) {
-			final AdQuery adQuery = new AdQuery();
-			adQuery.setStatus(Ad.Status.ACTIVE);
-			adQuery.setTradeType(tradeType);
-			adQuery.fetch(RelationshipHelper.nested(Ad.Relationships.OWNER,
-					Element.Relationships.USER), Ad.Relationships.CURRENCY,
-					Ad.Relationships.IMAGES);
-			form.clearForm();
-			form.setQuery("tradeType", tradeType.name());
-
-			return adQuery;
-		}
-
-		// Retrieve the query
-		final AbstractAdQuery query = getDataBinder().readFromString(
-				form.getQuery());
-
-		query.fetch(RelationshipHelper.nested(Ad.Relationships.OWNER,
-				Element.Relationships.USER), Ad.Relationships.CURRENCY,
-				Ad.Relationships.IMAGES, Ad.Relationships.CUSTOM_VALUES,
-				RelationshipHelper.nested(Ad.Relationships.CATEGORY,
-						RelationshipHelper.nested(AdCategory.MAX_LEVEL,
-								AdCategory.Relationships.PARENT)));
-
-		if (!context.isAdmin()) {
-			// Search only active ads
-			query.setStatus(Ad.Status.ACTIVE);
-		}
-
-		// Fetch the selected category recursively
-		final AdCategory category = query.getCategory() == null ? null
-				: adCategoryService.load(query.getCategory().getId(),
-						RelationshipHelper.nested(AdCategory.MAX_LEVEL,
-								AdCategory.Relationships.PARENT));
-		if (category != null) {
-			request.setAttribute("categoryPath", category.getPathFromRoot());
-			request.setAttribute("category", category);
-		}
-
-		if (form.isAdvanced()) {
-			// Retrieve the custom fields for members and ads
-			final List<MemberCustomField> memberFields = customFieldHelper
-					.onlyForAdSearch(memberCustomFieldService.list());
-			final List<AdCustomField> allAdFields = adCustomFieldService.list();
-			final List<AdCustomField> adFields = customFieldHelper
-					.onlyForAdsSearch(customFieldHelper
-							.adFieldsForSearch(allAdFields));
-			request.setAttribute(
-					"memberFields",
-					customFieldHelper.buildEntries(memberFields,
-							query.getMemberValues()));
-			request.setAttribute(
-					"adFields",
-					customFieldHelper.buildEntries(adFields,
-							query.getAdValues()));
-
-			// Search group filters and send to the jsp page
-			final GroupFilterQuery groupFilterQuery = new GroupFilterQuery();
-			if (context.isAdmin()) {
-				// Admins can search by groups
-				AdminGroup adminGroup = context.getGroup();
-				adminGroup = groupService.load(adminGroup.getId(),
-						AdminGroup.Relationships.MANAGES_GROUPS);
-				final Collection<MemberGroup> memberGroups = adminGroup
-						.getManagesGroups();
-				if (CollectionUtils.isNotEmpty(memberGroups)) {
-					request.setAttribute("memberGroups", memberGroups);
-				}
-				groupFilterQuery.setAdminGroup(adminGroup);
-			} else {
-				MemberGroup memberGroup = (MemberGroup) context.getMember()
-						.getGroup();
-				memberGroup = groupService.load(memberGroup.getId(),
-						MemberGroup.Relationships.CAN_VIEW_ADS_OF_GROUPS);
-				groupFilterQuery.setViewableBy(memberGroup);
-			}
-			final Collection<GroupFilter> groupFilters = groupFilterService
-					.search(groupFilterQuery);
-			request.setAttribute("groupFilters", groupFilters);
-
-			// Retrieve the periods for "published since"
-			request.setAttribute("sincePeriods", Arrays.asList(
-					TimePeriod.Field.DAYS, TimePeriod.Field.WEEKS,
-					TimePeriod.Field.MONTHS));
-
-			// Retrieve the currencies
-			List<Currency> currencies;
-			if (context.isAdmin()) {
-				currencies = currencyService.listAll();
-			} else {
-				final Member member = (Member) context.getAccountOwner();
-				currencies = currencyService.listByMemberGroup(member
-						.getMemberGroup());
-			}
-			if (currencies.size() > 1) {
-				request.setAttribute("currencies", currencies);
-			}
-		}
-
-		return query;
-	}
-
-	protected boolean willExecuteQuery(final ActionContext context,
-			final QueryParameters queryParameters) throws Exception {
-		final SearchAdsForm form = context.getForm();
-		if (form.isCategoryOnly()) {
-			return false;
-		}
-		// return form.isAlreadySearched() ||
-		// form.isLastAds()||super.willExecuteQuery(context, queryParameters);
-		return false;
-	}
+//	protected AbstractAdQuery prepareForm(final ActionContext context) {
+//		final HttpServletRequest request = context.getRequest();
+//		final SearchAdsForm form = context.getForm();
+//
+//		// Store the attributes we need for the search
+//		RequestHelper.storeEnum(request, Ad.TradeType.class, "tradeTypes");
+//		request.setAttribute("lastAdsForTradeType", form.isLastAds());
+//
+//		if (context.isAdmin()) {
+//			request.setAttribute("editable", true);
+//			RequestHelper.storeEnum(request, Ad.Status.class, "status");
+//		}
+//
+//		// Store the categories
+//		final TradeType tradeType = CoercionHelper.coerce(TradeType.class, form
+//				.getQuery().get("tradeType"));
+//		int rootCategoryCount;
+//		if (settingsService.getLocalSettings().isShowCountersInAdCategories()) {
+//			final AdCategoryWithCounterQuery counterQuery = new AdCategoryWithCounterQuery();
+//			counterQuery.setTradeType(tradeType);
+//			final List<AdCategoryWithCounterVO> categories = adService
+//					.getCategoriesWithCounters(counterQuery);
+//			rootCategoryCount = categories.size();
+//			request.setAttribute("categories", categories);
+//			request.setAttribute("showCounters", true);
+//		} else {
+//			final List<AdCategory> categories = adCategoryService.listRoot();
+//			rootCategoryCount = categories.size();
+//			request.setAttribute("categories", categories);
+//		}
+//		request.setAttribute("splitCategoriesAt", rootCategoryCount / 2);
+//
+//		if (form.isLastAds() || form.isCategoryOnly()) {
+//			final AdQuery adQuery = new AdQuery();
+//			adQuery.setStatus(Ad.Status.ACTIVE);
+//			adQuery.setTradeType(tradeType);
+//			adQuery.fetch(RelationshipHelper.nested(Ad.Relationships.OWNER,
+//					Element.Relationships.USER), Ad.Relationships.CURRENCY,
+//					Ad.Relationships.IMAGES);
+//			form.clearForm();
+//			form.setQuery("tradeType", tradeType.name());
+//
+//			return adQuery;
+//		}
+//
+//		// Retrieve the query
+//		final AbstractAdQuery query = getDataBinder().readFromString(
+//				form.getQuery());
+//
+//		query.fetch(RelationshipHelper.nested(Ad.Relationships.OWNER,
+//				Element.Relationships.USER), Ad.Relationships.CURRENCY,
+//				Ad.Relationships.IMAGES, Ad.Relationships.CUSTOM_VALUES,
+//				RelationshipHelper.nested(Ad.Relationships.CATEGORY,
+//						RelationshipHelper.nested(AdCategory.MAX_LEVEL,
+//								AdCategory.Relationships.PARENT)));
+//
+//		if (!context.isAdmin()) {
+//			// Search only active ads
+//			query.setStatus(Ad.Status.ACTIVE);
+//		}
+//
+//		// Fetch the selected category recursively
+//		final AdCategory category = query.getCategory() == null ? null
+//				: adCategoryService.load(query.getCategory().getId(),
+//						RelationshipHelper.nested(AdCategory.MAX_LEVEL,
+//								AdCategory.Relationships.PARENT));
+//		if (category != null) {
+//			request.setAttribute("categoryPath", category.getPathFromRoot());
+//			request.setAttribute("category", category);
+//		}
+//
+//		if (form.isAdvanced()) {
+//			// Retrieve the custom fields for members and ads
+//			final List<MemberCustomField> memberFields = customFieldHelper
+//					.onlyForAdSearch(memberCustomFieldService.list());
+//			final List<AdCustomField> allAdFields = adCustomFieldService.list();
+//			final List<AdCustomField> adFields = customFieldHelper
+//					.onlyForAdsSearch(customFieldHelper
+//							.adFieldsForSearch(allAdFields));
+//			request.setAttribute(
+//					"memberFields",
+//					customFieldHelper.buildEntries(memberFields,
+//							query.getMemberValues()));
+//			request.setAttribute(
+//					"adFields",
+//					customFieldHelper.buildEntries(adFields,
+//							query.getAdValues()));
+//
+//			// Search group filters and send to the jsp page
+//			final GroupFilterQuery groupFilterQuery = new GroupFilterQuery();
+//			if (context.isAdmin()) {
+//				// Admins can search by groups
+//				AdminGroup adminGroup = context.getGroup();
+//				adminGroup = groupService.load(adminGroup.getId(),
+//						AdminGroup.Relationships.MANAGES_GROUPS);
+//				final Collection<MemberGroup> memberGroups = adminGroup
+//						.getManagesGroups();
+//				if (CollectionUtils.isNotEmpty(memberGroups)) {
+//					request.setAttribute("memberGroups", memberGroups);
+//				}
+//				groupFilterQuery.setAdminGroup(adminGroup);
+//			} else {
+//				MemberGroup memberGroup = (MemberGroup) context.getMember()
+//						.getGroup();
+//				memberGroup = groupService.load(memberGroup.getId(),
+//						MemberGroup.Relationships.CAN_VIEW_ADS_OF_GROUPS);
+//				groupFilterQuery.setViewableBy(memberGroup);
+//			}
+//			final Collection<GroupFilter> groupFilters = groupFilterService
+//					.search(groupFilterQuery);
+//			request.setAttribute("groupFilters", groupFilters);
+//
+//			// Retrieve the periods for "published since"
+//			request.setAttribute("sincePeriods", Arrays.asList(
+//					TimePeriod.Field.DAYS, TimePeriod.Field.WEEKS,
+//					TimePeriod.Field.MONTHS));
+//
+//			// Retrieve the currencies
+//			List<Currency> currencies;
+//			if (context.isAdmin()) {
+//				currencies = currencyService.listAll();
+//			} else {
+//				final Member member = (Member) context.getAccountOwner();
+//				currencies = currencyService.listByMemberGroup(member
+//						.getMemberGroup());
+//			}
+//			if (currencies.size() > 1) {
+//				request.setAttribute("currencies", currencies);
+//			}
+//		}
+//
+//		return query;
+//	}
+//
+//	protected boolean willExecuteQuery(final ActionContext context,
+//			final QueryParameters queryParameters) throws Exception {
+//		final SearchAdsForm form = context.getForm();
+//		if (form.isCategoryOnly()) {
+//			return false;
+//		}
+//		// return form.isAlreadySearched() ||
+//		// form.isLastAds()||super.willExecuteQuery(context, queryParameters);
+//		return false;
+//	}
 
 	private DataBinder<FullTextAdQuery> getDataBinder() {
 		try {

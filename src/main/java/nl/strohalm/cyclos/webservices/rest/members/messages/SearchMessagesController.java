@@ -16,7 +16,7 @@ import nl.strohalm.cyclos.access.MemberPermission;
 import nl.strohalm.cyclos.access.OperatorPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.messages.SearchMessagesForm;
+//import nl.strohalm.cyclos.controls.members.messages.SearchMessagesForm;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
 import nl.strohalm.cyclos.entities.groups.SystemGroup;
 import nl.strohalm.cyclos.entities.members.Element;

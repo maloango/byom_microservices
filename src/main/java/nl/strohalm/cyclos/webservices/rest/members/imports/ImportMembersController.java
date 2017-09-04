@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.imports.ImportMembersForm;
+//import nl.strohalm.cyclos.controls.members.imports.ImportMembersForm;
 import nl.strohalm.cyclos.entities.accounts.MemberAccountType;
 import nl.strohalm.cyclos.entities.accounts.transactions.TransferType;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
@@ -146,12 +146,12 @@ public class ImportMembersController extends BaseRestController {
 		request.setAttribute("groups", groups);
 	}
 
-	protected void validateForm(final ActionContext context) {
-		final ImportMembersForm form = context.getForm();
-		final MemberImport memberImport = getDataBinder().readFromString(
-				form.getImport());
-		memberImportService.validate(memberImport);
-	}
+//	protected void validateForm(final ActionContext context) {
+//		final ImportMembersForm form = context.getForm();
+//		final MemberImport memberImport = getDataBinder().readFromString(
+//				form.getImport());
+//		memberImportService.validate(memberImport);
+//	}
 
 	private DataBinder<MemberImport> getDataBinder() {
 		if (dataBinder == null) {

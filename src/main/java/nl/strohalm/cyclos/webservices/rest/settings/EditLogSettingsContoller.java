@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.settings.EditLogSettingsForm;
+//import nl.strohalm.cyclos.controls.settings.EditLogSettingsForm;
 import nl.strohalm.cyclos.entities.settings.LogSettings;
 import nl.strohalm.cyclos.entities.settings.LogSettings.AccountFeeLevel;
 import nl.strohalm.cyclos.entities.settings.LogSettings.ScheduledTaskLevel;
@@ -134,28 +134,28 @@ public class EditLogSettingsContoller extends BaseRestController {
 		return response;
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final EditLogSettingsForm form = context.getForm();
-		final LogSettings settings = settingsService.getLogSettings();
-		getDataBinder().writeAsString(form.getSetting(), settings);
-
-		RequestHelper.storeEnum(request, TraceLevel.class, "traceLevels");
-		RequestHelper.storeEnum(request, WebServiceLevel.class,
-				"webServiceLevels");
-		RequestHelper.storeEnum(request, TransactionLevel.class,
-				"transactionLevels");
-		RequestHelper.storeEnum(request, AccountFeeLevel.class,
-				"accountFeeLevels");
-		RequestHelper.storeEnum(request, ScheduledTaskLevel.class,
-				"scheduledTaskLevels");
-		RequestHelper.storeEnum(request, FileUnits.class, "fileUnits");
-	}
-
-	protected void validateForm(final ActionContext context) {
-		final EditLogSettingsForm form = context.getForm();
-		final LogSettings settings = getDataBinder().readFromString(
-				form.getSetting());
-		settingsService.validate(settings);
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final EditLogSettingsForm form = context.getForm();
+//		final LogSettings settings = settingsService.getLogSettings();
+//		getDataBinder().writeAsString(form.getSetting(), settings);
+//
+//		RequestHelper.storeEnum(request, TraceLevel.class, "traceLevels");
+//		RequestHelper.storeEnum(request, WebServiceLevel.class,
+//				"webServiceLevels");
+//		RequestHelper.storeEnum(request, TransactionLevel.class,
+//				"transactionLevels");
+//		RequestHelper.storeEnum(request, AccountFeeLevel.class,
+//				"accountFeeLevels");
+//		RequestHelper.storeEnum(request, ScheduledTaskLevel.class,
+//				"scheduledTaskLevels");
+//		RequestHelper.storeEnum(request, FileUnits.class, "fileUnits");
+//	}
+//
+//	protected void validateForm(final ActionContext context) {
+//		final EditLogSettingsForm form = context.getForm();
+//		final LogSettings settings = getDataBinder().readFromString(
+//				form.getSetting());
+//		settingsService.validate(settings);
+//	}
 }

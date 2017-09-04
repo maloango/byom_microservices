@@ -2,42 +2,22 @@ package nl.strohalm.cyclos.webservices.rest.reports.members.list;
 
 import java.security.acl.Group;
 import java.util.Collection;
-import java.util.List;
-import java.util.TreeSet;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts.action.ActionForward;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.reports.members.list.MembersListReportDTO;
-import nl.strohalm.cyclos.controls.reports.members.list.MembersListReportForm;
-import nl.strohalm.cyclos.controls.reports.members.list.MembersListReportHandler;
-import nl.strohalm.cyclos.controls.reports.members.list.MembersListReportVOIterator;
-import nl.strohalm.cyclos.entities.accounts.AccountType;
+//import nl.strohalm.cyclos.controls.reports.members.list.MembersListReportHandler;
 import nl.strohalm.cyclos.entities.accounts.SystemAccountType;
 import nl.strohalm.cyclos.entities.accounts.transactions.TransferType;
-import nl.strohalm.cyclos.entities.ads.Ad;
 import nl.strohalm.cyclos.entities.customization.fields.AdminCustomField;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
 import nl.strohalm.cyclos.entities.groups.Group.Nature;
 import nl.strohalm.cyclos.entities.groups.MemberGroup;
-import nl.strohalm.cyclos.entities.members.Reference;
 import nl.strohalm.cyclos.entities.members.records.MemberRecordType;
 import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
-import nl.strohalm.cyclos.utils.RequestHelper;
-import nl.strohalm.cyclos.utils.SpringHelper;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 @Controller
 public class MembersListReportController extends BaseRestController{
 
-	private MembersListReportHandler reportHandler;
+	//private MembersListReportHandler reportHandler;
 	private SettingsService settingsService;
 	public final SettingsService getSettingsService() {
 		return settingsService;
@@ -55,9 +35,9 @@ public class MembersListReportController extends BaseRestController{
 		this.groupService = groupService;
 	}
 
-	public final void setReportHandler(MembersListReportHandler reportHandler) {
-		this.reportHandler = reportHandler;
-	}
+//	public final void setReportHandler(MembersListReportHandler reportHandler) {
+//		this.reportHandler = reportHandler;
+//	}
 
 	private GroupService groupService;
 	private nl.strohalm.cyclos.entities.groups.Group adminGroup;

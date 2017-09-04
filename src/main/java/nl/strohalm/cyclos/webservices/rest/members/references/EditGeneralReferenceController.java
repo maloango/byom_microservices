@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.references.EditReferenceForm;
+//import nl.strohalm.cyclos.controls.members.references.EditReferenceForm;
 import nl.strohalm.cyclos.entities.accounts.AccountOwner;
 import nl.strohalm.cyclos.entities.exceptions.EntityNotFoundException;
 import nl.strohalm.cyclos.entities.members.GeneralReference;
@@ -150,64 +150,64 @@ public class EditGeneralReferenceController extends BaseRestController{
 	}
 
 	//@Override
-    protected void prepareForm(final ActionContext context) throws Exception {
-        final EditReferenceForm form = context.getForm();
-        final HttpServletRequest request = context.getRequest();
-        final long referenceId = form.getReferenceId();
-
-        // Retrieve the generalReference
-        GeneralReference reference;
-        final AccountOwner accountOwner = context.getAccountOwner();
-        if (referenceId > 0L) {
-            if (form.getMemberId() == 0 && (accountOwner instanceof Member)) {
-                form.setMemberId(((Member) accountOwner).getId());
-            }
-            reference = (GeneralReference) referenceService.load(referenceId, Reference.Relationships.FROM, Reference.Relationships.TO);
-        } else {
-            // Is a new general reference
-            // We haven't received a reference id. Find by member
-            if (form.getMemberId() <= 0L) {
-                throw new ValidationException();
-            }
-            final Member loggedMember = (Member) accountOwner;
-            Member member;
-            try {
-                member = elementService.load(form.getMemberId());
-            } catch (final Exception e) {
-                throw new ValidationException();
-            }
-
-            try {
-                // Load the current reference
-                reference = referenceService.loadGeneral(loggedMember, member);
-            } catch (final EntityNotFoundException e) {
-                // There's no reference from / to the member - we are inserting
-                reference = new GeneralReference();
-                reference.setFrom(loggedMember);
-                reference.setTo(member);
-            }
-        }
-        getDataBinder().writeAsString(form.getReference(), reference);
-
-        final LocalSettings localSettings = settingsService.getLocalSettings();
-
-        // Check whether the reference is editable
-        final boolean editable = referenceService.canManage(reference);
-
-        if (reference.isTransient() && !editable) {
-            throw new ValidationException();
-        }
-
-        request.setAttribute("reference", reference);
-        request.setAttribute("levels", localSettings.getReferenceLevelList());
-        request.setAttribute("editable", editable);
-    }
-
-    //@Override
-    protected GeneralReference resolveReference(final ActionContext context) {
-        final EditReferenceForm form = context.getForm();
-        return getDataBinder().readFromString(form.getReference());
-    }
+//    protected void prepareForm(final ActionContext context) throws Exception {
+//        final EditReferenceForm form = context.getForm();
+//        final HttpServletRequest request = context.getRequest();
+//        final long referenceId = form.getReferenceId();
+//
+//        // Retrieve the generalReference
+//        GeneralReference reference;
+//        final AccountOwner accountOwner = context.getAccountOwner();
+//        if (referenceId > 0L) {
+//            if (form.getMemberId() == 0 && (accountOwner instanceof Member)) {
+//                form.setMemberId(((Member) accountOwner).getId());
+//            }
+//            reference = (GeneralReference) referenceService.load(referenceId, Reference.Relationships.FROM, Reference.Relationships.TO);
+//        } else {
+//            // Is a new general reference
+//            // We haven't received a reference id. Find by member
+//            if (form.getMemberId() <= 0L) {
+//                throw new ValidationException();
+//            }
+//            final Member loggedMember = (Member) accountOwner;
+//            Member member;
+//            try {
+//                member = elementService.load(form.getMemberId());
+//            } catch (final Exception e) {
+//                throw new ValidationException();
+//            }
+//
+//            try {
+//                // Load the current reference
+//                reference = referenceService.loadGeneral(loggedMember, member);
+//            } catch (final EntityNotFoundException e) {
+//                // There's no reference from / to the member - we are inserting
+//                reference = new GeneralReference();
+//                reference.setFrom(loggedMember);
+//                reference.setTo(member);
+//            }
+//        }
+//        getDataBinder().writeAsString(form.getReference(), reference);
+//
+//        final LocalSettings localSettings = settingsService.getLocalSettings();
+//
+//        // Check whether the reference is editable
+//        final boolean editable = referenceService.canManage(reference);
+//
+//        if (reference.isTransient() && !editable) {
+//            throw new ValidationException();
+//        }
+//
+//        request.setAttribute("reference", reference);
+//        request.setAttribute("levels", localSettings.getReferenceLevelList());
+//        request.setAttribute("editable", editable);
+//    }
+//
+//    //@Override
+//    protected GeneralReference resolveReference(final ActionContext context) {
+//        final EditReferenceForm form = context.getForm();
+//        return getDataBinder().readFromString(form.getReference());
+//    }
 
     private DataBinder<GeneralReference> getDataBinder() {
         if (dataBinder == null) {

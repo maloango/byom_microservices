@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.settings.EditMailSettingsForm;
+//import nl.strohalm.cyclos.controls.settings.EditMailSettingsForm;
 import nl.strohalm.cyclos.entities.settings.MailSettings;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
@@ -105,17 +105,17 @@ public class EditMailSettingsController extends BaseRestController {
 		return response;
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final EditMailSettingsForm form = context.getForm();
-		getDataBinder().writeAsString(form.getSetting(),
-				settingsService.getMailSettings());
-	}
-
-	protected void validateForm(final ActionContext context) {
-		final EditMailSettingsForm form = context.getForm();
-		final MailSettings settings = getDataBinder().readFromString(
-				form.getSetting());
-		settingsService.validate(settings);
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final EditMailSettingsForm form = context.getForm();
+//		getDataBinder().writeAsString(form.getSetting(),
+//				settingsService.getMailSettings());
+//	}
+//
+//	protected void validateForm(final ActionContext context) {
+//		final EditMailSettingsForm form = context.getForm();
+//		final MailSettings settings = getDataBinder().readFromString(
+//				form.getSetting());
+//		settingsService.validate(settings);
+//	}
 
 }

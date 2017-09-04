@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.settings.EditAccessSettingsForm;
+//import nl.strohalm.cyclos.controls.settings.EditAccessSettingsForm;
 import nl.strohalm.cyclos.entities.settings.AccessSettings;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.utils.RequestHelper;
@@ -128,23 +128,23 @@ public class EditAccessSettingsController extends BaseRestController {
 		return response;
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final EditAccessSettingsForm form = context.getForm();
-		getDataBinder().writeAsString(form.getSetting(),
-				settingsService.getAccessSettings());
-		RequestHelper.storeEnum(request,
-				AccessSettings.UsernameGeneration.class, "usernameGenerations");
-		request.setAttribute("timePeriodFields", Arrays.asList(
-				TimePeriod.Field.SECONDS, TimePeriod.Field.MINUTES,
-				TimePeriod.Field.HOURS, TimePeriod.Field.DAYS));
-	}
-
-	protected void validateForm(final ActionContext context) {
-		final EditAccessSettingsForm form = context.getForm();
-		final AccessSettings settings = getDataBinder().readFromString(
-				form.getSetting());
-		settingsService.validate(settings);
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final EditAccessSettingsForm form = context.getForm();
+//		getDataBinder().writeAsString(form.getSetting(),
+//				settingsService.getAccessSettings());
+//		RequestHelper.storeEnum(request,
+//				AccessSettings.UsernameGeneration.class, "usernameGenerations");
+//		request.setAttribute("timePeriodFields", Arrays.asList(
+//				TimePeriod.Field.SECONDS, TimePeriod.Field.MINUTES,
+//				TimePeriod.Field.HOURS, TimePeriod.Field.DAYS));
+//	}
+//
+//	protected void validateForm(final ActionContext context) {
+//		final EditAccessSettingsForm form = context.getForm();
+//		final AccessSettings settings = getDataBinder().readFromString(
+//				form.getSetting());
+//		settingsService.validate(settings);
+//	}
 
 }

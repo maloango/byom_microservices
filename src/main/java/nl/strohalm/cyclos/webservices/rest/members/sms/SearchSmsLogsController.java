@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.sms.SearchSmsLogsForm;
+//import nl.strohalm.cyclos.controls.members.sms.SearchSmsLogsForm;
 import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
@@ -86,29 +86,29 @@ public class SearchSmsLogsController extends BaseRestController {
                             
 		return response;
 	}
-
-	protected QueryParameters prepareForm(final ActionContext context) {
-		final HttpServletRequest request = context.getRequest();
-		// Resolve member id
-		final SearchSmsLogsForm form = context.getForm();
-		long memberId = form.getMemberId();
-		if (memberId < 1) {
-			memberId = context.getElement().getId();
-		}
-		final boolean mySmsLogs = memberId == context.getElement().getId();
-
-		// Load member
-		final Member member = elementService.load(memberId, RelationshipHelper
-				.nested(Element.Relationships.GROUP,
-						MemberGroup.Relationships.SMS_MESSAGES));
-		form.setQuery("member", member.getId());
-		request.setAttribute("member", member);
-		request.setAttribute("mySmsLogs", mySmsLogs);
-		RequestHelper.storeEnum(request, SmsLogStatus.class, "statusList");
-		RequestHelper.storeEnum(request, SmsLogType.class, "typesList");
-
-		return getDataBinder().readFromString(form.getQuery());
-	}
+//
+//	protected QueryParameters prepareForm(final ActionContext context) {
+//		final HttpServletRequest request = context.getRequest();
+//		// Resolve member id
+//		final SearchSmsLogsForm form = context.getForm();
+//		long memberId = form.getMemberId();
+//		if (memberId < 1) {
+//			memberId = context.getElement().getId();
+//		}
+//		final boolean mySmsLogs = memberId == context.getElement().getId();
+//
+//		// Load member
+//		final Member member = elementService.load(memberId, RelationshipHelper
+//				.nested(Element.Relationships.GROUP,
+//						MemberGroup.Relationships.SMS_MESSAGES));
+//		form.setQuery("member", member.getId());
+//		request.setAttribute("member", member);
+//		request.setAttribute("mySmsLogs", mySmsLogs);
+//		RequestHelper.storeEnum(request, SmsLogStatus.class, "statusList");
+//		RequestHelper.storeEnum(request, SmsLogType.class, "typesList");
+//
+//		return getDataBinder().readFromString(form.getQuery());
+//	}
 
 	private DataBinder<SmsLogQuery> getDataBinder() {
 		if (dataBinder == null) {

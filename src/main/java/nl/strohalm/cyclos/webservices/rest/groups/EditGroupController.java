@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import nl.strohalm.cyclos.access.MemberPermission;
 import nl.strohalm.cyclos.access.Permission;
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.groups.ListGroupsAction;
+//import nl.strohalm.cyclos.controls.groups.ListGroupsAction;
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.access.TransactionPassword;
 import nl.strohalm.cyclos.entities.access.User;
@@ -461,216 +461,216 @@ public class EditGroupController extends BaseRestController {
     }
 
   // isAdmin value 0 = Member , 1= admin
-    @RequestMapping(value = "admin/editGroup/{groupId}/{isAdmin}", method = RequestMethod.GET)
-    @ResponseBody
-    public PrepareFormResponseDTO prepareForm(@PathVariable("groupId") long groupId,@PathVariable("isAdmin") int isAdmin) throws Exception {
-        PrepareFormResponseDTO preFormResp=new PrepareFormResponseDTO();
-       try{
-         HashMap<String,Object> response=new HashMap<String,Object>();
-        final long id = groupId;
-        boolean editable = false;
-        boolean canManageFiles = false;
-
-        final Map<Group.Nature, Permission> permissionByNature = ListGroupsAction.getManageGroupPermissionByNatureMap();
-
-        final boolean isInsert = id <= 0L;
-        if (isInsert) {
-            // Prepare for insert
-            List<Group.Nature> natures = new ArrayList<Group.Nature>();
-            if (isAdmin==1) {
-                // Put in the request the name of permission used to manage a type of group
-                response.put("permissionByNature", permissionByNature);
-
-                for (final Group.Nature nature : permissionByNature.keySet()) {
-                    final Permission permission = permissionByNature.get(nature);
-                    if (permissionService.hasPermission(permission)) {
-                        natures.add(nature);
-                    }
-                }
-            } else {
-                // It's a member inserting an operator group
-                final GroupQuery groupQuery = new GroupQuery();
-                groupQuery.setMember((Member) WebServiceContext.getMember());
-                final List<OperatorGroup> baseGroups = (List<OperatorGroup>) groupService.search(groupQuery);
-                response.put("baseGroups", baseGroups);
-                response.put("isOperatorGroup", true);
-                natures = Collections.singletonList(Group.Nature.OPERATOR);
-            }
-            response.put("natures", natures);
-            response.put("status", Group.Status.class );
-            editable = true;
-        } else {
-            // Prepare for modify
-            Group group = groupService.load(id, Group.Relationships.CUSTOMIZED_FILES, MemberGroup.Relationships.CHANNELS);
-            final boolean isMemberGroup = MemberGroup.class.isAssignableFrom(group.getNature().getGroupClass());
-            final boolean isBrokerGroup = BrokerGroup.class.isAssignableFrom(group.getNature().getGroupClass());
-            final boolean isOperatorGroup = OperatorGroup.class.isAssignableFrom(group.getNature().getGroupClass());
-            if (group.getStatus().isEnabled()) {
-                response.put("deactivationTimePeriodFields", Arrays.asList(Field.SECONDS, Field.MINUTES, Field.HOURS, Field.DAYS));
-                response.put("passwordExpiresAfterFields", Arrays.asList(Field.DAYS, Field.WEEKS, Field.MONTHS, Field.YEARS));
-               response.put("transactionPasswords", TransactionPassword.class);
-                if (isMemberGroup) {
-                    final MemberGroup memberGroup = (MemberGroup) group;
-
-                    // Check if the group has access to a channel that uses pin
-                    final boolean usesPin = groupService.usesPin(memberGroup);
-                    response.put("usesPin", usesPin);
-
-                    // Retrieve the registration agreements
-                    final List<RegistrationAgreement> registrationAgreements = registrationAgreementService.listAll();
-                    response.put("registrationAgreements", registrationAgreements);
-
-                    // Retrieve the associated accounts
-                    response.put("timePeriodFields", Arrays.asList(Field.DAYS, Field.WEEKS, Field.MONTHS, Field.YEARS));
-                    final MemberAccountTypeQuery atQuery = new MemberAccountTypeQuery();
-                    atQuery.setRelatedToGroup(memberGroup);
-                    response.put("accountTypes", accountTypeService.search(atQuery));
-
-                    // Sort the message types using their messages
-                    final List<Type> messageTypes = Arrays.asList(Message.Type.values());
-                    final Comparator cmp = new Comparator() {
-                        @Override
-                        public int compare(final Object o1, final Object o2) {
-                            final String msg1 =   o1.toString(); //context.message("message.type." + o1);
-                            final String msg2 =  o2.toString();  //context.message("message.type." + o2);
-                            return msg1.compareTo(msg2);
-                        }
-                    };
-                    Collections.sort(messageTypes, cmp);
-                    response.put("messageTypes", messageTypes);
-
-                    // we create a wrapper ArrayList because the list must implement the remove method
-                    final List<Type> smsMessageTypes = new ArrayList<Type>(Arrays.asList(Message.Type.values()));
-                    CollectionUtils.filter(smsMessageTypes, new Predicate() {
-                        @Override
-                        public boolean evaluate(final Object object) {
-                            final Message.Type type = (Message.Type) object;
-                            switch (type) {
-                                case FROM_MEMBER:
-                                case FROM_ADMIN_TO_MEMBER:
-                                case FROM_ADMIN_TO_GROUP:
-                                    return false;
-                                default:
-                                    return true;
-                            }
-                        }
-                    });
-                    Collections.sort(smsMessageTypes, cmp);
-                    response.put("smsMessageTypes", smsMessageTypes);
-
-                    // Store the possible groups for expiration
-                    final GroupQuery query = new GroupQuery();
-                    query.setNatures(Group.Nature.MEMBER, Group.Nature.BROKER);
-                    final List<? extends Group> groups = groupService.search(query);
-                    groups.remove(group);
-                    response.put("possibleExpirationGroups", groups);
-                    response.put("expirationTimeFields", Arrays.asList(TimePeriod.Field.DAYS, TimePeriod.Field.WEEKS, TimePeriod.Field.MONTHS, TimePeriod.Field.YEARS));
-
-                    // Store transfer types for SMS charge
-                    final TransferTypeQuery ttQuery = new TransferTypeQuery();
-                    ttQuery.setFromGroups(Collections.singletonList(memberGroup));
-                    ttQuery.setToNature(AccountType.Nature.SYSTEM);
-                    final List<TransferType> smsChargeTransferTypes = transferTypeService.search(ttQuery);
-                    response.put("smsChargeTransferTypes", smsChargeTransferTypes);
-
-                    response.put("smsAdditionalChargedPeriodFields", Arrays.asList(Field.DAYS, Field.WEEKS, Field.MONTHS));
-
-                    // Retrieve the card types
-                    response.put("cardTypes", cardTypeService.listAll());
-                }
-                if (isBrokerGroup) {
-                    // Retrieve the possible groups for registered members by broker
-                    final GroupQuery query = new GroupQuery();
-                    query.setNatures(Group.Nature.MEMBER, Group.Nature.BROKER);
-                    query.setStatus(Group.Status.NORMAL);
-                    response.put("memberGroups", groupService.search(query));
-                }
-                if (isMemberGroup || isBrokerGroup) {
-                    response.put("externalAdPublications", MemberGroupSettings.ExternalAdPublication.class);
-                }
-                if (isOperatorGroup) {
-                    // Load the associated transaction types for the max amount per day
-                    group = groupService.load(group.getId(), RelationshipHelper.nested(OperatorGroup.Relationships.MEMBER, Element.Relationships.GROUP), OperatorGroup.Relationships.MAX_AMOUNT_PER_DAY_BY_TRANSFER_TYPE, OperatorGroup.Relationships.MAX_AMOUNT_PER_DAY_BY_TRANSFER_TYPE);
-                    final OperatorGroup operatorGroup = (OperatorGroup) group;
-                    response.put("transferTypes", operatorGroup.getMember().getGroup().getTransferTypes());
-                }
-
-                // Retrieve the associated customized files
-                final CustomizedFileQuery cfQuery = new CustomizedFileQuery();
-                cfQuery.setGroup(group);
-                response.put("customizedFiles", customizedFileService.search(cfQuery));
-
-                // Check whether the login page name will be shown
-                response.put("showLoginPageName", customizationHelper.isAnyFileRelatedToLoginPage(group.getCustomizedFiles()));
-            }
-            getDataBinder(group.getNature()).writeAsString(group, group);
-            response.put("group", group);
-            response.put("isMemberGroup", isMemberGroup);
-            response.put("isBrokerGroup", isBrokerGroup);
-            response.put("isOperatorGroup", isOperatorGroup);
-
-            if (isMemberGroup) {
-                // Show scheduling options when there's a schedulable transfer type
-                final TransferTypeQuery ttQuery = new TransferTypeQuery();
-                ttQuery.setPageForCount();
-                ttQuery.setContext(TransactionContext.PAYMENT);
-                ttQuery.setGroup(group);
-                ttQuery.setSchedulable(true);
-                response.put("showScheduling", PageHelper.getTotalCount(transferTypeService.search(ttQuery)) > 0);
-
-                // Channels that the group of member have access
-                final Collection<Channel> channels = channelService.list();
-                // The "web" channel can not be customized by the user, so it should not be sent to the JSP page
-                final Channel webChannel = channelService.loadByInternalName(Channel.WEB);
-                channels.remove(webChannel);
-                response.put("channels", channels);
-
-                 response.put("emailValidations", EmailValidation.class);
-            }
-
-            if (isAdmin==1) {
-               // AdminGroup adminGroup = WebServiceContext.
-              AdminGroup adminGroup = groupService.load(groupId, AdminGroup.Relationships.MANAGES_GROUPS);
-                if (permissionService.hasPermission(permissionByNature.get(group.getNature())) && (Group.Nature.ADMIN.equals(group.getNature()) || adminGroup.getManagesGroups().contains(group))) {
-                    editable = true;
-                }
-            } else {
-                // It's a member updating an operator group
-                editable = permissionService.hasPermission(MemberPermission.OPERATORS_MANAGE);
-            }
-            canManageFiles = customizedFileService.canViewOrManageInGroup(group);
-        }
-
-        response.put("isInsert", isInsert);
-        response.put("editable", editable);
-        response.put("canManageFiles", canManageFiles);
-        response.put("passwordPolicies", PasswordPolicy.class);
-        
-        preFormResp.setResponse(response);
-       }
-       catch(Exception e){
-               e.printStackTrace();
-               }
-       
-        
-        return preFormResp;
-    }
-
-    //@Override
-    protected void validateForm(EditGroupRequestDTO form ) {
-        final Group group = readGroup(form);
-        // Check if it's a insert operation
-        groupService.validate(group);
-        if (group instanceof MemberGroup) {
-           // final EditGroupForm form = context.getForm();
-            final MemberGroup memberGroup = (MemberGroup) group;
-            // Ensure the smsContext is present when the checkbox for using a custom context is checked
-            if (form.isUseCustomSMSContextClass() && StringUtils.isEmpty(memberGroup.getMemberSettings().getSmsContextClassName())) {
-               // throw new ValidationException("errors.required", context.message("group.settings.smsContextClassName"));
-            	 throw new ValidationException("errors.required","group.settings.smsContextClassName");
-            }
-        }
-    }
+//    @RequestMapping(value = "admin/editGroup/{groupId}/{isAdmin}", method = RequestMethod.GET)
+//    @ResponseBody
+//    public PrepareFormResponseDTO prepareForm(@PathVariable("groupId") long groupId,@PathVariable("isAdmin") int isAdmin) throws Exception {
+//        PrepareFormResponseDTO preFormResp=new PrepareFormResponseDTO();
+//       try{
+//         HashMap<String,Object> response=new HashMap<String,Object>();
+//        final long id = groupId;
+//        boolean editable = false;
+//        boolean canManageFiles = false;
+//
+//        final Map<Group.Nature, Permission> permissionByNature = ListGroupsAction.getManageGroupPermissionByNatureMap();
+//
+//        final boolean isInsert = id <= 0L;
+//        if (isInsert) {
+//            // Prepare for insert
+//            List<Group.Nature> natures = new ArrayList<Group.Nature>();
+//            if (isAdmin==1) {
+//                // Put in the request the name of permission used to manage a type of group
+//                response.put("permissionByNature", permissionByNature);
+//
+//                for (final Group.Nature nature : permissionByNature.keySet()) {
+//                    final Permission permission = permissionByNature.get(nature);
+//                    if (permissionService.hasPermission(permission)) {
+//                        natures.add(nature);
+//                    }
+//                }
+//            } else {
+//                // It's a member inserting an operator group
+//                final GroupQuery groupQuery = new GroupQuery();
+//                groupQuery.setMember((Member) WebServiceContext.getMember());
+//                final List<OperatorGroup> baseGroups = (List<OperatorGroup>) groupService.search(groupQuery);
+//                response.put("baseGroups", baseGroups);
+//                response.put("isOperatorGroup", true);
+//                natures = Collections.singletonList(Group.Nature.OPERATOR);
+//            }
+//            response.put("natures", natures);
+//            response.put("status", Group.Status.class );
+//            editable = true;
+//        } else {
+//            // Prepare for modify
+//            Group group = groupService.load(id, Group.Relationships.CUSTOMIZED_FILES, MemberGroup.Relationships.CHANNELS);
+//            final boolean isMemberGroup = MemberGroup.class.isAssignableFrom(group.getNature().getGroupClass());
+//            final boolean isBrokerGroup = BrokerGroup.class.isAssignableFrom(group.getNature().getGroupClass());
+//            final boolean isOperatorGroup = OperatorGroup.class.isAssignableFrom(group.getNature().getGroupClass());
+//            if (group.getStatus().isEnabled()) {
+//                response.put("deactivationTimePeriodFields", Arrays.asList(Field.SECONDS, Field.MINUTES, Field.HOURS, Field.DAYS));
+//                response.put("passwordExpiresAfterFields", Arrays.asList(Field.DAYS, Field.WEEKS, Field.MONTHS, Field.YEARS));
+//               response.put("transactionPasswords", TransactionPassword.class);
+//                if (isMemberGroup) {
+//                    final MemberGroup memberGroup = (MemberGroup) group;
+//
+//                    // Check if the group has access to a channel that uses pin
+//                    final boolean usesPin = groupService.usesPin(memberGroup);
+//                    response.put("usesPin", usesPin);
+//
+//                    // Retrieve the registration agreements
+//                    final List<RegistrationAgreement> registrationAgreements = registrationAgreementService.listAll();
+//                    response.put("registrationAgreements", registrationAgreements);
+//
+//                    // Retrieve the associated accounts
+//                    response.put("timePeriodFields", Arrays.asList(Field.DAYS, Field.WEEKS, Field.MONTHS, Field.YEARS));
+//                    final MemberAccountTypeQuery atQuery = new MemberAccountTypeQuery();
+//                    atQuery.setRelatedToGroup(memberGroup);
+//                    response.put("accountTypes", accountTypeService.search(atQuery));
+//
+//                    // Sort the message types using their messages
+//                    final List<Type> messageTypes = Arrays.asList(Message.Type.values());
+//                    final Comparator cmp = new Comparator() {
+//                        @Override
+//                        public int compare(final Object o1, final Object o2) {
+//                            final String msg1 =   o1.toString(); //context.message("message.type." + o1);
+//                            final String msg2 =  o2.toString();  //context.message("message.type." + o2);
+//                            return msg1.compareTo(msg2);
+//                        }
+//                    };
+//                    Collections.sort(messageTypes, cmp);
+//                    response.put("messageTypes", messageTypes);
+//
+//                    // we create a wrapper ArrayList because the list must implement the remove method
+//                    final List<Type> smsMessageTypes = new ArrayList<Type>(Arrays.asList(Message.Type.values()));
+//                    CollectionUtils.filter(smsMessageTypes, new Predicate() {
+//                        @Override
+//                        public boolean evaluate(final Object object) {
+//                            final Message.Type type = (Message.Type) object;
+//                            switch (type) {
+//                                case FROM_MEMBER:
+//                                case FROM_ADMIN_TO_MEMBER:
+//                                case FROM_ADMIN_TO_GROUP:
+//                                    return false;
+//                                default:
+//                                    return true;
+//                            }
+//                        }
+//                    });
+//                    Collections.sort(smsMessageTypes, cmp);
+//                    response.put("smsMessageTypes", smsMessageTypes);
+//
+//                    // Store the possible groups for expiration
+//                    final GroupQuery query = new GroupQuery();
+//                    query.setNatures(Group.Nature.MEMBER, Group.Nature.BROKER);
+//                    final List<? extends Group> groups = groupService.search(query);
+//                    groups.remove(group);
+//                    response.put("possibleExpirationGroups", groups);
+//                    response.put("expirationTimeFields", Arrays.asList(TimePeriod.Field.DAYS, TimePeriod.Field.WEEKS, TimePeriod.Field.MONTHS, TimePeriod.Field.YEARS));
+//
+//                    // Store transfer types for SMS charge
+//                    final TransferTypeQuery ttQuery = new TransferTypeQuery();
+//                    ttQuery.setFromGroups(Collections.singletonList(memberGroup));
+//                    ttQuery.setToNature(AccountType.Nature.SYSTEM);
+//                    final List<TransferType> smsChargeTransferTypes = transferTypeService.search(ttQuery);
+//                    response.put("smsChargeTransferTypes", smsChargeTransferTypes);
+//
+//                    response.put("smsAdditionalChargedPeriodFields", Arrays.asList(Field.DAYS, Field.WEEKS, Field.MONTHS));
+//
+//                    // Retrieve the card types
+//                    response.put("cardTypes", cardTypeService.listAll());
+//                }
+//                if (isBrokerGroup) {
+//                    // Retrieve the possible groups for registered members by broker
+//                    final GroupQuery query = new GroupQuery();
+//                    query.setNatures(Group.Nature.MEMBER, Group.Nature.BROKER);
+//                    query.setStatus(Group.Status.NORMAL);
+//                    response.put("memberGroups", groupService.search(query));
+//                }
+//                if (isMemberGroup || isBrokerGroup) {
+//                    response.put("externalAdPublications", MemberGroupSettings.ExternalAdPublication.class);
+//                }
+//                if (isOperatorGroup) {
+//                    // Load the associated transaction types for the max amount per day
+//                    group = groupService.load(group.getId(), RelationshipHelper.nested(OperatorGroup.Relationships.MEMBER, Element.Relationships.GROUP), OperatorGroup.Relationships.MAX_AMOUNT_PER_DAY_BY_TRANSFER_TYPE, OperatorGroup.Relationships.MAX_AMOUNT_PER_DAY_BY_TRANSFER_TYPE);
+//                    final OperatorGroup operatorGroup = (OperatorGroup) group;
+//                    response.put("transferTypes", operatorGroup.getMember().getGroup().getTransferTypes());
+//                }
+//
+//                // Retrieve the associated customized files
+//                final CustomizedFileQuery cfQuery = new CustomizedFileQuery();
+//                cfQuery.setGroup(group);
+//                response.put("customizedFiles", customizedFileService.search(cfQuery));
+//
+//                // Check whether the login page name will be shown
+//                response.put("showLoginPageName", customizationHelper.isAnyFileRelatedToLoginPage(group.getCustomizedFiles()));
+//            }
+//            getDataBinder(group.getNature()).writeAsString(group, group);
+//            response.put("group", group);
+//            response.put("isMemberGroup", isMemberGroup);
+//            response.put("isBrokerGroup", isBrokerGroup);
+//            response.put("isOperatorGroup", isOperatorGroup);
+//
+//            if (isMemberGroup) {
+//                // Show scheduling options when there's a schedulable transfer type
+//                final TransferTypeQuery ttQuery = new TransferTypeQuery();
+//                ttQuery.setPageForCount();
+//                ttQuery.setContext(TransactionContext.PAYMENT);
+//                ttQuery.setGroup(group);
+//                ttQuery.setSchedulable(true);
+//                response.put("showScheduling", PageHelper.getTotalCount(transferTypeService.search(ttQuery)) > 0);
+//
+//                // Channels that the group of member have access
+//                final Collection<Channel> channels = channelService.list();
+//                // The "web" channel can not be customized by the user, so it should not be sent to the JSP page
+//                final Channel webChannel = channelService.loadByInternalName(Channel.WEB);
+//                channels.remove(webChannel);
+//                response.put("channels", channels);
+//
+//                 response.put("emailValidations", EmailValidation.class);
+//            }
+//
+//            if (isAdmin==1) {
+//               // AdminGroup adminGroup = WebServiceContext.
+//              AdminGroup adminGroup = groupService.load(groupId, AdminGroup.Relationships.MANAGES_GROUPS);
+//                if (permissionService.hasPermission(permissionByNature.get(group.getNature())) && (Group.Nature.ADMIN.equals(group.getNature()) || adminGroup.getManagesGroups().contains(group))) {
+//                    editable = true;
+//                }
+//            } else {
+//                // It's a member updating an operator group
+//                editable = permissionService.hasPermission(MemberPermission.OPERATORS_MANAGE);
+//            }
+//            canManageFiles = customizedFileService.canViewOrManageInGroup(group);
+//        }
+//
+//        response.put("isInsert", isInsert);
+//        response.put("editable", editable);
+//        response.put("canManageFiles", canManageFiles);
+//        response.put("passwordPolicies", PasswordPolicy.class);
+//        
+//        preFormResp.setResponse(response);
+//       }
+//       catch(Exception e){
+//               e.printStackTrace();
+//               }
+//       
+//        
+//        return preFormResp;
+//    }
+//
+//    //@Override
+//    protected void validateForm(EditGroupRequestDTO form ) {
+//        final Group group = readGroup(form);
+//        // Check if it's a insert operation
+//        groupService.validate(group);
+//        if (group instanceof MemberGroup) {
+//           // final EditGroupForm form = context.getForm();
+//            final MemberGroup memberGroup = (MemberGroup) group;
+//            // Ensure the smsContext is present when the checkbox for using a custom context is checked
+//            if (form.isUseCustomSMSContextClass() && StringUtils.isEmpty(memberGroup.getMemberSettings().getSmsContextClassName())) {
+//               // throw new ValidationException("errors.required", context.message("group.settings.smsContextClassName"));
+//            	 throw new ValidationException("errors.required","group.settings.smsContextClassName");
+//            }
+//        }
+//    }
 
     private void initBasic(final BeanBinder<? extends Group> groupBinder, final BeanBinder<? extends BasicGroupSettings> basicSettingsBinder) {
         groupBinder.registerBinder("basicSettings", basicSettingsBinder);

@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.creditlimit.EditCreditLimitForm;
+//import nl.strohalm.cyclos.controls.members.creditlimit.EditCreditLimitForm;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;

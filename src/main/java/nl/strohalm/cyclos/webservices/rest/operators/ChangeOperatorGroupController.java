@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.operators.ChangeOperatorGroupForm;
+//import nl.strohalm.cyclos.controls.operators.ChangeOperatorGroupForm;
 import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.entities.members.Operator;
 import nl.strohalm.cyclos.services.groups.GroupService;
@@ -66,23 +66,23 @@ public class ChangeOperatorGroupController extends BaseRestController{
 	    }
 
 	   // @Override
-	    protected ChangeOperatorGroupResponseDTO handleValidation(final ActionContext context) {
-	        try {
-	            validateForm(context);
-	            final ChangeOperatorGroupForm form = context.getForm();
-	            final Group newGroup = groupService.load(form.getNewGroupId());
-	            if (newGroup.getStatus() == Group.Status.REMOVED) {
-	                final Map<String, Object> fields = new HashMap<String, Object>();
-	                fields.put("confirmationMessage", context.message("changeGroup.confirmRemove", newGroup.getName()));
-	                responseHelper.writeStatus(context.getResponse(), ResponseHelper.Status.SUCCESS, fields);
-	            } else {
-	                responseHelper.writeValidationSuccess(context.getResponse());
-	            }
-	        } catch (final ValidationException e) {
-	            responseHelper.writeValidationErrors(context.getResponse(), e);
-	        }
-	        return null;
-	    }
+//	    protected ChangeOperatorGroupResponseDTO handleValidation(final ActionContext context) {
+//	        try {
+//	            validateForm(context);
+//	            final ChangeOperatorGroupForm form = context.getForm();
+//	            final Group newGroup = groupService.load(form.getNewGroupId());
+//	            if (newGroup.getStatus() == Group.Status.REMOVED) {
+//	                final Map<String, Object> fields = new HashMap<String, Object>();
+//	                fields.put("confirmationMessage", context.message("changeGroup.confirmRemove", newGroup.getName()));
+//	                responseHelper.writeStatus(context.getResponse(), ResponseHelper.Status.SUCCESS, fields);
+//	            } else {
+//	                responseHelper.writeValidationSuccess(context.getResponse());
+//	            }
+//	        } catch (final ValidationException e) {
+//	            responseHelper.writeValidationErrors(context.getResponse(), e);
+//	        }
+//	        return null;
+//	    }
 
 	   private void validateForm(ActionContext context) {
 		// TODO Auto-generated method stub

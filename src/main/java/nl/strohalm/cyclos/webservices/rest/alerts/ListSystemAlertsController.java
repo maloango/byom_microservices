@@ -89,7 +89,7 @@ public class ListSystemAlertsController extends BaseRestController {
     public ListSystemAlertResponse listSystemAlerts(@PathVariable boolean show) {
         final AlertQuery query = new AlertQuery();
         ListSystemAlertResponse response=new ListSystemAlertResponse();
-        query.setResultType(QueryParameters.ResultType.ITERATOR);
+        query.setResultType(QueryParameters.ResultType.LIST);
         query.setPageParameters(PageParameters.max(MAX_ALERTS));
         query.setShowRemoved(false);
 
@@ -98,6 +98,7 @@ public class ListSystemAlertsController extends BaseRestController {
          
         if (Alert.Type.SYSTEM.equals(type) && LoggedUser.isAdministrator()) {
             System.out.println("------within loop--------------------");
+            
             AdminGroup adminGroup = LoggedUser.group();
             adminGroup = groupService.load(adminGroup.getId(), AdminGroup.Relationships.MANAGES_GROUPS);
             query.setGroups(adminGroup.getManagesGroups());

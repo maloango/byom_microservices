@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.sms.SearchInfoTextsForm;
+//import nl.strohalm.cyclos.controls.members.sms.SearchInfoTextsForm;
 import nl.strohalm.cyclos.entities.infotexts.InfoText;
 import nl.strohalm.cyclos.entities.infotexts.InfoTextQuery;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
@@ -103,18 +103,18 @@ public class SearchInfoTextsController extends BaseRestController {
 		return response;
 	}
 
-	protected QueryParameters prepareForm(final ActionContext context) {
-		final SearchInfoTextsForm form = context.getForm();
-		final InfoTextQuery query = getDataBinder().readFromString(
-				form.getQuery());
-		context.getRequest()
-				.setAttribute(
-						"hasManagePermissions",
-						permissionService
-								.hasPermission(AdminSystemPermission.INFO_TEXTS_MANAGE));
-
-		return query;
-	}
+//	protected QueryParameters prepareForm(final ActionContext context) {
+//		final SearchInfoTextsForm form = context.getForm();
+//		final InfoTextQuery query = getDataBinder().readFromString(
+//				form.getQuery());
+//		context.getRequest()
+//				.setAttribute(
+//						"hasManagePermissions",
+//						permissionService
+//								.hasPermission(AdminSystemPermission.INFO_TEXTS_MANAGE));
+//
+//		return query;
+//	}
 
 	protected boolean willExecuteQuery(final ActionContext context,
 			final QueryParameters queryParameters) throws Exception {

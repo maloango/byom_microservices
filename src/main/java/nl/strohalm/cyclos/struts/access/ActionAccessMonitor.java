@@ -73,9 +73,9 @@ public class ActionAccessMonitor {
     }
 
     public void requestAccess(final AbstractActionContext context) {
-        final ActionPolicy policy = ActionPolicyRepository.getApplicablePolicy(context.getActionMapping().getType());
+      //  final ActionPolicy policy = ActionPolicyRepository.getApplicablePolicy(context.getActionMapping().getType());
 
-        check(policy, context);
+     //   check(policy, context);
     }
 
     public void setElementService(final ElementService elementService) {

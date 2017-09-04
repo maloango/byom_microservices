@@ -5,7 +5,7 @@
 	      xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	      version="2.5">
 	      
-    <display-name>Cyclos</display-name>
+    <display-name>Byom Bnak core-service</display-name>
     
     <distributable />
      
@@ -188,7 +188,7 @@
 	</listener> 
 
 	<!-- Standard Action Servlet Configuration -->
-	<servlet>
+<!--	<servlet>
 		<servlet-name>action</servlet-name>
 		<servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
 		<init-param>
@@ -270,7 +270,7 @@
 	<servlet-mapping>
 		<servlet-name>action</servlet-name>
 		<url-pattern>/do/*</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping>-->
 	
 	<!-- Servlet to show system images -->
 	<servlet>

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.external.transferimports.SearchTransferImportsForm;
+//import nl.strohalm.cyclos.controls.accounts.external.transferimports.SearchTransferImportsForm;
 import nl.strohalm.cyclos.entities.accounts.external.ExternalAccount;
 import nl.strohalm.cyclos.entities.accounts.external.ExternalTransferImport;
 import nl.strohalm.cyclos.entities.accounts.external.ExternalTransferImportQuery;
@@ -152,25 +152,25 @@ public class SearchTransferImportsController extends BaseRestController {
 		return response;
 	}
 
-	protected QueryParameters prepareForm(final ActionContext context) {
-		final SearchTransferImportsForm form = context.getForm();
-		final HttpServletRequest request = context.getRequest();
-		final long externalAccountId = form.getExternalAccountId();
-		if (externalAccountId <= 0L) {
-			throw new ValidationException();
-		}
-		final ExternalAccount externalAccount = externalAccountService
-				.load(externalAccountId);
-		request.setAttribute("externalAccount", externalAccount);
-
-		final boolean editable = true;
-		request.setAttribute("editable", editable);
-
-		final ExternalTransferImportQuery query = getDataBinder()
-				.readFromString(form.getQuery());
-		query.setAccount(externalAccount);
-		return query;
-	}
+//	protected QueryParameters prepareForm(final ActionContext context) {
+//		final SearchTransferImportsForm form = context.getForm();
+//		final HttpServletRequest request = context.getRequest();
+//		final long externalAccountId = form.getExternalAccountId();
+//		if (externalAccountId <= 0L) {
+//			throw new ValidationException();
+//		}
+//		final ExternalAccount externalAccount = externalAccountService
+//				.load(externalAccountId);
+//		request.setAttribute("externalAccount", externalAccount);
+//
+//		final boolean editable = true;
+//		request.setAttribute("editable", editable);
+//
+//		final ExternalTransferImportQuery query = getDataBinder()
+//				.readFromString(form.getQuery());
+//		query.setAccount(externalAccount);
+//		return query;
+//	}
 
 	protected boolean willExecuteQuery(final ActionContext context,
 			final QueryParameters queryParameters) throws Exception {

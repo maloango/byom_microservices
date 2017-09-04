@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.customization.translationMessages.SearchTranslationMessagesForm;
+//import nl.strohalm.cyclos.controls.customization.translationMessages.SearchTranslationMessagesForm;
 import nl.strohalm.cyclos.entities.customization.translationMessages.TranslationMessage;
 import nl.strohalm.cyclos.entities.customization.translationMessages.TranslationMessageQuery;
 import nl.strohalm.cyclos.services.customization.TranslationMessageService;
@@ -96,9 +96,9 @@ public class SearchTranslationMessagesController extends BaseRestController {
 		return response;
 	}
 
-	protected QueryParameters prepareForm(final ActionContext context) {
-		final SearchTranslationMessagesForm form = context.getForm();
-		return getDataBinder().readFromString(form.getQuery());
-	}
+//	protected QueryParameters prepareForm(final ActionContext context) {
+//		final SearchTranslationMessagesForm form = context.getForm();
+//		return getDataBinder().readFromString(form.getQuery());
+//	}
 
 }

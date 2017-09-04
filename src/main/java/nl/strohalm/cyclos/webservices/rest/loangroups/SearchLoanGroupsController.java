@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.loangroups.SearchLoanGroupsForm;
+//import nl.strohalm.cyclos.controls.loangroups.SearchLoanGroupsForm;
 import nl.strohalm.cyclos.entities.EntityReference;
 import nl.strohalm.cyclos.entities.accounts.loans.LoanGroup;
 import nl.strohalm.cyclos.entities.accounts.loans.LoanGroupQuery;
@@ -151,14 +151,14 @@ public class SearchLoanGroupsController extends BaseRestController {
     @ResponseBody
 
  
-    public QueryParameters prepareForm(final ActionContext context) {
-        final SearchLoanGroupsForm form = context.getForm();
-        final LoanGroupQuery query = getDataBinder().readFromString(form.getQuery());
-        if (query.getMember() instanceof EntityReference) {
-            query.setMember((Member) elementService.load(query.getMember().getId(), Element.Relationships.USER));
-        }
-        return query;
-    }
+//    public QueryParameters prepareForm(final ActionContext context) {
+//        final SearchLoanGroupsForm form = context.getForm();
+//        final LoanGroupQuery query = getDataBinder().readFromString(form.getQuery());
+//        if (query.getMember() instanceof EntityReference) {
+//            query.setMember((Member) elementService.load(query.getMember().getId(), Element.Relationships.USER));
+//        }
+//        return query;
+//    }
 
   //  @Override
     protected boolean willExecuteQuery(final ActionContext context, final QueryParameters queryParameters) throws Exception {

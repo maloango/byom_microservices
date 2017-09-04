@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.customization.files.EditCustomizedFileForm;
+//import nl.strohalm.cyclos.controls.customization.files.EditCustomizedFileForm;
 import nl.strohalm.cyclos.entities.customization.files.CustomizedFile;
 import nl.strohalm.cyclos.entities.customization.files.CustomizedFileQuery;
 import nl.strohalm.cyclos.services.customization.CustomizedFileService;
@@ -172,39 +172,39 @@ public class EditCustomizedFileController extends BaseRestController {
     }
 
    // @Override
-    protected void prepareForm(final ActionContext context) throws Exception {
-        final HttpServletRequest request = context.getRequest();
-        final EditCustomizedFileForm form = context.getForm();
-        final long id = form.getFileId();
-        CustomizedFile file;
-        if (id > 0L) {
-            file = customizedFileService.load(id);
-        } else {
-            file = new CustomizedFile();
-            CustomizedFile.Type type;
-            try {
-                type = CustomizedFile.Type.valueOf(form.getType());
-            } catch (final Exception e) {
-                throw new ValidationException();
-            }
-            file.setType(type);
-
-            // Application pages shows a specific control to select a file, not a list of options
-            if (type != CustomizedFile.Type.APPLICATION_PAGE) {
-                request.setAttribute("filesNotYetCustomized", filesNotYetCustomized(type));
-            }
-        }
-        getDataBinder().writeAsString(form.getFile(), file);
-        request.setAttribute("file", file);
-        request.setAttribute("type", file.getType().name());
-    }
-
-    //@Override
-    protected void validateForm(final ActionContext context) {
-        final EditCustomizedFileForm form = context.getForm();
-        final CustomizedFile file = getDataBinder().readFromString(form.getFile());
-        customizedFileService.validate(file);
-    }
+//    protected void prepareForm(final ActionContext context) throws Exception {
+//        final HttpServletRequest request = context.getRequest();
+//        final EditCustomizedFileForm form = context.getForm();
+//        final long id = form.getFileId();
+//        CustomizedFile file;
+//        if (id > 0L) {
+//            file = customizedFileService.load(id);
+//        } else {
+//            file = new CustomizedFile();
+//            CustomizedFile.Type type;
+//            try {
+//                type = CustomizedFile.Type.valueOf(form.getType());
+//            } catch (final Exception e) {
+//                throw new ValidationException();
+//            }
+//            file.setType(type);
+//
+//            // Application pages shows a specific control to select a file, not a list of options
+//            if (type != CustomizedFile.Type.APPLICATION_PAGE) {
+//                request.setAttribute("filesNotYetCustomized", filesNotYetCustomized(type));
+//            }
+//        }
+//        getDataBinder().writeAsString(form.getFile(), file);
+//        request.setAttribute("file", file);
+//        request.setAttribute("type", file.getType().name());
+//    }
+//
+//    //@Override
+//    protected void validateForm(final ActionContext context) {
+//        final EditCustomizedFileForm form = context.getForm();
+//        final CustomizedFile file = getDataBinder().readFromString(form.getFile());
+//        customizedFileService.validate(file);
+//    }
 
     /**
      * Returns the files that were not yet customized

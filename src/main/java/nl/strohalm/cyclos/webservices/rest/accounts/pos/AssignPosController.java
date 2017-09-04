@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.pos.EditPosForm;
+//import nl.strohalm.cyclos.controls.accounts.pos.EditPosForm;
 import nl.strohalm.cyclos.entities.accounts.pos.Pos;
 import nl.strohalm.cyclos.entities.exceptions.EntityNotFoundException;
 import nl.strohalm.cyclos.entities.members.Member;
@@ -207,10 +207,10 @@ public class AssignPosController extends BaseRestController {
 		return response;
 	}
 
-	protected void validateForm(final ActionContext context) {
-		final EditPosForm form = context.getForm();
-		if (form.getMemberId() <= 0) {
-			throw new ValidationException();
-		}
-	}
+//	protected void validateForm(final ActionContext context) {
+//		final EditPosForm form = context.getForm();
+//		if (form.getMemberId() <= 0) {
+//			throw new ValidationException();
+//		}
+//	}
 }

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.records.EditMemberRecordTypeForm;
+//import nl.strohalm.cyclos.controls.members.records.EditMemberRecordTypeForm;
 import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.entities.groups.GroupQuery;
 import nl.strohalm.cyclos.entities.groups.MemberGroup;
@@ -131,48 +131,48 @@ public class EditMemberRecordTypeController extends BaseRestController {
 		return response;
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final EditMemberRecordTypeForm form = context.getForm();
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final EditMemberRecordTypeForm form = context.getForm();
+//
+//		final long id = form.getMemberRecordTypeId();
+//		final boolean isInsert = id <= 0L;
+//		boolean editable = permissionService
+//				.hasPermission(AdminSystemPermission.MEMBER_RECORD_TYPES_MANAGE);
+//		MemberRecordType memberRecordType;
+//		if (isInsert) {
+//			memberRecordType = new MemberRecordType();
+//			editable = true;
+//		} else {
+//			memberRecordType = memberRecordTypeService.load(id,
+//					MemberRecordType.Relationships.FIELDS,
+//					MemberRecordType.Relationships.GROUPS);
+//		}
+//		getDataBinder().writeAsString(form.getMemberRecordType(),
+//				memberRecordType);
+//		request.setAttribute("memberRecordType", memberRecordType);
+//		request.setAttribute("editable", editable);
+//		request.setAttribute("isInsert", isInsert);
+//
+//		// Search groups and send to JSP
+//		final GroupQuery groupQuery = new GroupQuery();
+//		groupQuery.setNatures(Group.Nature.MEMBER, Group.Nature.BROKER,
+//				Group.Nature.ADMIN);
+//		groupQuery.setStatus(Group.Status.NORMAL);
+//		final List<? extends Group> groups = groupService.search(groupQuery);
+//		request.setAttribute("groups", groups);
+//
+//		// Send layouts enum to JSP
+//		RequestHelper.storeEnum(request, MemberRecordType.Layout.class,
+//				"layouts");
+//	}
 
-		final long id = form.getMemberRecordTypeId();
-		final boolean isInsert = id <= 0L;
-		boolean editable = permissionService
-				.hasPermission(AdminSystemPermission.MEMBER_RECORD_TYPES_MANAGE);
-		MemberRecordType memberRecordType;
-		if (isInsert) {
-			memberRecordType = new MemberRecordType();
-			editable = true;
-		} else {
-			memberRecordType = memberRecordTypeService.load(id,
-					MemberRecordType.Relationships.FIELDS,
-					MemberRecordType.Relationships.GROUPS);
-		}
-		getDataBinder().writeAsString(form.getMemberRecordType(),
-				memberRecordType);
-		request.setAttribute("memberRecordType", memberRecordType);
-		request.setAttribute("editable", editable);
-		request.setAttribute("isInsert", isInsert);
-
-		// Search groups and send to JSP
-		final GroupQuery groupQuery = new GroupQuery();
-		groupQuery.setNatures(Group.Nature.MEMBER, Group.Nature.BROKER,
-				Group.Nature.ADMIN);
-		groupQuery.setStatus(Group.Status.NORMAL);
-		final List<? extends Group> groups = groupService.search(groupQuery);
-		request.setAttribute("groups", groups);
-
-		// Send layouts enum to JSP
-		RequestHelper.storeEnum(request, MemberRecordType.Layout.class,
-				"layouts");
-	}
-
-	protected void validateForm(final ActionContext context) {
-		final EditMemberRecordTypeForm form = context.getForm();
-		final MemberRecordType memberRecordType = getDataBinder()
-				.readFromString(form.getMemberRecordType());
-		memberRecordTypeService.validate(memberRecordType);
-	}
+//	protected void validateForm(final ActionContext context) {
+//		final EditMemberRecordTypeForm form = context.getForm();
+//		final MemberRecordType memberRecordType = getDataBinder()
+//				.readFromString(form.getMemberRecordType());
+//		memberRecordTypeService.validate(memberRecordType);
+//	}
 
 	private DataBinder<MemberRecordType> getDataBinder() {
 		if (dataBinder == null) {

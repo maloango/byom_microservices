@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.settings.ManageSettingsAction.Action;
+//import nl.strohalm.cyclos.controls.settings.ManageSettingsAction.Action;
 import nl.strohalm.cyclos.entities.settings.Setting;
 import nl.strohalm.cyclos.services.customization.MessageImportType;
 import nl.strohalm.cyclos.utils.RequestHelper;

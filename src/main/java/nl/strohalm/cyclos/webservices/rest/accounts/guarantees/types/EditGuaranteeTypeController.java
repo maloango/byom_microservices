@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.guarantees.types.EditGuaranteeTypeForm;
+//import nl.strohalm.cyclos.controls.accounts.guarantees.types.EditGuaranteeTypeForm;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.accounts.Currency;
 import nl.strohalm.cyclos.entities.accounts.guarantees.GuaranteeType;
@@ -239,90 +239,90 @@ public class EditGuaranteeTypeController extends BaseRestController {
      * @throws java.lang.Exception
 	 */
 //not required..
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final EditGuaranteeTypeForm form = context.getForm();
-		final Long id = form.getGuaranteeTypeId();
-
-		final boolean isInsert = id == null || id <= 0L;
-		if (!isInsert) {
-			final GuaranteeType guaranteeType = guaranteeTypeService.load(id,
-					GuaranteeType.Relationships.CURRENCY,
-					GuaranteeType.Relationships.LOAN_TRANSFER_TYPE,
-					GuaranteeType.Relationships.CREDIT_FEE_TRANSFER_TYPE,
-					GuaranteeType.Relationships.ISSUE_FEE_TRANSFER_TYPE,
-					GuaranteeType.Relationships.FORWARD_TRANSFER_TYPE);
-			request.setAttribute("guaranteeType", guaranteeType);
-			final Currency currency = guaranteeType.getCurrency();
-			getDataBinderGuaranteeType().writeAsString(form.getGuaranteeType(),
-					guaranteeType);
-			searchTrasferTypes(request, currency);
-		}
-
-		final StringTransformer javaScriptTransformer = new StringTransformer() {
-			@Override
-			public String transform(final Object value) {
-				return "'" + value.toString() + "'";
-			}
-		};
-
-		final StringTransformer i18nTransformer = new StringTransformer() {
-			@Override
-			public String transform(final Object value) {
-				return javaScriptTransformer.transform(context
-						.message("guaranteeType.authorizedBy." + value));
-			}
-		};
-
-		final GuaranteeType.AuthorizedBy[] paymentObligationAuthorizers = new GuaranteeType.AuthorizedBy[] {
-				GuaranteeType.AuthorizedBy.ISSUER,
-				GuaranteeType.AuthorizedBy.BOTH };
-		request.setAttribute(
-				"allAuthorizersStr",
-				arrayToString(GuaranteeType.AuthorizedBy.values(),
-						javaScriptTransformer));
-		request.setAttribute(
-				"paymentObligationAuthorizersStr",
-				arrayToString(paymentObligationAuthorizers,
-						javaScriptTransformer));
-		request.setAttribute("feePayers", Arrays.asList(
-				GuaranteeType.FeePayer.BUYER, GuaranteeType.FeePayer.SELLER));
-
-		request.setAttribute("paymentObligationAuthorizersI18N",
-				arrayToString(paymentObligationAuthorizers, i18nTransformer));
-		request.setAttribute(
-				"allAuthorizersI18N",
-				arrayToString(GuaranteeType.AuthorizedBy.values(),
-						i18nTransformer));
-		// request.setAttribute("paymentObligationModelIdx",
-		// GuaranteeType.Model.WITH_PAYMENT_OBLIGATION.ordinal());
-		// request.setAttribute("withBuyerOnlyIdx",
-		// GuaranteeType.Model.WITH_BUYER_ONLY.ordinal());
-
-		request.setAttribute("currencies", currencyService.listAll());
-		request.setAttribute("isInsert", isInsert);
-		request.setAttribute("editable", permissionService
-				.hasPermission(AdminSystemPermission.GUARANTEE_TYPES_MANAGE));
-		request.setAttribute("paymentObligationPeriod", Arrays.asList(
-				TimePeriod.Field.DAYS, TimePeriod.Field.MONTHS,
-				TimePeriod.Field.YEARS));
-		request.setAttribute("pendingGuaranteeExpiration", Arrays.asList(
-				TimePeriod.Field.DAYS, TimePeriod.Field.MONTHS,
-				TimePeriod.Field.YEARS));
-
-		RequestHelper.storeEnum(request, GuaranteeType.Model.class, "model");
-		RequestHelper.storeEnum(request, GuaranteeType.AuthorizedBy.class,
-				"allAuthorizers");
-		RequestHelper.storeEnum(request, GuaranteeType.FeeType.class,
-				"feeTypes");
-	}
-
-	protected void validateForm(final ActionContext context) {
-		final EditGuaranteeTypeForm form = context.getForm();
-		final GuaranteeType guaranteeType = getDataBinderGuaranteeType()
-				.readFromString(form.getGuaranteeType());
-		guaranteeTypeService.validate(guaranteeType);
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final EditGuaranteeTypeForm form = context.getForm();
+//		final Long id = form.getGuaranteeTypeId();
+//
+//		final boolean isInsert = id == null || id <= 0L;
+//		if (!isInsert) {
+//			final GuaranteeType guaranteeType = guaranteeTypeService.load(id,
+//					GuaranteeType.Relationships.CURRENCY,
+//					GuaranteeType.Relationships.LOAN_TRANSFER_TYPE,
+//					GuaranteeType.Relationships.CREDIT_FEE_TRANSFER_TYPE,
+//					GuaranteeType.Relationships.ISSUE_FEE_TRANSFER_TYPE,
+//					GuaranteeType.Relationships.FORWARD_TRANSFER_TYPE);
+//			request.setAttribute("guaranteeType", guaranteeType);
+//			final Currency currency = guaranteeType.getCurrency();
+//			getDataBinderGuaranteeType().writeAsString(form.getGuaranteeType(),
+//					guaranteeType);
+//			searchTrasferTypes(request, currency);
+//		}
+//
+//		final StringTransformer javaScriptTransformer = new StringTransformer() {
+//			@Override
+//			public String transform(final Object value) {
+//				return "'" + value.toString() + "'";
+//			}
+//		};
+//
+//		final StringTransformer i18nTransformer = new StringTransformer() {
+//			@Override
+//			public String transform(final Object value) {
+//				return javaScriptTransformer.transform(context
+//						.message("guaranteeType.authorizedBy." + value));
+//			}
+//		};
+//
+//		final GuaranteeType.AuthorizedBy[] paymentObligationAuthorizers = new GuaranteeType.AuthorizedBy[] {
+//				GuaranteeType.AuthorizedBy.ISSUER,
+//				GuaranteeType.AuthorizedBy.BOTH };
+//		request.setAttribute(
+//				"allAuthorizersStr",
+//				arrayToString(GuaranteeType.AuthorizedBy.values(),
+//						javaScriptTransformer));
+//		request.setAttribute(
+//				"paymentObligationAuthorizersStr",
+//				arrayToString(paymentObligationAuthorizers,
+//						javaScriptTransformer));
+//		request.setAttribute("feePayers", Arrays.asList(
+//				GuaranteeType.FeePayer.BUYER, GuaranteeType.FeePayer.SELLER));
+//
+//		request.setAttribute("paymentObligationAuthorizersI18N",
+//				arrayToString(paymentObligationAuthorizers, i18nTransformer));
+//		request.setAttribute(
+//				"allAuthorizersI18N",
+//				arrayToString(GuaranteeType.AuthorizedBy.values(),
+//						i18nTransformer));
+//		// request.setAttribute("paymentObligationModelIdx",
+//		// GuaranteeType.Model.WITH_PAYMENT_OBLIGATION.ordinal());
+//		// request.setAttribute("withBuyerOnlyIdx",
+//		// GuaranteeType.Model.WITH_BUYER_ONLY.ordinal());
+//
+//		request.setAttribute("currencies", currencyService.listAll());
+//		request.setAttribute("isInsert", isInsert);
+//		request.setAttribute("editable", permissionService
+//				.hasPermission(AdminSystemPermission.GUARANTEE_TYPES_MANAGE));
+//		request.setAttribute("paymentObligationPeriod", Arrays.asList(
+//				TimePeriod.Field.DAYS, TimePeriod.Field.MONTHS,
+//				TimePeriod.Field.YEARS));
+//		request.setAttribute("pendingGuaranteeExpiration", Arrays.asList(
+//				TimePeriod.Field.DAYS, TimePeriod.Field.MONTHS,
+//				TimePeriod.Field.YEARS));
+//
+//		RequestHelper.storeEnum(request, GuaranteeType.Model.class, "model");
+//		RequestHelper.storeEnum(request, GuaranteeType.AuthorizedBy.class,
+//				"allAuthorizers");
+//		RequestHelper.storeEnum(request, GuaranteeType.FeeType.class,
+//				"feeTypes");
+//	}
+//
+//	protected void validateForm(final ActionContext context) {
+//		final EditGuaranteeTypeForm form = context.getForm();
+//		final GuaranteeType guaranteeType = getDataBinderGuaranteeType()
+//				.readFromString(form.getGuaranteeType());
+//		guaranteeTypeService.validate(guaranteeType);
+//	}
 
 	private String arrayToString(final Object[] values,
 			final StringTransformer transformer) {

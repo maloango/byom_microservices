@@ -10,12 +10,13 @@
 		class="nl.strohalm.cyclos.webservices.rest.NoOpAuthenticationEntryPoint" />
 	<http pattern="/rest/general" create-session="stateless"
 		entry-point-ref="noOpAuthenticationEntryPoint" />
-        <http pattern="/rest/login" create-session="stateless"
+         <http pattern="/rest/login" create-session="stateless"
 		entry-point-ref="noOpAuthenticationEntryPoint" />
         <http pattern="/rest/logout" create-session="stateless"
 		entry-point-ref="noOpAuthenticationEntryPoint" />
          <http pattern="/rest/publicCreateMember" create-session="stateless"
 		entry-point-ref="noOpAuthenticationEntryPoint" />
+
 	<!-- access -->
 <!--	<http pattern="/rest/admin/managePasswords" create-session="stateless"
 		entry-point-ref="noOpAuthenticationEntryPoint" />-->

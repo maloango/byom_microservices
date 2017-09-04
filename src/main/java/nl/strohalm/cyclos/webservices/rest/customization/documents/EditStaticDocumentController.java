@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.customization.documents.EditStaticDocumentAction;
-import nl.strohalm.cyclos.controls.customization.documents.EditStaticDocumentForm;
+//import nl.strohalm.cyclos.controls.customization.documents.EditStaticDocumentAction;
+//import nl.strohalm.cyclos.controls.customization.documents.EditStaticDocumentForm;
 import nl.strohalm.cyclos.entities.customization.documents.Document;
 import nl.strohalm.cyclos.entities.customization.documents.StaticDocument;
 import nl.strohalm.cyclos.services.customization.DocumentService;
@@ -114,66 +114,66 @@ public class EditStaticDocumentController extends BaseRestController {
 	}
     
 
-    @RequestMapping(value ="admin/editStaticDocument" , method = RequestMethod.POST)
-    @ResponseBody
-    protected EditStaticDocumentResponseDTO handleSubmit(@RequestBody EditStaticDocumentRequestDTO form) throws Exception {
-        EditStaticDocumentResponseDTO response = null;
-        StaticDocument document = getDataBinder().readFromString(form.getDocument());
-        final boolean isInsert = document.getId() == null;
-        try {
-            final FormFile upload = form.getUpload();
-            document = (StaticDocument) documentService.saveStatic(document, upload.getInputStream(), upload.getFileSize(), upload.getFileName(), upload.getContentType());
-            String message =null;
-            if (isInsert) {
-                message ="document.inserted";
-            }
-            else{
-                message = "document.modified";
-                
-            }
-            
-            Map<String, Object> param = new HashMap<String, Object>();
-            param.put("documentId", document.getId());
-            response = new EditStaticDocumentResponseDTO(message, param);}
-        catch(Exception e){
-            e.printStackTrace();
-        }
-        return response ;
+//    @RequestMapping(value ="admin/editStaticDocument" , method = RequestMethod.POST)
+//    @ResponseBody
+//    protected EditStaticDocumentResponseDTO handleSubmit(@RequestBody EditStaticDocumentRequestDTO form) throws Exception {
+//        EditStaticDocumentResponseDTO response = null;
+//        StaticDocument document = getDataBinder().readFromString(form.getDocument());
+//        final boolean isInsert = document.getId() == null;
+//        try {
+//            final FormFile upload = form.getUpload();
+//            document = (StaticDocument) documentService.saveStatic(document, upload.getInputStream(), upload.getFileSize(), upload.getFileName(), upload.getContentType());
+//            String message =null;
+//            if (isInsert) {
+//                message ="document.inserted";
+//            }
+//            else{
+//                message = "document.modified";
+//                
+//            }
+//            
+//            Map<String, Object> param = new HashMap<String, Object>();
+//            param.put("documentId", document.getId());
+//            response = new EditStaticDocumentResponseDTO(message, param);}
+//        catch(Exception e){
+//            e.printStackTrace();
+//        }
+//        return response ;
         
         /*context.sendMessage(isInsert ? "document.inserted" : "document.modified");
         request.setAttribute("document", document);
         
         return ActionHelper.redirectWithParam(request, context.getSuccessForward(), "documentId", document.getId());*/
-    }
+//    }
 
     //@Override
-    protected void prepareForm(final ActionContext context) throws Exception {
-        final HttpServletRequest request = context.getRequest();
-        final EditStaticDocumentForm form = context.getForm();
-        final long id = form.getDocumentId();
-        StaticDocument document;
-        if (id > 0L) {
-            document = (StaticDocument) documentService.load(id);
-        } else {
-            document = ClassHelper.instantiate(getEntityType());
-        }
-        getDataBinder().writeAsString(form.getDocument(), document);
-        request.setAttribute("document", document);
-    }
+//    protected void prepareForm(final ActionContext context) throws Exception {
+//        final HttpServletRequest request = context.getRequest();
+//        final EditStaticDocumentForm form = context.getForm();
+//        final long id = form.getDocumentId();
+//        StaticDocument document;
+//        if (id > 0L) {
+//            document = (StaticDocument) documentService.load(id);
+//        } else {
+//            document = ClassHelper.instantiate(getEntityType());
+//        }
+//        getDataBinder().writeAsString(form.getDocument(), document);
+//        request.setAttribute("document", document);
+//    }
 
     //@Override
-    protected void validateForm(final ActionContext context) {
-        final EditStaticDocumentForm form = context.getForm();
-        final Document document = getDataBinder().readFromString(form.getDocument());
-        documentService.validate(document, false);
-    }
+//    protected void validateForm(final ActionContext context) {
+//        final EditStaticDocumentForm form = context.getForm();
+//        final Document document = getDataBinder().readFromString(form.getDocument());
+//        documentService.validate(document, false);
+//    }
 
-    private DataBinder<StaticDocument> getDataBinder() {
-        if (dataBinder == null) {
-            dataBinder = EditStaticDocumentAction.getDataBinder(StaticDocument.class);
-        }
-        return dataBinder;
-    }
+//    private DataBinder<StaticDocument> getDataBinder() {
+//        if (dataBinder == null) {
+//            dataBinder = EditStaticDocumentAction.getDataBinder(StaticDocument.class);
+//        }
+//        return dataBinder;
+//    }
 
 
 }

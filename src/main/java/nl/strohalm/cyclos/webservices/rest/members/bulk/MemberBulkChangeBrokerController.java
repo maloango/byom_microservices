@@ -11,8 +11,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.SearchMembersAction;
-import nl.strohalm.cyclos.controls.members.bulk.MemberBulkActionsForm;
+//import nl.strohalm.cyclos.controls.members.SearchMembersAction;
+//import nl.strohalm.cyclos.controls.members.bulk.MemberBulkActionsForm;
 import nl.strohalm.cyclos.entities.customization.fields.MemberCustomFieldValue;
 import nl.strohalm.cyclos.entities.members.FullTextMemberQuery;
 import nl.strohalm.cyclos.entities.members.Member;
@@ -45,20 +45,20 @@ public class MemberBulkChangeBrokerController extends BaseRestController {
 	private SettingsService settingsService;
 	private ReadWriteLock lock = new ReentrantReadWriteLock(true);
 
-	public DataBinder<FullTextMemberQuery> getDataBinder() {
-		try {
-			lock.readLock().lock();
-			if (dataBinder == null) {
-				final LocalSettings localSettings = settingsService
-						.getLocalSettings();
-				dataBinder = SearchMembersAction
-						.memberQueryDataBinder(localSettings);
-			}
-			return dataBinder;
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
+//	public DataBinder<FullTextMemberQuery> getDataBinder() {
+//		try {
+//			lock.readLock().lock();
+//			if (dataBinder == null) {
+//				final LocalSettings localSettings = settingsService
+//						.getLocalSettings();
+//				dataBinder = SearchMembersAction
+//						.memberQueryDataBinder(localSettings);
+//			}
+//			return dataBinder;
+//		} finally {
+//			lock.readLock().unlock();
+//		}
+//	}
 
 	public void onLocalSettingsUpdate(final LocalSettingsEvent event) {
 		try {
@@ -181,81 +181,81 @@ public class MemberBulkChangeBrokerController extends BaseRestController {
 			this.message = message;
 		}
 	}
+//
+//	@RequestMapping(value = "admin/memberBulkChangeBroker", method = RequestMethod.PUT)
+//	@ResponseBody
+//	protected MemberBulkChangeBrokerResponseDto formAction(
+//			@RequestBody MemberBulkChangeBrokerRequestDto form)
+//			throws Exception {
+//		MemberBulkChangeBrokerResponseDto response = null;
+//                try{
+//
+//		// Read the user input
+//		final MapBean bean = form.getChangeBroker();
+//		final FullTextMemberQuery query = getDataBinder().readFromString(
+//				form.getQuery());
+//		final Member newBroker = elementService.load(CoercionHelper.coerce(
+//				Long.class, bean.get("newBroker")));
+//		final boolean suspendCommission = CoercionHelper.coerce(Boolean.TYPE,
+//				bean.get("suspendCommission"));
+//		final String comments = StringUtils.trimToNull((String) bean
+//				.get("comments"));
+//
+//		final BulkMemberActionResultVO results = brokeringService
+//				.bulkChangeMemberBroker(query, newBroker, suspendCommission,
+//						comments);
+//
+//		String message = "member.bulkActions.brokerChanged";
+//		int changed = results.getChanged();
+//		int unchanged = results.getUnchanged();
+//		String name = newBroker.getName();
+//		response = new MemberBulkChangeBrokerResponseDto(
+//				message, changed, unchanged, name);
+//
+//		// Clear the change broker parameters
+//		form.getChangeBroker().clear();}
+//                catch(Exception e){
+//                    e.printStackTrace();
+//                }
+//		return response;
+//	}
 
-	@RequestMapping(value = "admin/memberBulkChangeBroker", method = RequestMethod.PUT)
-	@ResponseBody
-	protected MemberBulkChangeBrokerResponseDto formAction(
-			@RequestBody MemberBulkChangeBrokerRequestDto form)
-			throws Exception {
-		MemberBulkChangeBrokerResponseDto response = null;
-                try{
-
-		// Read the user input
-		final MapBean bean = form.getChangeBroker();
-		final FullTextMemberQuery query = getDataBinder().readFromString(
-				form.getQuery());
-		final Member newBroker = elementService.load(CoercionHelper.coerce(
-				Long.class, bean.get("newBroker")));
-		final boolean suspendCommission = CoercionHelper.coerce(Boolean.TYPE,
-				bean.get("suspendCommission"));
-		final String comments = StringUtils.trimToNull((String) bean
-				.get("comments"));
-
-		final BulkMemberActionResultVO results = brokeringService
-				.bulkChangeMemberBroker(query, newBroker, suspendCommission,
-						comments);
-
-		String message = "member.bulkActions.brokerChanged";
-		int changed = results.getChanged();
-		int unchanged = results.getUnchanged();
-		String name = newBroker.getName();
-		response = new MemberBulkChangeBrokerResponseDto(
-				message, changed, unchanged, name);
-
-		// Clear the change broker parameters
-		form.getChangeBroker().clear();}
-                catch(Exception e){
-                    e.printStackTrace();
-                }
-		return response;
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected void validateForm(final ActionContext context) {
-		final MemberBulkActionsForm form = context.getForm();
-
-		final FullTextMemberQuery query = getDataBinder().readFromString(
-				form.getQuery());
-
-		final Collection<MemberCustomFieldValue> customValues = (Collection<MemberCustomFieldValue>) query
-				.getCustomValues();
-		for (final Iterator it = customValues.iterator(); it.hasNext();) {
-			final MemberCustomFieldValue fieldValue = (MemberCustomFieldValue) it
-					.next();
-			if (StringUtils.isEmpty(fieldValue.getValue())) {
-				it.remove();
-			}
-		}
-		if (CollectionUtils.isEmpty(query.getGroupFilters())
-				&& CollectionUtils.isEmpty(query.getGroups())
-				&& query.getBroker() == null
-				&& CollectionUtils.isEmpty(customValues)) {
-			throw new ValidationException("member.bulkActions.error.emptyQuery");
-		}
-
-		final MapBean bean = form.getChangeBroker();
-		final Member newBroker = CoercionHelper.coerce(Member.class,
-				bean.get("newBroker"));
-		final String comments = StringUtils.trimToNull((String) bean
-				.get("comments"));
-		if (newBroker == null || newBroker.isTransient()) {
-			throw new ValidationException("newBroker", "changeBroker.new",
-					new RequiredError());
-		}
-		if (StringUtils.isEmpty(comments)) {
-			throw new ValidationException("comments", "remark.comments",
-					new RequiredError());
-		}
-	}
+//	@SuppressWarnings({ "unchecked", "rawtypes" })
+//	protected void validateForm(final ActionContext context) {
+//		final MemberBulkActionsForm form = context.getForm();
+//
+//		final FullTextMemberQuery query = getDataBinder().readFromString(
+//				form.getQuery());
+//
+//		final Collection<MemberCustomFieldValue> customValues = (Collection<MemberCustomFieldValue>) query
+//				.getCustomValues();
+//		for (final Iterator it = customValues.iterator(); it.hasNext();) {
+//			final MemberCustomFieldValue fieldValue = (MemberCustomFieldValue) it
+//					.next();
+//			if (StringUtils.isEmpty(fieldValue.getValue())) {
+//				it.remove();
+//			}
+//		}
+//		if (CollectionUtils.isEmpty(query.getGroupFilters())
+//				&& CollectionUtils.isEmpty(query.getGroups())
+//				&& query.getBroker() == null
+//				&& CollectionUtils.isEmpty(customValues)) {
+//			throw new ValidationException("member.bulkActions.error.emptyQuery");
+//		}
+//
+//		final MapBean bean = form.getChangeBroker();
+//		final Member newBroker = CoercionHelper.coerce(Member.class,
+//				bean.get("newBroker"));
+//		final String comments = StringUtils.trimToNull((String) bean
+//				.get("comments"));
+//		if (newBroker == null || newBroker.isTransient()) {
+//			throw new ValidationException("newBroker", "changeBroker.new",
+//					new RequiredError());
+//		}
+//		if (StringUtils.isEmpty(comments)) {
+//			throw new ValidationException("comments", "remark.comments",
+//					new RequiredError());
+//		}
+//	}
 
 }

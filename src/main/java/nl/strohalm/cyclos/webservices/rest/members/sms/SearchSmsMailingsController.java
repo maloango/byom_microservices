@@ -8,7 +8,7 @@ import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.sms.SearchSmsMailingsForm;
+//import nl.strohalm.cyclos.controls.members.sms.SearchSmsMailingsForm;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
 import nl.strohalm.cyclos.entities.groups.GroupQuery;
 import nl.strohalm.cyclos.entities.groups.MemberGroup;
@@ -73,69 +73,69 @@ public class SearchSmsMailingsController extends BaseRestController {
 
 	}
 
-	@RequestMapping(value = "member/searchSmsMailings", method = RequestMethod.GET)
-	@ResponseBody
-	protected SearchSmsMailingsResponseDto executeQuery(
-			@RequestBody SearchSmsMailingsRequestDto form,
-			final QueryParameters queryParameters) {
-            SearchSmsMailingsResponseDto response = null;
-            try{
-		final SmsMailingQuery query = (SmsMailingQuery) queryParameters;
-		query.fetch(SmsMailing.Relationships.BY,
-				SmsMailing.Relationships.GROUPS);
-		final List<SmsMailing> smsMailings = smsMailingService.search(query);
-		
-		 response = new SearchSmsMailingsResponseDto(
-				smsMailings);}
-            catch(Exception e){
-                e.printStackTrace();
-            }
-		return response;
-	}
-
-	protected QueryParameters prepareForm(final ActionContext context) {
-		final SearchSmsMailingsForm form = context.getForm();
-		final HttpServletRequest request = context.getRequest();
-		final SmsMailingQuery query = getDataBinder().readFromString(
-				form.getQuery());
-
-		boolean viewFree;
-		boolean viewPaid;
-		boolean canSend;
-		if (context.isAdmin()) {
-			viewPaid = viewFree = permissionService
-					.hasPermission(AdminMemberPermission.SMS_MAILINGS_VIEW); // 2
-																				// assignments
-			canSend = permissionService
-					.hasPermission(AdminMemberPermission.SMS_MAILINGS_FREE_SMS_MAILINGS)
-					|| permissionService
-							.hasPermission(AdminMemberPermission.SMS_MAILINGS_PAID_SMS_MAILINGS);
-
-			final GroupQuery groupQuery = new GroupQuery();
-			groupQuery.setManagedBy((AdminGroup) context.getGroup());
-			groupQuery.setOnlyActive(true);
-			request.setAttribute("groups", groupService.search(groupQuery));
-		} else {
-			viewFree = permissionService
-					.hasPermission(BrokerPermission.SMS_MAILINGS_FREE_SMS_MAILINGS);
-			viewPaid = permissionService
-					.hasPermission(BrokerPermission.SMS_MAILINGS_PAID_SMS_MAILINGS);
-			canSend = viewFree || viewPaid; // At least one permission (free /
-											// paid) the broker has
-		}
-		// Ensure to fetch the member, so the name / username will be displayed,
-		// if one is selected
-		if (query.getMember() != null) {
-			query.setMember((Member) elementService.load(query.getMember()
-					.getId(), Element.Relationships.USER));
-		}
-		request.setAttribute("viewFree", viewFree);
-		request.setAttribute("viewPaid", viewPaid);
-		request.setAttribute("canSend", canSend);
-		query.fetch(RelationshipHelper.nested(SmsMailing.Relationships.BY,
-				Element.Relationships.GROUP));
-		return query;
-	}
+//	@RequestMapping(value = "member/searchSmsMailings", method = RequestMethod.GET)
+//	@ResponseBody
+//	protected SearchSmsMailingsResponseDto executeQuery(
+//			@RequestBody SearchSmsMailingsRequestDto form,
+//			final QueryParameters queryParameters) {
+//            SearchSmsMailingsResponseDto response = null;
+//            try{
+//		final SmsMailingQuery query = (SmsMailingQuery) queryParameters;
+//		query.fetch(SmsMailing.Relationships.BY,
+//				SmsMailing.Relationships.GROUPS);
+//		final List<SmsMailing> smsMailings = smsMailingService.search(query);
+//		
+//		 response = new SearchSmsMailingsResponseDto(
+//				smsMailings);}
+//            catch(Exception e){
+//                e.printStackTrace();
+//            }
+//		return response;
+//	}
+//
+//	protected QueryParameters prepareForm(final ActionContext context) {
+//		final SearchSmsMailingsForm form = context.getForm();
+//		final HttpServletRequest request = context.getRequest();
+//		final SmsMailingQuery query = getDataBinder().readFromString(
+//				form.getQuery());
+//
+//		boolean viewFree;
+//		boolean viewPaid;
+//		boolean canSend;
+//		if (context.isAdmin()) {
+//			viewPaid = viewFree = permissionService
+//					.hasPermission(AdminMemberPermission.SMS_MAILINGS_VIEW); // 2
+//																				// assignments
+//			canSend = permissionService
+//					.hasPermission(AdminMemberPermission.SMS_MAILINGS_FREE_SMS_MAILINGS)
+//					|| permissionService
+//							.hasPermission(AdminMemberPermission.SMS_MAILINGS_PAID_SMS_MAILINGS);
+//
+//			final GroupQuery groupQuery = new GroupQuery();
+//			groupQuery.setManagedBy((AdminGroup) context.getGroup());
+//			groupQuery.setOnlyActive(true);
+//			request.setAttribute("groups", groupService.search(groupQuery));
+//		} else {
+//			viewFree = permissionService
+//					.hasPermission(BrokerPermission.SMS_MAILINGS_FREE_SMS_MAILINGS);
+//			viewPaid = permissionService
+//					.hasPermission(BrokerPermission.SMS_MAILINGS_PAID_SMS_MAILINGS);
+//			canSend = viewFree || viewPaid; // At least one permission (free /
+//											// paid) the broker has
+//		}
+//		// Ensure to fetch the member, so the name / username will be displayed,
+//		// if one is selected
+//		if (query.getMember() != null) {
+//			query.setMember((Member) elementService.load(query.getMember()
+//					.getId(), Element.Relationships.USER));
+//		}
+//		request.setAttribute("viewFree", viewFree);
+//		request.setAttribute("viewPaid", viewPaid);
+//		request.setAttribute("canSend", canSend);
+//		query.fetch(RelationshipHelper.nested(SmsMailing.Relationships.BY,
+//				Element.Relationships.GROUP));
+//		return query;
+//	}
 
 	protected boolean willExecuteQuery(final ActionContext context,
 			final QueryParameters queryParameters) throws Exception {

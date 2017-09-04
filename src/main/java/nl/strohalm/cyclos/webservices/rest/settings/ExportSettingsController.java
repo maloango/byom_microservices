@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.BaseAjaxAction.ContentType;
-import nl.strohalm.cyclos.controls.settings.ManageSettingsForm;
+//import nl.strohalm.cyclos.controls.BaseAjaxAction.ContentType;
+//import nl.strohalm.cyclos.controls.settings.ManageSettingsForm;
 import nl.strohalm.cyclos.entities.settings.Setting;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.utils.ResponseHelper;

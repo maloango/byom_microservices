@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.cards.CardForm;
+//import nl.strohalm.cyclos.controls.accounts.cards.CardForm;
 import nl.strohalm.cyclos.entities.accounts.cards.Card;
 import nl.strohalm.cyclos.entities.accounts.cards.Card.Relationships;
 import nl.strohalm.cyclos.entities.accounts.cards.CardType.CardSecurityCode;
@@ -181,43 +181,43 @@ public class UpdateCardController extends BaseRestController {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	protected void validateForm(final ActionContext context) {
-		final CardForm form = context.getForm();
-		final boolean usesTransactionPassword = context.isTransactionPasswordEnabled();
-
-		final ValidationException e = new ValidationException();
-		e.setPropertyKey("securityCode", "card.changeCardCode.newCode1");
-		e.setPropertyKey("securityCodeConfirmation", "card.changeCardCode.newCode2");
-		e.setPropertyKey("login.transactionPassword", "login.transactionPassword");
-
-		if (usesTransactionPassword) {
-			context.validateTransactionPassword();
-			if (StringUtils.isEmpty(form.getPassword())) {
-				e.addPropertyError("login.transactionPassword", new RequiredError());
-			}
-		}
-
-		final String operation = form.getOperation();
-		final Card card = cardService.load(form.getCardId(), Relationships.CARD_TYPE);
-		final boolean cardWithManualCodeActivation = card.getCardType().getCardSecurityCode() == CardSecurityCode.MANUAL
-				&& operation.equals("activate");
-
-		if (operation.equals("changeCardCode") || cardWithManualCodeActivation) {
-			final String securityCode = form.getSecurityCode();
-			if (StringUtils.isEmpty(securityCode)) {
-				e.addPropertyError("securityCode", new RequiredError());
-			}
-			if (!card.getCardType().isShowCardSecurityCode()) {
-				final String securityCodeConfirmation = form.getSecurityCodeConfirmation();
-				if (StringUtils.isEmpty(securityCodeConfirmation)) {
-					e.addPropertyError("securityCodeConfirmation", new RequiredError());
-				}
-				if (!ObjectUtils.equals(securityCode, securityCodeConfirmation)) {
-					e.addGeneralError(new ValidationError("card.updateCard.cardCodesAreNotEqual"));
-				}
-			}
-		}
-		e.throwIfHasErrors();
-	}
+//	protected void validateForm(final ActionContext context) {
+//		final CardForm form = context.getForm();
+//		final boolean usesTransactionPassword = context.isTransactionPasswordEnabled();
+//
+//		final ValidationException e = new ValidationException();
+//		e.setPropertyKey("securityCode", "card.changeCardCode.newCode1");
+//		e.setPropertyKey("securityCodeConfirmation", "card.changeCardCode.newCode2");
+//		e.setPropertyKey("login.transactionPassword", "login.transactionPassword");
+//
+//		if (usesTransactionPassword) {
+//			context.validateTransactionPassword();
+//			if (StringUtils.isEmpty(form.getPassword())) {
+//				e.addPropertyError("login.transactionPassword", new RequiredError());
+//			}
+//		}
+//
+//		final String operation = form.getOperation();
+//		final Card card = cardService.load(form.getCardId(), Relationships.CARD_TYPE);
+//		final boolean cardWithManualCodeActivation = card.getCardType().getCardSecurityCode() == CardSecurityCode.MANUAL
+//				&& operation.equals("activate");
+//
+//		if (operation.equals("changeCardCode") || cardWithManualCodeActivation) {
+//			final String securityCode = form.getSecurityCode();
+//			if (StringUtils.isEmpty(securityCode)) {
+//				e.addPropertyError("securityCode", new RequiredError());
+//			}
+//			if (!card.getCardType().isShowCardSecurityCode()) {
+//				final String securityCodeConfirmation = form.getSecurityCodeConfirmation();
+//				if (StringUtils.isEmpty(securityCodeConfirmation)) {
+//					e.addPropertyError("securityCodeConfirmation", new RequiredError());
+//				}
+//				if (!ObjectUtils.equals(securityCode, securityCodeConfirmation)) {
+//					e.addGeneralError(new ValidationError("card.updateCard.cardCodesAreNotEqual"));
+//				}
+//			}
+//		}
+//		e.throwIfHasErrors();
+//	}
 	}
 }

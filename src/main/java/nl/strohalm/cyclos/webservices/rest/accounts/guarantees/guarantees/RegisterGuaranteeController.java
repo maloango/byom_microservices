@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.guarantees.guarantees.RegisterGuaranteeForm;
+//import nl.strohalm.cyclos.controls.accounts.guarantees.guarantees.RegisterGuaranteeForm;
 import nl.strohalm.cyclos.entities.accounts.guarantees.Guarantee;
 import nl.strohalm.cyclos.entities.accounts.guarantees.GuaranteeType;
 import nl.strohalm.cyclos.entities.accounts.guarantees.GuaranteeType.FeeType;
@@ -176,50 +176,50 @@ public class RegisterGuaranteeController {
 	 * Method use to prepare a form for being displayed
 	 */
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final RegisterGuaranteeForm form = context.getForm();
-		final Long id = form.getGuaranteeTypeId();
-		final GuaranteeType guaranteeType = guaranteeTypeService.load(id);
-
-		final Collection<? extends Group> issuers = guaranteeService
-				.getIssuers(guaranteeType);
-		if (CollectionUtils.isEmpty(issuers)) {
-			throw new ValidationException("guarantee.error.noIssuer");
-		}
-		final Collection<? extends Group> sellers = guaranteeService
-				.getSellers();
-
-		request.setAttribute("issuerGroupsId",
-				EntityHelper.toIdsAsString(issuers));
-		// only with this model we must filter the buyers groups
-		if (guaranteeType.getModel() != GuaranteeType.Model.WITH_BUYER_ONLY) {
-			final Collection<? extends Group> buyers = guaranteeService
-					.getBuyers();
-			request.setAttribute("buyerGroupsId",
-					EntityHelper.toIdsAsString(buyers));
-		}
-
-		final List<PaymentCustomField> customFields = paymentCustomFieldService
-				.list(guaranteeType.getLoanTransferType(), false);
-		request.setAttribute("customFields", customFields);
-
-		request.setAttribute("sellerGroupsId",
-				EntityHelper.toIdsAsString(sellers));
-		request.setAttribute(
-				"isWithBuyerAndSeller",
-				guaranteeType.getModel() == GuaranteeType.Model.WITH_BUYER_AND_SELLER);
-		request.setAttribute("guaranteeType", guaranteeType);
-		RequestHelper.storeEnum(request, GuaranteeType.FeeType.class,
-				"feeTypes");
-	}
-
-	protected void validateForm(final ActionContext context) {
-		final RegisterGuaranteeForm form = context.getForm();
-		final Guarantee guarantee = getDataBinder().readFromString(
-				form.getGuarantee());
-		guaranteeService.validate(guarantee, false);
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final RegisterGuaranteeForm form = context.getForm();
+//		final Long id = form.getGuaranteeTypeId();
+//		final GuaranteeType guaranteeType = guaranteeTypeService.load(id);
+//
+//		final Collection<? extends Group> issuers = guaranteeService
+//				.getIssuers(guaranteeType);
+//		if (CollectionUtils.isEmpty(issuers)) {
+//			throw new ValidationException("guarantee.error.noIssuer");
+//		}
+//		final Collection<? extends Group> sellers = guaranteeService
+//				.getSellers();
+//
+//		request.setAttribute("issuerGroupsId",
+//				EntityHelper.toIdsAsString(issuers));
+//		// only with this model we must filter the buyers groups
+//		if (guaranteeType.getModel() != GuaranteeType.Model.WITH_BUYER_ONLY) {
+//			final Collection<? extends Group> buyers = guaranteeService
+//					.getBuyers();
+//			request.setAttribute("buyerGroupsId",
+//					EntityHelper.toIdsAsString(buyers));
+//		}
+//
+//		final List<PaymentCustomField> customFields = paymentCustomFieldService
+//				.list(guaranteeType.getLoanTransferType(), false);
+//		request.setAttribute("customFields", customFields);
+//
+//		request.setAttribute("sellerGroupsId",
+//				EntityHelper.toIdsAsString(sellers));
+//		request.setAttribute(
+//				"isWithBuyerAndSeller",
+//				guaranteeType.getModel() == GuaranteeType.Model.WITH_BUYER_AND_SELLER);
+//		request.setAttribute("guaranteeType", guaranteeType);
+//		RequestHelper.storeEnum(request, GuaranteeType.FeeType.class,
+//				"feeTypes");
+//	}
+//
+//	protected void validateForm(final ActionContext context) {
+//		final RegisterGuaranteeForm form = context.getForm();
+//		final Guarantee guarantee = getDataBinder().readFromString(
+//				form.getGuarantee());
+//		guaranteeService.validate(guarantee, false);
+//	}
 
 	private DataBinder<Guarantee> getDataBinder() {
 		if (dataBinder == null) {

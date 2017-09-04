@@ -62,9 +62,9 @@ public class CustomizedFileInitialization implements LocalInitialization, Servle
     public void initialize() {
         // First, clear the customized css files to ensure proper migration from previous versions when css files were not customized
         final File customizedStylesDir = new File(servletContext.getRealPath(customizationHelper.customizedPathFor(CustomizedFile.Type.STYLE)));
-        for (final File css : customizedStylesDir.listFiles((FilenameFilter) new SuffixFileFilter(".css"))) {
-            css.delete();
-        }
+//        for (final File css : customizedStylesDir.listFiles((FilenameFilter) new SuffixFileFilter(".css"))) {
+//            css.delete();
+//        }
 
         final LocalSettings localSettings = settingsServiceLocal.getLocalSettings();
         final CustomizedFileQuery query = new CustomizedFileQuery();

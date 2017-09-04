@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.payments.request.RequestPaymentForm;
+//import nl.strohalm.cyclos.controls.payments.request.RequestPaymentForm;
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.accounts.Currency;
 import nl.strohalm.cyclos.entities.accounts.transactions.PaymentRequestTicket;
@@ -246,10 +246,10 @@ public class RequestPaymentController extends BaseRestController{
 	    }
 
 	   // @Override
-	    protected void validateForm(final ActionContext context) {
-	        final PaymentRequestTicket ticket = resolveTicket(context);
-	        ticketService.validate(ticket);
-	    }
+//	    protected void validateForm(final ActionContext context) {
+//	        final PaymentRequestTicket ticket = resolveTicket(context);
+//	        ticketService.validate(ticket);
+//	    }
 
 	    private DataBinder<PaymentRequestTicket> getDataBinder() {
 	        try {
@@ -270,12 +270,12 @@ public class RequestPaymentController extends BaseRestController{
 	        }
 	    }
 
-	    private PaymentRequestTicket resolveTicket(final ActionContext context) {
-	        final RequestPaymentForm form = context.getForm();
-	        final PaymentRequestTicket ticket = getDataBinder().readFromString(form.getTicket());
-	        ticket.setTo((Member) context.getAccountOwner());
-	        ticket.setFromChannel(channelService.loadByInternalName(Channel.WEB));
-	        return ticket;
-	    }
+//	    private PaymentRequestTicket resolveTicket(final ActionContext context) {
+//	        final RequestPaymentForm form = context.getForm();
+//	        final PaymentRequestTicket ticket = getDataBinder().readFromString(form.getTicket());
+//	        ticket.setTo((Member) context.getAccountOwner());
+//	        ticket.setFromChannel(channelService.loadByInternalName(Channel.WEB));
+//	        return ticket;
+//	    }
 
 }

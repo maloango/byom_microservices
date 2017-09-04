@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.groups.groupFilters.EditGroupFilterForm;
+//import nl.strohalm.cyclos.controls.groups.groupFilters.EditGroupFilterForm;
 import nl.strohalm.cyclos.entities.customization.files.CustomizedFileQuery;
 import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.entities.groups.GroupFilter;
@@ -231,10 +231,10 @@ public class EditGroupFilterController extends BaseRestController {
     }
 
     // @Override
-    protected void validateForm(final ActionContext context) {
-        final EditGroupFilterForm form = context.getForm();
-        final GroupFilter groupFilter = getDataBinder().readFromString(form.getGroupFilter());
-        groupFilterService.validate(groupFilter);
-    }
+//    protected void validateForm(final ActionContext context) {
+//        final EditGroupFilterForm form = context.getForm();
+//        final GroupFilter groupFilter = getDataBinder().readFromString(form.getGroupFilter());
+//        groupFilterService.validate(groupFilter);
+//    }
 
 }

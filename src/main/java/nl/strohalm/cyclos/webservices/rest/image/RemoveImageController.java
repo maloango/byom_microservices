@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.BaseAjaxAction.ContentType;
+//import nl.strohalm.cyclos.controls.BaseAjaxAction.ContentType;
 import nl.strohalm.cyclos.entities.ads.Ad;
 import nl.strohalm.cyclos.entities.customization.images.AdImage;
 import nl.strohalm.cyclos.entities.customization.images.Image;
@@ -38,9 +38,9 @@ public class RemoveImageController extends BaseRestController {
     }
 
     //@Override
-    protected ContentType contentType() {
-        return ContentType.TEXT;
-    }
+//    protected ContentType contentType() {
+//        return ContentType.TEXT;
+//    }
     
     public static class RemoveImageRequestDTO{
     	private long              id;

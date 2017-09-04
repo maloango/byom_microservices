@@ -16,7 +16,7 @@ import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.pos.EditPosForm;
+//import nl.strohalm.cyclos.controls.accounts.pos.EditPosForm;
 import nl.strohalm.cyclos.entities.accounts.pos.MemberPos;
 import nl.strohalm.cyclos.entities.accounts.pos.MemberPos.Status;
 import nl.strohalm.cyclos.entities.accounts.pos.Pos;
@@ -528,185 +528,185 @@ public class EditPosController extends BaseRestController {
 		}
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final EditPosForm form = context.getForm();
-		final long id = form.getId();
-		Pos pos;
-		PosEditionPermissions permissions;
-		boolean hasMemberPos = false;
-
-		permissions = checkPermissionsInformation(context);
-
-		final boolean isInsert = id <= 0;
-		if (isInsert) {
-			pos = new Pos();
-			pos.setStatus(Pos.Status.UNASSIGNED);
-		} else {
-			pos = posService.load(id, Relationships.MEMBER_POS);
-			hasMemberPos = pos.getMemberPos() != null;
-			if (hasMemberPos) {
-				request.setAttribute("memberLogin", pos.getMemberPos()
-						.getMember().getUsername());
-				request.setAttribute("userName", pos.getMemberPos().getMember()
-						.getName());
-			}
-		}
-
-		getWriteDataBinder().writeAsString(form.getPos(), pos);
-
-		// Attributes
-		request.setAttribute("pos", pos);
-		request.setAttribute("isInsert", isInsert);
-		request.setAttribute("hasMemberPos", hasMemberPos);
-		request.setAttribute("isRegularUser",
-				!context.isAdmin() && !context.isBroker());
-
-		// Permissions
-		request.setAttribute("canAssign", permissions.isCanAssign());
-		request.setAttribute("canBlock", permissions.isCanBlock());
-		request.setAttribute("canChangeParameters",
-				permissions.isCanChangeParameters());
-		request.setAttribute("canChangePin", permissions.isCanChangePin());
-		request.setAttribute("canDiscard", permissions.isCanDiscard());
-		request.setAttribute("canUnassign", permissions.isCanUnassign());
-		request.setAttribute("canUnblock", permissions.isCanUnblock());
-		request.setAttribute("canUnblockPin", permissions.isCanUnblockPin());
-		request.setAttribute("editable", permissions.isEditable());
-		request.setAttribute("isDiscarded", permissions.isDiscarded());
-		request.setAttribute("memberId", form.getMemberId());
-	}
-
-	protected void validateForm(final ActionContext context) {
-		final EditPosForm form = context.getForm();
-		final Pos pos = getWriteDataBinder().readFromString(form.getPos());
-		posService.validate(pos);
-	}
-
-	private PosEditionPermissions checkPermissionsInformation(
-			final ActionContext context) {
-		final PosEditionPermissions permissions = new PosEditionPermissions();
-		final EditPosForm form = context.getForm();
-		Pos pos;
-		boolean hasMemberPos = false;
-		final long id = form.getId();
-		final boolean isInsert = id <= 0;
-
-		permissions
-				.setEditable(permissionService
-						.hasPermission(AdminMemberPermission.POS_MANAGE)
-						|| permissionService
-								.hasPermission(BrokerPermission.POS_MANAGE));
-		if (isInsert) {
-			if (!context.isBroker() && !context.isAdmin()) {
-				throw new PermissionDeniedException();
-			}
-		} else {
-			pos = posService.load(id, Relationships.MEMBER_POS);
-			hasMemberPos = pos.getMemberPos() != null;
-			Member member = null;
-			if (hasMemberPos) {
-				member = pos.getMemberPos().getMember();
-				if (member.equals(context.getElement())) {
-					permissions.setEditable(true);
-				}
-				if ((!context.isBroker() && !context.isAdmin() && !member
-						.equals(context.getElement()))
-						|| (context.isBroker() && !context.isBrokerOf(member) && !member
-								.equals(context.getElement()))) {
-					throw new PermissionDeniedException();
-				}
-				if (context.isAdmin()) {
-					final AdminGroup group = groupService.load(context
-							.getGroup().getId(),
-							AdminGroup.Relationships.MANAGES_GROUPS);
-					if (!group.getManagesGroups().contains(
-							pos.getMemberPos().getMember().getGroup())) {
-						throw new PermissionDeniedException();
-					}
-				}
-			} else {
-				if (!context.isBroker() && !context.isAdmin()) {
-					throw new PermissionDeniedException();
-				}
-			}
-
-			if (context.isAdmin()
-					|| (context.isBroker() && !hasMemberPos)
-					|| (context.isBroker() && hasMemberPos && !member
-							.equals(context.getElement()))) {
-				final boolean isAdmin = context.isAdmin();
-				switch (pos.getStatus()) {
-				case UNASSIGNED:
-					permissions
-							.setCanAssign(permissionService
-									.hasPermission(isAdmin ? AdminMemberPermission.POS_ASSIGN
-											: BrokerPermission.POS_ASSIGN));
-					break;
-				case ASSIGNED:
-					permissions
-							.setCanUnassign(permissionService
-									.hasPermission(isAdmin ? AdminMemberPermission.POS_ASSIGN
-											: BrokerPermission.POS_ASSIGN));
-					permissions
-							.setCanChangePin(permissionService
-									.hasPermission(isAdmin ? AdminMemberPermission.POS_CHANGE_PIN
-											: BrokerPermission.POS_CHANGE_PIN));
-					if (hasMemberPos) {
-						final Status status = pos.getMemberPos().getStatus();
-						if (status == MemberPos.Status.ACTIVE) {
-							permissions
-									.setCanBlock(permissionService
-											.hasPermission(isAdmin ? AdminMemberPermission.POS_BLOCK
-													: BrokerPermission.POS_BLOCK));
-						}
-						if (status == MemberPos.Status.BLOCKED) {
-							permissions
-									.setCanUnblock(permissionService
-											.hasPermission(isAdmin ? AdminMemberPermission.POS_BLOCK
-													: BrokerPermission.POS_BLOCK));
-						}
-						if (status == MemberPos.Status.PIN_BLOCKED) {
-							permissions
-									.setCanUnblockPin(permissionService
-											.hasPermission(isAdmin ? AdminMemberPermission.POS_UNBLOCK_PIN
-													: BrokerPermission.POS_UNBLOCK_PIN));
-						}
-					}
-					break;
-				case DISCARDED:
-					permissions.setDiscarded(true);
-					break;
-				}
-				if (pos.getStatus() != Pos.Status.DISCARDED) {
-					permissions
-							.setCanDiscard(permissionService
-									.hasPermission(isAdmin ? AdminMemberPermission.POS_DISCARD
-											: BrokerPermission.POS_DISCARD));
-				}
-				permissions
-						.setCanChangeParameters(permissionService
-								.hasPermission(isAdmin ? AdminMemberPermission.POS_CHANGE_PARAMETERS
-										: BrokerPermission.POS_CHANGE_PARAMETERS));
-			} else if (context.isMember() && hasMemberPos
-					&& context.getElement().equals(member)) {
-				permissions.setCanChangeParameters(true);
-
-				final Status status = pos.getMemberPos().getStatus();
-
-				if (status == MemberPos.Status.ACTIVE) {
-					permissions.setCanBlock(true);
-				} else if (status == MemberPos.Status.BLOCKED) {
-					permissions.setCanUnblock(true);
-				} else if (status == MemberPos.Status.PIN_BLOCKED) {
-					permissions.setCanUnblockPin(true);
-				}
-				if (pos.getStatus().equals(Pos.Status.ASSIGNED)) {
-					permissions.setCanChangePin(true);
-				}
-			}
-		}
-
-		return permissions;
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final EditPosForm form = context.getForm();
+//		final long id = form.getId();
+//		Pos pos;
+//		PosEditionPermissions permissions;
+//		boolean hasMemberPos = false;
+//
+//		permissions = checkPermissionsInformation(context);
+//
+//		final boolean isInsert = id <= 0;
+//		if (isInsert) {
+//			pos = new Pos();
+//			pos.setStatus(Pos.Status.UNASSIGNED);
+//		} else {
+//			pos = posService.load(id, Relationships.MEMBER_POS);
+//			hasMemberPos = pos.getMemberPos() != null;
+//			if (hasMemberPos) {
+//				request.setAttribute("memberLogin", pos.getMemberPos()
+//						.getMember().getUsername());
+//				request.setAttribute("userName", pos.getMemberPos().getMember()
+//						.getName());
+//			}
+//		}
+//
+//		getWriteDataBinder().writeAsString(form.getPos(), pos);
+//
+//		// Attributes
+//		request.setAttribute("pos", pos);
+//		request.setAttribute("isInsert", isInsert);
+//		request.setAttribute("hasMemberPos", hasMemberPos);
+//		request.setAttribute("isRegularUser",
+//				!context.isAdmin() && !context.isBroker());
+//
+//		// Permissions
+//		request.setAttribute("canAssign", permissions.isCanAssign());
+//		request.setAttribute("canBlock", permissions.isCanBlock());
+//		request.setAttribute("canChangeParameters",
+//				permissions.isCanChangeParameters());
+//		request.setAttribute("canChangePin", permissions.isCanChangePin());
+//		request.setAttribute("canDiscard", permissions.isCanDiscard());
+//		request.setAttribute("canUnassign", permissions.isCanUnassign());
+//		request.setAttribute("canUnblock", permissions.isCanUnblock());
+//		request.setAttribute("canUnblockPin", permissions.isCanUnblockPin());
+//		request.setAttribute("editable", permissions.isEditable());
+//		request.setAttribute("isDiscarded", permissions.isDiscarded());
+//		request.setAttribute("memberId", form.getMemberId());
+//	}
+//
+//	protected void validateForm(final ActionContext context) {
+//		final EditPosForm form = context.getForm();
+//		final Pos pos = getWriteDataBinder().readFromString(form.getPos());
+//		posService.validate(pos);
+//	}
+//
+//	private PosEditionPermissions checkPermissionsInformation(
+//			final ActionContext context) {
+//		final PosEditionPermissions permissions = new PosEditionPermissions();
+//		final EditPosForm form = context.getForm();
+//		Pos pos;
+//		boolean hasMemberPos = false;
+//		final long id = form.getId();
+//		final boolean isInsert = id <= 0;
+//
+//		permissions
+//				.setEditable(permissionService
+//						.hasPermission(AdminMemberPermission.POS_MANAGE)
+//						|| permissionService
+//								.hasPermission(BrokerPermission.POS_MANAGE));
+//		if (isInsert) {
+//			if (!context.isBroker() && !context.isAdmin()) {
+//				throw new PermissionDeniedException();
+//			}
+//		} else {
+//			pos = posService.load(id, Relationships.MEMBER_POS);
+//			hasMemberPos = pos.getMemberPos() != null;
+//			Member member = null;
+//			if (hasMemberPos) {
+//				member = pos.getMemberPos().getMember();
+//				if (member.equals(context.getElement())) {
+//					permissions.setEditable(true);
+//				}
+//				if ((!context.isBroker() && !context.isAdmin() && !member
+//						.equals(context.getElement()))
+//						|| (context.isBroker() && !context.isBrokerOf(member) && !member
+//								.equals(context.getElement()))) {
+//					throw new PermissionDeniedException();
+//				}
+//				if (context.isAdmin()) {
+//					final AdminGroup group = groupService.load(context
+//							.getGroup().getId(),
+//							AdminGroup.Relationships.MANAGES_GROUPS);
+//					if (!group.getManagesGroups().contains(
+//							pos.getMemberPos().getMember().getGroup())) {
+//						throw new PermissionDeniedException();
+//					}
+//				}
+//			} else {
+//				if (!context.isBroker() && !context.isAdmin()) {
+//					throw new PermissionDeniedException();
+//				}
+//			}
+//
+//			if (context.isAdmin()
+//					|| (context.isBroker() && !hasMemberPos)
+//					|| (context.isBroker() && hasMemberPos && !member
+//							.equals(context.getElement()))) {
+//				final boolean isAdmin = context.isAdmin();
+//				switch (pos.getStatus()) {
+//				case UNASSIGNED:
+//					permissions
+//							.setCanAssign(permissionService
+//									.hasPermission(isAdmin ? AdminMemberPermission.POS_ASSIGN
+//											: BrokerPermission.POS_ASSIGN));
+//					break;
+//				case ASSIGNED:
+//					permissions
+//							.setCanUnassign(permissionService
+//									.hasPermission(isAdmin ? AdminMemberPermission.POS_ASSIGN
+//											: BrokerPermission.POS_ASSIGN));
+//					permissions
+//							.setCanChangePin(permissionService
+//									.hasPermission(isAdmin ? AdminMemberPermission.POS_CHANGE_PIN
+//											: BrokerPermission.POS_CHANGE_PIN));
+//					if (hasMemberPos) {
+//						final Status status = pos.getMemberPos().getStatus();
+//						if (status == MemberPos.Status.ACTIVE) {
+//							permissions
+//									.setCanBlock(permissionService
+//											.hasPermission(isAdmin ? AdminMemberPermission.POS_BLOCK
+//													: BrokerPermission.POS_BLOCK));
+//						}
+//						if (status == MemberPos.Status.BLOCKED) {
+//							permissions
+//									.setCanUnblock(permissionService
+//											.hasPermission(isAdmin ? AdminMemberPermission.POS_BLOCK
+//													: BrokerPermission.POS_BLOCK));
+//						}
+//						if (status == MemberPos.Status.PIN_BLOCKED) {
+//							permissions
+//									.setCanUnblockPin(permissionService
+//											.hasPermission(isAdmin ? AdminMemberPermission.POS_UNBLOCK_PIN
+//													: BrokerPermission.POS_UNBLOCK_PIN));
+//						}
+//					}
+//					break;
+//				case DISCARDED:
+//					permissions.setDiscarded(true);
+//					break;
+//				}
+//				if (pos.getStatus() != Pos.Status.DISCARDED) {
+//					permissions
+//							.setCanDiscard(permissionService
+//									.hasPermission(isAdmin ? AdminMemberPermission.POS_DISCARD
+//											: BrokerPermission.POS_DISCARD));
+//				}
+//				permissions
+//						.setCanChangeParameters(permissionService
+//								.hasPermission(isAdmin ? AdminMemberPermission.POS_CHANGE_PARAMETERS
+//										: BrokerPermission.POS_CHANGE_PARAMETERS));
+//			} else if (context.isMember() && hasMemberPos
+//					&& context.getElement().equals(member)) {
+//				permissions.setCanChangeParameters(true);
+//
+//				final Status status = pos.getMemberPos().getStatus();
+//
+//				if (status == MemberPos.Status.ACTIVE) {
+//					permissions.setCanBlock(true);
+//				} else if (status == MemberPos.Status.BLOCKED) {
+//					permissions.setCanUnblock(true);
+//				} else if (status == MemberPos.Status.PIN_BLOCKED) {
+//					permissions.setCanUnblockPin(true);
+//				}
+//				if (pos.getStatus().equals(Pos.Status.ASSIGNED)) {
+//					permissions.setCanChangePin(true);
+//				}
+//			}
+//		}
+//
+//		return permissions;
+//	}
 }

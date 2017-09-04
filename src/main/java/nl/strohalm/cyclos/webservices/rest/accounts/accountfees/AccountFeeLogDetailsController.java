@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.accountfees.AccountFeeLogDetailsForm;
+//import nl.strohalm.cyclos.controls.accounts.accountfees.AccountFeeLogDetailsForm;
 import nl.strohalm.cyclos.entities.accounts.fees.account.AccountFee;
 import nl.strohalm.cyclos.entities.accounts.fees.account.AccountFee.InvoiceMode;
 import nl.strohalm.cyclos.entities.accounts.fees.account.AccountFeeLog;
@@ -95,65 +95,65 @@ public class AccountFeeLogDetailsController extends BaseRestController {
 		return response;
 	}
 
-	protected QueryParameters prepareForm(final ActionContext context) {
-		final HttpServletRequest request = context.getRequest();
-		final AccountFeeLogDetailsForm form = context.getForm();
-		final Long accountFeeLogId = form.getAccountFeeLogId();
-
-		// Get the details
-		final AccountFeeLogDetailsDTO details = accountFeeService
-				.getLogDetails(accountFeeLogId);
-		final AccountFeeLog log = details.getAccountFeeLog();
-		final AccountFee fee = log.getAccountFee();
-		final boolean invoiceAlways = fee.getInvoiceMode() == InvoiceMode.ALWAYS;
-		final boolean invoiceNever = fee.getInvoiceMode() == InvoiceMode.NEVER;
-
-		// Prepare the query
-		final MemberAccountFeeLogQuery query = getDataBinder().readFromString(
-				form.getQuery());
-		query.setAccountFeeLog(log);
-		if (query.getStatus() == null) {
-			query.setStatus(log.getFailedMembers() == 0 ? MemberAccountFeeLogQuery.Status.PROCESSED
-					: MemberAccountFeeLogQuery.Status.ERROR);
-			form.setQuery("status", query.getStatus().name());
-		}
-		if (query.getMember() != null) {
-			query.setMember((Member) elementService.load(query.getMember()
-					.getId()));
-		}
-
-		// Get the possible statuses for search
-		final Set<MemberAccountFeeLogQuery.Status> statuses = EnumSet
-				.allOf(MemberAccountFeeLogQuery.Status.class);
-		if (invoiceAlways) {
-			statuses.remove(MemberAccountFeeLogQuery.Status.TRANSFER);
-		} else if (invoiceNever) {
-			statuses.remove(MemberAccountFeeLogQuery.Status.INVOICE);
-			statuses.remove(MemberAccountFeeLogQuery.Status.ACCEPTED_INVOICE);
-			statuses.remove(MemberAccountFeeLogQuery.Status.OPEN_INVOICE);
-		}
-
-		// Get the possible groups
-		final List<MemberGroup> groups = new ArrayList<MemberGroup>(
-				permissionService.getManagedMemberGroups());
-		Collections.sort(groups);
-
-		final boolean isRunning = log.getFinishDate() == null
-				|| log.isRechargingFailed();
-
-		// Store the request attributes
-		request.setAttribute("details", details);
-		request.setAttribute("log", log);
-		request.setAttribute("fee", fee);
-		request.setAttribute("currencyPattern", fee.getAccountType()
-				.getCurrency().getPattern());
-		request.setAttribute("invoiceAlways", invoiceAlways);
-		request.setAttribute("invoiceNever", invoiceNever);
-		request.setAttribute("statuses", statuses);
-		request.setAttribute("groups", groups);
-		request.setAttribute("isRunning", isRunning);
-		return query;
-	}
+//	protected QueryParameters prepareForm(final ActionContext context) {
+//		final HttpServletRequest request = context.getRequest();
+//		final AccountFeeLogDetailsForm form = context.getForm();
+//		final Long accountFeeLogId = form.getAccountFeeLogId();
+//
+//		// Get the details
+//		final AccountFeeLogDetailsDTO details = accountFeeService
+//				.getLogDetails(accountFeeLogId);
+//		final AccountFeeLog log = details.getAccountFeeLog();
+//		final AccountFee fee = log.getAccountFee();
+//		final boolean invoiceAlways = fee.getInvoiceMode() == InvoiceMode.ALWAYS;
+//		final boolean invoiceNever = fee.getInvoiceMode() == InvoiceMode.NEVER;
+//
+//		// Prepare the query
+//		final MemberAccountFeeLogQuery query = getDataBinder().readFromString(
+//				form.getQuery());
+//		query.setAccountFeeLog(log);
+//		if (query.getStatus() == null) {
+//			query.setStatus(log.getFailedMembers() == 0 ? MemberAccountFeeLogQuery.Status.PROCESSED
+//					: MemberAccountFeeLogQuery.Status.ERROR);
+//			form.setQuery("status", query.getStatus().name());
+//		}
+//		if (query.getMember() != null) {
+//			query.setMember((Member) elementService.load(query.getMember()
+//					.getId()));
+//		}
+//
+//		// Get the possible statuses for search
+//		final Set<MemberAccountFeeLogQuery.Status> statuses = EnumSet
+//				.allOf(MemberAccountFeeLogQuery.Status.class);
+//		if (invoiceAlways) {
+//			statuses.remove(MemberAccountFeeLogQuery.Status.TRANSFER);
+//		} else if (invoiceNever) {
+//			statuses.remove(MemberAccountFeeLogQuery.Status.INVOICE);
+//			statuses.remove(MemberAccountFeeLogQuery.Status.ACCEPTED_INVOICE);
+//			statuses.remove(MemberAccountFeeLogQuery.Status.OPEN_INVOICE);
+//		}
+//
+//		// Get the possible groups
+//		final List<MemberGroup> groups = new ArrayList<MemberGroup>(
+//				permissionService.getManagedMemberGroups());
+//		Collections.sort(groups);
+//
+//		final boolean isRunning = log.getFinishDate() == null
+//				|| log.isRechargingFailed();
+//
+//		// Store the request attributes
+//		request.setAttribute("details", details);
+//		request.setAttribute("log", log);
+//		request.setAttribute("fee", fee);
+//		request.setAttribute("currencyPattern", fee.getAccountType()
+//				.getCurrency().getPattern());
+//		request.setAttribute("invoiceAlways", invoiceAlways);
+//		request.setAttribute("invoiceNever", invoiceNever);
+//		request.setAttribute("statuses", statuses);
+//		request.setAttribute("groups", groups);
+//		request.setAttribute("isRunning", isRunning);
+//		return query;
+//	}
 
 	protected boolean willExecuteQuery(final ActionContext context,
 			final QueryParameters queryParameters) throws Exception {

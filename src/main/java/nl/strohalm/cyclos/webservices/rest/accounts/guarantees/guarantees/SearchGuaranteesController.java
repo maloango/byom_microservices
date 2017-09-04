@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.guarantees.guarantees.SearchGuaranteesForm;
+//import nl.strohalm.cyclos.controls.accounts.guarantees.guarantees.SearchGuaranteesForm;
 import nl.strohalm.cyclos.entities.accounts.guarantees.Guarantee;
 import nl.strohalm.cyclos.entities.accounts.guarantees.GuaranteeQuery;
 import nl.strohalm.cyclos.entities.accounts.guarantees.GuaranteeType;
@@ -180,110 +180,110 @@ public class SearchGuaranteesController {
 	}
 
 	
-	protected QueryParameters prepareForm(final ActionContext context) {
-		final HttpServletRequest request = context.getRequest();
-		final SearchGuaranteesForm form = context.getForm();
-		final GuaranteeQuery query = getGuaranteeDataBinder().readFromString(
-				form.getQuery());
-
-		final boolean isIssuer = (Boolean) context.getSession().getAttribute(
-				"isIssuer");
-		final boolean isBuyer = (Boolean) context.getSession().getAttribute(
-				"isBuyer");
-		final boolean isSeller = (Boolean) context.getSession().getAttribute(
-				"isSeller");
-		final boolean hasViewPermission = permissionService
-				.hasPermission(AdminMemberPermission.GUARANTEES_VIEW_GUARANTEES);
-
-		final boolean hasNoRole = !isIssuer && !isSeller && !isBuyer
-				&& !hasViewPermission;
-		final boolean showIssuer = isSeller || isBuyer || hasViewPermission
-				|| hasNoRole;
-		final boolean showBuyer = isSeller || isIssuer || hasViewPermission;
-		final boolean showSeller = isBuyer || isIssuer || hasViewPermission;
-		final boolean showGuaranteeType = isIssuer || hasViewPermission;
-
-		request.setAttribute("hasNoRole", hasNoRole);
-		request.setAttribute("showIssuer", showIssuer);
-		request.setAttribute("showBuyer", showBuyer);
-		request.setAttribute("showSeller", showSeller);
-		request.setAttribute("showGuaranteeType", showGuaranteeType);
-
-		request.setAttribute(
-				"issuerGroupsId",
-				showIssuer ? EntityHelper.toIdsAsString(guaranteeService
-						.getIssuers()) : "[]");
-		request.setAttribute(
-				"buyerGroupsId",
-				showBuyer ? EntityHelper.toIdsAsString(guaranteeService
-						.getBuyers()) : "[]");
-		request.setAttribute(
-				"sellerGroupsId",
-				showSeller ? EntityHelper.toIdsAsString(guaranteeService
-						.getSellers()) : "[]");
-		request.setAttribute("hasViewPermission", hasViewPermission);
-
-		// we need to load the filtered member to show the user login and name
-		// in the text fields
-		query.setIssuer(ensureFilter(query.getIssuer()));
-		query.setBuyer(ensureFilter(query.getBuyer()));
-		query.setSeller(ensureFilter(query.getSeller()));
-		query.setMember(ensureFilter(query.getMember()));
-
-		Collection<GuaranteeType> guaranteeTypes;
-		final Group group = groupService.load(context.getGroup().getId(),
-				Group.Relationships.GUARANTEE_TYPES);
-		if (context.isAdmin()) {
-			request.setAttribute("guaranteeTypesToRegister",
-					group.getEnabledGuaranteeTypes());
-			guaranteeTypes = guaranteeTypeService
-					.search(new GuaranteeTypeQuery());
-		} else {
-			guaranteeTypes = group.getGuaranteeTypes();
-		}
-
-		request.setAttribute("guaranteeTypes", guaranteeTypes);
-		final Collection<GuaranteeType> guaranteeTypesWithBuyerOnly = filterWithBuyerOnly(guaranteeTypes);
-		request.setAttribute("guaranteeTypeIdsWithBuyerOnly",
-				EntityHelper.toIdsAsString(guaranteeTypesWithBuyerOnly));
-
-		RequestHelper.storeEnum(request, Guarantee.Status.class,
-				"guaranteeStatuses");
-
-		if (RequestHelper.isFromMenu(request)) { // reset the flag
-			context.getSession().setAttribute("executeGuaranteesQuery", false);
-		}
-
-		// Get the custom fields for search
-		Collection<PaymentCustomField> customFields;
-		if (query.getGuaranteeType() != null) {
-			final GuaranteeType guaranteeType = guaranteeTypeService.load(query
-					.getGuaranteeType().getId());
-			customFields = paymentCustomFieldService.list(
-					guaranteeType.getLoanTransferType(), true);
-		} else {
-			customFields = new LinkedHashSet<PaymentCustomField>();
-			for (final GuaranteeType guaranteeType : guaranteeTypes) {
-				customFields.addAll(paymentCustomFieldService.list(
-						guaranteeType.getLoanTransferType(), true));
-			}
-		}
-		for (final Iterator<PaymentCustomField> iterator = customFields
-				.iterator(); iterator.hasNext();) {
-			final Access searchAccess = iterator.next().getSearchAccess();
-			if (searchAccess == null
-					|| searchAccess == PaymentCustomField.Access.NONE) {
-				// Not for search. Remove from list
-				iterator.remove();
-			}
-		}
-		request.setAttribute(
-				"customFields",
-				customFieldHelper.buildEntries(customFields,
-						query.getCustomValues()));
-
-		return query;
-	}
+//	protected QueryParameters prepareForm(final ActionContext context) {
+//		final HttpServletRequest request = context.getRequest();
+//		final SearchGuaranteesForm form = context.getForm();
+//		final GuaranteeQuery query = getGuaranteeDataBinder().readFromString(
+//				form.getQuery());
+//
+//		final boolean isIssuer = (Boolean) context.getSession().getAttribute(
+//				"isIssuer");
+//		final boolean isBuyer = (Boolean) context.getSession().getAttribute(
+//				"isBuyer");
+//		final boolean isSeller = (Boolean) context.getSession().getAttribute(
+//				"isSeller");
+//		final boolean hasViewPermission = permissionService
+//				.hasPermission(AdminMemberPermission.GUARANTEES_VIEW_GUARANTEES);
+//
+//		final boolean hasNoRole = !isIssuer && !isSeller && !isBuyer
+//				&& !hasViewPermission;
+//		final boolean showIssuer = isSeller || isBuyer || hasViewPermission
+//				|| hasNoRole;
+//		final boolean showBuyer = isSeller || isIssuer || hasViewPermission;
+//		final boolean showSeller = isBuyer || isIssuer || hasViewPermission;
+//		final boolean showGuaranteeType = isIssuer || hasViewPermission;
+//
+//		request.setAttribute("hasNoRole", hasNoRole);
+//		request.setAttribute("showIssuer", showIssuer);
+//		request.setAttribute("showBuyer", showBuyer);
+//		request.setAttribute("showSeller", showSeller);
+//		request.setAttribute("showGuaranteeType", showGuaranteeType);
+//
+//		request.setAttribute(
+//				"issuerGroupsId",
+//				showIssuer ? EntityHelper.toIdsAsString(guaranteeService
+//						.getIssuers()) : "[]");
+//		request.setAttribute(
+//				"buyerGroupsId",
+//				showBuyer ? EntityHelper.toIdsAsString(guaranteeService
+//						.getBuyers()) : "[]");
+//		request.setAttribute(
+//				"sellerGroupsId",
+//				showSeller ? EntityHelper.toIdsAsString(guaranteeService
+//						.getSellers()) : "[]");
+//		request.setAttribute("hasViewPermission", hasViewPermission);
+//
+//		// we need to load the filtered member to show the user login and name
+//		// in the text fields
+//		query.setIssuer(ensureFilter(query.getIssuer()));
+//		query.setBuyer(ensureFilter(query.getBuyer()));
+//		query.setSeller(ensureFilter(query.getSeller()));
+//		query.setMember(ensureFilter(query.getMember()));
+//
+//		Collection<GuaranteeType> guaranteeTypes;
+//		final Group group = groupService.load(context.getGroup().getId(),
+//				Group.Relationships.GUARANTEE_TYPES);
+//		if (context.isAdmin()) {
+//			request.setAttribute("guaranteeTypesToRegister",
+//					group.getEnabledGuaranteeTypes());
+//			guaranteeTypes = guaranteeTypeService
+//					.search(new GuaranteeTypeQuery());
+//		} else {
+//			guaranteeTypes = group.getGuaranteeTypes();
+//		}
+//
+//		request.setAttribute("guaranteeTypes", guaranteeTypes);
+//		final Collection<GuaranteeType> guaranteeTypesWithBuyerOnly = filterWithBuyerOnly(guaranteeTypes);
+//		request.setAttribute("guaranteeTypeIdsWithBuyerOnly",
+//				EntityHelper.toIdsAsString(guaranteeTypesWithBuyerOnly));
+//
+//		RequestHelper.storeEnum(request, Guarantee.Status.class,
+//				"guaranteeStatuses");
+//
+//		if (RequestHelper.isFromMenu(request)) { // reset the flag
+//			context.getSession().setAttribute("executeGuaranteesQuery", false);
+//		}
+//
+//		// Get the custom fields for search
+//		Collection<PaymentCustomField> customFields;
+//		if (query.getGuaranteeType() != null) {
+//			final GuaranteeType guaranteeType = guaranteeTypeService.load(query
+//					.getGuaranteeType().getId());
+//			customFields = paymentCustomFieldService.list(
+//					guaranteeType.getLoanTransferType(), true);
+//		} else {
+//			customFields = new LinkedHashSet<PaymentCustomField>();
+//			for (final GuaranteeType guaranteeType : guaranteeTypes) {
+//				customFields.addAll(paymentCustomFieldService.list(
+//						guaranteeType.getLoanTransferType(), true));
+//			}
+//		}
+//		for (final Iterator<PaymentCustomField> iterator = customFields
+//				.iterator(); iterator.hasNext();) {
+//			final Access searchAccess = iterator.next().getSearchAccess();
+//			if (searchAccess == null
+//					|| searchAccess == PaymentCustomField.Access.NONE) {
+//				// Not for search. Remove from list
+//				iterator.remove();
+//			}
+//		}
+//		request.setAttribute(
+//				"customFields",
+//				customFieldHelper.buildEntries(customFields,
+//						query.getCustomValues()));
+//
+//		return query;
+//	}
 
 
 	private Member ensureFilter(final Member filter) {

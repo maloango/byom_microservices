@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.accountfees.EditAccountFeeForm;
+//import nl.strohalm.cyclos.controls.accounts.accountfees.EditAccountFeeForm;
 import nl.strohalm.cyclos.entities.accounts.MemberAccountType;
 import nl.strohalm.cyclos.entities.accounts.fees.account.AccountFee;
 import nl.strohalm.cyclos.entities.accounts.fees.account.AccountFee.ChargeMode;
@@ -336,74 +336,138 @@ public class EditAccountFeeController extends BaseRestController {
 		return response;
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final EditAccountFeeForm form = context.getForm();
-		final long accountTypeId = form.getAccountTypeId();
-		MemberAccountType accountType;
-		try {
-			accountType = (MemberAccountType) accountTypeService
-					.load(accountTypeId);
-		} catch (final Exception e) {
-			throw new ValidationException();
-		}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final EditAccountFeeForm form = context.getForm();
+//		final long accountTypeId = form.getAccountTypeId();
+//		MemberAccountType accountType;
+//		try {
+//			accountType = (MemberAccountType) accountTypeService
+//					.load(accountTypeId);
+//		} catch (final Exception e) {
+//			throw new ValidationException();
+//		}
+//
+//		final long id = form.getAccountFeeId();
+//		final boolean isInsert = id <= 0L;
+//		AccountFee accountFee;
+//		boolean alreadyRan;
+//		if (isInsert) {
+//			accountFee = new AccountFee();
+//			alreadyRan = false;
+//		} else {
+//			accountFee = accountFeeService.load(id,
+//					AccountFee.Relationships.GROUPS,
+//					AccountFee.Relationships.TRANSFER_TYPE);
+//
+//			final List<TransferType> transferTypes = transferTypeService
+//					.getPosibleTTsForAccountFee(accountType,
+//							accountFee.getPaymentDirection());
+//			request.setAttribute("transferTypes", transferTypes);
+//
+//			final AccountFeeLogQuery query = new AccountFeeLogQuery();
+//			query.setPageForCount();
+//			query.setAccountFee(accountFee);
+//			alreadyRan = PageHelper.hasResults(accountFeeService
+//					.searchLogs(query));
+//		}
+//
+//		getDataBinder().writeAsString(form.getAccountFee(), accountFee);
+//
+//		final GroupQuery groupQuery = new GroupQuery();
+//		groupQuery.setNatures(Group.Nature.MEMBER, Group.Nature.BROKER);
+//		groupQuery.setStatus(Group.Status.NORMAL);
+//		groupQuery.setMemberAccountType(accountType);
+//		final List<? extends MemberGroup> groups = (List<? extends MemberGroup>) groupService
+//				.search(groupQuery);
+//
+//		request.setAttribute("accountFee", accountFee);
+//		request.setAttribute("isInsert", isInsert);
+//		request.setAttribute("alreadyRan", alreadyRan);
+//		request.setAttribute("accountType", accountType);
+//		request.setAttribute("groups", groups);
+//		request.setAttribute("recurrenceFields", Arrays.asList(
+//				TimePeriod.Field.MONTHS, TimePeriod.Field.WEEKS,
+//				TimePeriod.Field.DAYS));
+//		RequestHelper.storeEnum(request, AccountFee.ChargeMode.class,
+//				"chargeModes");
+//		RequestHelper.storeEnum(request, AccountFee.PaymentDirection.class,
+//				"paymentDirections");
+//		RequestHelper.storeEnum(request, AccountFee.RunMode.class, "runModes");
+//		RequestHelper.storeEnum(request, AccountFee.InvoiceMode.class,
+//				"invoiceModes");
+//		RequestHelper.storeEnum(request, WeekDay.class, "weekDays");
+//	}
 
-		final long id = form.getAccountFeeId();
-		final boolean isInsert = id <= 0L;
-		AccountFee accountFee;
-		boolean alreadyRan;
-		if (isInsert) {
-			accountFee = new AccountFee();
-			alreadyRan = false;
-		} else {
-			accountFee = accountFeeService.load(id,
-					AccountFee.Relationships.GROUPS,
-					AccountFee.Relationships.TRANSFER_TYPE);
-
-			final List<TransferType> transferTypes = transferTypeService
-					.getPosibleTTsForAccountFee(accountType,
-							accountFee.getPaymentDirection());
-			request.setAttribute("transferTypes", transferTypes);
-
-			final AccountFeeLogQuery query = new AccountFeeLogQuery();
-			query.setPageForCount();
-			query.setAccountFee(accountFee);
-			alreadyRan = PageHelper.hasResults(accountFeeService
-					.searchLogs(query));
-		}
-
-		getDataBinder().writeAsString(form.getAccountFee(), accountFee);
-
-		final GroupQuery groupQuery = new GroupQuery();
-		groupQuery.setNatures(Group.Nature.MEMBER, Group.Nature.BROKER);
-		groupQuery.setStatus(Group.Status.NORMAL);
-		groupQuery.setMemberAccountType(accountType);
-		final List<? extends MemberGroup> groups = (List<? extends MemberGroup>) groupService
-				.search(groupQuery);
-
-		request.setAttribute("accountFee", accountFee);
-		request.setAttribute("isInsert", isInsert);
-		request.setAttribute("alreadyRan", alreadyRan);
-		request.setAttribute("accountType", accountType);
-		request.setAttribute("groups", groups);
-		request.setAttribute("recurrenceFields", Arrays.asList(
-				TimePeriod.Field.MONTHS, TimePeriod.Field.WEEKS,
-				TimePeriod.Field.DAYS));
-		RequestHelper.storeEnum(request, AccountFee.ChargeMode.class,
-				"chargeModes");
-		RequestHelper.storeEnum(request, AccountFee.PaymentDirection.class,
-				"paymentDirections");
-		RequestHelper.storeEnum(request, AccountFee.RunMode.class, "runModes");
-		RequestHelper.storeEnum(request, AccountFee.InvoiceMode.class,
-				"invoiceModes");
-		RequestHelper.storeEnum(request, WeekDay.class, "weekDays");
-	}
-
-	protected void validateForm(final ActionContext context) {
-		final EditAccountFeeForm form = context.getForm();
-		final AccountFee accountFee = getDataBinder().readFromString(
-				form.getAccountFee());
-		accountFeeService.validate(accountFee);
-	}
+//	protected void validateForm(final ActionContext context) {
+//		final EditAccountFeeForm form = context.getForm();
+//		final Acprotected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final EditAccountFeeForm form = context.getForm();
+//		final long accountTypeId = form.getAccountTypeId();
+//		MemberAccountType accountType;
+//		try {
+//			accountType = (MemberAccountType) accountTypeService
+//					.load(accountTypeId);
+//		} catch (final Exception e) {
+//			throw new ValidationException();
+//		}
+//
+//		final long id = form.getAccountFeeId();
+//		final boolean isInsert = id <= 0L;
+//		AccountFee accountFee;
+//		boolean alreadyRan;
+//		if (isInsert) {
+//			accountFee = new AccountFee();
+//			alreadyRan = false;
+//		} else {
+//			accountFee = accountFeeService.load(id,
+//					AccountFee.Relationships.GROUPS,
+//					AccountFee.Relationships.TRANSFER_TYPE);
+//
+//			final List<TransferType> transferTypes = transferTypeService
+//					.getPosibleTTsForAccountFee(accountType,
+//							accountFee.getPaymentDirection());
+//			request.setAttribute("transferTypes", transferTypes);
+//
+//			final AccountFeeLogQuery query = new AccountFeeLogQuery();
+//			query.setPageForCount();
+//			query.setAccountFee(accountFee);
+//			alreadyRan = PageHelper.hasResults(accountFeeService
+//					.searchLogs(query));
+//		}
+//
+//		getDataBinder().writeAsString(form.getAccountFee(), accountFee);
+//
+//		final GroupQuery groupQuery = new GroupQuery();
+//		groupQuery.setNatures(Group.Nature.MEMBER, Group.Nature.BROKER);
+//		groupQuery.setStatus(Group.Status.NORMAL);
+//		groupQuery.setMemberAccountType(accountType);
+//		final List<? extends MemberGroup> groups = (List<? extends MemberGroup>) groupService
+//				.search(groupQuery);
+//
+//		request.setAttribute("accountFee", accountFee);
+//		request.setAttribute("isInsert", isInsert);
+//		request.setAttribute("alreadyRan", alreadyRan);
+//		request.setAttribute("accountType", accountType);
+//		request.setAttribute("groups", groups);
+//		request.setAttribute("recurrenceFields", Arrays.asList(
+//				TimePeriod.Field.MONTHS, TimePeriod.Field.WEEKS,
+//				TimePeriod.Field.DAYS));
+//		RequestHelper.storeEnum(request, AccountFee.ChargeMode.class,
+//				"chargeModes");
+//		RequestHelper.storeEnum(request, AccountFee.PaymentDirection.class,
+//				"paymentDirections");
+//		RequestHelper.storeEnum(request, AccountFee.RunMode.class, "runModes");
+//		RequestHelper.storeEnum(request, AccountFee.InvoiceMode.class,
+//				"invoiceModes");
+//		RequestHelper.storeEnum(request, WeekDay.class, "weekDays");
+//	}
+//
+//	protected void validateForm(final ActionContext context) {
+//		final EditAccountFee accountFee = getDataBinder().readFromString(
+//				form.getAccountFee());
+//		accountFeeService.validate(accountFee);
+//	}
 
 }

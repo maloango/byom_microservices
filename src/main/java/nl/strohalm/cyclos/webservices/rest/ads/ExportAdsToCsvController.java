@@ -18,7 +18,7 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.AbstractActionContext;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.controls.BaseQueryForm;
-import nl.strohalm.cyclos.controls.ads.SearchAdsAction;
+//import nl.strohalm.cyclos.controls.ads.SearchAdsAction;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.ads.Ad;
 import nl.strohalm.cyclos.entities.ads.Ad.TradeType;
@@ -93,12 +93,12 @@ public class ExportAdsToCsvController extends BaseRestController{
 	        return adService;
 	    }
 
-	    public DataBinder<FullTextAdQuery> getDataBinder() {
-	        if (dataBinder == null) {
-	            dataBinder = SearchAdsAction.adFullTextQueryDataBinder(settingsService.getLocalSettings());
-	        }
-	        return dataBinder;
-	    }
+//	    public DataBinder<FullTextAdQuery> getDataBinder() {
+//	        if (dataBinder == null) {
+//	            dataBinder = SearchAdsAction.adFullTextQueryDataBinder(settingsService.getLocalSettings());
+//	        }
+//	        return dataBinder;
+//	    }
 
 	    //@Override
 	    public void onLocalSettingsUpdate(final LocalSettingsEvent event) {
@@ -249,16 +249,16 @@ public class ExportAdsToCsvController extends BaseRestController{
 
 	    @RequestMapping(value = "admin/exportAdsToCsv",method = RequestMethod.GET)
 	    @ResponseBody
-	    protected ExportAdsToCsvResponseDTO executeQuery(@RequestBody ExportAdsToCsvRequestDTO context) {
-	        
-	        form = null;
-			final FullTextAdQuery query = getDataBinder().readFromString(form.getQuery());
-	        query.setResultType(ResultType.ITERATOR);
-	        query.fetch(RelationshipHelper.nested(Ad.Relationships.CATEGORY, RelationshipHelper.nested(AdCategory.MAX_LEVEL, AdCategory.Relationships.PARENT)), Ad.Relationships.CURRENCY, Ad.Relationships.CUSTOM_VALUES, RelationshipHelper.nested(Ad.Relationships.OWNER, Element.Relationships.USER));
-	        return (ExportAdsToCsvResponseDTO) adService.fullTextSearch(query);
-	        
-	        
-	    }
+//	    protected ExportAdsToCsvResponseDTO executeQuery(@RequestBody ExportAdsToCsvRequestDTO context) {
+//	        
+//	        form = null;
+//			final FullTextAdQuery query = getDataBinder().readFromString(form.getQuery());
+//	        query.setResultType(ResultType.ITERATOR);
+//	        query.fetch(RelationshipHelper.nested(Ad.Relationships.CATEGORY, RelationshipHelper.nested(AdCategory.MAX_LEVEL, AdCategory.Relationships.PARENT)), Ad.Relationships.CURRENCY, Ad.Relationships.CUSTOM_VALUES, RelationshipHelper.nested(Ad.Relationships.OWNER, Element.Relationships.USER));
+//	        return (ExportAdsToCsvResponseDTO) adService.fullTextSearch(query);
+//	        
+//	        
+//	    }
 
 	   // @Override
 	    protected String fileName(final ActionContext context) {

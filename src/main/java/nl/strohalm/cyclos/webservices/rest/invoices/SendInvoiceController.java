@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.invoices.SendInvoiceForm;
-import nl.strohalm.cyclos.controls.payments.SchedulingType;
+//import nl.strohalm.cyclos.controls.invoices.SendInvoiceForm;
+//import nl.strohalm.cyclos.controls.payments.SchedulingType;
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.access.MemberUser;
 import nl.strohalm.cyclos.entities.access.OperatorUser;
@@ -180,143 +180,143 @@ public class SendInvoiceController extends BaseRestController {
 		this.transferTypeService = transferTypeService;
 	}
 
-	protected ActionForward handleDisplay(final ActionContext context)
-			throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final SendInvoiceForm form = context.getForm();
-		final boolean toSystem = form.isToSystem();
-		final boolean selectMember = form.isSelectMember();
-
-		AccountOwner to;
-		final Member fromMember = (form.getFrom() == null) ? null
-				: (Member) elementService.load(Long.valueOf(form.getFrom()));
-		final Element loggedElement = context.getElement();
-		if (toSystem) {
-			// System invoice
-			to = SystemAccountOwner.instance();
-		} else {
-			if (!selectMember) {
-				// Retrieve the member to send invoice for
-				Member member = null;
-				final Long memberId = IdConverter.instance().valueOf(
-						form.getTo());
-				if (memberId != null && memberId != loggedElement.getId()) {
-					final Element element = elementService.load(memberId,
-							Element.Relationships.USER);
-					if (element instanceof Member) {
-						member = (Member) element;
-					}
-				}
-				if (member == null) {
-					throw new ValidationException();
-				}
-				request.setAttribute("member", member);
-				to = member;
-			} else {
-				// The member will be selected later
-				to = null;
-			}
-		}
-
-		// If we know who will receive the invoice, get the transfer types or
-		// dest account types
-		if (to != null) {
-			if (context.isAdmin() && fromMember == null) {
-				// Only admins may select the transfer type
-				final TransferTypeQuery query = new TransferTypeQuery();
-				query.setChannel(Channel.WEB);
-				query.setContext(TransactionContext.PAYMENT);
-				query.setFromOwner(to);
-				query.setToOwner(context.getAccountOwner());
-				query.setUsePriority(true);
-				request.setAttribute("transferTypes",
-						transferTypeService.search(query));
-			} else {
-				// Members may select the destination account type
-				final MemberAccountTypeQuery query = new MemberAccountTypeQuery();
-				query.setOwner(fromMember == null ? (Member) loggedElement
-						.getAccountOwner() : fromMember);
-				query.setCanPay(to);
-				final List<? extends AccountType> accountTypes = accountTypeService
-						.search(query);
-				if (accountTypes.isEmpty()) {
-					return context.sendError("invoice.error.noAccountType");
-				}
-				request.setAttribute("accountTypes", accountTypes);
-			}
-		}
-
-		// Resolve the possible currencies
-		final MemberGroup group = getMemberGroup(context);
-		final List<Currency> currencies;
-		if (group != null) {
-			currencies = currencyService.listByMemberGroup(group);
-			final MemberAccountType defaultAccountType = accountTypeService
-					.getDefault(group, AccountType.Relationships.CURRENCY);
-			// Preselect the default currency
-			if (defaultAccountType != null) {
-				form.setCurrency(CoercionHelper.coerce(String.class,
-						defaultAccountType.getCurrency()));
-			}
-		} else {
-			currencies = currencyService.listAll();
-		}
-		request.setAttribute("currencies", currencies);
-
-		if (currencies.isEmpty()) {
-			// No currencies means no possible payment!!!
-			throw new ValidationException("payment.error.noTransferType");
-		} else if (currencies.size() == 1) {
-			// Special case: There is a single currency. The JSP will use this
-			// object
-			request.setAttribute("singleCurrency", currencies.get(0));
-		}
-
-		request.setAttribute("toSystem", toSystem);
-		request.setAttribute("toMember", !toSystem);
-		request.setAttribute("selectMember", selectMember);
-		request.setAttribute("from", fromMember);
-
-		final boolean useTransferType = context.isAdmin() && fromMember == null;
-		request.setAttribute("useTransferType", useTransferType);
-
-		// Check whether scheduled payments may be performed
-		boolean allowsScheduling = false;
-		boolean allowsMultipleScheduling = false;
-		if (context.isAdmin() && fromMember == null) {
-			allowsScheduling = true;
-			allowsMultipleScheduling = true;
-		} else {
-			MemberGroup memberGroup;
-			if (fromMember == null) {
-				memberGroup = ((Member) context.getAccountOwner())
-						.getMemberGroup();
-			} else {
-				memberGroup = fromMember.getMemberGroup();
-			}
-			final MemberGroupSettings memberSettings = memberGroup
-					.getMemberSettings();
-			allowsScheduling = memberSettings.isAllowsScheduledPayments();
-			allowsMultipleScheduling = memberSettings
-					.isAllowsMultipleScheduledPayments();
-		}
-		if (allowsScheduling) {
-			request.setAttribute("allowsScheduling", allowsScheduling);
-			request.setAttribute("allowsMultipleScheduling",
-					allowsMultipleScheduling);
-			final Collection<SchedulingType> schedulingTypes = EnumSet.of(
-					SchedulingType.IMMEDIATELY, SchedulingType.SINGLE_FUTURE);
-			if (allowsMultipleScheduling) {
-				schedulingTypes.add(SchedulingType.MULTIPLE_FUTURE);
-			}
-			request.setAttribute("schedulingTypes", schedulingTypes);
-			request.setAttribute("schedulingFields", Arrays.asList(
-					TimePeriod.Field.MONTHS, TimePeriod.Field.WEEKS,
-					TimePeriod.Field.DAYS));
-		}
-
-		return context.getInputForward();
-	}
+//	protected ActionForward handleDisplay(final ActionContext context)
+//			throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final SendInvoiceForm form = context.getForm();
+//		final boolean toSystem = form.isToSystem();
+//		final boolean selectMember = form.isSelectMember();
+//
+//		AccountOwner to;
+//		final Member fromMember = (form.getFrom() == null) ? null
+//				: (Member) elementService.load(Long.valueOf(form.getFrom()));
+//		final Element loggedElement = context.getElement();
+//		if (toSystem) {
+//			// System invoice
+//			to = SystemAccountOwner.instance();
+//		} else {
+//			if (!selectMember) {
+//				// Retrieve the member to send invoice for
+//				Member member = null;
+//				final Long memberId = IdConverter.instance().valueOf(
+//						form.getTo());
+//				if (memberId != null && memberId != loggedElement.getId()) {
+//					final Element element = elementService.load(memberId,
+//							Element.Relationships.USER);
+//					if (element instanceof Member) {
+//						member = (Member) element;
+//					}
+//				}
+//				if (member == null) {
+//					throw new ValidationException();
+//				}
+//				request.setAttribute("member", member);
+//				to = member;
+//			} else {
+//				// The member will be selected later
+//				to = null;
+//			}
+//		}
+//
+//		// If we know who will receive the invoice, get the transfer types or
+//		// dest account types
+//		if (to != null) {
+//			if (context.isAdmin() && fromMember == null) {
+//				// Only admins may select the transfer type
+//				final TransferTypeQuery query = new TransferTypeQuery();
+//				query.setChannel(Channel.WEB);
+//				query.setContext(TransactionContext.PAYMENT);
+//				query.setFromOwner(to);
+//				query.setToOwner(context.getAccountOwner());
+//				query.setUsePriority(true);
+//				request.setAttribute("transferTypes",
+//						transferTypeService.search(query));
+//			} else {
+//				// Members may select the destination account type
+//				final MemberAccountTypeQuery query = new MemberAccountTypeQuery();
+//				query.setOwner(fromMember == null ? (Member) loggedElement
+//						.getAccountOwner() : fromMember);
+//				query.setCanPay(to);
+//				final List<? extends AccountType> accountTypes = accountTypeService
+//						.search(query);
+//				if (accountTypes.isEmpty()) {
+//					return context.sendError("invoice.error.noAccountType");
+//				}
+//				request.setAttribute("accountTypes", accountTypes);
+//			}
+//		}
+//
+//		// Resolve the possible currencies
+//		final MemberGroup group = getMemberGroup(context);
+//		final List<Currency> currencies;
+//		if (group != null) {
+//			currencies = currencyService.listByMemberGroup(group);
+//			final MemberAccountType defaultAccountType = accountTypeService
+//					.getDefault(group, AccountType.Relationships.CURRENCY);
+//			// Preselect the default currency
+//			if (defaultAccountType != null) {
+//				form.setCurrency(CoercionHelper.coerce(String.class,
+//						defaultAccountType.getCurrency()));
+//			}
+//		} else {
+//			currencies = currencyService.listAll();
+//		}
+//		request.setAttribute("currencies", currencies);
+//
+//		if (currencies.isEmpty()) {
+//			// No currencies means no possible payment!!!
+//			throw new ValidationException("payment.error.noTransferType");
+//		} else if (currencies.size() == 1) {
+//			// Special case: There is a single currency. The JSP will use this
+//			// object
+//			request.setAttribute("singleCurrency", currencies.get(0));
+//		}
+//
+//		request.setAttribute("toSystem", toSystem);
+//		request.setAttribute("toMember", !toSystem);
+//		request.setAttribute("selectMember", selectMember);
+//		request.setAttribute("from", fromMember);
+//
+//		final boolean useTransferType = context.isAdmin() && fromMember == null;
+//		request.setAttribute("useTransferType", useTransferType);
+//
+//		// Check whether scheduled payments may be performed
+//		boolean allowsScheduling = false;
+//		boolean allowsMultipleScheduling = false;
+//		if (context.isAdmin() && fromMember == null) {
+//			allowsScheduling = true;
+//			allowsMultipleScheduling = true;
+//		} else {
+//			MemberGroup memberGroup;
+//			if (fromMember == null) {
+//				memberGroup = ((Member) context.getAccountOwner())
+//						.getMemberGroup();
+//			} else {
+//				memberGroup = fromMember.getMemberGroup();
+//			}
+//			final MemberGroupSettings memberSettings = memberGroup
+//					.getMemberSettings();
+//			allowsScheduling = memberSettings.isAllowsScheduledPayments();
+//			allowsMultipleScheduling = memberSettings
+//					.isAllowsMultipleScheduledPayments();
+//		}
+//		if (allowsScheduling) {
+//			request.setAttribute("allowsScheduling", allowsScheduling);
+//			request.setAttribute("allowsMultipleScheduling",
+//					allowsMultipleScheduling);
+//			final Collection<SchedulingType> schedulingTypes = EnumSet.of(
+//					SchedulingType.IMMEDIATELY, SchedulingType.SINGLE_FUTURE);
+//			if (allowsMultipleScheduling) {
+//				schedulingTypes.add(SchedulingType.MULTIPLE_FUTURE);
+//			}
+//			request.setAttribute("schedulingTypes", schedulingTypes);
+//			request.setAttribute("schedulingFields", Arrays.asList(
+//					TimePeriod.Field.MONTHS, TimePeriod.Field.WEEKS,
+//					TimePeriod.Field.DAYS));
+//		}
+//
+//		return context.getInputForward();
+//	}
 
 	public static class SendInvoiceRequestDto {
 		private String destType;
@@ -522,27 +522,27 @@ public class SendInvoiceController extends BaseRestController {
 		}
 	}
 
-	private MemberGroup getMemberGroup(final ActionContext context) {
-		final SendInvoiceForm form = context.getForm();
-		final Long fromId = IdConverter.instance().valueOf(form.getFrom());
-		final Long toId = IdConverter.instance().valueOf(form.getTo());
-		Group group = null;
-		if (fromId == null && toId == null) {
-			group = context.getGroup();
-		} else if (fromId != null) {
-			final Element element = elementService.load(fromId,
-					Element.Relationships.GROUP);
-			group = element.getGroup();
-		} else {
-			final Element element = elementService.load(toId,
-					Element.Relationships.GROUP);
-			group = element.getGroup();
-		}
-		if (group instanceof MemberGroup) {
-			return (MemberGroup) group;
-		}
-		return null;
-	}
+//	private MemberGroup getMemberGroup(final ActionContext context) {
+//		final SendInvoiceForm form = context.getForm();
+//		final Long fromId = IdConverter.instance().valueOf(form.getFrom());
+//		final Long toId = IdConverter.instance().valueOf(form.getTo());
+//		Group group = null;
+//		if (fromId == null && toId == null) {
+//			group = context.getGroup();
+//		} else if (fromId != null) {
+//			final Element element = elementService.load(fromId,
+//					Element.Relationships.GROUP);
+//			group = element.getGroup();
+//		} else {
+//			final Element element = elementService.load(toId,
+//					Element.Relationships.GROUP);
+//			group = element.getGroup();
+//		}
+//		if (group instanceof MemberGroup) {
+//			return (MemberGroup) group;
+//		}
+//		return null;
+//	}
 
 	private Invoice resolveInvoice(final SendInvoiceRequestDto form) {
 		// final SendInvoiceForm form = context.getForm();

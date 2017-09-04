@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.pos.SearchPosForm;
+//import nl.strohalm.cyclos.controls.accounts.pos.SearchPosForm;
 import nl.strohalm.cyclos.entities.accounts.pos.Pos;
 import nl.strohalm.cyclos.entities.accounts.pos.PosQuery;
 import nl.strohalm.cyclos.entities.members.Element;
@@ -99,26 +99,26 @@ public class SearchPosController extends BaseRestController {
 
 	}
 
-	protected QueryParameters prepareForm(final ActionContext context) {
-
-		final SearchPosForm form = context.getForm();
-		final HttpServletRequest request = context.getRequest();
-		final PosQuery query = getDataBinder().readFromString(form.getQuery());
-
-		// Members
-		if (query.getMember() != null) {
-			final Member member = elementService.load(
-					query.getMember().getId(), Element.Relationships.USER);
-			query.setMember(member);
-		}
-		if (context.isBroker()) {
-			query.setBroker((Member) context.getElement());
-		}
-		RequestHelper
-				.storeEnum(request, PosQuery.QueryStatus.class, "statuses");
-
-		return query;
-	}
+//	protected QueryParameters prepareForm(final ActionContext context) {
+//
+//		final SearchPosForm form = context.getForm();
+//		final HttpServletRequest request = context.getRequest();
+//		final PosQuery query = getDataBinder().readFromString(form.getQuery());
+//
+//		// Members
+//		if (query.getMember() != null) {
+//			final Member member = elementService.load(
+//					query.getMember().getId(), Element.Relationships.USER);
+//			query.setMember(member);
+//		}
+//		if (context.isBroker()) {
+//			query.setBroker((Member) context.getElement());
+//		}
+//		RequestHelper
+//				.storeEnum(request, PosQuery.QueryStatus.class, "statuses");
+//
+//		return query;
+//	}
 
 	protected boolean willExecuteQuery(final ActionContext context,
 			final QueryParameters queryParameters) throws Exception {

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.channels.EditChannelForm;
+//import nl.strohalm.cyclos.controls.channels.EditChannelForm;
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.access.Channel.Credentials;
 import nl.strohalm.cyclos.entities.access.Channel.Principal;
@@ -173,61 +173,61 @@ public class EditChannelController extends BaseRestController {
 		return response;
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final EditChannelForm form = context.getForm();
-		final long id = form.getChannelId();
-		Channel channel;
-		boolean isBuiltin;
-		boolean allowsPaymentRequest;
-		if (id <= 0) {
-			channel = new Channel();
-			isBuiltin = false;
-			allowsPaymentRequest = true;
-		} else {
-			channel = channelService.load(id);
-			final String internalName = channel.getInternalName();
-			isBuiltin = channelService.isBuiltin(internalName);
-			allowsPaymentRequest = channelService
-					.allowsPaymentRequest(internalName);
-		}
-
-		final LocalSettings localSettings = settingsService.getLocalSettings();
-
-		// Find the possible principal types
-		final Map<PrincipalType, String> possiblePrincipalTypes = new LinkedHashMap<PrincipalType, String>();
-		final List<MemberCustomField> customFields = channelService
-				.possibleCustomFieldsAsPrincipal();
-		for (final Principal principal : Principal.values()) {
-			if (principal == Principal.CUSTOM_FIELD) {
-				for (final MemberCustomField customField : customFields) {
-					possiblePrincipalTypes.put(new PrincipalType(customField),
-							customField.getName());
-				}
-			} else {
-				if (principal == Principal.EMAIL
-						&& !localSettings.isEmailUnique()) {
-					// Skip e-mail when it is not unique
-					continue;
-				}
-				final String label = context.message(principal.getKey());
-				possiblePrincipalTypes.put(new PrincipalType(principal), label);
-			}
-		}
-		final Set<Credentials> possibleCredentials = channelService
-				.getPossibleCredentials(channel);
-		getDataBinder().writeAsString(form.getChannel(), channel);
-		request.setAttribute("channel", channel);
-		request.setAttribute("isBuiltin", isBuiltin);
-		request.setAttribute("possiblePrincipalTypes", possiblePrincipalTypes);
-		request.setAttribute("possibleCredentials", possibleCredentials);
-		request.setAttribute("singleCredential",
-				possibleCredentials.size() == 1 ? possibleCredentials
-						.iterator().next() : null);
-		request.setAttribute("allowsPaymentRequest", allowsPaymentRequest);
-		request.setAttribute("canManage", permissionService
-				.hasPermission(AdminSystemPermission.CHANNELS_MANAGE));
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final EditChannelForm form = context.getForm();
+//		final long id = form.getChannelId();
+//		Channel channel;
+//		boolean isBuiltin;
+//		boolean allowsPaymentRequest;
+//		if (id <= 0) {
+//			channel = new Channel();
+//			isBuiltin = false;
+//			allowsPaymentRequest = true;
+//		} else {
+//			channel = channelService.load(id);
+//			final String internalName = channel.getInternalName();
+//			isBuiltin = channelService.isBuiltin(internalName);
+//			allowsPaymentRequest = channelService
+//					.allowsPaymentRequest(internalName);
+//		}
+//
+//		final LocalSettings localSettings = settingsService.getLocalSettings();
+//
+//		// Find the possible principal types
+//		final Map<PrincipalType, String> possiblePrincipalTypes = new LinkedHashMap<PrincipalType, String>();
+//		final List<MemberCustomField> customFields = channelService
+//				.possibleCustomFieldsAsPrincipal();
+//		for (final Principal principal : Principal.values()) {
+//			if (principal == Principal.CUSTOM_FIELD) {
+//				for (final MemberCustomField customField : customFields) {
+//					possiblePrincipalTypes.put(new PrincipalType(customField),
+//							customField.getName());
+//				}
+//			} else {
+//				if (principal == Principal.EMAIL
+//						&& !localSettings.isEmailUnique()) {
+//					// Skip e-mail when it is not unique
+//					continue;
+//				}
+//				final String label = context.message(principal.getKey());
+//				possiblePrincipalTypes.put(new PrincipalType(principal), label);
+//			}
+//		}
+//		final Set<Credentials> possibleCredentials = channelService
+//				.getPossibleCredentials(channel);
+//		getDataBinder().writeAsString(form.getChannel(), channel);
+//		request.setAttribute("channel", channel);
+//		request.setAttribute("isBuiltin", isBuiltin);
+//		request.setAttribute("possiblePrincipalTypes", possiblePrincipalTypes);
+//		request.setAttribute("possibleCredentials", possibleCredentials);
+//		request.setAttribute("singleCredential",
+//				possibleCredentials.size() == 1 ? possibleCredentials
+//						.iterator().next() : null);
+//		request.setAttribute("allowsPaymentRequest", allowsPaymentRequest);
+//		request.setAttribute("canManage", permissionService
+//				.hasPermission(AdminSystemPermission.CHANNELS_MANAGE));
+//	}
 
 	private DataBinder<Channel> getDataBinder() {
 		if (dataBinder == null) {

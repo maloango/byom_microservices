@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.contacts.ContactForm;
+//import nl.strohalm.cyclos.controls.members.contacts.ContactForm;
 import nl.strohalm.cyclos.entities.members.Contact;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
@@ -113,18 +113,18 @@ public class EditContactController extends BaseRestController{
 	    }
 
 	   // @Override
-	    protected void prepareForm(final ActionContext context) throws Exception {
-	        final ContactForm form = context.getForm();
-	        final Contact contact = contactService.load(form.getId(), RelationshipHelper.nested(Contact.Relationships.CONTACT, Element.Relationships.USER));
-	        getDataBinder().writeAsString(form.getContact(), contact);
-	        context.getRequest().setAttribute("contact", contact.getContact());
-	    }
-
-	   // @Override
-	    protected void validateForm(final ActionContext context) {
-	        final ContactForm form = context.getForm();
-	        final Contact contact = dataBinder.readFromString(form.getContact());
-	        contactService.validate(contact);
-	    }
+//	    protected void prepareForm(final ActionContext context) throws Exception {
+//	        final ContactForm form = context.getForm();
+//	        final Contact contact = contactService.load(form.getId(), RelationshipHelper.nested(Contact.Relationships.CONTACT, Element.Relationships.USER));
+//	        getDataBinder().writeAsString(form.getContact(), contact);
+//	        context.getRequest().setAttribute("contact", contact.getContact());
+//	    }
+//
+//	   // @Override
+//	    protected void validateForm(final ActionContext context) {
+//	        final ContactForm form = context.getForm();
+//	        final Contact contact = dataBinder.readFromString(form.getContact());
+//	        contactService.validate(contact);
+//	    }
 
 }

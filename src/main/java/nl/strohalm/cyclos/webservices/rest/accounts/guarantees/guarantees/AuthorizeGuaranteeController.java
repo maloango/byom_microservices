@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.guarantees.guarantees.AuthorizeGuaranteeForm;
+//import nl.strohalm.cyclos.controls.accounts.guarantees.guarantees.AuthorizeGuaranteeForm;
 import nl.strohalm.cyclos.entities.access.AdminUser;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.accounts.guarantees.Guarantee;
@@ -222,52 +222,52 @@ public class AuthorizeGuaranteeController extends BaseRestController {
 	/**
 	 * Method use to prepare a form for being displayed
 	 */
-
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final AuthorizeGuaranteeForm form = context.getForm();
-		final Long id = form.getGuaranteeId();
-		final Guarantee guarantee = guaranteeService.load(id,
-				Guarantee.Relationships.GUARANTEE_TYPE);
-		final boolean canAcceptLoan = permissionService
-				.hasPermission(AdminSystemPermission.PAYMENTS_AUTHORIZE);
-		getReadDataBinder().writeAsString(form.getGuarantee(), guarantee);
-
-		// suggest the validity begin as the current date
-		if (guarantee.getValidity() == null
-				|| guarantee.getValidity().getBegin() == null) {
-			final LocalSettings localSettings = settingsService
-					.getLocalSettings();
-			final CalendarConverter calendarConverter = localSettings
-					.getRawDateConverter();
-
-			((MapBean) form.getGuarantee("validity")).set("begin",
-					calendarConverter.toString(Calendar.getInstance()));
-		}
-
-		final TransferType transferType = guarantee.getGuaranteeType()
-				.getLoanTransferType();
-		final List<PaymentCustomField> customFields = paymentCustomFieldService
-				.list(transferType, false);
-		request.setAttribute(
-				"customFields",
-				customFieldHelper.buildEntries(customFields,
-						guarantee.getCustomValues()));
-		request.setAttribute("canAcceptLoan", canAcceptLoan);
-
-		request.setAttribute("guarantee", guarantee);
-		RequestHelper.storeEnum(request, GuaranteeType.FeeType.class,
-				"feeTypes");
-	}
-
-	protected void validateForm(final ActionContext context) {
-		final AuthorizeGuaranteeForm form = context.getForm();
-		final Guarantee guarantee = getDataBinder().readFromString(
-				form.getGuarantee());
-		guarantee.setId(form.getGuaranteeId()); // the id is not read by the
-												// binder
-		guaranteeService.validate(guarantee, true);
-	}
+//
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final AuthorizeGuaranteeForm form = context.getForm();
+//		final Long id = form.getGuaranteeId();
+//		final Guarantee guarantee = guaranteeService.load(id,
+//				Guarantee.Relationships.GUARANTEE_TYPE);
+//		final boolean canAcceptLoan = permissionService
+//				.hasPermission(AdminSystemPermission.PAYMENTS_AUTHORIZE);
+//		getReadDataBinder().writeAsString(form.getGuarantee(), guarantee);
+//
+//		// suggest the validity begin as the current date
+//		if (guarantee.getValidity() == null
+//				|| guarantee.getValidity().getBegin() == null) {
+//			final LocalSettings localSettings = settingsService
+//					.getLocalSettings();
+//			final CalendarConverter calendarConverter = localSettings
+//					.getRawDateConverter();
+//
+//			((MapBean) form.getGuarantee("validity")).set("begin",
+//					calendarConverter.toString(Calendar.getInstance()));
+//		}
+//
+//		final TransferType transferType = guarantee.getGuaranteeType()
+//				.getLoanTransferType();
+//		final List<PaymentCustomField> customFields = paymentCustomFieldService
+//				.list(transferType, false);
+//		request.setAttribute(
+//				"customFields",
+//				customFieldHelper.buildEntries(customFields,
+//						guarantee.getCustomValues()));
+//		request.setAttribute("canAcceptLoan", canAcceptLoan);
+//
+//		request.setAttribute("guarantee", guarantee);
+//		RequestHelper.storeEnum(request, GuaranteeType.FeeType.class,
+//				"feeTypes");
+//	}
+//
+//	protected void validateForm(final ActionContext context) {
+//		final AuthorizeGuaranteeForm form = context.getForm();
+//		final Guarantee guarantee = getDataBinder().readFromString(
+//				form.getGuarantee());
+//		guarantee.setId(form.getGuaranteeId()); // the id is not read by the
+//												// binder
+//		guaranteeService.validate(guarantee, true);
+//	}
 
 	private DataBinder<Guarantee> getDataBinder() {
 		if (dataBinder == null) {

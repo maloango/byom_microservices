@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.ads.imports.ImportedAdsDetailsForm;
+//import nl.strohalm.cyclos.controls.ads.imports.ImportedAdsDetailsForm;
 import nl.strohalm.cyclos.entities.ads.imports.AdImport;
 import nl.strohalm.cyclos.entities.ads.imports.ImportedAd;
 import nl.strohalm.cyclos.entities.ads.imports.ImportedAdQuery;
@@ -86,21 +86,21 @@ public class ImportedAdsDetailsController extends BaseRestController {
 		return response;
 	}
 
-	protected QueryParameters prepareForm(final ActionContext context) {
-		final HttpServletRequest request = context.getRequest();
-		final ImportedAdsDetailsForm form = context.getForm();
-		final ImportedAdQuery query = getDataBinder().readFromString(
-				form.getQuery());
-		final AdImport adImport = adImportService.load(query.getAdImport()
-				.getId(), AdImport.Relationships.CURRENCY);
-		if (adImport == null || query.getStatus() == null) {
-			throw new ValidationException();
-		}
-		query.setAdImport(adImport);
-		request.setAttribute("lowercaseStatus", query.getStatus().name()
-				.toLowerCase());
-		return query;
-	}
+//	protected QueryParameters prepareForm(final ActionContext context) {
+//		final HttpServletRequest request = context.getRequest();
+//		final ImportedAdsDetailsForm form = context.getForm();
+//		final ImportedAdQuery query = getDataBinder().readFromString(
+//				form.getQuery());
+//		final AdImport adImport = adImportService.load(query.getAdImport()
+//				.getId(), AdImport.Relationships.CURRENCY);
+//		if (adImport == null || query.getStatus() == null) {
+//			throw new ValidationException();
+//		}
+//		query.setAdImport(adImport);
+//		request.setAttribute("lowercaseStatus", query.getStatus().name()
+//				.toLowerCase());
+//		return query;
+//	}
 
     /**
      *

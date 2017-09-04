@@ -21,7 +21,7 @@ import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.access.Permission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.groups.ListGroupsForm;
+//import nl.strohalm.cyclos.controls.groups.ListGroupsForm;
 import nl.strohalm.cyclos.entities.accounts.MemberAccountType;
 import nl.strohalm.cyclos.entities.accounts.transactions.PaymentFilter;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
@@ -289,52 +289,52 @@ public class ListGroupsController extends BaseRestController {
     }
 
     //@Override
-    protected GroupQuery prepareForm(final ActionContext context) {
-        final HttpServletRequest request = context.getRequest();
-        final ListGroupsForm form = context.getForm();
-        boolean manageAnyGroup = false;
-        final GroupQuery groupQuery = getDataBinder().readFromString(form.getQuery());
-        if (context.isAdmin()) {
-            groupQuery.setSortByNature(true);
-
-            // Put in the request the name of permission used to manage a type of group
-            final Map<Group.Nature, Permission> permissionByNature = getManageGroupPermissionByNatureMap();
-            request.setAttribute("permissionByNature", permissionByNature);
-
-            // Check if the user has permission to manage any group
-            for (final Permission permission : permissionByNature.values()) {
-                if (permissionService.hasPermission(permission)) {
-                    manageAnyGroup = true;
-                    break;
-                }
-            }
-
-            // List of groups that the administrator can manage
-            AdminGroup adminGroup = context.getGroup();
-            adminGroup = groupService.load(adminGroup.getId(), AdminGroup.Relationships.MANAGES_GROUPS);
-            request.setAttribute("managesGroups", adminGroup.getManagesGroups());
-
-            // List of group natures
-            request.setAttribute("natures", Arrays.asList(Group.Nature.ADMIN, Group.Nature.BROKER, Group.Nature.MEMBER));
-
-            // Search group filters and send to the JSP page
-            final GroupFilterQuery groupFilterQuery = new GroupFilterQuery();
-            groupFilterQuery.setAdminGroup(adminGroup);
-            final Collection<GroupFilter> groupFilters = groupFilterService.search(groupFilterQuery);
-            if (CollectionUtils.isNotEmpty(groupFilters)) {
-                request.setAttribute("groupFilters", groupFilters);
-            }
-        } else {
-            // It's a member listing operators groups
-            final Member member = (Member) context.getElement();
-            groupQuery.setNatures(Group.Nature.OPERATOR);
-            groupQuery.setMember(member);
-            groupQuery.setSortByNature(false);
-            manageAnyGroup = true;
-        }
-        request.setAttribute("manageAnyGroup", manageAnyGroup);
-        return groupQuery;
-    }
+//    protected GroupQuery prepareForm(final ActionContext context) {
+//        final HttpServletRequest request = context.getRequest();
+//        final ListGroupsForm form = context.getForm();
+//        boolean manageAnyGroup = false;
+//        final GroupQuery groupQuery = getDataBinder().readFromString(form.getQuery());
+//        if (context.isAdmin()) {
+//            groupQuery.setSortByNature(true);
+//
+//            // Put in the request the name of permission used to manage a type of group
+//            final Map<Group.Nature, Permission> permissionByNature = getManageGroupPermissionByNatureMap();
+//            request.setAttribute("permissionByNature", permissionByNature);
+//
+//            // Check if the user has permission to manage any group
+//            for (final Permission permission : permissionByNature.values()) {
+//                if (permissionService.hasPermission(permission)) {
+//                    manageAnyGroup = true;
+//                    break;
+//                }
+//            }
+//
+//            // List of groups that the administrator can manage
+//            AdminGroup adminGroup = context.getGroup();
+//            adminGroup = groupService.load(adminGroup.getId(), AdminGroup.Relationships.MANAGES_GROUPS);
+//            request.setAttribute("managesGroups", adminGroup.getManagesGroups());
+//
+//            // List of group natures
+//            request.setAttribute("natures", Arrays.asList(Group.Nature.ADMIN, Group.Nature.BROKER, Group.Nature.MEMBER));
+//
+//            // Search group filters and send to the JSP page
+//            final GroupFilterQuery groupFilterQuery = new GroupFilterQuery();
+//            groupFilterQuery.setAdminGroup(adminGroup);
+//            final Collection<GroupFilter> groupFilters = groupFilterService.search(groupFilterQuery);
+//            if (CollectionUtils.isNotEmpty(groupFilters)) {
+//                request.setAttribute("groupFilters", groupFilters);
+//            }
+//        } else {
+//            // It's a member listing operators groups
+//            final Member member = (Member) context.getElement();
+//            groupQuery.setNatures(Group.Nature.OPERATOR);
+//            groupQuery.setMember(member);
+//            groupQuery.setSortByNature(false);
+//            manageAnyGroup = true;
+//        }
+//        request.setAttribute("manageAnyGroup", manageAnyGroup);
+//        return groupQuery;
+//    }
 
     //@Override
     protected boolean willExecuteQuery(final ActionContext context, final QueryParameters queryParameters) throws Exception {

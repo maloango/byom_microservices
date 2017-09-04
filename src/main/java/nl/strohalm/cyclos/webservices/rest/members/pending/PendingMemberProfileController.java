@@ -16,7 +16,7 @@ import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.pending.PendingMemberProfileForm;
+//import nl.strohalm.cyclos.controls.members.pending.PendingMemberProfileForm;
 import nl.strohalm.cyclos.entities.customization.fields.CustomField;
 import nl.strohalm.cyclos.entities.customization.fields.MemberCustomField;
 import nl.strohalm.cyclos.entities.customization.fields.MemberCustomFieldValue;
@@ -154,38 +154,38 @@ public class PendingMemberProfileController extends BaseRestController{
     }
 
     //@Override
-    protected void prepareForm(final ActionContext context) throws Exception {
-        final HttpServletRequest request = context.getRequest();
-        final PendingMemberProfileForm form = context.getForm();
-        final long id = form.getPendingMemberId();
-        if (id <= 0L) {
-            throw new ValidationException();
-        }
-        final PendingMember pendingMember = elementService.loadPendingMember(id, PendingMember.Relationships.values());
-        request.setAttribute("pendingMember", pendingMember);
-
-        final List<MemberCustomField> customFields = customFieldHelper.onlyForGroup(memberCustomFieldService.list(), pendingMember.getMemberGroup());
-        for (final Iterator<MemberCustomField> iterator = customFields.iterator(); iterator.hasNext();) {
-            final MemberCustomField customField = iterator.next();
-            if (!customField.getVisibilityAccess().granted(context.getGroup(), false, context.isBroker(), true, false)) {
-                iterator.remove();
-            }
-        }
-        request.setAttribute("customFields", customFieldHelper.buildEntries(customFields, pendingMember.getCustomValues()));
-
-        boolean editable = false;
-        if (context.isAdmin()) {
-            editable = permissionService.hasPermission(AdminMemberPermission.MEMBERS_MANAGE_PENDING);
-        } else if (context.isBroker()) {
-            editable = permissionService.hasPermission(BrokerPermission.MEMBERS_MANAGE_PENDING);
-        }
-        request.setAttribute("editable", editable);
-    }
+//    protected void prepareForm(final ActionContext context) throws Exception {
+//        final HttpServletRequest request = context.getRequest();
+//        final PendingMemberProfileForm form = context.getForm();
+//        final long id = form.getPendingMemberId();
+//        if (id <= 0L) {
+//            throw new ValidationException();
+//        }
+//        final PendingMember pendingMember = elementService.loadPendingMember(id, PendingMember.Relationships.values());
+//        request.setAttribute("pendingMember", pendingMember);
+//
+//        final List<MemberCustomField> customFields = customFieldHelper.onlyForGroup(memberCustomFieldService.list(), pendingMember.getMemberGroup());
+//        for (final Iterator<MemberCustomField> iterator = customFields.iterator(); iterator.hasNext();) {
+//            final MemberCustomField customField = iterator.next();
+//            if (!customField.getVisibilityAccess().granted(context.getGroup(), false, context.isBroker(), true, false)) {
+//                iterator.remove();
+//            }
+//        }
+//        request.setAttribute("customFields", customFieldHelper.buildEntries(customFields, pendingMember.getCustomValues()));
+//
+//        boolean editable = false;
+//        if (context.isAdmin()) {
+//            editable = permissionService.hasPermission(AdminMemberPermission.MEMBERS_MANAGE_PENDING);
+//        } else if (context.isBroker()) {
+//            editable = permissionService.hasPermission(BrokerPermission.MEMBERS_MANAGE_PENDING);
+//        }
+//        request.setAttribute("editable", editable);
+//    }
 
    // @Override
-    protected void validateForm(final ActionContext context) {
-        final PendingMemberProfileForm form = context.getForm();
-        final PendingMember pendingMember = getDataBinder().readFromString(form.getPendingMember());
-        elementService.validate(pendingMember);
-    }
+//    protected void validateForm(final ActionContext context) {
+//        final PendingMemberProfileForm form = context.getForm();
+//        final PendingMember pendingMember = getDataBinder().readFromString(form.getPendingMember());
+//        elementService.validate(pendingMember);
+//    }
 }

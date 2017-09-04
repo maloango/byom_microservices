@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.imports.ImportedMembersDetailsForm;
+//import nl.strohalm.cyclos.controls.members.imports.ImportedMembersDetailsForm;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.accounts.MemberAccountType;
 import nl.strohalm.cyclos.entities.members.imports.ImportedMember;
@@ -130,36 +130,36 @@ public class ImportedMembersDetailsController extends BaseRestController {
                 }
 		return response;
 	}
-
-	protected QueryParameters prepareForm(final ActionContext context) {
-		final HttpServletRequest request = context.getRequest();
-		final ImportedMembersDetailsForm form = context.getForm();
-		final ImportedMemberQuery query = getDataBinder().readFromString(
-				form.getQuery());
-		final MemberImport memberImport = memberImportService.load(query
-				.getMemberImport().getId(), RelationshipHelper.nested(
-				MemberImport.Relationships.ACCOUNT_TYPE,
-				AccountType.Relationships.CURRENCY));
-		if (memberImport == null || query.getStatus() == null) {
-			throw new ValidationException();
-		}
-		query.setMemberImport(memberImport);
-		// Check whether account type will be used
-		final MemberAccountType accountType = memberImport.getAccountType();
-		if (accountType != null) {
-			request.setAttribute("unitsPattern", accountType.getCurrency()
-					.getPattern());
-			request.setAttribute("hasCreditLimit", true);
-			// Check whether the initial balance will be used
-			if (memberImport.getInitialCreditTransferType() != null
-					|| memberImport.getInitialDebitTransferType() != null) {
-				request.setAttribute("hasBalance", true);
-			}
-		}
-		request.setAttribute("lowercaseStatus", query.getStatus().name()
-				.toLowerCase());
-		return query;
-	}
+//
+//	protected QueryParameters prepareForm(final ActionContext context) {
+//		final HttpServletRequest request = context.getRequest();
+//		final ImportedMembersDetailsForm form = context.getForm();
+//		final ImportedMemberQuery query = getDataBinder().readFromString(
+//				form.getQuery());
+//		final MemberImport memberImport = memberImportService.load(query
+//				.getMemberImport().getId(), RelationshipHelper.nested(
+//				MemberImport.Relationships.ACCOUNT_TYPE,
+//				AccountType.Relationships.CURRENCY));
+//		if (memberImport == null || query.getStatus() == null) {
+//			throw new ValidationException();
+//		}
+//		query.setMemberImport(memberImport);
+//		// Check whether account type will be used
+//		final MemberAccountType accountType = memberImport.getAccountType();
+//		if (accountType != null) {
+//			request.setAttribute("unitsPattern", accountType.getCurrency()
+//					.getPattern());
+//			request.setAttribute("hasCreditLimit", true);
+//			// Check whether the initial balance will be used
+//			if (memberImport.getInitialCreditTransferType() != null
+//					|| memberImport.getInitialDebitTransferType() != null) {
+//				request.setAttribute("hasBalance", true);
+//			}
+//		}
+//		request.setAttribute("lowercaseStatus", query.getStatus().name()
+//				.toLowerCase());
+//		return query;
+//	}
 
 	protected boolean willExecuteQuery(final ActionContext context,
 			final QueryParameters queryParameters) throws Exception {

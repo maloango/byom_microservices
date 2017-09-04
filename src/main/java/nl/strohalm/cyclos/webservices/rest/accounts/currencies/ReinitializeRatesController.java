@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.currencies.ReinitializeRatesForm;
+//import nl.strohalm.cyclos.controls.accounts.currencies.ReinitializeRatesForm;
 import nl.strohalm.cyclos.entities.accounts.Currency;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
 import nl.strohalm.cyclos.entities.settings.events.LocalSettingsEvent;
@@ -66,29 +66,29 @@ public class ReinitializeRatesController extends BaseRestController{
 		this.rateService = rateService;
 	}
 
-	protected ActionForward handleDisplay(final ActionContext context)
-			throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final ReinitializeRatesForm form = context.getForm();
-		final long id = form.getCurrencyId();
-		final Currency currency = currencyService.load(id);
-		request.setAttribute("enabledARate", currency.isEnableARate());
-		request.setAttribute("enabledDRate", currency.isEnableDRate());
-		request.setAttribute("enabledIRate", currency.isEnableIRate());
-		request.setAttribute("enableDateA",
-				rateService.getEnableDate(currency, RateType.A_RATE));
-		request.setAttribute("enableDateD",
-				rateService.getEnableDate(currency, RateType.D_RATE));
-		request.setAttribute("enableDateI",
-				rateService.getEnableDate(currency, RateType.I_RATE));
-		request.setAttribute("currency", currency);
-		final ReinitializeRatesDTO dto = new ReinitializeRatesDTO();
-		dto.setCurrencyId(id);
-		dto.setMaintainPastSettings(true);
-		getDataBinder().writeAsString(form.getReinitializeRatesDto(), dto);
-		return new ActionForward(
-				"/pages/accounts/currencies/reinitializeRates.jsp");
-	}
+//	protected ActionForward handleDisplay(final ActionContext context)
+//			throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final ReinitializeRatesForm form = context.getForm();
+//		final long id = form.getCurrencyId();
+//		final Currency currency = currencyService.load(id);
+//		request.setAttribute("enabledARate", currency.isEnableARate());
+//		request.setAttribute("enabledDRate", currency.isEnableDRate());
+//		request.setAttribute("enabledIRate", currency.isEnableIRate());
+//		request.setAttribute("enableDateA",
+//				rateService.getEnableDate(currency, RateType.A_RATE));
+//		request.setAttribute("enableDateD",
+//				rateService.getEnableDate(currency, RateType.D_RATE));
+//		request.setAttribute("enableDateI",
+//				rateService.getEnableDate(currency, RateType.I_RATE));
+//		request.setAttribute("currency", currency);
+//		final ReinitializeRatesDTO dto = new ReinitializeRatesDTO();
+//		dto.setCurrencyId(id);
+//		dto.setMaintainPastSettings(true);
+//		getDataBinder().writeAsString(form.getReinitializeRatesDto(), dto);
+//		return new ActionForward(
+//				"/pages/accounts/currencies/reinitializeRates.jsp");
+//	}
 
 	public static class ReinitializeRatesRequestDto {
 		protected Map<String, Object> values;
@@ -260,13 +260,13 @@ public class ReinitializeRatesController extends BaseRestController{
 		return response;
 	}
 
-	protected void validateForm(final ActionContext context) {
-		final ReinitializeRatesForm form = context.getForm();
-		final ReinitializeRatesDTO reinitDto = getDataBinder().readFromString(
-				form.getReinitializeRatesDto());
-		reinitDto.setWhatRate(form.getWhatRate());
-		rateService.validate(reinitDto);
-	}
+//	protected void validateForm(final ActionContext context) {
+//		final ReinitializeRatesForm form = context.getForm();
+//		final ReinitializeRatesDTO reinitDto = getDataBinder().readFromString(
+//				form.getReinitializeRatesDto());
+//		reinitDto.setWhatRate(form.getWhatRate());
+//		rateService.validate(reinitDto);
+//	}
 
 	private DataBinder<ReinitializeRatesDTO> getDataBinder() {
 		if (dataBinder == null) {

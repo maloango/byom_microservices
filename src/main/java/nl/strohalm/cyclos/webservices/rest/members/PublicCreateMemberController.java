@@ -27,7 +27,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.elements.CreateElementAction;
+//import nl.strohalm.cyclos.controls.elements.CreateElementAction;
 import nl.strohalm.cyclos.entities.access.MemberUser;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.customization.fields.MemberCustomField;
@@ -83,20 +83,20 @@ public class PublicCreateMemberController extends BaseRestController {
         this.messageResolver = messageResolver;
     }
 
-    public DataBinder<Member> getDataBinder() {
-        try {
-            lock.readLock().lock();
-            if (dataBinder == null) {
-                final LocalSettings localSettings = settingsService.getLocalSettings();
-                final AccessSettings accessSettings = settingsService.getAccessSettings();
-                dataBinder = CreateElementAction.getDataBinder(localSettings, accessSettings, Member.class, MemberUser.class, MemberGroup.class, MemberCustomField.class, MemberCustomFieldValue.class);
-            }
-            return dataBinder;
-        } 
-        finally {
-            lock.readLock().unlock();
-        }
-    }
+//    public DataBinder<Member> getDataBinder() {
+//        try {
+//            lock.readLock().lock();
+//            if (dataBinder == null) {
+//                final LocalSettings localSettings = settingsService.getLocalSettings();
+//                final AccessSettings accessSettings = settingsService.getAccessSettings();
+//                dataBinder = CreateElementAction.getDataBinder(localSettings, accessSettings, Member.class, MemberUser.class, MemberGroup.class, MemberCustomField.class, MemberCustomFieldValue.class);
+//            }
+//            return dataBinder;
+//        } 
+//        finally {
+//            lock.readLock().unlock();
+//        }
+//    }
 
     public MemberCustomFieldService getMemberCustomFieldService() {
         return memberCustomFieldService;

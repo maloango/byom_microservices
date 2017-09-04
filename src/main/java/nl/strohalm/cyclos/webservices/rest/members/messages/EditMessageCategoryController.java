@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.messages.EditMessageCategoryForm;
+//import nl.strohalm.cyclos.controls.members.messages.EditMessageCategoryForm;
 import nl.strohalm.cyclos.entities.members.messages.MessageCategory;
 import nl.strohalm.cyclos.services.elements.MessageCategoryService;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;

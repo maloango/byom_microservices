@@ -19,7 +19,6 @@
  */
 package nl.strohalm.cyclos.webservices.rest.general;
 
-import nl.strohalm.cyclos.controls.general.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 

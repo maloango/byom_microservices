@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.payments.PaymentForm;
+//import nl.strohalm.cyclos.controls.payments.PaymentForm;
 import nl.strohalm.cyclos.entities.accounts.AccountOwner;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
@@ -28,20 +28,20 @@ public class PaymentController extends BaseRestController {
 	private ElementService elementService;
 	private PermissionService permissionService;
 	private SettingsService settingsService;
-
-	protected AccountOwner getFromOwner(final ActionContext context) {
-		final PaymentForm form = context.getForm();
-		final Long fromId = IdConverter.instance().valueOf(form.getFrom());
-		if (fromId == null) {
-			return context.getAccountOwner();
-		}
-		final Element element = elementService.load(fromId,
-				Element.Relationships.GROUP);
-		if (element instanceof Member) {
-			return (Member) element;
-		}
-		return null;
-	}
+//
+//	protected AccountOwner getFromOwner(final ActionContext context) {
+//		final PaymentForm form = context.getForm();
+//		final Long fromId = IdConverter.instance().valueOf(form.getFrom());
+//		if (fromId == null) {
+//			return context.getAccountOwner();
+//		}
+//		final Element element = elementService.load(fromId,
+//				Element.Relationships.GROUP);
+//		if (element instanceof Member) {
+//			return (Member) element;
+//		}
+//		return null;
+//	}
 
 	public static class PaymentRequestDto {
 		private boolean selectMember;

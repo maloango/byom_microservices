@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.reports.CurrentStateReportForm;
+//import nl.strohalm.cyclos.controls.reports.CurrentStateReportForm;
 import nl.strohalm.cyclos.entities.reports.CurrentStateReportVO;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
 import nl.strohalm.cyclos.services.reports.CurrentStateReportParameters;
@@ -36,15 +36,15 @@ public class CurrentStateReportController extends BaseRestController {
 		this.currentStateReportService = currentStateReportService;
 	}
 
-	protected ActionForward handleDisplay(final ActionContext context)
-			throws Exception {
-		try {
-			prepareForm(context);
-		} catch (final Exception e) {
-			return context.sendError("reports.error.formDisplayError");
-		}
-		return context.getInputForward();
-	}
+//	protected ActionForward handleDisplay(final ActionContext context)
+//			throws Exception {
+//		try {
+//			prepareForm(context);
+//		} catch (final Exception e) {
+//			return context.sendError("reports.error.formDisplayError");
+//		}
+//		return context.getInputForward();
+//	}
 
 	public static class CurrentStateReportRequestDto {
 		protected Map<String, Object> values;
@@ -118,11 +118,11 @@ public class CurrentStateReportController extends BaseRestController {
 		return response;
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final CurrentStateReportForm form = context.getForm();
-		final CurrentStateReportParameters params = new CurrentStateReportParameters();
-		getDataBinder().writeAsString(form.getCurrentStateReport(), params);
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final CurrentStateReportForm form = context.getForm();
+//		final CurrentStateReportParameters params = new CurrentStateReportParameters();
+//		getDataBinder().writeAsString(form.getCurrentStateReport(), params);
+//	}
 
 	private DataBinder<CurrentStateReportParameters> getDataBinder() {
 		if (dataBinder == null) {

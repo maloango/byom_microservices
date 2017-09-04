@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.imports.ImportedMembersSummaryForm;
+//import nl.strohalm.cyclos.controls.members.imports.ImportedMembersSummaryForm;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.members.imports.MemberImport;
 import nl.strohalm.cyclos.services.elements.MemberImportService;

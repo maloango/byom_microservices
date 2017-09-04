@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.loans.SearchLoanPaymentsForm;
+//import nl.strohalm.cyclos.controls.loans.SearchLoanPaymentsForm;
 import nl.strohalm.cyclos.entities.accounts.MemberAccount;
 import nl.strohalm.cyclos.entities.accounts.loans.Loan;
 import nl.strohalm.cyclos.entities.accounts.loans.LoanGroup;
@@ -235,109 +235,109 @@ public class SearchLoanPaymentsController extends BaseRestController {
 		return response;
 	}
 
-	protected QueryParameters prepareForm(final ActionContext context) {
-		final HttpServletRequest request = context.getRequest();
-		final SearchLoanPaymentsForm form = context.getForm();
-		final LoanPaymentQuery query = getDataBinder().readFromString(
-				form.getQuery());
-		query.fetch(RelationshipHelper.nested(LoanPayment.Relationships.LOAN,
-				Loan.Relationships.TRANSFER,
-				Payment.Relationships.CUSTOM_VALUES), RelationshipHelper
-				.nested(LoanPayment.Relationships.LOAN,
-						Loan.Relationships.TRANSFER, Payment.Relationships.TO,
-						MemberAccount.Relationships.MEMBER,
-						Element.Relationships.USER));
-
-		// Just search loan payments of members in groups managed by admin group
-		AdminGroup adminGroup = context.getGroup();
-		adminGroup = groupService.load(adminGroup.getId(),
-				AdminGroup.Relationships.MANAGES_GROUPS);
-		query.setGroups(adminGroup.getManagesGroups());
-
-		// Retrieve a list of all transfer types that are loans
-		final TransferTypeQuery ttQuery = new TransferTypeQuery();
-		ttQuery.setContext(TransactionContext.LOAN);
-		ttQuery.setToGroups(adminGroup.getManagesGroups());
-		final List<TransferType> transferTypes = transferTypeService
-				.search(ttQuery);
-		if (transferTypes.size() == 1) {
-			// When there is a single transfer type, set it, so that the custom
-			// fields will be shown
-			query.setTransferType(transferTypes.iterator().next());
-			request.setAttribute("singleTransferType", query.getTransferType());
-		}
-		request.setAttribute("transferTypes", transferTypes);
-
-		// Get the member custom fields
-		final List<MemberCustomField> memberFields = customFieldHelper
-				.onlyForLoanSearch(memberCustomFieldService.list());
-		request.setAttribute(
-				"memberFieldValues",
-				customFieldHelper.buildEntries(memberFields,
-						query.getMemberCustomValues()));
-
-		// Get the payment custom fields
-		final TransferType transferType = query.getTransferType();
-		form.setQuery("loanValues", new MapBean(true, "field", "value"));
-		if (transferType == null) {
-			// If setting no transfer type, don't filter by custom fields also
-			query.setLoanCustomValues(null);
-		} else {
-			// Get the custom fields for search and for list
-			final List<PaymentCustomField> allFields = paymentCustomFieldService
-					.list(transferType, true);
-			request.setAttribute("allFields", allFields);
-			final List<PaymentCustomField> customFieldsForSearch = new ArrayList<PaymentCustomField>();
-			final List<PaymentCustomField> customFieldsForList = new ArrayList<PaymentCustomField>();
-			for (final PaymentCustomField customField : allFields) {
-				if (customField.getSearchAccess() != PaymentCustomField.Access.NONE) {
-					customFieldsForSearch.add(customField);
-				}
-				if (customField.getListAccess() != PaymentCustomField.Access.NONE) {
-					customFieldsForList.add(customField);
-				}
-			}
-			request.setAttribute("customFieldsForList", customFieldsForList);
-
-			// Ensure the query has no custom values which are not visible
-			final Collection<PaymentCustomFieldValue> loanCustomValues = query
-					.getLoanCustomValues();
-			if (loanCustomValues != null) {
-				final Iterator<PaymentCustomFieldValue> iterator = loanCustomValues
-						.iterator();
-				while (iterator.hasNext()) {
-					final PaymentCustomFieldValue fieldValue = iterator.next();
-					if (!customFieldsForSearch.contains(fieldValue.getField())) {
-						iterator.remove();
-					}
-				}
-			}
-
-			request.setAttribute("loanFieldValues", customFieldHelper
-					.buildEntries(customFieldsForSearch, loanCustomValues));
-		}
-
-		RequestHelper.storeEnum(request, LoanPayment.Status.class, "status");
-
-		if (permissionService
-				.hasPermission(AdminSystemPermission.LOAN_GROUPS_VIEW)) {
-			// Retrieve a list of all loan groups
-			final LoanGroupQuery lgQuery = new LoanGroupQuery();
-			request.setAttribute("loanGroups", loanGroupService.search(lgQuery));
-		} else {
-			request.setAttribute("loanGroups", Collections.emptyList());
-		}
-
-		if (query.getMember() != null) {
-			query.setMember((Member) elementService.load(query.getMember()
-					.getId(), Element.Relationships.USER));
-		}
-		if (query.getBroker() != null) {
-			query.setBroker((Member) elementService.load(query.getBroker()
-					.getId(), Element.Relationships.USER));
-		}
-
-		return query;
-	}
+//	protected QueryParameters prepareForm(final ActionContext context) {
+//		final HttpServletRequest request = context.getRequest();
+//		final SearchLoanPaymentsForm form = context.getForm();
+//		final LoanPaymentQuery query = getDataBinder().readFromString(
+//				form.getQuery());
+//		query.fetch(RelationshipHelper.nested(LoanPayment.Relationships.LOAN,
+//				Loan.Relationships.TRANSFER,
+//				Payment.Relationships.CUSTOM_VALUES), RelationshipHelper
+//				.nested(LoanPayment.Relationships.LOAN,
+//						Loan.Relationships.TRANSFER, Payment.Relationships.TO,
+//						MemberAccount.Relationships.MEMBER,
+//						Element.Relationships.USER));
+//
+//		// Just search loan payments of members in groups managed by admin group
+//		AdminGroup adminGroup = context.getGroup();
+//		adminGroup = groupService.load(adminGroup.getId(),
+//				AdminGroup.Relationships.MANAGES_GROUPS);
+//		query.setGroups(adminGroup.getManagesGroups());
+//
+//		// Retrieve a list of all transfer types that are loans
+//		final TransferTypeQuery ttQuery = new TransferTypeQuery();
+//		ttQuery.setContext(TransactionContext.LOAN);
+//		ttQuery.setToGroups(adminGroup.getManagesGroups());
+//		final List<TransferType> transferTypes = transferTypeService
+//				.search(ttQuery);
+//		if (transferTypes.size() == 1) {
+//			// When there is a single transfer type, set it, so that the custom
+//			// fields will be shown
+//			query.setTransferType(transferTypes.iterator().next());
+//			request.setAttribute("singleTransferType", query.getTransferType());
+//		}
+//		request.setAttribute("transferTypes", transferTypes);
+//
+//		// Get the member custom fields
+//		final List<MemberCustomField> memberFields = customFieldHelper
+//				.onlyForLoanSearch(memberCustomFieldService.list());
+//		request.setAttribute(
+//				"memberFieldValues",
+//				customFieldHelper.buildEntries(memberFields,
+//						query.getMemberCustomValues()));
+//
+//		// Get the payment custom fields
+//		final TransferType transferType = query.getTransferType();
+//		form.setQuery("loanValues", new MapBean(true, "field", "value"));
+//		if (transferType == null) {
+//			// If setting no transfer type, don't filter by custom fields also
+//			query.setLoanCustomValues(null);
+//		} else {
+//			// Get the custom fields for search and for list
+//			final List<PaymentCustomField> allFields = paymentCustomFieldService
+//					.list(transferType, true);
+//			request.setAttribute("allFields", allFields);
+//			final List<PaymentCustomField> customFieldsForSearch = new ArrayList<PaymentCustomField>();
+//			final List<PaymentCustomField> customFieldsForList = new ArrayList<PaymentCustomField>();
+//			for (final PaymentCustomField customField : allFields) {
+//				if (customField.getSearchAccess() != PaymentCustomField.Access.NONE) {
+//					customFieldsForSearch.add(customField);
+//				}
+//				if (customField.getListAccess() != PaymentCustomField.Access.NONE) {
+//					customFieldsForList.add(customField);
+//				}
+//			}
+//			request.setAttribute("customFieldsForList", customFieldsForList);
+//
+//			// Ensure the query has no custom values which are not visible
+//			final Collection<PaymentCustomFieldValue> loanCustomValues = query
+//					.getLoanCustomValues();
+//			if (loanCustomValues != null) {
+//				final Iterator<PaymentCustomFieldValue> iterator = loanCustomValues
+//						.iterator();
+//				while (iterator.hasNext()) {
+//					final PaymentCustomFieldValue fieldValue = iterator.next();
+//					if (!customFieldsForSearch.contains(fieldValue.getField())) {
+//						iterator.remove();
+//					}
+//				}
+//			}
+//
+//			request.setAttribute("loanFieldValues", customFieldHelper
+//					.buildEntries(customFieldsForSearch, loanCustomValues));
+//		}
+//
+//		RequestHelper.storeEnum(request, LoanPayment.Status.class, "status");
+//
+//		if (permissionService
+//				.hasPermission(AdminSystemPermission.LOAN_GROUPS_VIEW)) {
+//			// Retrieve a list of all loan groups
+//			final LoanGroupQuery lgQuery = new LoanGroupQuery();
+//			request.setAttribute("loanGroups", loanGroupService.search(lgQuery));
+//		} else {
+//			request.setAttribute("loanGroups", Collections.emptyList());
+//		}
+//
+//		if (query.getMember() != null) {
+//			query.setMember((Member) elementService.load(query.getMember()
+//					.getId(), Element.Relationships.USER));
+//		}
+//		if (query.getBroker() != null) {
+//			query.setBroker((Member) elementService.load(query.getBroker()
+//					.getId(), Element.Relationships.USER));
+//		}
+//
+//		return query;
+//	}
 
 }

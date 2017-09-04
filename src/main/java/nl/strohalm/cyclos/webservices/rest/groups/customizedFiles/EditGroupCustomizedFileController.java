@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.groups.ListGroupsAction;
-import nl.strohalm.cyclos.controls.groups.customizedFiles.EditGroupCustomizedFileForm;
+//import nl.strohalm.cyclos.controls.groups.ListGroupsAction;
+//import nl.strohalm.cyclos.controls.groups.customizedFiles.EditGroupCustomizedFileForm;
 import nl.strohalm.cyclos.entities.customization.files.CustomizedFile;
 import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.entities.groups.OperatorGroup;
@@ -269,81 +269,81 @@ public class EditGroupCustomizedFileController extends BaseRestController{
         }
 
    }
-   @RequestMapping(value = "member/editGroupCustomizedFile/{groupId}", method = RequestMethod.GET)
-   @ResponseBody
-    
-    public PrepareFormResponseDto prepareForm(@PathVariable ("groupId") long groupId,@PathVariable("isAdmin") int isAdmin) throws Exception {
-      PrepareFormResponseDto preFormResp = new PrepareFormResponseDto();
-      try{
-      HashMap<String,Object> response=new HashMap<String,Object>();
-
-        boolean editable = false;
-
-        // Retrieve the group
-        final Map<Group.Nature, Permission> permissionByNature = ListGroupsAction.getManageGroupPermissionByNatureMap();
-        final long Id = groupId;
-        if (groupId <= 0L) {
-            throw new ValidationException();
-        }
-        final Group group = groupService.load(groupId);
-
-        final long id = groupId;
-        final boolean isInsert = id <= 0L;
-        CustomizedFile file;
-        if (isInsert) {
-            file = new CustomizedFile();
-            file.setGroup(group);
-            // Prepare the possible types
-            response.put("types", Arrays.asList(CustomizedFile.Type.STATIC_FILE, CustomizedFile.Type.STYLE));
-            editable = true;
-        } else {
-            // Retrieve the file
-            file = customizedFileService.load(id);
-            if (file.getGroup() == null || !file.getGroup().equals(group)) {
-                // Wrong group passed
-                throw new ValidationException();
-            }
-            editable = customizedFileService.canViewOrManageInGroup(group);
-
-        }
-        response.put("file", file);
-        DataBinder<CustomizedFile> dataBinder;
-        if (isAdmin==1) {
-            dataBinder = getAdminDataBinder();
-        } else {
-            dataBinder = getMemberDataBinder();
-        }
-      
-      dataBinder.writeAsString(group, group);
-          Object put = response.put("group", group);
-        response.put("isInsert", isInsert);
-        response.put("editable", editable);
-        
-         preFormResp.setResponse(response);
-       }
-       catch(ValidationException e){
-               e.printStackTrace();
-               }
-       
-        
-        return preFormResp;
-    }
-
-   
-    protected void validateForm(final ActionContext context) {
-        final EditGroupCustomizedFileForm form = context.getForm();
-        DataBinder<CustomizedFile> dataBinder;
-        if (context.isAdmin()) {
-            dataBinder = getAdminDataBinder();
-        } else {
-            dataBinder = getMemberDataBinder();
-        }
-        final CustomizedFile file = dataBinder.readFromString(form.getFile());
-        if (context.isMember()) {
-            file.setType(CustomizedFile.Type.STATIC_FILE);
-        }
-        customizedFileService.validate(file);
-    }
+//   @RequestMapping(value = "member/editGroupCustomizedFile/{groupId}", method = RequestMethod.GET)
+//   @ResponseBody
+//    
+//    public PrepareFormResponseDto prepareForm(@PathVariable ("groupId") long groupId,@PathVariable("isAdmin") int isAdmin) throws Exception {
+//      PrepareFormResponseDto preFormResp = new PrepareFormResponseDto();
+//      try{
+//      HashMap<String,Object> response=new HashMap<String,Object>();
+//
+//        boolean editable = false;
+//
+//        // Retrieve the group
+//        final Map<Group.Nature, Permission> permissionByNature = ListGroupsAction.getManageGroupPermissionByNatureMap();
+//        final long Id = groupId;
+//        if (groupId <= 0L) {
+//            throw new ValidationException();
+//        }
+//        final Group group = groupService.load(groupId);
+//
+//        final long id = groupId;
+//        final boolean isInsert = id <= 0L;
+//        CustomizedFile file;
+//        if (isInsert) {
+//            file = new CustomizedFile();
+//            file.setGroup(group);
+//            // Prepare the possible types
+//            response.put("types", Arrays.asList(CustomizedFile.Type.STATIC_FILE, CustomizedFile.Type.STYLE));
+//            editable = true;
+//        } else {
+//            // Retrieve the file
+//            file = customizedFileService.load(id);
+//            if (file.getGroup() == null || !file.getGroup().equals(group)) {
+//                // Wrong group passed
+//                throw new ValidationException();
+//            }
+//            editable = customizedFileService.canViewOrManageInGroup(group);
+//
+//        }
+//        response.put("file", file);
+//        DataBinder<CustomizedFile> dataBinder;
+//        if (isAdmin==1) {
+//            dataBinder = getAdminDataBinder();
+//        } else {
+//            dataBinder = getMemberDataBinder();
+//        }
+//      
+//      dataBinder.writeAsString(group, group);
+//          Object put = response.put("group", group);
+//        response.put("isInsert", isInsert);
+//        response.put("editable", editable);
+//        
+//         preFormResp.setResponse(response);
+//       }
+//       catch(ValidationException e){
+//               e.printStackTrace();
+//               }
+//       
+//        
+//        return preFormResp;
+//    }
+//
+//   
+//    protected void validateForm(final ActionContext context) {
+//        final EditGroupCustomizedFileForm form = context.getForm();
+//        DataBinder<CustomizedFile> dataBinder;
+//        if (context.isAdmin()) {
+//            dataBinder = getAdminDataBinder();
+//        } else {
+//            dataBinder = getMemberDataBinder();
+//        }
+//        final CustomizedFile file = dataBinder.readFromString(form.getFile());
+//        if (context.isMember()) {
+//            file.setType(CustomizedFile.Type.STATIC_FILE);
+//        }
+//        customizedFileService.validate(file);
+//    }
 
     private BeanBinder<CustomizedFile> getCommonBinderElements() {
         final BeanBinder<CustomizedFile> binder = BeanBinder.instance(CustomizedFile.class);

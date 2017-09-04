@@ -9,7 +9,7 @@ import nl.strohalm.cyclos.access.BrokerPermission;
 import nl.strohalm.cyclos.access.Permission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.sms.SendSmsMailingForm;
+//import nl.strohalm.cyclos.controls.members.sms.SendSmsMailingForm;
 import nl.strohalm.cyclos.entities.access.AdminUser;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
@@ -139,42 +139,42 @@ public class SendSmsMailingController extends BaseRestController {
 		return response;
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final SendSmsMailingForm form = context.getForm();
-
-		boolean canSendFree;
-		boolean canSendPaid;
-		if (context.isAdmin()) {
-			canSendFree = permissionService
-					.hasPermission(AdminMemberPermission.SMS_MAILINGS_FREE_SMS_MAILINGS);
-			canSendPaid = permissionService
-					.hasPermission(AdminMemberPermission.SMS_MAILINGS_PAID_SMS_MAILINGS);
-
-			final GroupQuery query = new GroupQuery();
-			query.setManagedBy((AdminGroup) context.getGroup());
-			query.setOnlyActive(true);
-			request.setAttribute("groups", groupService.search(query));
-		} else {
-			canSendFree = permissionService
-					.hasPermission(BrokerPermission.SMS_MAILINGS_FREE_SMS_MAILINGS);
-			canSendPaid = permissionService
-					.hasPermission(BrokerPermission.SMS_MAILINGS_PAID_SMS_MAILINGS);
-		}
-
-		request.setAttribute("canSendFree", canSendFree);
-		request.setAttribute("canSendPaid", canSendPaid);
-		if (canSendFree && canSendPaid) {
-			form.setSmsMailing("free", "true");
-		}
-	}
-
-	protected void validateForm(final ActionContext context) {
-		final SendSmsMailingForm form = context.getForm();
-		final SmsMailing smsMailing = getDataBinder().readFromString(
-				form.getSmsMailing());
-		smsMailingService.validate(smsMailing, form.isSingleMember());
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final SendSmsMailingForm form = context.getForm();
+//
+//		boolean canSendFree;
+//		boolean canSendPaid;
+//		if (context.isAdmin()) {
+//			canSendFree = permissionService
+//					.hasPermission(AdminMemberPermission.SMS_MAILINGS_FREE_SMS_MAILINGS);
+//			canSendPaid = permissionService
+//					.hasPermission(AdminMemberPermission.SMS_MAILINGS_PAID_SMS_MAILINGS);
+//
+//			final GroupQuery query = new GroupQuery();
+//			query.setManagedBy((AdminGroup) context.getGroup());
+//			query.setOnlyActive(true);
+//			request.setAttribute("groups", groupService.search(query));
+//		} else {
+//			canSendFree = permissionService
+//					.hasPermission(BrokerPermission.SMS_MAILINGS_FREE_SMS_MAILINGS);
+//			canSendPaid = permissionService
+//					.hasPermission(BrokerPermission.SMS_MAILINGS_PAID_SMS_MAILINGS);
+//		}
+//
+//		request.setAttribute("canSendFree", canSendFree);
+//		request.setAttribute("canSendPaid", canSendPaid);
+//		if (canSendFree && canSendPaid) {
+//			form.setSmsMailing("free", "true");
+//		}
+//	}
+//
+//	protected void validateForm(final ActionContext context) {
+//		final SendSmsMailingForm form = context.getForm();
+//		final SmsMailing smsMailing = getDataBinder().readFromString(
+//				form.getSmsMailing());
+//		smsMailingService.validate(smsMailing, form.isSingleMember());
+//	}
 
 	private DataBinder<SmsMailing> getDataBinder() {
 		if (dataBinder == null) {

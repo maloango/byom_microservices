@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.customization.themes.ExportThemeForm;
+//import nl.strohalm.cyclos.controls.customization.themes.ExportThemeForm;
 import nl.strohalm.cyclos.themes.Theme;
 import nl.strohalm.cyclos.themes.ThemeHandler;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
@@ -98,10 +98,10 @@ public class ExportThemeController extends BaseRestController{
     }
 
    // @Override
-    protected void validateForm(final ActionContext context) {
-        final ExportThemeForm form = context.getForm();
-        final Theme theme = getDataBinder().readFromString(form.getTheme());
-        themeHandler.validateForExport(theme);
-    }
+//    protected void validateForm(final ActionContext context) {
+//        final ExportThemeForm form = context.getForm();
+//        final Theme theme = getDataBinder().readFromString(form.getTheme());
+//        themeHandler.validateForExport(theme);
+//    }
 
 }

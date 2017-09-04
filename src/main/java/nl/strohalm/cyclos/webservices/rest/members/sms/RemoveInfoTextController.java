@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.sms.RemoveInfoTextForm;
+//import nl.strohalm.cyclos.controls.members.sms.RemoveInfoTextForm;
 import nl.strohalm.cyclos.exceptions.PermissionDeniedException;
 import nl.strohalm.cyclos.services.infotexts.InfoTextService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;

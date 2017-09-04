@@ -3,7 +3,7 @@ package nl.strohalm.cyclos.webservices.rest.settings;
 import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.settings.EditMessageSettingForm;
+//import nl.strohalm.cyclos.controls.settings.EditMessageSettingForm;
 import nl.strohalm.cyclos.entities.settings.MessageSettings;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.utils.ActionHelper;
@@ -179,78 +179,78 @@ public class EditMessageSettingController extends BaseRestController {
 		return response;
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final EditMessageSettingForm form = context.getForm();
-		final MessageSettings messageSettings = settingsService
-				.getMessageSettings();
-		final String setting = StringUtils.trimToNull(form.getSetting());
-		if (setting == null) {
-			throw new ValidationException();
-		}
-
-		// Try the setting name itself (like global settings)
-		try {
-			final String value = PropertyHelper.get(messageSettings, setting);
-			form.setValue(value);
-			form.setHasGeneral(true);
-			request.setAttribute("generalIsHtml", setting.toLowerCase()
-					.endsWith("html"));
-		} catch (final PropertyException e) {
-			// Ignore - probably didn't have this setting
-		}
-
-		// Try the subject
-		try {
-			final String property = setting + "Subject";
-			final String value = PropertyHelper.get(messageSettings, property);
-			form.setSubject(value);
-			form.setHasSubject(true);
-		} catch (final PropertyException e) {
-			// Ignore - probably didn't have this setting
-		}
-
-		// Try the body
-		try {
-			final String property = setting + "Message";
-			final String value = PropertyHelper.get(messageSettings, property);
-			form.setBody(value);
-			form.setHasBody(true);
-		} catch (final PropertyException e) {
-			// Ignore - probably didn't have this setting
-		}
-
-		// Try the sms
-		try {
-			final String property = setting + "Sms";
-			final String value = PropertyHelper.get(messageSettings, property);
-			form.setSms(value);
-			form.setHasSms(true);
-		} catch (final PropertyException e) {
-			// Ignore - probably didn't have this setting
-		}
-
-		request.setAttribute("setting", setting);
-		request.setAttribute("format", TextFormat.RICH);
-	}
-
-	protected void validateForm(final ActionContext context) {
-		final EditMessageSettingForm form = context.getForm();
-		final Validator validator = new Validator("settings.message");
-		if (form.isHasGeneral()) {
-			validator.property("value").required().maxLength(MAX_SUBJECT_SIZE);
-		}
-		if (form.isHasSubject()) {
-			validator.property("subject").required()
-					.maxLength(MAX_SUBJECT_SIZE);
-		}
-		if (form.isHasBody()) {
-			validator.property("body").required().maxLength(MAX_BODY_SIZE);
-		}
-		if (form.isHasSms()) {
-			validator.property("sms").required().maxLength(MAX_SMS_SIZE);
-		}
-		validator.validate(form);
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final EditMessageSettingForm form = context.getForm();
+//		final MessageSettings messageSettings = settingsService
+//				.getMessageSettings();
+//		final String setting = StringUtils.trimToNull(form.getSetting());
+//		if (setting == null) {
+//			throw new ValidationException();
+//		}
+//
+//		// Try the setting name itself (like global settings)
+//		try {
+//			final String value = PropertyHelper.get(messageSettings, setting);
+//			form.setValue(value);
+//			form.setHasGeneral(true);
+//			request.setAttribute("generalIsHtml", setting.toLowerCase()
+//					.endsWith("html"));
+//		} catch (final PropertyException e) {
+//			// Ignore - probably didn't have this setting
+//		}
+//
+//		// Try the subject
+//		try {
+//			final String property = setting + "Subject";
+//			final String value = PropertyHelper.get(messageSettings, property);
+//			form.setSubject(value);
+//			form.setHasSubject(true);
+//		} catch (final PropertyException e) {
+//			// Ignore - probably didn't have this setting
+//		}
+//
+//		// Try the body
+//		try {
+//			final String property = setting + "Message";
+//			final String value = PropertyHelper.get(messageSettings, property);
+//			form.setBody(value);
+//			form.setHasBody(true);
+//		} catch (final PropertyException e) {
+//			// Ignore - probably didn't have this setting
+//		}
+//
+//		// Try the sms
+//		try {
+//			final String property = setting + "Sms";
+//			final String value = PropertyHelper.get(messageSettings, property);
+//			form.setSms(value);
+//			form.setHasSms(true);
+//		} catch (final PropertyException e) {
+//			// Ignore - probably didn't have this setting
+//		}
+//
+//		request.setAttribute("setting", setting);
+//		request.setAttribute("format", TextFormat.RICH);
+//	}
+//
+//	protected void validateForm(final ActionContext context) {
+//		final EditMessageSettingForm form = context.getForm();
+//		final Validator validator = new Validator("settings.message");
+//		if (form.isHasGeneral()) {
+//			validator.property("value").required().maxLength(MAX_SUBJECT_SIZE);
+//		}
+//		if (form.isHasSubject()) {
+//			validator.property("subject").required()
+//					.maxLength(MAX_SUBJECT_SIZE);
+//		}
+//		if (form.isHasBody()) {
+//			validator.property("body").required().maxLength(MAX_BODY_SIZE);
+//		}
+//		if (form.isHasSms()) {
+//			validator.property("sms").required().maxLength(MAX_SMS_SIZE);
+//		}
+//		validator.validate(form);
+//	}
 
 }

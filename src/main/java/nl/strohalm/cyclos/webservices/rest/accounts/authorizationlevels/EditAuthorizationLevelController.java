@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.authorizationlevels.EditAuthorizationLevelForm;
+//import nl.strohalm.cyclos.controls.accounts.authorizationlevels.EditAuthorizationLevelForm;
 import nl.strohalm.cyclos.entities.accounts.transactions.AuthorizationLevel;
 import nl.strohalm.cyclos.entities.accounts.transactions.TransferType;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
@@ -210,9 +210,9 @@ public class EditAuthorizationLevelController extends BaseRestController impleme
 		return response;
 	}
 
-	protected void validateForm(final ActionContext context) {
-		final EditAuthorizationLevelForm form = context.getForm();
-		final AuthorizationLevel authorizationLevel = getDataBinder().readFromString(form.getAuthorizationLevel());
-		authorizationLevelService.validate(authorizationLevel);
-	}
+//	protected void validateForm(final ActionContext context) {
+//		final EditAuthorizationLevelForm form = context.getForm();
+//		final AuthorizationLevel authorizationLevel = getDataBinder().readFromString(form.getAuthorizationLevel());
+//		authorizationLevelService.validate(authorizationLevel);
+//	}
 }

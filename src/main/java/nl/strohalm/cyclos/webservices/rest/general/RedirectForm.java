@@ -19,14 +19,11 @@
  */
 package nl.strohalm.cyclos.webservices.rest.general;
 
-import nl.strohalm.cyclos.controls.general.*;
-import org.apache.struts.action.ActionForm;
-
 /**
  * Form used to set the cookies regarding guest pages customization, then redirect to a given path
  * @author luis
  */
-public class RedirectForm extends ActionForm {
+public class RedirectForm  {
 
     private static final long serialVersionUID = -7170681778877879978L;
 

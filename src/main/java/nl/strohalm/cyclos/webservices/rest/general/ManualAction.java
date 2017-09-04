@@ -19,7 +19,6 @@
  */
 package nl.strohalm.cyclos.webservices.rest.general;
 
-import nl.strohalm.cyclos.controls.general.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

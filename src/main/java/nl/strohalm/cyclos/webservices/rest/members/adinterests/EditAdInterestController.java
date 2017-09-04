@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.adinterests.EditAdInterestForm;
+//import nl.strohalm.cyclos.controls.members.adinterests.EditAdInterestForm;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.accounts.Currency;
 import nl.strohalm.cyclos.entities.accounts.MemberAccountType;
@@ -215,92 +215,92 @@ public class EditAdInterestController extends BaseRestController{
     	
     }
     
-    @RequestMapping(value = "member/editAdInterest", method = RequestMethod.PUT)
-    @ResponseBody
-    protected EditAdInterestResponseDTO formAction(@RequestBody EditAdInterestRequestDTO form) throws Exception {
-        EditAdInterestResponseDTO response = null;
-        try{
-        final AdInterest adInterest = resolveAdInterest(null);
-        final boolean isInsert = adInterest.isTransient();
-        adInterestService.save(adInterest);
-        
-        String message = null;
-        if (isInsert) {
-        	message = "adInterest.inserted";
-			
-		}
-        else{
-        	message = "adInterest.modified";
-        }
-        response = new EditAdInterestResponseDTO();}
-        catch(Exception e){
-                e.printStackTrace();
-                }
-        return response;
-    }
+//    @RequestMapping(value = "member/editAdInterest", method = RequestMethod.PUT)
+//    @ResponseBody
+//    protected EditAdInterestResponseDTO formAction(@RequestBody EditAdInterestRequestDTO form) throws Exception {
+//        EditAdInterestResponseDTO response = null;
+//        try{
+//        final AdInterest adInterest = resolveAdInterest(null);
+//        final boolean isInsert = adInterest.isTransient();
+//        adInterestService.save(adInterest);
+//        
+//        String message = null;
+//        if (isInsert) {
+//        	message = "adInterest.inserted";
+//			
+//		}
+//        else{
+//        	message = "adInterest.modified";
+//        }
+//        response = new EditAdInterestResponseDTO();}
+//        catch(Exception e){
+//                e.printStackTrace();
+//                }
+//        return response;
+//    }
    
 
     //@Override
-    protected void prepareForm(final ActionContext context) throws Exception {
-        final HttpServletRequest request = context.getRequest();
-
-        // Send ad interest to JSP
-        final EditAdInterestForm form = context.getForm();
-        AdInterest adInterest = resolveAdInterest(context);
-        final Long id = adInterest.getId();
-        if (id != null) {
-            adInterest = adInterestService.load(adInterest.getId(), RelationshipHelper.nested(AdInterest.Relationships.MEMBER, Element.Relationships.USER));
-        }
-        getDataBinder().writeAsString(form.getAdInterest(), adInterest);
-        request.setAttribute("adInterest", adInterest);
-
-        // Send trade types to JSP
-        RequestHelper.storeEnum(request, Ad.TradeType.class, "tradeTypes");
-
-        // Send categories to JSP
-        request.setAttribute("adCategories", adCategoryService.listLeaf());
-
-        // Send group filters to JSP
-        final MemberGroup memberGroup = context.getGroup();
-        final GroupFilterQuery groupFilterQuery = new GroupFilterQuery();
-        groupFilterQuery.setViewableBy(memberGroup);
-        final List<GroupFilter> groupFilters = groupFilterService.search(groupFilterQuery);
-        if (groupFilters.size() > 0) {
-            request.setAttribute("groupFilters", groupFilters);
-        }
-
-        // Send currencies to JSP
-        final List<Currency> currencies = currencyService.listByMemberGroup(memberGroup);
-        request.setAttribute("currencies", currencies);
-        if (currencies.size() == 1) {
-            // Set a single currency variable when there's only one option
-            request.setAttribute("singleCurrency", currencies.get(0));
-        } else if (currencies.size() > 1 && adInterest.getCurrency() == null) {
-            // When there's multiple currencies, pre select the one of the default account
-            final MemberAccountType defaultAccountType = accountTypeService.getDefault(memberGroup, AccountType.Relationships.CURRENCY);
-            if (defaultAccountType != null) {
-                form.setAdInterest("currency", CoercionHelper.coerce(String.class, defaultAccountType.getCurrency()));
-            }
-        }
-
-    }
+//    protected void prepareForm(final ActionContext context) throws Exception {
+//        final HttpServletRequest request = context.getRequest();
+//
+//        // Send ad interest to JSP
+//        final EditAdInterestForm form = context.getForm();
+//        AdInterest adInterest = resolveAdInterest(context);
+//        final Long id = adInterest.getId();
+//        if (id != null) {
+//            adInterest = adInterestService.load(adInterest.getId(), RelationshipHelper.nested(AdInterest.Relationships.MEMBER, Element.Relationships.USER));
+//        }
+//        getDataBinder().writeAsString(form.getAdInterest(), adInterest);
+//        request.setAttribute("adInterest", adInterest);
+//
+//        // Send trade types to JSP
+//        RequestHelper.storeEnum(request, Ad.TradeType.class, "tradeTypes");
+//
+//        // Send categories to JSP
+//        request.setAttribute("adCategories", adCategoryService.listLeaf());
+//
+//        // Send group filters to JSP
+//        final MemberGroup memberGroup = context.getGroup();
+//        final GroupFilterQuery groupFilterQuery = new GroupFilterQuery();
+//        groupFilterQuery.setViewableBy(memberGroup);
+//        final List<GroupFilter> groupFilters = groupFilterService.search(groupFilterQuery);
+//        if (groupFilters.size() > 0) {
+//            request.setAttribute("groupFilters", groupFilters);
+//        }
+//
+//        // Send currencies to JSP
+//        final List<Currency> currencies = currencyService.listByMemberGroup(memberGroup);
+//        request.setAttribute("currencies", currencies);
+//        if (currencies.size() == 1) {
+//            // Set a single currency variable when there's only one option
+//            request.setAttribute("singleCurrency", currencies.get(0));
+//        } else if (currencies.size() > 1 && adInterest.getCurrency() == null) {
+//            // When there's multiple currencies, pre select the one of the default account
+//            final MemberAccountType defaultAccountType = accountTypeService.getDefault(memberGroup, AccountType.Relationships.CURRENCY);
+//            if (defaultAccountType != null) {
+//                form.setAdInterest("currency", CoercionHelper.coerce(String.class, defaultAccountType.getCurrency()));
+//            }
+//        }
+//
+//    }
 
    // @Override
-    protected void validateForm(final ActionContext context) {
-        final AdInterest adInterest = resolveAdInterest(context);
-        adInterestService.validate(adInterest);
-    }
-
-    private AdInterest resolveAdInterest(final ActionContext context) {
-        final EditAdInterestForm form = context.getForm();
-        final AdInterest adInterest = getDataBinder().readFromString(form.getAdInterest());
-        if (adInterest.getOwner() == null && context.isMember()) {
-            adInterest.setOwner((Member) context.getElement());
-        }
-        if (adInterest.getType() == null) {
-            adInterest.setType(Ad.TradeType.OFFER);
-        }
-        return adInterest;
-    }
+//    protected void validateForm(final ActionContext context) {
+//        final AdInterest adInterest = resolveAdInterest(context);
+//        adInterestService.validate(adInterest);
+//    }
+//
+//    private AdInterest resolveAdInterest(final ActionContext context) {
+//        final EditAdInterestForm form = context.getForm();
+//        final AdInterest adInterest = getDataBinder().readFromString(form.getAdInterest());
+//        if (adInterest.getOwner() == null && context.isMember()) {
+//            adInterest.setOwner((Member) context.getElement());
+//        }
+//        if (adInterest.getType() == null) {
+//            adInterest.setType(Ad.TradeType.OFFER);
+//        }
+//        return adInterest;
+//    }
 
 }

@@ -21,7 +21,7 @@ package nl.strohalm.cyclos.webservices.rest.general;
 
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.BaseAction;
+//import nl.strohalm.cyclos.controls.BaseAction;
 import nl.strohalm.cyclos.entities.access.TransactionPassword;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.access.User.TransactionPasswordStatus;

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.customization.translationMessages.EditTranslationMessageForm;
+//import nl.strohalm.cyclos.controls.customization.translationMessages.EditTranslationMessageForm;
 import nl.strohalm.cyclos.entities.customization.translationMessages.TranslationMessage;
 import nl.strohalm.cyclos.entities.exceptions.DaoException;
 import nl.strohalm.cyclos.services.customization.TranslationMessageService;
@@ -187,11 +187,11 @@ public class EditTranslationMessageController extends BaseRestController {
                 return response;
 	}
 
-	protected void validateForm(final ActionContext context) {
-		final EditTranslationMessageForm form = context.getForm();
-		final TranslationMessage translationMessage = getDataBinder()
-				.readFromString(form.getMessage());
-		translationMessageService.validate(translationMessage);
-	}
+//	protected void validateForm(final ActionContext context) {
+//		final EditTranslationMessageForm form = context.getForm();
+//		final TranslationMessage translationMessage = getDataBinder()
+//				.readFromString(form.getMessage());
+//		translationMessageService.validate(translationMessage);
+//	}
 
 }

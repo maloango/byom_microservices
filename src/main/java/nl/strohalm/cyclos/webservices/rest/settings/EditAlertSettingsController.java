@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.settings.EditAlertSettingsForm;
+//import nl.strohalm.cyclos.controls.settings.EditAlertSettingsForm;
 import nl.strohalm.cyclos.entities.settings.AlertSettings;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.utils.TimePeriod;
@@ -110,20 +110,20 @@ public class EditAlertSettingsController extends BaseRestController {
 		return response;
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final EditAlertSettingsForm form = context.getForm();
-		getDataBinder().writeAsString(form.getSetting(),
-				settingsService.getAlertSettings());
-		request.setAttribute("timePeriodFields", Arrays.asList(
-				TimePeriod.Field.DAYS, TimePeriod.Field.WEEKS,
-				TimePeriod.Field.MONTHS));
-	}
-
-	protected void validateForm(final ActionContext context) {
-		final EditAlertSettingsForm form = context.getForm();
-		final AlertSettings settings = getDataBinder().readFromString(
-				form.getSetting());
-		settingsService.validate(settings);
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final EditAlertSettingsForm form = context.getForm();
+//		getDataBinder().writeAsString(form.getSetting(),
+//				settingsService.getAlertSettings());
+//		request.setAttribute("timePeriodFields", Arrays.asList(
+//				TimePeriod.Field.DAYS, TimePeriod.Field.WEEKS,
+//				TimePeriod.Field.MONTHS));
+//	}
+//
+//	protected void validateForm(final ActionContext context) {
+//		final EditAlertSettingsForm form = context.getForm();
+//		final AlertSettings settings = getDataBinder().readFromString(
+//				form.getSetting());
+//		settingsService.validate(settings);
+//	}
 }

@@ -8,7 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.accountfees.AccountFeeLogForm;
+//import nl.strohalm.cyclos.controls.accounts.accountfees.AccountFeeLogForm;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.accounts.MemberAccountType;
 import nl.strohalm.cyclos.entities.accounts.fees.account.AccountFee;
@@ -192,42 +192,42 @@ public class ListAccountFeeLogController extends BaseRestController {
 
 
     //@Override
-    protected QueryParameters prepareForm(final ActionContext context) {
-        final HttpServletRequest request = context.getRequest();
-
-        // Groups managed by the admin group
-        AdminGroup adminGroup = context.getGroup();
-        adminGroup = groupService.load(adminGroup.getId(), AdminGroup.Relationships.MANAGES_GROUPS);
-        final Collection<MemberGroup> managedGroups = (adminGroup.getManagesGroups());
-
-        final AccountFeeQuery feeQuery = new AccountFeeQuery();
-        feeQuery.fetch(AccountFee.Relationships.LOGS, RelationshipHelper.nested(AccountFee.Relationships.ACCOUNT_TYPE, AccountType.Relationships.CURRENCY));
-        feeQuery.setReturnDisabled(false);
-        feeQuery.setGroups(managedGroups);
-        final List<AccountFee> fees = accountFeeService.search(feeQuery);
-
-        feeQuery.setReturnDisabled(true);
-
-        final AccountFeeLogForm form = context.getForm();
-
-        final AccountFeeLogQuery logQuery = getDataBinder().readFromString(form.getQuery());
-        logQuery.setAccountFees(fees);
-
-        // Check if there is at least one fee which is currently running
-        boolean hasRunningFees = false;
-        for (final AccountFee fee : fees) {
-            final AccountFeeLog lastExecution = fee.getLastExecution();
-            if (lastExecution != null && !lastExecution.isFinished()) {
-                hasRunningFees = true;
-                break;
-            }
-        }
-        request.setAttribute("hasRunningFees", hasRunningFees);
-
-        request.setAttribute("accountFees", fees);
-
-        return logQuery;
-    }
+//    protected QueryParameters prepareForm(final ActionContext context) {
+//        final HttpServletRequest request = context.getRequest();
+//
+//        // Groups managed by the admin group
+//        AdminGroup adminGroup = context.getGroup();
+//        adminGroup = groupService.load(adminGroup.getId(), AdminGroup.Relationships.MANAGES_GROUPS);
+//        final Collection<MemberGroup> managedGroups = (adminGroup.getManagesGroups());
+//
+//        final AccountFeeQuery feeQuery = new AccountFeeQuery();
+//        feeQuery.fetch(AccountFee.Relationships.LOGS, RelationshipHelper.nested(AccountFee.Relationships.ACCOUNT_TYPE, AccountType.Relationships.CURRENCY));
+//        feeQuery.setReturnDisabled(false);
+//        feeQuery.setGroups(managedGroups);
+//        final List<AccountFee> fees = accountFeeService.search(feeQuery);
+//
+//        feeQuery.setReturnDisabled(true);
+//
+//        final AccountFeeLogForm form = context.getForm();
+//
+//        final AccountFeeLogQuery logQuery = getDataBinder().readFromString(form.getQuery());
+//        logQuery.setAccountFees(fees);
+//
+//        // Check if there is at least one fee which is currently running
+//        boolean hasRunningFees = false;
+//        for (final AccountFee fee : fees) {
+//            final AccountFeeLog lastExecution = fee.getLastExecution();
+//            if (lastExecution != null && !lastExecution.isFinished()) {
+//                hasRunningFees = true;
+//                break;
+//            }
+//        }
+//        request.setAttribute("hasRunningFees", hasRunningFees);
+//
+//        request.setAttribute("accountFees", fees);
+//
+//        return logQuery;
+//    }
 
    // @Override
     protected boolean willExecuteQuery(final ActionContext context, final QueryParameters queryParameters) throws Exception {

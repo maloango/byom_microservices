@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.records.RemoveMemberRecordForm;
-import nl.strohalm.cyclos.controls.members.records.SearchMemberRecordsForm;
+//import nl.strohalm.cyclos.controls.members.records.RemoveMemberRecordForm;
+//import nl.strohalm.cyclos.controls.members.records.SearchMemberRecordsForm;
 import nl.strohalm.cyclos.entities.members.records.MemberRecord;
 import nl.strohalm.cyclos.entities.members.records.MemberRecordType;
 import nl.strohalm.cyclos.entities.members.records.MemberRecordType.Layout;

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.settings.EditLocalSettingsForm;
+//import nl.strohalm.cyclos.controls.settings.EditLocalSettingsForm;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
 import nl.strohalm.cyclos.entities.settings.LocalSettings.DatePattern;
 import nl.strohalm.cyclos.entities.settings.LocalSettings.Language;
@@ -267,78 +267,78 @@ public class EditLocalSettingsController extends BaseRestController {
 		return response;
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final EditLocalSettingsForm form = context.getForm();
-		final LocalSettings settings = settingsService.getLocalSettings();
-
-		form.setSetting("enableSms",
-				StringUtils.isNotEmpty(settings.getSendSmsWebServiceUrl())
-						|| StringUtils.isNotEmpty(settings.getSmsChannelName()));
-		final TransactionNumber transactionNumber = settings
-				.getTransactionNumber();
-		form.setSetting("enableTransactionNumber", transactionNumber != null
-				&& transactionNumber.getPadLength() > 0);
-
-		getDataBinder().writeAsString(form.getSetting(), settings);
-
-		RequestHelper.storeEnum(request, LocalSettings.Language.class,
-				"languages");
-		RequestHelper.storeEnum(request, FileUnits.class, "uploadUnits");
-		RequestHelper.storeEnum(request, LocalSettings.NumberLocale.class,
-				"numberLocales");
-		RequestHelper.storeEnum(request, LocalSettings.Precision.class,
-				"precisions");
-		RequestHelper.storeEnum(request,
-				LocalSettings.DecimalInputMethod.class, "decimalInputMethods");
-		final Map<DatePattern, String> datePatterns = new LinkedHashMap<DatePattern, String>();
-		/*for (final DatePattern datePattern : DatePattern.values()) {
-			datePatterns.put(datePattern, messageHelper
-					.getDatePatternDescription(datePattern).toUpperCase());
-		}*/
-		request.setAttribute("datePatterns", datePatterns);
-		RequestHelper.storeEnum(request, LocalSettings.TimePattern.class,
-				"timePatterns");
-		RequestHelper.storeEnum(request,
-				LocalSettings.CsvRecordSeparator.class, "csvRecordSeparators");
-		RequestHelper.storeEnum(request, LocalSettings.CsvValueSeparator.class,
-				"csvValueSeparators");
-		RequestHelper.storeEnum(request, LocalSettings.CsvStringQuote.class,
-				"csvStringQuotes");
-		RequestHelper
-				.storeEnum(request, LocalSettings.MemberResultDisplay.class,
-						"memberResultDisplays");
-		RequestHelper.storeEnum(request, LocalSettings.SortOrder.class,
-				"memberSortOrders");
-		RequestHelper.storeEnum(request, TextFormat.class, "textFormats");
-		request.setAttribute("brokeringExpirationUnits", Arrays.asList(
-				TimePeriod.Field.DAYS, TimePeriod.Field.MONTHS,
-				TimePeriod.Field.YEARS));
-		request.setAttribute("deleteMessagesExpirationUnits", Arrays.asList(
-				TimePeriod.Field.DAYS, TimePeriod.Field.MONTHS,
-				TimePeriod.Field.YEARS));
-		request.setAttribute("maxChargebackTimeUnits", Arrays.asList(
-				TimePeriod.Field.DAYS, TimePeriod.Field.WEEKS,
-				TimePeriod.Field.MONTHS));
-		request.setAttribute("indexRebuildingTimeUnits", Arrays.asList(
-				TimePeriod.Field.DAYS, TimePeriod.Field.WEEKS,
-				TimePeriod.Field.MONTHS));
-		request.setAttribute("smsChannels", channelService.listNonBuiltin());
-		request.setAttribute("smsCustomFields",
-				channelService.possibleCustomFieldsAsPrincipal());
-
-		// Transform the time zones in an
-		final List<String> timeZones = new ArrayList<String>();
-		for (final String id : TimeZone.getAvailableIDs()) {
-			if (!id.contains("/") || id.contains("Etc")) {
-				continue;
-			}
-			timeZones.add(id);
-		}
-		Collections.sort(timeZones);
-		timeZones.add(0, "GMT");
-		request.setAttribute("timeZones", timeZones);
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final EditLocalSettingsForm form = context.getForm();
+//		final LocalSettings settings = settingsService.getLocalSettings();
+//
+//		form.setSetting("enableSms",
+//				StringUtils.isNotEmpty(settings.getSendSmsWebServiceUrl())
+//						|| StringUtils.isNotEmpty(settings.getSmsChannelName()));
+//		final TransactionNumber transactionNumber = settings
+//				.getTransactionNumber();
+//		form.setSetting("enableTransactionNumber", transactionNumber != null
+//				&& transactionNumber.getPadLength() > 0);
+//
+//		getDataBinder().writeAsString(form.getSetting(), settings);
+//
+//		RequestHelper.storeEnum(request, LocalSettings.Language.class,
+//				"languages");
+//		RequestHelper.storeEnum(request, FileUnits.class, "uploadUnits");
+//		RequestHelper.storeEnum(request, LocalSettings.NumberLocale.class,
+//				"numberLocales");
+//		RequestHelper.storeEnum(request, LocalSettings.Precision.class,
+//				"precisions");
+//		RequestHelper.storeEnum(request,
+//				LocalSettings.DecimalInputMethod.class, "decimalInputMethods");
+//		final Map<DatePattern, String> datePatterns = new LinkedHashMap<DatePattern, String>();
+//		/*for (final DatePattern datePattern : DatePattern.values()) {
+//			datePatterns.put(datePattern, messageHelper
+//					.getDatePatternDescription(datePattern).toUpperCase());
+//		}*/
+//		request.setAttribute("datePatterns", datePatterns);
+//		RequestHelper.storeEnum(request, LocalSettings.TimePattern.class,
+//				"timePatterns");
+//		RequestHelper.storeEnum(request,
+//				LocalSettings.CsvRecordSeparator.class, "csvRecordSeparators");
+//		RequestHelper.storeEnum(request, LocalSettings.CsvValueSeparator.class,
+//				"csvValueSeparators");
+//		RequestHelper.storeEnum(request, LocalSettings.CsvStringQuote.class,
+//				"csvStringQuotes");
+//		RequestHelper
+//				.storeEnum(request, LocalSettings.MemberResultDisplay.class,
+//						"memberResultDisplays");
+//		RequestHelper.storeEnum(request, LocalSettings.SortOrder.class,
+//				"memberSortOrders");
+//		RequestHelper.storeEnum(request, TextFormat.class, "textFormats");
+//		request.setAttribute("brokeringExpirationUnits", Arrays.asList(
+//				TimePeriod.Field.DAYS, TimePeriod.Field.MONTHS,
+//				TimePeriod.Field.YEARS));
+//		request.setAttribute("deleteMessagesExpirationUnits", Arrays.asList(
+//				TimePeriod.Field.DAYS, TimePeriod.Field.MONTHS,
+//				TimePeriod.Field.YEARS));
+//		request.setAttribute("maxChargebackTimeUnits", Arrays.asList(
+//				TimePeriod.Field.DAYS, TimePeriod.Field.WEEKS,
+//				TimePeriod.Field.MONTHS));
+//		request.setAttribute("indexRebuildingTimeUnits", Arrays.asList(
+//				TimePeriod.Field.DAYS, TimePeriod.Field.WEEKS,
+//				TimePeriod.Field.MONTHS));
+//		request.setAttribute("smsChannels", channelService.listNonBuiltin());
+//		request.setAttribute("smsCustomFields",
+//				channelService.possibleCustomFieldsAsPrincipal());
+//
+//		// Transform the time zones in an
+//		final List<String> timeZones = new ArrayList<String>();
+//		for (final String id : TimeZone.getAvailableIDs()) {
+//			if (!id.contains("/") || id.contains("Etc")) {
+//				continue;
+//			}
+//			timeZones.add(id);
+//		}
+//		Collections.sort(timeZones);
+//		timeZones.add(0, "GMT");
+//		request.setAttribute("timeZones", timeZones);
+//	}
 
 	protected void validateForm(final EditLocalSettingsRequestDto context) {
 		final LocalSettings settings = resolveLocalSettings(context);

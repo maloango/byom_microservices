@@ -10,7 +10,7 @@ import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.records.SearchMemberRecordsForm;
+//import nl.strohalm.cyclos.controls.members.records.SearchMemberRecordsForm;
 import nl.strohalm.cyclos.entities.customization.fields.MemberRecordCustomField;
 import nl.strohalm.cyclos.entities.customization.fields.MemberRecordCustomFieldValue;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
@@ -148,169 +148,169 @@ public class SearchMemberRecordsController extends BaseRestController {
 		return response;
 	}
 
-	protected QueryParameters prepareForm(final ActionContext context) {
-		final HttpServletRequest request = context.getRequest();
-		final SearchMemberRecordsForm form = context.getForm();
-
-		final long typeId = form.getTypeId();
-		if (typeId <= 0L) {
-			throw new ValidationException();
-		}
-		final MemberRecordType type = memberRecordTypeService.load(typeId);
-		request.setAttribute("type", type);
-
-		final boolean global = form.isGlobal();
-
-		// Fetch the element
-		Element element = null;
-		if (!global) {
-			final long elementId = form.getElementId();
-			if (elementId <= 0L) {
-				throw new ValidationException();
-			}
-			element = elementService.load(elementId,
-					Element.Relationships.GROUP);
-		}
-		request.setAttribute("element", element);
-
-		// Retrieve the query
-		final FullTextMemberRecordQuery query = getDataBinder().readFromString(
-				form.getQuery());
-		query.setType(type);
-		if (global) {
-			if (form.getQueryElementId() > 0L) {
-				final Element queryElement = elementService.load(form
-						.getQueryElementId());
-				query.setElement(queryElement);
-			}
-			if (context.isBroker()) {
-				query.setBroker(context.getMember());
-			} else if (context.isAdmin() && query.getBroker() != null) {
-				final Member broker = elementService.load(query.getBroker()
-						.getId());
-				query.setBroker(broker);
-			}
-		} else {
-			query.setElement(element);
-		}
-		query.fetch(MemberRecord.Relationships.TYPE);
-
-		// Retrieve the custom fields
-		final List<MemberRecordCustomField> customFields = memberRecordCustomFieldService
-				.list(type);
-		final List<MemberRecordCustomField> fieldsForSearch = new ArrayList<MemberRecordCustomField>();
-		final List<MemberRecordCustomField> fieldsOnList = new ArrayList<MemberRecordCustomField>();
-		for (final MemberRecordCustomField field : customFields) {
-			if (field.isShowInSearch()) {
-				fieldsForSearch.add(field);
-			}
-			if (field.isShowInList()) {
-				fieldsOnList.add(field);
-			}
-		}
-		request.setAttribute(
-				"customValues",
-				customFieldHelper.buildEntries(fieldsForSearch,
-						query.getCustomValues()));
-		request.setAttribute("fieldsOnList", fieldsOnList);
-
-		// Check permissions for logged user
-		final Group group = context.getGroup();
-		boolean canCreate = false;
-		boolean canModify = false;
-		boolean canDelete = false;
-		if (context.isAdmin()) {
-			AdminGroup adminGroup = (AdminGroup) group;
-			adminGroup = groupService.load(adminGroup.getId(),
-					AdminGroup.Relationships.CREATE_MEMBER_RECORD_TYPES,
-					AdminGroup.Relationships.MODIFY_MEMBER_RECORD_TYPES,
-					AdminGroup.Relationships.DELETE_MEMBER_RECORD_TYPES,
-					AdminGroup.Relationships.CREATE_ADMIN_RECORD_TYPES,
-					AdminGroup.Relationships.MODIFY_ADMIN_RECORD_TYPES,
-					AdminGroup.Relationships.DELETE_ADMIN_RECORD_TYPES);
-			if (global) {
-				canCreate = (permissionService
-						.hasPermission(AdminMemberPermission.RECORDS_CREATE) && adminGroup
-						.getCreateMemberRecordTypes().contains(type))
-						|| (permissionService
-								.hasPermission(AdminAdminPermission.RECORDS_CREATE) && adminGroup
-								.getCreateAdminRecordTypes().contains(type));
-				canModify = (permissionService
-						.hasPermission(AdminMemberPermission.RECORDS_MODIFY) && adminGroup
-						.getModifyMemberRecordTypes().contains(type))
-						|| (permissionService
-								.hasPermission(AdminAdminPermission.RECORDS_MODIFY) && adminGroup
-								.getModifyAdminRecordTypes().contains(type));
-				canDelete = (permissionService
-						.hasPermission(AdminMemberPermission.RECORDS_DELETE) && adminGroup
-						.getDeleteMemberRecordTypes().contains(type))
-						|| (permissionService
-								.hasPermission(AdminAdminPermission.RECORDS_DELETE) && adminGroup
-								.getDeleteAdminRecordTypes().contains(type));
-			} else if (element instanceof Member) {
-				canCreate = permissionService
-						.hasPermission(AdminMemberPermission.RECORDS_CREATE)
-						&& adminGroup.getCreateMemberRecordTypes().contains(
-								type);
-				canModify = permissionService
-						.hasPermission(AdminMemberPermission.RECORDS_MODIFY)
-						&& adminGroup.getModifyMemberRecordTypes().contains(
-								type);
-				canDelete = permissionService
-						.hasPermission(AdminMemberPermission.RECORDS_DELETE)
-						&& adminGroup.getDeleteMemberRecordTypes().contains(
-								type);
-			} else if (element instanceof Administrator) {
-				canCreate = permissionService
-						.hasPermission(AdminAdminPermission.RECORDS_CREATE)
-						&& adminGroup.getCreateAdminRecordTypes()
-								.contains(type);
-				canModify = permissionService
-						.hasPermission(AdminAdminPermission.RECORDS_MODIFY)
-						&& adminGroup.getModifyAdminRecordTypes()
-								.contains(type);
-				canDelete = permissionService
-						.hasPermission(AdminAdminPermission.RECORDS_DELETE)
-						&& adminGroup.getDeleteAdminRecordTypes()
-								.contains(type);
-			}
-		} else if ((element instanceof Member)
-				&& context.isBrokerOf((Member) element)) {
-			BrokerGroup brokerGroup = (BrokerGroup) group;
-			brokerGroup = groupService
-					.load(brokerGroup.getId(),
-							BrokerGroup.Relationships.BROKER_MEMBER_RECORD_TYPES,
-							BrokerGroup.Relationships.BROKER_CREATE_MEMBER_RECORD_TYPES,
-							BrokerGroup.Relationships.BROKER_MODIFY_MEMBER_RECORD_TYPES,
-							BrokerGroup.Relationships.BROKER_DELETE_MEMBER_RECORD_TYPES);
-			canCreate = permissionService
-					.hasPermission(BrokerPermission.MEMBER_RECORDS_CREATE)
-					&& brokerGroup.getBrokerCreateMemberRecordTypes().contains(
-							type);
-			canModify = permissionService
-					.hasPermission(BrokerPermission.MEMBER_RECORDS_MODIFY)
-					&& brokerGroup.getBrokerModifyMemberRecordTypes().contains(
-							type);
-			canDelete = permissionService
-					.hasPermission(BrokerPermission.MEMBER_RECORDS_DELETE)
-					&& brokerGroup.getBrokerDeleteMemberRecordTypes().contains(
-							type);
-		}
-		request.setAttribute("canCreate", canCreate);
-		request.setAttribute("canModify", canModify);
-		request.setAttribute("canDelete", canDelete);
-
-		return query;
-	}
-
-	protected boolean willExecuteQuery(final ActionContext context,
-			final QueryParameters queryParameters) throws Exception {
-		final SearchMemberRecordsForm form = context.getForm();
-		// For global searches, don't search when coming straight from the menu
-		if (form.isGlobal()) {
-			return !RequestHelper.isFromMenu(context.getRequest());
-		}
-		// For member-specific, always execute
-		return true;
-	}
+//	protected QueryParameters prepareForm(final ActionContext context) {
+//		final HttpServletRequest request = context.getRequest();
+//		final SearchMemberRecordsForm form = context.getForm();
+//
+//		final long typeId = form.getTypeId();
+//		if (typeId <= 0L) {
+//			throw new ValidationException();
+//		}
+//		final MemberRecordType type = memberRecordTypeService.load(typeId);
+//		request.setAttribute("type", type);
+//
+//		final boolean global = form.isGlobal();
+//
+//		// Fetch the element
+//		Element element = null;
+//		if (!global) {
+//			final long elementId = form.getElementId();
+//			if (elementId <= 0L) {
+//				throw new ValidationException();
+//			}
+//			element = elementService.load(elementId,
+//					Element.Relationships.GROUP);
+//		}
+//		request.setAttribute("element", element);
+//
+//		// Retrieve the query
+//		final FullTextMemberRecordQuery query = getDataBinder().readFromString(
+//				form.getQuery());
+//		query.setType(type);
+//		if (global) {
+//			if (form.getQueryElementId() > 0L) {
+//				final Element queryElement = elementService.load(form
+//						.getQueryElementId());
+//				query.setElement(queryElement);
+//			}
+//			if (context.isBroker()) {
+//				query.setBroker(context.getMember());
+//			} else if (context.isAdmin() && query.getBroker() != null) {
+//				final Member broker = elementService.load(query.getBroker()
+//						.getId());
+//				query.setBroker(broker);
+//			}
+//		} else {
+//			query.setElement(element);
+//		}
+//		query.fetch(MemberRecord.Relationships.TYPE);
+//
+//		// Retrieve the custom fields
+//		final List<MemberRecordCustomField> customFields = memberRecordCustomFieldService
+//				.list(type);
+//		final List<MemberRecordCustomField> fieldsForSearch = new ArrayList<MemberRecordCustomField>();
+//		final List<MemberRecordCustomField> fieldsOnList = new ArrayList<MemberRecordCustomField>();
+//		for (final MemberRecordCustomField field : customFields) {
+//			if (field.isShowInSearch()) {
+//				fieldsForSearch.add(field);
+//			}
+//			if (field.isShowInList()) {
+//				fieldsOnList.add(field);
+//			}
+//		}
+//		request.setAttribute(
+//				"customValues",
+//				customFieldHelper.buildEntries(fieldsForSearch,
+//						query.getCustomValues()));
+//		request.setAttribute("fieldsOnList", fieldsOnList);
+//
+//		// Check permissions for logged user
+//		final Group group = context.getGroup();
+//		boolean canCreate = false;
+//		boolean canModify = false;
+//		boolean canDelete = false;
+//		if (context.isAdmin()) {
+//			AdminGroup adminGroup = (AdminGroup) group;
+//			adminGroup = groupService.load(adminGroup.getId(),
+//					AdminGroup.Relationships.CREATE_MEMBER_RECORD_TYPES,
+//					AdminGroup.Relationships.MODIFY_MEMBER_RECORD_TYPES,
+//					AdminGroup.Relationships.DELETE_MEMBER_RECORD_TYPES,
+//					AdminGroup.Relationships.CREATE_ADMIN_RECORD_TYPES,
+//					AdminGroup.Relationships.MODIFY_ADMIN_RECORD_TYPES,
+//					AdminGroup.Relationships.DELETE_ADMIN_RECORD_TYPES);
+//			if (global) {
+//				canCreate = (permissionService
+//						.hasPermission(AdminMemberPermission.RECORDS_CREATE) && adminGroup
+//						.getCreateMemberRecordTypes().contains(type))
+//						|| (permissionService
+//								.hasPermission(AdminAdminPermission.RECORDS_CREATE) && adminGroup
+//								.getCreateAdminRecordTypes().contains(type));
+//				canModify = (permissionService
+//						.hasPermission(AdminMemberPermission.RECORDS_MODIFY) && adminGroup
+//						.getModifyMemberRecordTypes().contains(type))
+//						|| (permissionService
+//								.hasPermission(AdminAdminPermission.RECORDS_MODIFY) && adminGroup
+//								.getModifyAdminRecordTypes().contains(type));
+//				canDelete = (permissionService
+//						.hasPermission(AdminMemberPermission.RECORDS_DELETE) && adminGroup
+//						.getDeleteMemberRecordTypes().contains(type))
+//						|| (permissionService
+//								.hasPermission(AdminAdminPermission.RECORDS_DELETE) && adminGroup
+//								.getDeleteAdminRecordTypes().contains(type));
+//			} else if (element instanceof Member) {
+//				canCreate = permissionService
+//						.hasPermission(AdminMemberPermission.RECORDS_CREATE)
+//						&& adminGroup.getCreateMemberRecordTypes().contains(
+//								type);
+//				canModify = permissionService
+//						.hasPermission(AdminMemberPermission.RECORDS_MODIFY)
+//						&& adminGroup.getModifyMemberRecordTypes().contains(
+//								type);
+//				canDelete = permissionService
+//						.hasPermission(AdminMemberPermission.RECORDS_DELETE)
+//						&& adminGroup.getDeleteMemberRecordTypes().contains(
+//								type);
+//			} else if (element instanceof Administrator) {
+//				canCreate = permissionService
+//						.hasPermission(AdminAdminPermission.RECORDS_CREATE)
+//						&& adminGroup.getCreateAdminRecordTypes()
+//								.contains(type);
+//				canModify = permissionService
+//						.hasPermission(AdminAdminPermission.RECORDS_MODIFY)
+//						&& adminGroup.getModifyAdminRecordTypes()
+//								.contains(type);
+//				canDelete = permissionService
+//						.hasPermission(AdminAdminPermission.RECORDS_DELETE)
+//						&& adminGroup.getDeleteAdminRecordTypes()
+//								.contains(type);
+//			}
+//		} else if ((element instanceof Member)
+//				&& context.isBrokerOf((Member) element)) {
+//			BrokerGroup brokerGroup = (BrokerGroup) group;
+//			brokerGroup = groupService
+//					.load(brokerGroup.getId(),
+//							BrokerGroup.Relationships.BROKER_MEMBER_RECORD_TYPES,
+//							BrokerGroup.Relationships.BROKER_CREATE_MEMBER_RECORD_TYPES,
+//							BrokerGroup.Relationships.BROKER_MODIFY_MEMBER_RECORD_TYPES,
+//							BrokerGroup.Relationships.BROKER_DELETE_MEMBER_RECORD_TYPES);
+//			canCreate = permissionService
+//					.hasPermission(BrokerPermission.MEMBER_RECORDS_CREATE)
+//					&& brokerGroup.getBrokerCreateMemberRecordTypes().contains(
+//							type);
+//			canModify = permissionService
+//					.hasPermission(BrokerPermission.MEMBER_RECORDS_MODIFY)
+//					&& brokerGroup.getBrokerModifyMemberRecordTypes().contains(
+//							type);
+//			canDelete = permissionService
+//					.hasPermission(BrokerPermission.MEMBER_RECORDS_DELETE)
+//					&& brokerGroup.getBrokerDeleteMemberRecordTypes().contains(
+//							type);
+//		}
+//		request.setAttribute("canCreate", canCreate);
+//		request.setAttribute("canModify", canModify);
+//		request.setAttribute("canDelete", canDelete);
+//
+//		return query;
+//	}
+//
+//	protected boolean willExecuteQuery(final ActionContext context,
+//			final QueryParameters queryParameters) throws Exception {
+//		final SearchMemberRecordsForm form = context.getForm();
+//		// For global searches, don't search when coming straight from the menu
+//		if (form.isGlobal()) {
+//			return !RequestHelper.isFromMenu(context.getRequest());
+//		}
+//		// For member-specific, always execute
+//		return true;
+//	}
 }

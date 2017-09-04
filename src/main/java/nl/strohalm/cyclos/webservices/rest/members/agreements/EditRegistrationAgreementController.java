@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.agreements.EditRegistrationAgreementForm;
+//import nl.strohalm.cyclos.controls.members.agreements.EditRegistrationAgreementForm;
 import nl.strohalm.cyclos.entities.members.RegistrationAgreement;
 import nl.strohalm.cyclos.services.elements.RegistrationAgreementService;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
@@ -109,28 +109,28 @@ public class EditRegistrationAgreementController extends BaseRestController {
 		return response;
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final EditRegistrationAgreementForm form = context.getForm();
-		final long id = form.getRegistrationAgreementId();
-		RegistrationAgreement registrationAgreement;
-		final boolean isInsert = id <= 0L;
-		if (isInsert) {
-			registrationAgreement = new RegistrationAgreement();
-		} else {
-			registrationAgreement = registrationAgreementService.load(id);
-		}
-		getDataBinder().writeAsString(form, registrationAgreement);
-		request.setAttribute("registrationAgreement", registrationAgreement);
-		request.setAttribute("isInsert", isInsert);
-	}
-
-	protected void validateForm(final ActionContext context) {
-		final EditRegistrationAgreementForm form = context.getForm();
-		final RegistrationAgreement registrationAgreement = getDataBinder()
-				.readFromString(form);
-		registrationAgreementService.validate(registrationAgreement);
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final EditRegistrationAgreementForm form = context.getForm();
+//		final long id = form.getRegistrationAgreementId();
+//		RegistrationAgreement registrationAgreement;
+//		final boolean isInsert = id <= 0L;
+//		if (isInsert) {
+//			registrationAgreement = new RegistrationAgreement();
+//		} else {
+//			registrationAgreement = registrationAgreementService.load(id);
+//		}
+//		getDataBinder().writeAsString(form, registrationAgreement);
+//		request.setAttribute("registrationAgreement", registrationAgreement);
+//		request.setAttribute("isInsert", isInsert);
+//	}
+//
+//	protected void validateForm(final ActionContext context) {
+//		final EditRegistrationAgreementForm form = context.getForm();
+//		final RegistrationAgreement registrationAgreement = getDataBinder()
+//				.readFromString(form);
+//		registrationAgreementService.validate(registrationAgreement);
+//	}
 
 	private DataBinder<RegistrationAgreement> getDataBinder() {
 		if (dataBinder == null) {

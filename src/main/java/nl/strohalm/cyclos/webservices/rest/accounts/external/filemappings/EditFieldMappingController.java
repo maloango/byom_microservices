@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.accounts.external.filemappings.EditFieldMappingForm;
+//import nl.strohalm.cyclos.controls.accounts.external.filemappings.EditFieldMappingForm;
 import nl.strohalm.cyclos.entities.accounts.MemberAccountType;
 import nl.strohalm.cyclos.entities.accounts.external.ExternalAccount;
 import nl.strohalm.cyclos.entities.accounts.external.filemapping.FieldMapping;
@@ -237,83 +237,83 @@ public class EditFieldMappingController extends BaseRestController {
 	}
 
 	// @Override
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final EditFieldMappingForm form = context.getForm();
-
-		final Long fileMappingId = form.getFileMappingId();
-		if (fileMappingId <= 0) {
-			throw new ValidationException();
-		}
-		final FileMapping fileMapping = fileMappingService.load(fileMappingId,
-				FileMappingWithFields.Relationships.FIELDS,
-				RelationshipHelper.nested(
-						FileMapping.Relationships.EXTERNAL_ACCOUNT,
-						ExternalAccount.Relationships.MEMBER_ACCOUNT_TYPE));
-		final MemberAccountType memberAccountType = fileMapping.getAccount()
-				.getMemberAccountType();
-
-		final long fieldMappingId = form.getFieldMappingId();
-		final boolean isInsert = (fieldMappingId <= 0);
-		FieldMapping fieldMapping = null;
-		if (isInsert) {
-			fieldMapping = new FieldMapping();
-			fieldMapping.setFileMapping(fileMapping);
-		} else {
-			fieldMapping = fieldMappingService.load(fieldMappingId);
-		}
-		getDataBinder().writeAsString(form.getFieldMapping(), fieldMapping);
-		request.setAttribute("fieldMapping", fieldMapping);
-		request.setAttribute("editable", permissionService
-				.hasPermission(AdminSystemPermission.EXTERNAL_ACCOUNTS_MANAGE));
-		request.setAttribute("isInsert", isInsert);
-		RequestHelper.storeEnum(request,
-				FileMappingWithFields.NumberFormat.class, "numberFormats");
-
-		final Set<FieldMapping.Field> fields = EnumSet
-				.allOf(FieldMapping.Field.class);
-		final Set<Field> memberIdentificationFields = EnumSet.of(
-				Field.MEMBER_ID, Field.MEMBER_USERNAME,
-				Field.MEMBER_CUSTOM_FIELD);
-		if (fileMapping instanceof FileMappingWithFields) {
-			final FileMappingWithFields fileWithFields = (FileMappingWithFields) fileMapping;
-			for (final FieldMapping current : fileWithFields.getFields()) {
-				final Field field = current.getField();
-				// The only field which may be duplicated is IGNORED
-				if (field == Field.IGNORED) {
-					continue;
-				}
-				// The fields that identify the member may appear only once
-				if (memberIdentificationFields.contains(field)
-						&& !memberIdentificationFields.contains(fieldMapping
-								.getField())) {
-					fields.removeAll(memberIdentificationFields);
-				} else {
-					fields.remove(field);
-				}
-			}
-			if (!isInsert) {
-				fields.add(fieldMapping.getField()); // The field that was
-														// previously selected
-														// should always be
-														// present
-			}
-		}
-		request.setAttribute("fields", fields);
-		// Fetch the custom fields when they can be used
-		if (fields.contains(Field.MEMBER_CUSTOM_FIELD)) {
-			final List<MemberCustomField> memberCustomFields = getMemberCustomFields(memberAccountType);
-			request.setAttribute("memberFields", memberCustomFields);
-		}
-	}
-
-	// @Override
-	protected void validateForm(final ActionContext context) {
-		final EditFieldMappingForm form = context.getForm();
-		final FieldMapping fieldMapping = getDataBinder().readFromString(
-				form.getFieldMapping());
-		fieldMappingService.validate(fieldMapping);
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final EditFieldMappingForm form = context.getForm();
+//
+//		final Long fileMappingId = form.getFileMappingId();
+//		if (fileMappingId <= 0) {
+//			throw new ValidationException();
+//		}
+//		final FileMapping fileMapping = fileMappingService.load(fileMappingId,
+//				FileMappingWithFields.Relationships.FIELDS,
+//				RelationshipHelper.nested(
+//						FileMapping.Relationships.EXTERNAL_ACCOUNT,
+//						ExternalAccount.Relationships.MEMBER_ACCOUNT_TYPE));
+//		final MemberAccountType memberAccountType = fileMapping.getAccount()
+//				.getMemberAccountType();
+//
+//		final long fieldMappingId = form.getFieldMappingId();
+//		final boolean isInsert = (fieldMappingId <= 0);
+//		FieldMapping fieldMapping = null;
+//		if (isInsert) {
+//			fieldMapping = new FieldMapping();
+//			fieldMapping.setFileMapping(fileMapping);
+//		} else {
+//			fieldMapping = fieldMappingService.load(fieldMappingId);
+//		}
+//		getDataBinder().writeAsString(form.getFieldMapping(), fieldMapping);
+//		request.setAttribute("fieldMapping", fieldMapping);
+//		request.setAttribute("editable", permissionService
+//				.hasPermission(AdminSystemPermission.EXTERNAL_ACCOUNTS_MANAGE));
+//		request.setAttribute("isInsert", isInsert);
+//		RequestHelper.storeEnum(request,
+//				FileMappingWithFields.NumberFormat.class, "numberFormats");
+//
+//		final Set<FieldMapping.Field> fields = EnumSet
+//				.allOf(FieldMapping.Field.class);
+//		final Set<Field> memberIdentificationFields = EnumSet.of(
+//				Field.MEMBER_ID, Field.MEMBER_USERNAME,
+//				Field.MEMBER_CUSTOM_FIELD);
+//		if (fileMapping instanceof FileMappingWithFields) {
+//			final FileMappingWithFields fileWithFields = (FileMappingWithFields) fileMapping;
+//			for (final FieldMapping current : fileWithFields.getFields()) {
+//				final Field field = current.getField();
+//				// The only field which may be duplicated is IGNORED
+//				if (field == Field.IGNORED) {
+//					continue;
+//				}
+//				// The fields that identify the member may appear only once
+//				if (memberIdentificationFields.contains(field)
+//						&& !memberIdentificationFields.contains(fieldMapping
+//								.getField())) {
+//					fields.removeAll(memberIdentificationFields);
+//				} else {
+//					fields.remove(field);
+//				}
+//			}
+//			if (!isInsert) {
+//				fields.add(fieldMapping.getField()); // The field that was
+//														// previously selected
+//														// should always be
+//														// present
+//			}
+//		}
+//		request.setAttribute("fields", fields);
+//		// Fetch the custom fields when they can be used
+//		if (fields.contains(Field.MEMBER_CUSTOM_FIELD)) {
+//			final List<MemberCustomField> memberCustomFields = getMemberCustomFields(memberAccountType);
+//			request.setAttribute("memberFields", memberCustomFields);
+//		}
+//	}
+//
+//	// @Override
+//	protected void validateForm(final ActionContext context) {
+//		final EditFieldMappingForm form = context.getForm();
+//		final FieldMapping fieldMapping = getDataBinder().readFromString(
+//				form.getFieldMapping());
+//		fieldMappingService.validate(fieldMapping);
+//	}
 
 	@SuppressWarnings("unchecked")
 	private List<MemberCustomField> getMemberCustomFields(

@@ -8,7 +8,7 @@ import java.util.List;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.loans.ConfirmLoanForm;
+//import nl.strohalm.cyclos.controls.loans.ConfirmLoanForm;
 import nl.strohalm.cyclos.entities.access.TransactionPassword;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
@@ -389,15 +389,15 @@ public class ConfirmLoanController extends BaseRestController {
 		
 	}
 
-	protected void validateForm(final ActionContext context) {
-		if (context.isTransactionPasswordEnabled()) {
-			final ConfirmLoanForm form = context.getForm();
-			if (StringUtils.isEmpty(form.getTransactionPassword())) {
-				throw new ValidationException("_transactionPassword",
-						"login.transactionPassword", new RequiredError());
-			}
-		}
-	}
+//	protected void validateForm(final ActionContext context) {
+//		if (context.isTransactionPasswordEnabled()) {
+//			final ConfirmLoanForm form = context.getForm();
+//			if (StringUtils.isEmpty(form.getTransactionPassword())) {
+//				throw new ValidationException("_transactionPassword",
+//						"login.transactionPassword", new RequiredError());
+//			}
+//		}
+//	}
 
 	private GrantLoanDTO validateLoan(final ConfirmLoanRequestDto context) {
 		final GrantLoanDTO payment = (GrantLoanDTO) context

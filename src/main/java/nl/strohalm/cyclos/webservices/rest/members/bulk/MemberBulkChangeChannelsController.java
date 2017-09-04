@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.SearchMembersAction;
-import nl.strohalm.cyclos.controls.members.bulk.MemberBulkActionsForm;
+//import nl.strohalm.cyclos.controls.members.SearchMembersAction;
+//import nl.strohalm.cyclos.controls.members.bulk.MemberBulkActionsForm;
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.members.FullTextMemberQuery;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
@@ -80,21 +80,21 @@ public class MemberBulkChangeChannelsController extends BaseRestController {
 	private ReadWriteLock lock = new ReentrantReadWriteLock(true);
 	protected ChannelService channelService;
 
-	public DataBinder<FullTextMemberQuery> getDataBinder() {
-		try {
-			lock.readLock().lock();
-
-			if (dataBinder == null) {
-				final LocalSettings localSettings = settingsService
-						.getLocalSettings();
-				dataBinder = SearchMembersAction
-						.memberQueryDataBinder(localSettings);
-			}
-			return dataBinder;
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
+//	public DataBinder<FullTextMemberQuery> getDataBinder() {
+//		try {
+//			lock.readLock().lock();
+//
+//			if (dataBinder == null) {
+//				final LocalSettings localSettings = settingsService
+//						.getLocalSettings();
+//				dataBinder = SearchMembersAction
+//						.memberQueryDataBinder(localSettings);
+//			}
+//			return dataBinder;
+//		} finally {
+//			lock.readLock().unlock();
+//		}
+//	}
 
 	public void onLocalSettingsUpdate(final LocalSettingsEvent event) {
 		try {
@@ -229,55 +229,55 @@ public class MemberBulkChangeChannelsController extends BaseRestController {
 			this.message = message;
 		}
 	}
-
-	@RequestMapping(value = "admin/memberBulkChangeChannels", method = RequestMethod.PUT)
-	@ResponseBody
-	protected MemberBulkChangeChannelsResponseDto formAction(
-			@RequestBody MemberBulkChangeChannelsRequestDto form)
-			throws Exception {
-		
-		final ChangeChannelsBean changeChanelsBean = getBeanBinder()
-				.readFromString(form.getChangeChannels());
-		final FullTextMemberQuery query = getDataBinder().readFromString(
-				form.getQuery());
-		final BulkMemberActionResultVO result = elementService
-				.bulkChangeMemberChannels(query,
-						changeChanelsBean.enableChannels,
-						changeChanelsBean.disableChannels);
-		MemberBulkChangeChannelsResponseDto response = null;
-		if (result.getChanged() > 0 && result.getUnchanged() > 0) {
-			new MemberBulkChangeChannelsResponseDto(
-					"member.bulkActions.channelsChanged", result.getChanged(),
-					(long) result.getUnchanged());
-			return response;
-		} else if (result.getChanged() > 0) {
-			new MemberBulkChangeChannelsResponseDto(
-					"member.bulkActions.channelsChangedForAll",
-					result.getChanged());
-			return response;
-		} else {
-			new MemberBulkChangeChannelsResponseDto(
-					"member.bulkActions.channelsNotChanged",
-					(long) result.getUnchanged());
-			return response;
-		}
-
-	}
+//
+//	@RequestMapping(value = "admin/memberBulkChangeChannels", method = RequestMethod.PUT)
+//	@ResponseBody
+//	protected MemberBulkChangeChannelsResponseDto formAction(
+//			@RequestBody MemberBulkChangeChannelsRequestDto form)
+//			throws Exception {
+//		
+//		final ChangeChannelsBean changeChanelsBean = getBeanBinder()
+//				.readFromString(form.getChangeChannels());
+//		final FullTextMemberQuery query = getDataBinder().readFromString(
+//				form.getQuery());
+//		final BulkMemberActionResultVO result = elementService
+//				.bulkChangeMemberChannels(query,
+//						changeChanelsBean.enableChannels,
+//						changeChanelsBean.disableChannels);
+//		MemberBulkChangeChannelsResponseDto response = null;
+//		if (result.getChanged() > 0 && result.getUnchanged() > 0) {
+//			new MemberBulkChangeChannelsResponseDto(
+//					"member.bulkActions.channelsChanged", result.getChanged(),
+//					(long) result.getUnchanged());
+//			return response;
+//		} else if (result.getChanged() > 0) {
+//			new MemberBulkChangeChannelsResponseDto(
+//					"member.bulkActions.channelsChangedForAll",
+//					result.getChanged());
+//			return response;
+//		} else {
+//			new MemberBulkChangeChannelsResponseDto(
+//					"member.bulkActions.channelsNotChanged",
+//					(long) result.getUnchanged());
+//			return response;
+//		}
+//
+//	}
 
 	protected void prepareForm(final ActionContext context) throws Exception {
 		prepare(context, channelService);
 	}
-
-	protected void validateForm(final ActionContext context) {
-		final MemberBulkActionsForm form = context.getForm();
-		final ChangeChannelsBean changeChanelsBean = getBeanBinder()
-				.readFromString(form.getChangeChannels());
-		final FullTextMemberQuery query = getDataBinder().readFromString(
-				form.getQuery());
-		elementService.validateBulkChangeChannels(query,
-				changeChanelsBean.enableChannels,
-				changeChanelsBean.disableChannels);
-	}
+//
+//	protected void validateForm(final ActionContext context) {
+//		final MemberBulkActionsForm form = context.getForm();
+//		final ChangeChannelsBean changeChanelsBean = getBeanBinder()
+//				.readFromString(form.getChangeChannels());
+//		final FullTextMemberQuery query = getDataBinder().readFromString(
+//				form.getQuery());
+//		elementService.validateBulkChangeChannels(query,
+//				changeChanelsBean.enableChannels,
+//				changeChanelsBean.disableChannels);
+//	}
 
 	private BeanBinder<ChangeChannelsBean> getBeanBinder() {
 		if (beanBinder != null) {

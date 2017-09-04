@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.admins.mailPreferences.MailPreferencesForm;
+//import nl.strohalm.cyclos.controls.admins.mailPreferences.MailPreferencesForm;
 import nl.strohalm.cyclos.entities.accounts.guarantees.GuaranteeType;
 import nl.strohalm.cyclos.entities.accounts.guarantees.GuaranteeTypeQuery;
 import nl.strohalm.cyclos.entities.accounts.transactions.TransferType;
@@ -253,84 +253,84 @@ public class MailPreferencesController extends BaseRestController {
             return response;
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final MailPreferencesForm form = context.getForm();
-
-		final Administrator admin = context.getElement();
-		AdminGroup group = admin.getAdminGroup();
-		group = groupService.load(group.getId(),
-				AdminGroup.Relationships.VIEW_INFORMATION_OF,
-				SystemGroup.Relationships.MESSAGE_CATEGORIES);
-
-		final List<MemberGroup> memberGroups = new ArrayList<MemberGroup>(
-				permissionService.getManagedMemberGroups());
-		for (final Iterator<MemberGroup> it = memberGroups.iterator(); it
-				.hasNext();) {
-			if (it.next().isRemoved()) {
-				it.remove();
-			}
-		}
-		Collections.sort(memberGroups);
-		final List<TransferType> transferTypes = transferTypeService
-				.getPaymentAndSelfPaymentTTs();
-		final List<TransferType> newPendingPayments = transferTypeService
-				.getAuthorizableTTs();
-
-		List<GuaranteeType> guaranteeTypes = Collections.emptyList();
-		if (permissionService
-				.hasPermission(AdminSystemPermission.GUARANTEE_TYPES_VIEW)) {
-			final GuaranteeTypeQuery guaranteeTypeQuery = new GuaranteeTypeQuery();
-			guaranteeTypeQuery.setEnabled(true);
-			guaranteeTypes = guaranteeTypeService.search(guaranteeTypeQuery);
-		}
-
-		final List<MessageCategory> messageCategories = new ArrayList<MessageCategory>(
-				group.getMessageCategories());
-		Collections.sort(messageCategories);
-
-		AdminNotificationPreference notificationPreference = null;
-		try {
-			notificationPreference = preferenceService
-					.load(admin,
-							AdminNotificationPreference.Relationships.TRANSFER_TYPES,
-							AdminNotificationPreference.Relationships.MESSAGE_CATEGORIES,
-							AdminNotificationPreference.Relationships.MEMBER_ALERTS,
-							AdminNotificationPreference.Relationships.SYSTEM_ALERTS);
-			form.setAdminNotificationPreference("applicationErrors",
-					notificationPreference.isApplicationErrors());
-			form.setAdminNotificationPreference("systemInvoices",
-					notificationPreference.isSystemInvoices());
-			request.setAttribute("selectedTransferTypes",
-					notificationPreference.getTransferTypes());
-			request.setAttribute("selectedNewPendingPayments",
-					notificationPreference.getNewPendingPayments());
-			request.setAttribute("selectedGuaranteeTypes",
-					notificationPreference.getGuaranteeTypes());
-			request.setAttribute("selectedMessageCategories",
-					notificationPreference.getMessageCategories());
-			request.setAttribute("selectedNewMembers",
-					notificationPreference.getNewMembers());
-			request.setAttribute("selectedSystemAlerts",
-					notificationPreference.getSystemAlerts());
-			request.setAttribute("selectedMemberAlerts",
-					notificationPreference.getMemberAlerts());
-		} catch (final EntityNotFoundException e) {
-			// Ignore - no current preference
-		}
-
-		RequestHelper.storeEnum(request, MemberAlert.Alerts.class,
-				"memberAlerts");
-		RequestHelper.storeEnum(request, SystemAlert.Alerts.class,
-				"systemAlerts");
-
-		request.setAttribute("transferTypes", transferTypes);
-		request.setAttribute("newPendingPayments", newPendingPayments);
-		request.setAttribute("guaranteeTypes", guaranteeTypes);
-		request.setAttribute("messageCategories", messageCategories);
-		request.setAttribute("memberGroups", memberGroups);
-		request.setAttribute("notificationPreference", notificationPreference);
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final HttpServletRequest request = context.getRequest();
+//		final MailPreferencesForm form = context.getForm();
+//
+//		final Administrator admin = context.getElement();
+//		AdminGroup group = admin.getAdminGroup();
+//		group = groupService.load(group.getId(),
+//				AdminGroup.Relationships.VIEW_INFORMATION_OF,
+//				SystemGroup.Relationships.MESSAGE_CATEGORIES);
+//
+//		final List<MemberGroup> memberGroups = new ArrayList<MemberGroup>(
+//				permissionService.getManagedMemberGroups());
+//		for (final Iterator<MemberGroup> it = memberGroups.iterator(); it
+//				.hasNext();) {
+//			if (it.next().isRemoved()) {
+//				it.remove();
+//			}
+//		}
+//		Collections.sort(memberGroups);
+//		final List<TransferType> transferTypes = transferTypeService
+//				.getPaymentAndSelfPaymentTTs();
+//		final List<TransferType> newPendingPayments = transferTypeService
+//				.getAuthorizableTTs();
+//
+//		List<GuaranteeType> guaranteeTypes = Collections.emptyList();
+//		if (permissionService
+//				.hasPermission(AdminSystemPermission.GUARANTEE_TYPES_VIEW)) {
+//			final GuaranteeTypeQuery guaranteeTypeQuery = new GuaranteeTypeQuery();
+//			guaranteeTypeQuery.setEnabled(true);
+//			guaranteeTypes = guaranteeTypeService.search(guaranteeTypeQuery);
+//		}
+//
+//		final List<MessageCategory> messageCategories = new ArrayList<MessageCategory>(
+//				group.getMessageCategories());
+//		Collections.sort(messageCategories);
+//
+//		AdminNotificationPreference notificationPreference = null;
+//		try {
+//			notificationPreference = preferenceService
+//					.load(admin,
+//							AdminNotificationPreference.Relationships.TRANSFER_TYPES,
+//							AdminNotificationPreference.Relationships.MESSAGE_CATEGORIES,
+//							AdminNotificationPreference.Relationships.MEMBER_ALERTS,
+//							AdminNotificationPreference.Relationships.SYSTEM_ALERTS);
+//			form.setAdminNotificationPreference("applicationErrors",
+//					notificationPreference.isApplicationErrors());
+//			form.setAdminNotificationPreference("systemInvoices",
+//					notificationPreference.isSystemInvoices());
+//			request.setAttribute("selectedTransferTypes",
+//					notificationPreference.getTransferTypes());
+//			request.setAttribute("selectedNewPendingPayments",
+//					notificationPreference.getNewPendingPayments());
+//			request.setAttribute("selectedGuaranteeTypes",
+//					notificationPreference.getGuaranteeTypes());
+//			request.setAttribute("selectedMessageCategories",
+//					notificationPreference.getMessageCategories());
+//			request.setAttribute("selectedNewMembers",
+//					notificationPreference.getNewMembers());
+//			request.setAttribute("selectedSystemAlerts",
+//					notificationPreference.getSystemAlerts());
+//			request.setAttribute("selectedMemberAlerts",
+//					notificationPreference.getMemberAlerts());
+//		} catch (final EntityNotFoundException e) {
+//			// Ignore - no current preference
+//		}
+//
+//		RequestHelper.storeEnum(request, MemberAlert.Alerts.class,
+//				"memberAlerts");
+//		RequestHelper.storeEnum(request, SystemAlert.Alerts.class,
+//				"systemAlerts");
+//
+//		request.setAttribute("transferTypes", transferTypes);
+//		request.setAttribute("newPendingPayments", newPendingPayments);
+//		request.setAttribute("guaranteeTypes", guaranteeTypes);
+//		request.setAttribute("messageCategories", messageCategories);
+//		request.setAttribute("memberGroups", memberGroups);
+//		request.setAttribute("notificationPreference", notificationPreference);
+//	}
 
 	private DataBinder<AdminNotificationPreference> getDataBinder() {
 		if (dataBinder == null) {

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.reports.members.sms.SmsLogsReportForm;
+//import nl.strohalm.cyclos.controls.reports.members.sms.SmsLogsReportForm;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
 import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.entities.members.Administrator;
@@ -27,7 +27,6 @@ import nl.strohalm.cyclos.entities.sms.SmsMailingType;
 import nl.strohalm.cyclos.entities.sms.SmsType;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.groups.GroupService;
-import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.services.sms.SmsLogService;
 import nl.strohalm.cyclos.utils.EntityHelper;
@@ -135,47 +134,47 @@ public class SmsLogsReportController extends BaseRestController {
 		return response;
 	}
 
-	protected QueryParameters prepareForm(final ActionContext context) {
-		final HttpServletRequest request = context.getRequest();
-		final Administrator admin = elementService.load(context.getElement()
-				.getId(), RelationshipHelper.nested(
-				Element.Relationships.GROUP,
-				AdminGroup.Relationships.MANAGES_GROUPS));
-		request.setAttribute("memberGroups", admin.getAdminGroup()
-				.getManagesGroups());
-		RequestHelper.storeEnum(request, SmsLogType.class, "typesList");
-		RequestHelper.storeEnum(request, SmsLogStatus.class, "statusList");
-		RequestHelper.storeEnum(request, SmsMailingType.class, "mailingTypes");
-		request.setAttribute("smsTypes", smsLogService.getSmsTypes());
-
-		// Filter the message types which can never be delivered by sms
-		final EnumSet<Message.Type> messageTypes = EnumSet
-				.allOf(Message.Type.class);
-		messageTypes.remove(Message.Type.FROM_MEMBER);
-		messageTypes.remove(Message.Type.FROM_ADMIN_TO_GROUP);
-		messageTypes.remove(Message.Type.FROM_ADMIN_TO_MEMBER);
-		request.setAttribute("messagesTypes", messageTypes);
-
-		final SmsLogsReportForm form = context.getForm();
-		final SmsLogReportQuery query = getDataBinder().readFromString(
-				form.getQuery());
-		query.setReturnTotals(true);
-		query.fetch(
-				RelationshipHelper.nested(SmsLog.Relationships.TARGET_MEMBER,
-						Element.Relationships.USER), RelationshipHelper.nested(
-						SmsLog.Relationships.SMS_MAILING,
-						SmsMailing.Relationships.BY));
-		if (query.getMember() != null) {
-			query.setMember((Member) elementService.load(query.getMember()
-					.getId(), Element.Relationships.USER));
-		}
-		final Collection<MemberGroup> grps = groupService.load(EntityHelper
-				.toIdsAsList(query.getMemberGroups()));
-		query.setMemberGroups(grps);
-		query.setSmsTypes(smsLogService.loadSmsTypes(EntityHelper
-				.toIdsAsList(query.getSmsTypes())));
-		return query;
-	}
+//	protected QueryParameters prepareForm(final ActionContext context) {
+//		final HttpServletRequest request = context.getRequest();
+//		final Administrator admin = elementService.load(context.getElement()
+//				.getId(), RelationshipHelper.nested(
+//				Element.Relationships.GROUP,
+//				AdminGroup.Relationships.MANAGES_GROUPS));
+//		request.setAttribute("memberGroups", admin.getAdminGroup()
+//				.getManagesGroups());
+//		RequestHelper.storeEnum(request, SmsLogType.class, "typesList");
+//		RequestHelper.storeEnum(request, SmsLogStatus.class, "statusList");
+//		RequestHelper.storeEnum(request, SmsMailingType.class, "mailingTypes");
+//		request.setAttribute("smsTypes", smsLogService.getSmsTypes());
+//
+//		// Filter the message types which can never be delivered by sms
+//		final EnumSet<Message.Type> messageTypes = EnumSet
+//				.allOf(Message.Type.class);
+//		messageTypes.remove(Message.Type.FROM_MEMBER);
+//		messageTypes.remove(Message.Type.FROM_ADMIN_TO_GROUP);
+//		messageTypes.remove(Message.Type.FROM_ADMIN_TO_MEMBER);
+//		request.setAttribute("messagesTypes", messageTypes);
+//
+//		final SmsLogsReportForm form = context.getForm();
+//		final SmsLogReportQuery query = getDataBinder().readFromString(
+//				form.getQuery());
+//		query.setReturnTotals(true);
+//		query.fetch(
+//				RelationshipHelper.nested(SmsLog.Relationships.TARGET_MEMBER,
+//						Element.Relationships.USER), RelationshipHelper.nested(
+//						SmsLog.Relationships.SMS_MAILING,
+//						SmsMailing.Relationships.BY));
+//		if (query.getMember() != null) {
+//			query.setMember((Member) elementService.load(query.getMember()
+//					.getId(), Element.Relationships.USER));
+//		}
+//		final Collection<MemberGroup> grps = groupService.load(EntityHelper
+//				.toIdsAsList(query.getMemberGroups()));
+//		query.setMemberGroups(grps);
+//		query.setSmsTypes(smsLogService.loadSmsTypes(EntityHelper
+//				.toIdsAsList(query.getSmsTypes())));
+//		return query;
+//	}
 
 	private DataBinder<SmsLogReportQuery> getDataBinder() {
 		if (dataBinder == null) {

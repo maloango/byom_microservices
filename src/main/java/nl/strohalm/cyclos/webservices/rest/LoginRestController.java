@@ -2,7 +2,6 @@ package nl.strohalm.cyclos.webservices.rest;
 
 import javax.servlet.http.HttpServletRequest;
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.access.LoginForm;
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.access.MemberUser;
 import nl.strohalm.cyclos.entities.access.User;

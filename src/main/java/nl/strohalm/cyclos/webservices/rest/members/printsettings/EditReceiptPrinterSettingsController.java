@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.printsettings.EditReceiptPrinterSettingsForm;
+//import nl.strohalm.cyclos.controls.members.printsettings.EditReceiptPrinterSettingsForm;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.entities.members.printsettings.ReceiptPrinterSettings;
 import nl.strohalm.cyclos.services.preferences.ReceiptPrinterSettingsService;
@@ -108,48 +108,48 @@ public class EditReceiptPrinterSettingsController extends BaseRestController{
 			}
 	    }
 
-	    @RequestMapping(value = "member/editReceiptPrinterSettings", method = RequestMethod.POST)
-	    @ResponseBody
-	    protected EditReceiptPrinterSettingsResponseDTO handleSubmit(@RequestBody ActionContext form) throws Exception {
-	        final ReceiptPrinterSettings receiptPrinterSettings = read(form);
-                EditReceiptPrinterSettingsResponseDTO response= null;
-                try{
-	        final boolean isInsert = receiptPrinterSettings.isTransient();
-	        receiptPrinterSettingsService.save(receiptPrinterSettings);
-	        //response = new EditReceiptPrinterSettingsResponseDTO();
-	        if (isInsert) {
-	            response.setMessage("receiptPrinterSettings.created");
-	        } else {
-	            response.setMessage("receiptPrinterSettings.modified");
-	        }
-                response = new EditReceiptPrinterSettingsResponseDTO();}
-                catch(Exception e){
-                        e.printStackTrace();
-                        }
-	        return response;
-	    }
+//	    @RequestMapping(value = "member/editReceiptPrinterSettings", method = RequestMethod.POST)
+//	    @ResponseBody
+//	    protected EditReceiptPrinterSettingsResponseDTO handleSubmit(@RequestBody ActionContext form) throws Exception {
+//	        final ReceiptPrinterSettings receiptPrinterSettings = read(form);
+//                EditReceiptPrinterSettingsResponseDTO response= null;
+//                try{
+//	        final boolean isInsert = receiptPrinterSettings.isTransient();
+//	        receiptPrinterSettingsService.save(receiptPrinterSettings);
+//	        //response = new EditReceiptPrinterSettingsResponseDTO();
+//	        if (isInsert) {
+//	            response.setMessage("receiptPrinterSettings.created");
+//	        } else {
+//	            response.setMessage("receiptPrinterSettings.modified");
+//	        }
+//                response = new EditReceiptPrinterSettingsResponseDTO();}
+//                catch(Exception e){
+//                        e.printStackTrace();
+//                        }
+//	        return response;
+//	    }
 
 	   // @Override
-	    protected void prepareForm(final ActionContext context) throws Exception {
-	        final EditReceiptPrinterSettingsForm form = context.getForm();
-	        final Long id = form.getId();
-	        ReceiptPrinterSettings receiptPrinterSettings;
-	        if (id == null) {
-	            receiptPrinterSettings = new ReceiptPrinterSettings();
-	        } else {
-	            receiptPrinterSettings = receiptPrinterSettingsService.load(id);
-	        }
-	        getDataBinder().writeAsString(form.getReceiptPrinterSettings(), receiptPrinterSettings);
-	        final HttpServletRequest request = context.getRequest();
-	        request.setAttribute("receiptPrinterSettings", receiptPrinterSettings);
-	        request.setAttribute("editable", context.isMember());
-	    }
+//	    protected void prepareForm(final ActionContext context) throws Exception {
+//	        final EditReceiptPrinterSettingsForm form = context.getForm();
+//	        final Long id = form.getId();
+//	        ReceiptPrinterSettings receiptPrinterSettings;
+//	        if (id == null) {
+//	            receiptPrinterSettings = new ReceiptPrinterSettings();
+//	        } else {
+//	            receiptPrinterSettings = receiptPrinterSettingsService.load(id);
+//	        }
+//	        getDataBinder().writeAsString(form.getReceiptPrinterSettings(), receiptPrinterSettings);
+//	        final HttpServletRequest request = context.getRequest();
+//	        request.setAttribute("receiptPrinterSettings", receiptPrinterSettings);
+//	        request.setAttribute("editable", context.isMember());
+//	    }
 
 	    //@Override
-	    protected void validateForm(final ActionContext context) {
-	        final ReceiptPrinterSettings receiptPrinterSettings = read(context);
-	        receiptPrinterSettingsService.validate(receiptPrinterSettings);
-	    }
+//	    protected void validateForm(final ActionContext context) {
+//	        final ReceiptPrinterSettings receiptPrinterSettings = read(context);
+//	        receiptPrinterSettingsService.validate(receiptPrinterSettings);
+//	    }
 
 	    private DataBinder<ReceiptPrinterSettings> getDataBinder() {
 	        if (dataBinder == null) {
@@ -165,12 +165,12 @@ public class EditReceiptPrinterSettingsController extends BaseRestController{
 	        return dataBinder;
 	    }
 
-	    private ReceiptPrinterSettings read(final ActionContext context) {
-	        final EditReceiptPrinterSettingsForm form = context.getForm();
-	        final ReceiptPrinterSettings receiptPrinterSettings = getDataBinder().readFromString(form.getReceiptPrinterSettings());
-	        receiptPrinterSettings.setMember(context.getMember());
-	        return receiptPrinterSettings;
-	    }
+//	    private ReceiptPrinterSettings read(final ActionContext context) {
+//	        final EditReceiptPrinterSettingsForm form = context.getForm();
+//	        final ReceiptPrinterSettings receiptPrinterSettings = getDataBinder().readFromString(form.getReceiptPrinterSettings());
+//	        receiptPrinterSettings.setMember(context.getMember());
+//	        return receiptPrinterSettings;
+//	    }
 
 
 }

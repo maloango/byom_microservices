@@ -19,9 +19,9 @@
  */
 package nl.strohalm.cyclos.webservices.rest.general;
 
-import nl.strohalm.cyclos.controls.general.*;
+//import nl.strohalm.cyclos.controls.general.*;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.BaseFormAction;
+//import nl.strohalm.cyclos.controls.BaseFormAction;
 import nl.strohalm.cyclos.exceptions.MailSendingException;
 import nl.strohalm.cyclos.utils.transaction.CurrentTransactionData;
 import nl.strohalm.cyclos.utils.validation.RequiredError;
@@ -34,30 +34,30 @@ import org.apache.struts.action.ActionForward;
  * Action used to invite a person to join cyclos
  * @author luis
  */
-public class InviteAction extends BaseFormAction {
+public class InviteAction  {
 
-    @Override
-    protected ActionForward handleSubmit(final ActionContext context) throws Exception {
-        final InviteForm form = context.getForm();
-        final String to = form.getTo();
-        try {
-            elementService.invitePerson(to);
-            context.sendMessage("invite.sent", to);
-            final MailSendingException currentException = CurrentTransactionData.getMailError();
-            if (currentException != null) {
-                throw currentException;
-            }
-        } catch (final Exception e) {
-            context.sendMessage("error.sendingMail", to);
-        }
-        return context.findForward("home");
-    }
+//    @Override
+//    protected ActionForward handleSubmit(final ActionContext context) throws Exception {
+//        final InviteForm form = context.getForm();
+//        final String to = form.getTo();
+//        try {
+//            elementService.invitePerson(to);
+//            context.sendMessage("invite.sent", to);
+//            final MailSendingException currentException = CurrentTransactionData.getMailError();
+//            if (currentException != null) {
+//                throw currentException;
+//            }
+//        } catch (final Exception e) {
+//            context.sendMessage("error.sendingMail", to);
+//        }
+//        return context.findForward("home");
+//    }
 
-    @Override
-    protected void validateForm(final ActionContext context) {
-        final InviteForm form = context.getForm();
-        if (StringUtils.isEmpty(form.getTo())) {
-            throw new ValidationException("to", "member.email", new RequiredError());
-        }
-    }
+//    @Override
+//    protected void validateForm(final ActionContext context) {
+//        final InviteForm form = context.getForm();
+//        if (StringUtils.isEmpty(form.getTo())) {
+//            throw new ValidationException("to", "member.email", new RequiredError());
+//        }
+//    }
 }

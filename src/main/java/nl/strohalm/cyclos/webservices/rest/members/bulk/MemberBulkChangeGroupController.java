@@ -14,8 +14,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.servlet.http.HttpServletRequest;
 
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.SearchMembersAction;
-import nl.strohalm.cyclos.controls.members.bulk.MemberBulkActionsForm;
+//import nl.strohalm.cyclos.controls.members.SearchMembersAction;
+//import nl.strohalm.cyclos.controls.members.bulk.MemberBulkActionsForm;
 import nl.strohalm.cyclos.entities.customization.fields.MemberCustomFieldValue;
 import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.entities.groups.GroupFilter;
@@ -71,21 +71,21 @@ public class MemberBulkChangeGroupController extends BaseRestController {
 
 	private ReadWriteLock lock = new ReentrantReadWriteLock(true);
 
-	public DataBinder<FullTextMemberQuery> getDataBinder() {
-		try {
-			lock.readLock().lock();
-
-			if (dataBinder == null) {
-				final LocalSettings localSettings = settingsService
-						.getLocalSettings();
-				dataBinder = SearchMembersAction
-						.memberQueryDataBinder(localSettings);
-			}
-			return dataBinder;
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
+//	public DataBinder<FullTextMemberQuery> getDataBinder() {
+//		try {
+//			lock.readLock().lock();
+//
+//			if (dataBinder == null) {
+//				final LocalSettings localSettings = settingsService
+//						.getLocalSettings();
+//				dataBinder = SearchMembersAction
+//						.memberQueryDataBinder(localSettings);
+//			}
+//			return dataBinder;
+//		} finally {
+//			lock.readLock().unlock();
+//		}
+//	}
 
 	public void onLocalSettingsUpdate(final LocalSettingsEvent event) {
 
@@ -190,79 +190,79 @@ public class MemberBulkChangeGroupController extends BaseRestController {
 		}
 	}
 
-	@RequestMapping(value = "admin/memberBulkChangeGroup", method = RequestMethod.POST)
-	@ResponseBody
-	protected MemberBulkChangeGroupResponseDto formAction(
-			final MemberBulkChangeGroupRequestDto form) throws Exception {
-		MemberBulkChangeGroupResponseDto response = null;
-                try{
-		String message = null;
-		// Read the user input
-		final MapBean bean = form.getChangeGroup();
-		final FullTextMemberQuery query = getDataBinder().readFromString(
-				form.getQuery());
-		final MemberGroup newGroup = groupService.load(CoercionHelper.coerce(
-				Long.class, bean.get("newGroup")));
-		final String comments = StringUtils.trimToNull((String) bean
-				.get("comments"));
+//	@RequestMapping(value = "admin/memberBulkChangeGroup", method = RequestMethod.POST)
+//	@ResponseBody
+//	protected MemberBulkChangeGroupResponseDto formAction(
+//			final MemberBulkChangeGroupRequestDto form) throws Exception {
+//		MemberBulkChangeGroupResponseDto response = null;
+//                try{
+//		String message = null;
+//		// Read the user input
+//		final MapBean bean = form.getChangeGroup();
+//		final FullTextMemberQuery query = getDataBinder().readFromString(
+//				form.getQuery());
+//		final MemberGroup newGroup = groupService.load(CoercionHelper.coerce(
+//				Long.class, bean.get("newGroup")));
+//		final String comments = StringUtils.trimToNull((String) bean
+//				.get("comments"));
+//
+//		final BulkMemberActionResultVO results = elementService
+//				.bulkChangeMemberGroup(query, newGroup, comments);
+//		message = "member.bulkActions.groupChanged";
+//
+//		int changed = results.getChanged();
+//		int unchanged = results.getUnchanged();
+//		String name = newGroup.getName();
+//		response = new MemberBulkChangeGroupResponseDto(
+//				message, changed, unchanged, name);
+//		// Clear the change group parameters
+//		form.getChangeGroup().clear();}
+//                catch(Exception e){
+//                    e.printStackTrace();
+//                }
+//		return response;
+//	}
 
-		final BulkMemberActionResultVO results = elementService
-				.bulkChangeMemberGroup(query, newGroup, comments);
-		message = "member.bulkActions.groupChanged";
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		prepare(context, groupService);
+//	}
 
-		int changed = results.getChanged();
-		int unchanged = results.getUnchanged();
-		String name = newGroup.getName();
-		response = new MemberBulkChangeGroupResponseDto(
-				message, changed, unchanged, name);
-		// Clear the change group parameters
-		form.getChangeGroup().clear();}
-                catch(Exception e){
-                    e.printStackTrace();
-                }
-		return response;
-	}
-
-	protected void prepareForm(final ActionContext context) throws Exception {
-		prepare(context, groupService);
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected void validateForm(final ActionContext context) {
-		final MemberBulkActionsForm form = context.getForm();
-
-		final FullTextMemberQuery query = getDataBinder().readFromString(
-				form.getQuery());
-
-		final Collection<MemberCustomFieldValue> customValues = (Collection<MemberCustomFieldValue>) query
-				.getCustomValues();
-		for (final Iterator it = customValues.iterator(); it.hasNext();) {
-			final MemberCustomFieldValue fieldValue = (MemberCustomFieldValue) it
-					.next();
-			if (StringUtils.isEmpty(fieldValue.getValue())) {
-				it.remove();
-			}
-		}
-		if (CollectionUtils.isEmpty(query.getGroupFilters())
-				&& CollectionUtils.isEmpty(query.getGroups())
-				&& query.getBroker() == null
-				&& CollectionUtils.isEmpty(customValues)) {
-			throw new ValidationException("member.bulkActions.error.emptyQuery");
-		}
-
-		final MapBean bean = form.getChangeGroup();
-		final MemberGroup newGroup = CoercionHelper.coerce(MemberGroup.class,
-				bean.get("newGroup"));
-		final String comments = StringUtils.trimToNull((String) bean
-				.get("comments"));
-		if (newGroup == null || newGroup.isTransient()) {
-			throw new ValidationException("newGroup", "changeGroup.new",
-					new RequiredError());
-		}
-		if (StringUtils.isEmpty(comments)) {
-			throw new ValidationException("comments", "remark.comments",
-					new RequiredError());
-		}
-	}
+//	@SuppressWarnings({ "unchecked", "rawtypes" })
+//	protected void validateForm(final ActionContext context) {
+//		final MemberBulkActionsForm form = context.getForm();
+//
+//		final FullTextMemberQuery query = getDataBinder().readFromString(
+//				form.getQuery());
+//
+//		final Collection<MemberCustomFieldValue> customValues = (Collection<MemberCustomFieldValue>) query
+//				.getCustomValues();
+//		for (final Iterator it = customValues.iterator(); it.hasNext();) {
+//			final MemberCustomFieldValue fieldValue = (MemberCustomFieldValue) it
+//					.next();
+//			if (StringUtils.isEmpty(fieldValue.getValue())) {
+//				it.remove();
+//			}
+//		}
+//		if (CollectionUtils.isEmpty(query.getGroupFilters())
+//				&& CollectionUtils.isEmpty(query.getGroups())
+//				&& query.getBroker() == null
+//				&& CollectionUtils.isEmpty(customValues)) {
+//			throw new ValidationException("member.bulkActions.error.emptyQuery");
+//		}
+//
+//		final MapBean bean = form.getChangeGroup();
+//		final MemberGroup newGroup = CoercionHelper.coerce(MemberGroup.class,
+//				bean.get("newGroup"));
+//		final String comments = StringUtils.trimToNull((String) bean
+//				.get("comments"));
+//		if (newGroup == null || newGroup.isTransient()) {
+//			throw new ValidationException("newGroup", "changeGroup.new",
+//					new RequiredError());
+//		}
+//		if (StringUtils.isEmpty(comments)) {
+//			throw new ValidationException("comments", "remark.comments",
+//					new RequiredError());
+//		}
+//	}
 
 }

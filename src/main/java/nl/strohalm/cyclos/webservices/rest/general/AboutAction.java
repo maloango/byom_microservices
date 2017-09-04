@@ -19,9 +19,9 @@
  */
 package nl.strohalm.cyclos.webservices.rest.general;
 
-import nl.strohalm.cyclos.controls.general.*;
-import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.BaseAction;
+//import nl.strohalm.cyclos.controls.general.*;
+//import nl.strohalm.cyclos.controls.ActionContext;
+//import nl.strohalm.cyclos.controls.BaseAction;
 
 import org.apache.struts.action.ActionForward;
 
@@ -29,11 +29,11 @@ import org.apache.struts.action.ActionForward;
  * Action used to show the about page
  * @author luis
  */
-public class AboutAction extends BaseAction {
+public class AboutAction  {
 
-    @Override
-    protected ActionForward executeAction(final ActionContext context) throws Exception {
-        return context.getInputForward();
-    }
+//    @Override
+//    protected ActionForward executeAction(final ActionContext context) throws Exception {
+//        return context.getInputForward();
+//    }
 
 }

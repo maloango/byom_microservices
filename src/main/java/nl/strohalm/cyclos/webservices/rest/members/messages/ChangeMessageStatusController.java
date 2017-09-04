@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.messages.ChangeMessageStatusForm;
+//import nl.strohalm.cyclos.controls.members.messages.ChangeMessageStatusForm;
 import nl.strohalm.cyclos.services.elements.MessageAction;
 import nl.strohalm.cyclos.services.elements.MessageService;
 import nl.strohalm.cyclos.utils.conversion.CoercionHelper;

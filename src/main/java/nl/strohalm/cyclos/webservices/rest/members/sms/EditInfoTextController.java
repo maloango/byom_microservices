@@ -7,7 +7,7 @@ import java.util.TreeSet;
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.sms.EditInfoTextForm;
+//import nl.strohalm.cyclos.controls.members.sms.EditInfoTextForm;
 import nl.strohalm.cyclos.entities.infotexts.InfoText;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
 import nl.strohalm.cyclos.services.elements.ElementService;
@@ -131,26 +131,26 @@ public class EditInfoTextController extends BaseRestController {
 		return response;
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final EditInfoTextForm form = context.getForm();
-		if (form.getInfoTextId() != null) {
-			final InfoText infoText = infoTextService
-					.load(form.getInfoTextId());
-			context.getRequest().setAttribute("currentInfoText", infoText);
-		}
-		context.getRequest()
-				.setAttribute(
-						"hasManagePermissions",
-						permissionService
-								.hasPermission(AdminSystemPermission.INFO_TEXTS_MANAGE));
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final EditInfoTextForm form = context.getForm();
+//		if (form.getInfoTextId() != null) {
+//			final InfoText infoText = infoTextService
+//					.load(form.getInfoTextId());
+//			context.getRequest().setAttribute("currentInfoText", infoText);
+//		}
+//		context.getRequest()
+//				.setAttribute(
+//						"hasManagePermissions",
+//						permissionService
+//								.hasPermission(AdminSystemPermission.INFO_TEXTS_MANAGE));
+//	}
 
-	protected void validateForm(final ActionContext context) {
-		final EditInfoTextForm form = context.getForm();
-		final InfoText infoText = getDataBinder().readFromString(
-				form.getValues());
-		infoTextService.validate(infoText);
-	}
+//	protected void validateForm(final ActionContext context) {
+//		final EditInfoTextForm form = context.getForm();
+//		final InfoText infoText = getDataBinder().readFromString(
+//				form.getValues());
+//		infoTextService.validate(infoText);
+//	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private DataBinder<InfoText> getDataBinder() {

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.ads.imports.ImportAdsForm;
+//import nl.strohalm.cyclos.controls.ads.imports.ImportAdsForm;
 import nl.strohalm.cyclos.entities.accounts.Currency;
 import nl.strohalm.cyclos.entities.ads.imports.AdImport;
 import nl.strohalm.cyclos.services.accounts.CurrencyService;
@@ -157,11 +157,11 @@ public class ImportAdsController extends BaseRestController {
 		request.setAttribute("currencies", currencies);
 	}
 
-	protected void validateForm(final ActionContext context) {
-		final ImportAdsForm form = context.getForm();
-		final AdImport adImport = getDataBinder().readFromString(
-				form.getImport());
-		adImportService.validate(adImport);
-	}
+//	protected void validateForm(final ActionContext context) {
+//		final ImportAdsForm form = context.getForm();
+//		final AdImport adImport = getDataBinder().readFromString(
+//				form.getImport());
+//		adImportService.validate(adImport);
+//	}
 
 }

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.groups.groupFilters.customizedFiles.EditGroupFilterCustomizedFileForm;
+//import nl.strohalm.cyclos.controls.groups.groupFilters.customizedFiles.EditGroupFilterCustomizedFileForm;
 import nl.strohalm.cyclos.entities.customization.files.CustomizedFile;
 import nl.strohalm.cyclos.entities.groups.GroupFilter;
 import nl.strohalm.cyclos.services.customization.CustomizedFileService;
@@ -304,9 +304,9 @@ public class EditGroupFilterCustomizedFileController extends BaseRestController{
 	   
 
 	   // @Override
-	    protected void validateForm(final ActionContext context) {
-	        final EditGroupFilterCustomizedFileForm form = context.getForm();
-	        final CustomizedFile file = getDataBinder().readFromString(form.getFile());
-	        customizedFileService.validate(file);
-	    }
+//	    protected void validateForm(final ActionContext context) {
+//	        final EditGroupFilterCustomizedFileForm form = context.getForm();
+//	        final CustomizedFile file = getDataBinder().readFromString(form.getFile());
+//	        customizedFileService.validate(file);
+//	    }
 }

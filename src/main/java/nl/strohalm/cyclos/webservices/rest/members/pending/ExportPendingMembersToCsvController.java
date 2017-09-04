@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.pending.SearchPendingMembersAction;
-import nl.strohalm.cyclos.controls.members.pending.SearchPendingMembersForm;
+//import nl.strohalm.cyclos.controls.members.pending.SearchPendingMembersAction;
+//import nl.strohalm.cyclos.controls.members.pending.SearchPendingMembersForm;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.customization.fields.MemberCustomField;
 import nl.strohalm.cyclos.entities.customization.fields.MemberCustomFieldValue;
@@ -119,12 +119,12 @@ public class ExportPendingMembersToCsvController extends BaseRestController{
 
     @RequestMapping(value = "",method = RequestMethod.GET)
     @ResponseBody
-    protected List<?> executeQuery(final ActionContext context) {
-        final SearchPendingMembersForm form = context.getForm();
-        final PendingMemberQuery query = getDataBinder().readFromString(form.getQuery());
-        query.fetch(PendingMember.Relationships.CUSTOM_VALUES, PendingMember.Relationships.MEMBER, RelationshipHelper.nested(PendingMember.Relationships.BROKER));
-        return elementService.search(query);
-    }
+//    protected List<?> executeQuery(final ActionContext context) {
+//        final SearchPendingMembersForm form = context.getForm();
+//        final PendingMemberQuery query = getDataBinder().readFromString(form.getQuery());
+//        query.fetch(PendingMember.Relationships.CUSTOM_VALUES, PendingMember.Relationships.MEMBER, RelationshipHelper.nested(PendingMember.Relationships.BROKER));
+//        return elementService.search(query);
+//    }
 
    // @Override
     protected String fileName(final ActionContext context) {
@@ -157,12 +157,12 @@ public class ExportPendingMembersToCsvController extends BaseRestController{
         return csv;
     }
 
-    private DataBinder<PendingMemberQuery> getDataBinder() {
-        if (dataBinder == null) {
-            final LocalSettings settings = settingsService.getLocalSettings();
-            dataBinder = SearchPendingMembersAction.createDataBinder(settings);
-        }
-        return dataBinder;
-    }
+//    private DataBinder<PendingMemberQuery> getDataBinder() {
+//        if (dataBinder == null) {
+//            final LocalSettings settings = settingsService.getLocalSettings();
+//            dataBinder = SearchPendingMembersAction.createDataBinder(settings);
+//        }
+//        return dataBinder;
+//    }
 
 }

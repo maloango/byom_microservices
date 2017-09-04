@@ -14,7 +14,7 @@ import nl.strohalm.cyclos.access.MemberPermission;
 import nl.strohalm.cyclos.access.OperatorPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
-import nl.strohalm.cyclos.controls.members.messages.SendMessageForm;
+//import nl.strohalm.cyclos.controls.members.messages.SendMessageForm;
 import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.entities.groups.GroupQuery;
 import nl.strohalm.cyclos.entities.groups.MemberGroup;
@@ -256,129 +256,129 @@ public class SendMessageController extends BaseRestController {
 		return response;
 	}
 
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final SendMessageForm form = context.getForm();
-		final HttpServletRequest request = context.getRequest();
-		final Member toMember = resolveToMember(context);
-		final Message inReplyTo = resolveInReplyTo(context);
-
-		if (toMember == null) {
-			final List<SendTo> sendTo = new ArrayList<SendTo>();
-			if (context.isAdmin()) {
-				// An admin may send to a group, so, we must get the groups
-				if (inReplyTo == null) {
-					final GroupQuery gq = new GroupQuery();
-					gq.setNatures(Group.Nature.MEMBER, Group.Nature.BROKER);
-					gq.setStatus(Group.Status.NORMAL);
-					request.setAttribute("groups", groupService.search(gq));
-					if (permissionService
-							.hasPermission(AdminMemberPermission.MESSAGES_SEND_TO_MEMBER)) {
-						sendTo.add(SendTo.MEMBER);
-					}
-					if (permissionService
-							.hasPermission(AdminMemberPermission.MESSAGES_SEND_TO_GROUP)) {
-						sendTo.add(SendTo.GROUP);
-					}
-				}
-			} else {
-				if (form.isToBrokeredMembers()) {
-					if (context.isBroker()
-							&& permissionService
-									.hasPermission(BrokerPermission.MESSAGES_SEND_TO_MEMBERS)) {
-						sendTo.add(SendTo.BROKERED_MEMBERS);
-						request.setAttribute("toBrokeredMembers",
-								SendTo.BROKERED_MEMBERS);
-					}
-				} else if (inReplyTo == null) {
-					if (context.isMember()
-							&& permissionService
-									.hasPermission(MemberPermission.MESSAGES_SEND_TO_MEMBER)
-							|| context.isOperator()
-							&& permissionService
-									.hasPermission(OperatorPermission.MESSAGES_SEND_TO_MEMBER)) {
-						sendTo.add(SendTo.MEMBER);
-					}
-					if (context.isBroker()
-							&& permissionService
-									.hasPermission(BrokerPermission.MESSAGES_SEND_TO_MEMBERS)) {
-						sendTo.add(SendTo.BROKERED_MEMBERS);
-					}
-					// A member may send to admin, so we must get the categories
-					final MessageCategoryQuery query = new MessageCategoryQuery();
-					query.setFromElement((Member) context.getAccountOwner());
-					final List<MessageCategory> categories = messageCategoryService
-							.search(query);
-					request.setAttribute("categories", categories);
-					if (CollectionUtils.isNotEmpty(categories)
-							&& (context.isMember()
-									&& permissionService
-											.hasPermission(MemberPermission.MESSAGES_SEND_TO_ADMINISTRATION) || context
-									.isOperator()
-									&& permissionService
-											.hasPermission(OperatorPermission.MESSAGES_SEND_TO_ADMINISTRATION))) {
-						sendTo.add(SendTo.ADMIN);
-					}
-				}
-			}
-			if (inReplyTo == null && CollectionUtils.isEmpty(sendTo)) {
-				throw new PermissionDeniedException();
-			}
-			request.setAttribute("sendTo", sendTo);
-		} else {
-			final MessageCategoryQuery query = new MessageCategoryQuery();
-			query.setFromElement((Element) (context.isOperator() ? context
-					.getAccountOwner() : context.getElement()));
-			query.setToElement(toMember);
-			request.setAttribute("categories",
-					messageCategoryService.search(query));
-		}
-
-		// Message reply
-		final LocalSettings localSettings = settingsService.getLocalSettings();
-		TextFormat messageFormat = localSettings.getMessageFormat();
-		if (inReplyTo != null) {
-			form.setMessage(
-					"subject",
-					context.message("message.reply.subject",
-							inReplyTo.getSubject()));
-			String body;
-			if (inReplyTo.isHtml()) {
-				body = "<br><br><div style='padding-left:40px;border-left:1px solid black'>"
-						+ inReplyTo.getBody() + "</div>";
-				messageFormat = TextFormat.RICH;
-			} else {
-				body = " \n\n> "
-						+ StringUtils.replace(
-								WordUtils.wrap(inReplyTo.getBody(), WRAP_SIZE),
-								"\n", "\n> ");
-				messageFormat = TextFormat.PLAIN;
-			}
-			request.setAttribute("body", body);
-			form.setMessage("html", inReplyTo.isHtml());
-			if (inReplyTo.getCategory() != null) {
-				form.setMessage("category", inReplyTo.getCategory().getId());
-				if (inReplyTo.getToMember() != null) {
-					// Reply to a member
-					request.setAttribute("categoryName", inReplyTo
-							.getCategory().getName());
-					request.setAttribute("categoryEditable", false);
-				} else {
-					// Reply to administration
-					final MessageCategoryQuery query = new MessageCategoryQuery();
-					query.setFromElement((Element) (context.isOperator() ? context
-							.getAccountOwner() : context.getElement()));
-					request.setAttribute("categories",
-							messageCategoryService.search(query));
-					request.setAttribute("categoryId", inReplyTo.getCategory()
-							.getId());
-				}
-			}
-		}
-		form.setMessage("html", messageFormat == TextFormat.RICH);
-		request.setAttribute("inReplyTo", inReplyTo);
-		request.setAttribute("toMember", toMember);
-		request.setAttribute("messageFormat", messageFormat);
-	}
+//	protected void prepareForm(final ActionContext context) throws Exception {
+//		final SendMessageForm form = context.getForm();
+//		final HttpServletRequest request = context.getRequest();
+//		final Member toMember = resolveToMember(context);
+//		final Message inReplyTo = resolveInReplyTo(context);
+//
+//		if (toMember == null) {
+//			final List<SendTo> sendTo = new ArrayList<SendTo>();
+//			if (context.isAdmin()) {
+//				// An admin may send to a group, so, we must get the groups
+//				if (inReplyTo == null) {
+//					final GroupQuery gq = new GroupQuery();
+//					gq.setNatures(Group.Nature.MEMBER, Group.Nature.BROKER);
+//					gq.setStatus(Group.Status.NORMAL);
+//					request.setAttribute("groups", groupService.search(gq));
+//					if (permissionService
+//							.hasPermission(AdminMemberPermission.MESSAGES_SEND_TO_MEMBER)) {
+//						sendTo.add(SendTo.MEMBER);
+//					}
+//					if (permissionService
+//							.hasPermission(AdminMemberPermission.MESSAGES_SEND_TO_GROUP)) {
+//						sendTo.add(SendTo.GROUP);
+//					}
+//				}
+//			} else {
+//				if (form.isToBrokeredMembers()) {
+//					if (context.isBroker()
+//							&& permissionService
+//									.hasPermission(BrokerPermission.MESSAGES_SEND_TO_MEMBERS)) {
+//						sendTo.add(SendTo.BROKERED_MEMBERS);
+//						request.setAttribute("toBrokeredMembers",
+//								SendTo.BROKERED_MEMBERS);
+//					}
+//				} else if (inReplyTo == null) {
+//					if (context.isMember()
+//							&& permissionService
+//									.hasPermission(MemberPermission.MESSAGES_SEND_TO_MEMBER)
+//							|| context.isOperator()
+//							&& permissionService
+//									.hasPermission(OperatorPermission.MESSAGES_SEND_TO_MEMBER)) {
+//						sendTo.add(SendTo.MEMBER);
+//					}
+//					if (context.isBroker()
+//							&& permissionService
+//									.hasPermission(BrokerPermission.MESSAGES_SEND_TO_MEMBERS)) {
+//						sendTo.add(SendTo.BROKERED_MEMBERS);
+//					}
+//					// A member may send to admin, so we must get the categories
+//					final MessageCategoryQuery query = new MessageCategoryQuery();
+//					query.setFromElement((Member) context.getAccountOwner());
+//					final List<MessageCategory> categories = messageCategoryService
+//							.search(query);
+//					request.setAttribute("categories", categories);
+//					if (CollectionUtils.isNotEmpty(categories)
+//							&& (context.isMember()
+//									&& permissionService
+//											.hasPermission(MemberPermission.MESSAGES_SEND_TO_ADMINISTRATION) || context
+//									.isOperator()
+//									&& permissionService
+//											.hasPermission(OperatorPermission.MESSAGES_SEND_TO_ADMINISTRATION))) {
+//						sendTo.add(SendTo.ADMIN);
+//					}
+//				}
+//			}
+//			if (inReplyTo == null && CollectionUtils.isEmpty(sendTo)) {
+//				throw new PermissionDeniedException();
+//			}
+//			request.setAttribute("sendTo", sendTo);
+//		} else {
+//			final MessageCategoryQuery query = new MessageCategoryQuery();
+//			query.setFromElement((Element) (context.isOperator() ? context
+//					.getAccountOwner() : context.getElement()));
+//			query.setToElement(toMember);
+//			request.setAttribute("categories",
+//					messageCategoryService.search(query));
+//		}
+//
+//		// Message reply
+//		final LocalSettings localSettings = settingsService.getLocalSettings();
+//		TextFormat messageFormat = localSettings.getMessageFormat();
+//		if (inReplyTo != null) {
+//			form.setMessage(
+//					"subject",
+//					context.message("message.reply.subject",
+//							inReplyTo.getSubject()));
+//			String body;
+//			if (inReplyTo.isHtml()) {
+//				body = "<br><br><div style='padding-left:40px;border-left:1px solid black'>"
+//						+ inReplyTo.getBody() + "</div>";
+//				messageFormat = TextFormat.RICH;
+//			} else {
+//				body = " \n\n> "
+//						+ StringUtils.replace(
+//								WordUtils.wrap(inReplyTo.getBody(), WRAP_SIZE),
+//								"\n", "\n> ");
+//				messageFormat = TextFormat.PLAIN;
+//			}
+//			request.setAttribute("body", body);
+//			form.setMessage("html", inReplyTo.isHtml());
+//			if (inReplyTo.getCategory() != null) {
+//				form.setMessage("category", inReplyTo.getCategory().getId());
+//				if (inReplyTo.getToMember() != null) {
+//					// Reply to a member
+//					request.setAttribute("categoryName", inReplyTo
+//							.getCategory().getName());
+//					request.setAttribute("categoryEditable", false);
+//				} else {
+//					// Reply to administration
+//					final MessageCategoryQuery query = new MessageCategoryQuery();
+//					query.setFromElement((Element) (context.isOperator() ? context
+//							.getAccountOwner() : context.getElement()));
+//					request.setAttribute("categories",
+//							messageCategoryService.search(query));
+//					request.setAttribute("categoryId", inReplyTo.getCategory()
+//							.getId());
+//				}
+//			}
+//		}
+//		form.setMessage("html", messageFormat == TextFormat.RICH);
+//		request.setAttribute("inReplyTo", inReplyTo);
+//		request.setAttribute("toMember", toMember);
+//		request.setAttribute("messageFormat", messageFormat);
+//	}
 
 	private <T extends SendMessageDTO> BeanBinder<T> basicDataBinderFor(
 			final Class<T> type) {
@@ -471,48 +471,48 @@ public class SendMessageController extends BaseRestController {
 		return dto;
 	}
 
-	private Message resolveInReplyTo(final ActionContext context) {
-		final SendMessageForm form = context.getForm();
-		final long inReplyToId = form.getInReplyTo();
-		if (inReplyToId <= 0L) {
-			return null;
-		}
-		final Message inReplyTo = messageService.load(inReplyToId,
-				Message.Relationships.TO_MEMBER);
-		if ((context.isAdmin() && inReplyTo.getToMember() != null)
-				|| (context.isMember() && !context.getAccountOwner().equals(
-						inReplyTo.getToMember()))) {
-			throw new PermissionDeniedException();
-		}
-		return inReplyTo;
-	}
+//	private Message resolveInReplyTo(final ActionContext context) {
+//		final SendMessageForm form = context.getForm();
+//		final long inReplyToId = form.getInReplyTo();
+//		if (inReplyToId <= 0L) {
+//			return null;
+//		}
+//		final Message inReplyTo = messageService.load(inReplyToId,
+//				Message.Relationships.TO_MEMBER);
+//		if ((context.isAdmin() && inReplyTo.getToMember() != null)
+//				|| (context.isMember() && !context.getAccountOwner().equals(
+//						inReplyTo.getToMember()))) {
+//			throw new PermissionDeniedException();
+//		}
+//		return inReplyTo;
+//	}
 
 	/**
 	 * Resolve the member to send to, if any
 	 */
-	private Member resolveToMember(final ActionContext context) {
-		final SendMessageForm form = context.getForm();
-		final long toMemberId = form.getToMemberId();
-		Member toMember = null;
-
-		// Load the member to send to, if any
-		if (toMemberId > 0L) {
-			final Element loggedElement = (Element) (context.isOperator() ? context
-					.getAccountOwner() : context.getElement());
-			// Cannot send to self
-			if (toMemberId == loggedElement.getId()) {
-				throw new ValidationException();
-			}
-			// Ensure a member
-			final Element element = elementService.load(toMemberId,
-					Element.Relationships.USER);
-			if (!(element instanceof Member)) {
-				throw new ValidationException();
-			}
-			toMember = (Member) element;
-		}
-
-		return toMember;
-	}
+//	private Member resolveToMember(final ActionContext context) {
+//		final SendMessageForm form = context.getForm();
+//		final long toMemberId = form.getToMemberId();
+//		Member toMember = null;
+//
+//		// Load the member to send to, if any
+//		if (toMemberId > 0L) {
+//			final Element loggedElement = (Element) (context.isOperator() ? context
+//					.getAccountOwner() : context.getElement());
+//			// Cannot send to self
+//			if (toMemberId == loggedElement.getId()) {
+//				throw new ValidationException();
+//			}
+//			// Ensure a member
+//			final Element element = elementService.load(toMemberId,
+//					Element.Relationships.USER);
+//			if (!(element instanceof Member)) {
+//				throw new ValidationException();
+//			}
+//			toMember = (Member) element;
+//		}
+//
+//		return toMember;
+//	}
 
 }

@@ -220,8 +220,7 @@
         <!-- Alerts-->
         <bean id="viewErrorLogEntryController"
                 class="nl.strohalm.cyclos.webservices.rest.alerts.ViewErrorLogEntryController"/>
-        <bean id="removeAlertsController"
-                class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveAlertsController"/>
+        
         <bean id="removeErrorLogEntriesController"
                 class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveErrorLogEntriesController"/>
          <bean id="listSystemAlertsController"
@@ -229,7 +228,13 @@
          
           <bean id="listMemberAlertsController"
                 class="nl.strohalm.cyclos.webservices.rest.alerts.ListMemberAlertsController"/>
-        
+          
+          <bean id="removeAlertsController"
+                class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveAlertsController"/>
+        <bean id="searchAlertsController"
+                class="nl.strohalm.cyclos.webservices.rest.alerts.SearchAlertsController"/>
+        <bean id="viewErrorLogController"
+                class="nl.strohalm.cyclos.webservices.rest.alerts.ViewErrorLogController"/>
 	
                 <!--customization open documents-->
 
@@ -527,12 +532,12 @@
 	<bean id="manageSettingsController"
 		class="nl.strohalm.cyclos.webservices.rest.settings.ManageSettingsController" />
 
-	webshop
-	<bean id="cancelWebShopPaymentController"
-		class="nl.strohalm.cyclos.webservices.rest.webshop.CancelWebShopPaymentController" /> -->
+webshop
+<bean id="cancelWebShopPaymentController"
+    class="nl.strohalm.cyclos.webservices.rest.webshop.CancelWebShopPaymentController" /> -->
 
-      <!-- General -->
-     <bean id="homeController"
-		class="nl.strohalm.cyclos.webservices.rest.general.HomeController" />
+    <!-- General -->
+    <bean id="homeController"
+           class="nl.strohalm.cyclos.webservices.rest.general.HomeController" />
         
 </beans>

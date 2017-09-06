@@ -20,200 +20,78 @@ import nl.strohalm.cyclos.services.accounts.rates.RateService;
 import nl.strohalm.cyclos.services.accounts.rates.WhatRate;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
+import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 
 @Controller
 public class EditCurrencyController extends BaseRestController {
-    
-	private CurrencyService currencyService;
-	private RateService rateService;
-	private DataBinder<Currency> dataBinder;
-	private PermissionService permissionService;
-	private SettingsService settingsService;
 
-	public final CurrencyService getCurrencyService() {
-		return currencyService;
-	}
+    private CurrencyService currencyService;
 
-	public final void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
+    @Inject
+    public CurrencyService getCurrencyService() {
+        return currencyService;
+    }
 
-	public final void setSettingsService(SettingsService settingsService) {
-		this.settingsService = settingsService;
-	}
+    @Inject
+    public void setCurrencyService(CurrencyService currencyService) {
+        this.currencyService = currencyService;
+    }
 
-	
+    public static class AddCurrencyRequest extends Currency {
 
-	@Inject
-	public void setCurrencyService(final CurrencyService currencyService) {
-		this.currencyService = currencyService;
-	}
+        private boolean enableARate;
+        private boolean enableDRate;
+        private boolean enableIRate;
 
-	@Inject
-	public void setRateService(final RateService rateService) {
-		this.rateService = rateService;
-	}
-
-	public static class EditCurrencyRequestDto {
-		private long currencyId;
-		private boolean enableARate;
-		private boolean enableDRate;
-		private boolean enableIRate;
-
-		public long getCurrencyId() {
-			return currencyId;
-		}
-
-		public void setCurrencyId(long currencyId) {
-			this.currencyId = currencyId;
-		}
-
-		public boolean isEnableARate() {
-			return enableARate;
-		}
-
-		public void setEnableARate(boolean enableARate) {
-			this.enableARate = enableARate;
-		}
-
-		public boolean isEnableDRate() {
-			return enableDRate;
-		}
-
-		public void setEnableDRate(boolean enableDRate) {
-			this.enableDRate = enableDRate;
-		}
-
-		public boolean isEnableIRate() {
-			return enableIRate;
-		}
-
-		public void setEnableIRate(boolean enableIRate) {
-			this.enableIRate = enableIRate;
-		}
-
-	}
-
-	public static class EditCurrencyResponseDto {
-		public String message;
-                
-
-		public String getMessage() {
-			return message;
-		}
-
-		public void setMessage(String message) {
-			this.message = message;
-		}
-                public EditCurrencyResponseDto(){
-                }
-	}
-
-	@RequestMapping(value = "admin/editCurrency", method = RequestMethod.POST)
-	@ResponseBody
-	protected EditCurrencyResponseDto editCurrency(
-			@RequestBody EditCurrencyRequestDto form) throws Exception {
-		Currency currency =  currencyService.load(form.getCurrencyId());
-                EditCurrencyResponseDto response = new EditCurrencyResponseDto();
-                try{
-		final boolean isInsert = currency.isTransient();
-		final WhatRate whatRate = new WhatRate();
-		whatRate.setaRate(form.isEnableARate());
-		whatRate.setdRate(form.isEnableDRate());
-		whatRate.setiRate(form.isEnableIRate());
-		 currencyService.save(currency, whatRate);
-		
-		if (isInsert) {
-			response.setMessage("currency.inserted");
-		} else {
-			response.setMessage("currency.modified");}
-                }
-                catch(Exception e){
-                    e.printStackTrace();
-                }
-                
-		return response;
+        public boolean isEnableARate() {
+            return enableARate;
         }
 
-	private DataBinder<Currency> getDataBinder() {
-		if (dataBinder == null) {
-			final LocalSettings localSettings = settingsService
-					.getLocalSettings();
+        public void setEnableARate(boolean enableARate) {
+            this.enableARate = enableARate;
+        }
 
-			final BeanBinder<Currency> binder = BeanBinder
-					.instance(Currency.class);
-			binder.registerBinder(
-					"id",
-					PropertyBinder.instance(Long.class, "id",
-							IdConverter.instance()));
-			binder.registerBinder("name",
-					PropertyBinder.instance(String.class, "name"));
-			binder.registerBinder("symbol",
-					PropertyBinder.instance(String.class, "symbol"));
-			binder.registerBinder("pattern",
-					PropertyBinder.instance(String.class, "pattern"));
-			binder.registerBinder("description",
-					PropertyBinder.instance(String.class, "description"));
+        public boolean isEnableDRate() {
+            return enableDRate;
+        }
 
-			final BeanBinder<ARateParameters> aRate = BeanBinder.instance(
-					ARateParameters.class, "aRateParameters");
-			aRate.registerBinder(
-					"id",
-					PropertyBinder.instance(Long.class, "id",
-							IdConverter.instance()));
-			aRate.registerBinder("initValue", PropertyBinder.instance(
-					BigDecimal.class, "initValue",
-					localSettings.getNumberConverter()));
-			aRate.registerBinder("initDate", PropertyBinder.instance(
-					Calendar.class, "initDate",
-					localSettings.getDateTimeConverter()));
-			aRate.registerBinder("creationValue", PropertyBinder.instance(
-					BigDecimal.class, "creationValue",
-					localSettings.getNumberConverter()));
-			binder.registerBinder("aRateParameters", aRate);
+        public void setEnableDRate(boolean enableDRate) {
+            this.enableDRate = enableDRate;
+        }
 
-			final BeanBinder<DRateParameters> dRate = BeanBinder.instance(
-					DRateParameters.class, "dRateParameters");
-			dRate.registerBinder(
-					"id",
-					PropertyBinder.instance(Long.class, "id",
-							IdConverter.instance()));
-			dRate.registerBinder("interest", PropertyBinder.instance(
-					BigDecimal.class, "interest",
-					localSettings.getHighPrecisionConverter()));
-			dRate.registerBinder("baseMalus", PropertyBinder.instance(
-					BigDecimal.class, "baseMalus",
-					localSettings.getHighPrecisionConverter()));
-			dRate.registerBinder("minimalD", PropertyBinder.instance(
-					BigDecimal.class, "minimalD",
-					localSettings.getNumberConverter()));
-			dRate.registerBinder("initValue", PropertyBinder.instance(
-					BigDecimal.class, "initValue",
-					localSettings.getNumberConverter()));
-			dRate.registerBinder("initDate", PropertyBinder.instance(
-					Calendar.class, "initDate",
-					localSettings.getDateTimeConverter()));
-			dRate.registerBinder("creationValue", PropertyBinder.instance(
-					BigDecimal.class, "creationValue",
-					localSettings.getNumberConverter()));
-			binder.registerBinder("dRateParameters", dRate);
+        public boolean isEnableIRate() {
+            return enableIRate;
+        }
 
-			final BeanBinder<IRateParameters> iRate = BeanBinder.instance(
-					IRateParameters.class, "iRateParameters");
-			iRate.registerBinder(
-					"id",
-					PropertyBinder.instance(Long.class, "id",
-							IdConverter.instance()));
-			binder.registerBinder("iRateParameters", iRate);
+        public void setEnableIRate(boolean enableIRate) {
+            this.enableIRate = enableIRate;
+        }
 
-			dataBinder = binder;
-		}
-		return dataBinder;
-	}
+    }
+
+  @RequestMapping(value = "admin/addCurrency", method = RequestMethod.POST)
+    @ResponseBody
+ public GenericResponse addCurrency(@RequestBody AddCurrencyRequest currency) {
+       GenericResponse response = new GenericResponse();
+      final boolean isInsert = currency.isTransient();
+      final WhatRate whatRate = new WhatRate();
+      whatRate.setaRate(currency.isEnableARate());
+      whatRate.setdRate(currency.isEnableDRate());
+      whatRate.setiRate(currency.isEnableIRate());
+      currency = (AddCurrencyRequest) currencyService.save(currency, whatRate);
+      if (isInsert) {
+          response.setMessage("currency.inserted");
+      } else {
+          response.setMessage("currency.modified");
+      }
+      response.setStatus(0);
+       return response;
+  }
 
 }

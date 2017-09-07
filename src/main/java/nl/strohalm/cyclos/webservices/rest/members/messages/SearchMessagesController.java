@@ -8,15 +8,9 @@ package nl.strohalm.cyclos.webservices.rest.members.messages;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import nl.strohalm.cyclos.access.AdminMemberPermission;
-import nl.strohalm.cyclos.access.BrokerPermission;
-import nl.strohalm.cyclos.access.MemberPermission;
-import nl.strohalm.cyclos.access.OperatorPermission;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
-import nl.strohalm.cyclos.entities.groups.SystemGroup;
-import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.entities.members.messages.Message;
 import nl.strohalm.cyclos.entities.members.messages.MessageBox;
@@ -26,7 +20,6 @@ import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.elements.MessageService;
 import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
-import nl.strohalm.cyclos.utils.access.LoggedUser;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinderHelper;
@@ -53,6 +46,31 @@ public class SearchMessagesController extends BaseRestController {
     private ElementService elementService;
     private GroupService groupService;
 
+    public PermissionService getPermissionService() {
+        return permissionService;
+    }
+
+    public void setPermissionService(PermissionService permissionService) {
+        this.permissionService = permissionService;
+    }
+
+    public ElementService getElementService() {
+        return elementService;
+    }
+
+    public void setElementService(ElementService elementService) {
+        this.elementService = elementService;
+    }
+
+    public GroupService getGroupService() {
+        return groupService;
+    }
+
+    public void setGroupService(GroupService groupService) {
+        this.groupService = groupService;
+    }
+    
+
     public DataBinder<MessageQuery> getDataBinder() {
         if (dataBinder == null) {
             final BeanBinder<MessageQuery> binder = BeanBinder.instance(MessageQuery.class);
@@ -77,7 +95,16 @@ public class SearchMessagesController extends BaseRestController {
         private String messageBox;
         private String rootType;
         private String keywords;
-        private long relatedMember;
+        private String relatedMember;
+
+        public String getRelatedMember() {
+            return relatedMember;
+        }
+
+        public void setRelatedMember(String relatedMember) {
+            this.relatedMember = relatedMember;
+        }
+        
 
         public boolean isAdvanced() {
             return advanced;
@@ -111,16 +138,7 @@ public class SearchMessagesController extends BaseRestController {
             this.keywords = keywords;
         }
 
-        public long getRelatedMember() {
-            return relatedMember;
-        }
-
-        public void setRelatedMember(long relatedMember) {
-            this.relatedMember = relatedMember;
-        }
-
-     
-        
+      
         
     }
 
@@ -129,19 +147,9 @@ public class SearchMessagesController extends BaseRestController {
         private boolean advanced;
         private boolean canManage;
         private boolean canSend;
-        private Member relatedMember;
         private AdminGroup adminGroup;
 
-       
-        
-        public Member getRelatedMember() {
-            return relatedMember;
-        }
-
-        public void setRelatedMember(Member relatedMember) {
-            this.relatedMember = relatedMember;
-        }
-
+     
         public AdminGroup getAdminGroup() {
             return adminGroup;
         }
@@ -166,11 +174,6 @@ public class SearchMessagesController extends BaseRestController {
         public void setCanSend(boolean canSend) {
             this.canSend = canSend;
         }
-
-//         public SearchMessagesResponse() {
-//        
-//        setQuery("messageBox", MessageBox.INBOX.name());
-//    }
         public boolean isAdvanced() {
             return advanced;
         }
@@ -181,10 +184,11 @@ public class SearchMessagesController extends BaseRestController {
 
     }
 
-    @RequestMapping(value = "member/serchMessage", method = RequestMethod.POST)
+    @RequestMapping(value = "member/searchMessage", method = RequestMethod.POST)
     @ResponseBody
     public GenericResponse executeQuery(@RequestBody SearchMessageRequest request) {
         GenericResponse response = new GenericResponse();
+        try{
         
         Map<String, Object> query=new HashMap<String, Object>();
         query.put("messageBox", request.getMessageBox());
@@ -195,8 +199,15 @@ public class SearchMessagesController extends BaseRestController {
         
         final MessageQuery queries = getDataBinder().readFromString(query);
         final List<Message> list = messageService.search(queries);
-        //list.getRequest().setAttribute("messages", list);
-        list.set(0, (Message) list);
+       // list.getRequest.setAttribute("messages", list);
+       list.listIterator(0);
+        }
+     
+
+        catch(Exception e){
+            e.printStackTrace();
+                
+                }
         response.setStatus(0);
         response.setMessage("messange sent!!");
         return response;

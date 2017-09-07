@@ -235,6 +235,8 @@
                 class="nl.strohalm.cyclos.webservices.rest.alerts.SearchAlertsController"/>
         <bean id="viewErrorLogController"
                 class="nl.strohalm.cyclos.webservices.rest.alerts.ViewErrorLogController"/>
+         <bean id="searchErrorLogController"
+                class="nl.strohalm.cyclos.webservices.rest.alerts.SearchErrorLogController"/>
 	
                 <!--customization open documents-->
 

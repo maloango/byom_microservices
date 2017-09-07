@@ -43,55 +43,108 @@ public class EditCurrencyController extends BaseRestController {
         this.currencyService = currencyService;
     }
 
-    public static class AddCurrencyRequest extends Currency {
+    public static class AddCurrencyRequest {
 
-        private boolean enableARate;
-        private boolean enableDRate;
-        private boolean enableIRate;
+        private Long id;
+        private String name;
+        private String description;
+        private String symbol;
+        private String pattern = "#amount#";
+        private DRateParameters dRateParameters;
+        private ARateParameters aRateParameters;
+        private IRateParameters iRateParameters;
 
-        public boolean isEnableARate() {
-            return enableARate;
+        public Long getId() {
+            return id;
         }
 
-        public void setEnableARate(boolean enableARate) {
-            this.enableARate = enableARate;
+        public void setId(Long id) {
+            this.id = id;
+        }
+        
+
+        public String getName() {
+            return name;
         }
 
-        public boolean isEnableDRate() {
-            return enableDRate;
+        public void setName(String name) {
+            this.name = name;
         }
 
-        public void setEnableDRate(boolean enableDRate) {
-            this.enableDRate = enableDRate;
+        public String getDescription() {
+            return description;
         }
 
-        public boolean isEnableIRate() {
-            return enableIRate;
+        public void setDescription(String description) {
+            this.description = description;
         }
 
-        public void setEnableIRate(boolean enableIRate) {
-            this.enableIRate = enableIRate;
+        public String getSymbol() {
+            return symbol;
+        }
+
+        public void setSymbol(String symbol) {
+            this.symbol = symbol;
+        }
+
+        public String getPattern() {
+            return pattern;
+        }
+
+        public void setPattern(String pattern) {
+            this.pattern = pattern;
+        }
+
+        public DRateParameters getdRateParameters() {
+            return dRateParameters;
+        }
+
+        public void setdRateParameters(DRateParameters dRateParameters) {
+            this.dRateParameters = dRateParameters;
+        }
+
+        public ARateParameters getaRateParameters() {
+            return aRateParameters;
+        }
+
+        public void setaRateParameters(ARateParameters aRateParameters) {
+            this.aRateParameters = aRateParameters;
+        }
+
+        public IRateParameters getiRateParameters() {
+            return iRateParameters;
+        }
+
+        public void setiRateParameters(IRateParameters iRateParameters) {
+            this.iRateParameters = iRateParameters;
         }
 
     }
 
-  @RequestMapping(value = "admin/addCurrency", method = RequestMethod.POST)
+    @RequestMapping(value = "admin/addCurrency", method = RequestMethod.POST)
     @ResponseBody
- public GenericResponse addCurrency(@RequestBody AddCurrencyRequest currency) {
-       GenericResponse response = new GenericResponse();
-      final boolean isInsert = currency.isTransient();
-      final WhatRate whatRate = new WhatRate();
-      whatRate.setaRate(currency.isEnableARate());
-      whatRate.setdRate(currency.isEnableDRate());
-      whatRate.setiRate(currency.isEnableIRate());
-      currency = (AddCurrencyRequest) currencyService.save(currency, whatRate);
-      if (isInsert) {
-          response.setMessage("currency.inserted");
-      } else {
-          response.setMessage("currency.modified");
-      }
-      response.setStatus(0);
-       return response;
-  }
+    public GenericResponse addCurrency(@RequestBody AddCurrencyRequest request) {
+        GenericResponse response = new GenericResponse();
+        Currency currency = new Currency();
+        currency.setDescription(request.getDescription());
+        currency.setPattern(request.getPattern());
+        currency.setName(request.getName());
+        currency.setSymbol(request.getSymbol());
+        currency.setId(request.getId());
+
+        final boolean isInsert = currency.isTransient();
+        final WhatRate whatRate = new WhatRate();
+        whatRate.setaRate(currency.isEnableARate());
+        whatRate.setdRate(currency.isEnableDRate());
+        whatRate.setiRate(currency.isEnableIRate());
+        currency = currencyService.save(currency, whatRate);
+        if (isInsert) {
+            response.setMessage("currency.inserted");
+        } else {
+            response.setMessage("currency.modified");
+        }
+        response.setStatus(0);
+        return response;
+    }
 
 }

@@ -52,6 +52,10 @@
 		class="nl.strohalm.cyclos.webservices.rest.AdFieldsRestController" />
 	<bean id="adCategoriesRestController"
 		class="nl.strohalm.cyclos.webservices.rest.AdCategoriesRestController" />
+        
+        <!--Account Overview-->
+        <bean id="accountOverviewController"
+		class=" nl.strohalm.cyclos.webservices.rest.accounts.details.AccountOverviewController" />
 
 	<!-- access open -->
 	<bean id="managePasswordsController"

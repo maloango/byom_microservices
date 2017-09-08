@@ -15,6 +15,7 @@ import nl.strohalm.cyclos.services.accounts.MemberAccountTypeQuery;
 import nl.strohalm.cyclos.services.accounts.SystemAccountTypeQuery;
 import nl.strohalm.cyclos.webservices.model.AccountTypeVO;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 import nl.strohalm.cyclos.webservices.utils.AccountHelper;
 
 @Controller
@@ -41,7 +42,7 @@ public class ListAccountTypesController extends BaseRestController {
 
         
 
-	public static class ListAccountTypesResponseDTO {
+	public static class ListAccountTypesResponseDTO  extends GenericResponse{
 		private List<AccountTypeVO> accountType=new ArrayList<AccountTypeVO>();
                 
 
@@ -81,7 +82,8 @@ public class ListAccountTypesController extends BaseRestController {
                 for(AccountType at:accountTypes){
                     response.getAccountType().add(accountHelper.toVO(at));
                 }
-                
+                response.setStatus(0);
+                response.setMessage("Account type list!!");
 		//response.setAccountType(accountTypes);
                // response = new ListAccountTypesResponseDTO(accountTypes)
 		

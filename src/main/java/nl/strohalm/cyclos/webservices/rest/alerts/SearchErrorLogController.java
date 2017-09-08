@@ -12,6 +12,7 @@ import static nl.strohalm.cyclos.http.AttributeHolder.Factory.context;
 import nl.strohalm.cyclos.services.alerts.AlertService;
 import nl.strohalm.cyclos.services.alerts.ErrorLogService;
 import nl.strohalm.cyclos.utils.Period;
+import nl.strohalm.cyclos.utils.query.QueryParameters;
 import org.springframework.stereotype.Controller;
 
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
@@ -24,16 +25,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class SearchErrorLogController extends BaseRestController {
 
-    private ErrorLogService errorLogServic;
+    private ErrorLogService errorLogService;
 
-    @Inject
-    public ErrorLogService getErrorLogServic() {
-        return errorLogServic;
-    }
-
+   
     @Inject
     public void setErrorLogServic(ErrorLogService errorLogServic) {
-        this.errorLogServic = errorLogServic;
+        this.errorLogService = errorLogServic;
     }
 
     public static class SerachErrorLogRequest {
@@ -61,16 +58,16 @@ public class SearchErrorLogController extends BaseRestController {
 
     public static class SearchErrorLogResponse extends GenericResponse {
 
-        private List<ErrorLogEntry> alerts;
+     List<ErrorLogEntry> errorHistory;
 
-        public List<ErrorLogEntry> getAlerts() {
-            return alerts;
+        public List<ErrorLogEntry> getErrorHistory() {
+            return errorHistory;
         }
 
-        public void setAlerts(List<ErrorLogEntry> alerts) {
-            this.alerts = alerts;
+        public void setErrorHistory(List<ErrorLogEntry> errorHistory) {
+            this.errorHistory = errorHistory;
         }
-        
+     
 
     }
 
@@ -84,10 +81,11 @@ public class SearchErrorLogController extends BaseRestController {
         final ErrorLogEntryQuery query = new ErrorLogEntryQuery();
         query.setPeriod(period);
         query.setShowRemoved(true);
+        query.setResultType(QueryParameters.ResultType.LIST);
         System.out.println("query------"+query);
-        final List<ErrorLogEntry> alerts = errorLogServic.search(query);
-         System.out.println("alerts size------"+alerts.size());
-        response.setAlerts(alerts);
+        final List<ErrorLogEntry> errorHistory = errorLogService.search(query);
+         System.out.println("alerts size------"+errorHistory.size());
+        response.setErrorHistory(errorHistory);
         response.setStatus(0);
         response.setMessage("error history list!!");
         return response;

@@ -32,245 +32,174 @@ import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 //import static org.apache.commons.httpclient.URI.param;
 
 @Controller
 public class EditAccountTypeController extends BaseRestController {
-	private CurrencyService currencyService;
-	private AccountTypeService accountTypeService;
-	private TransferTypeService transferTypeService;
-	private AccountFeeService accountFeeService;
-	private PaymentFilterService paymentFilterService;
-	private Map<AccountType.Nature, DataBinder<? extends AccountType>> dataBinders;
-	private ReadWriteLock lock = new ReentrantReadWriteLock(true);
-	private SettingsService settingsService;
-	private PermissionService permissionService;
+
+    private CurrencyService currencyService;
+    private AccountTypeService accountTypeService;
+    private TransferTypeService transferTypeService;
+    private AccountFeeService accountFeeService;
+    private PaymentFilterService paymentFilterService;
 
     public CurrencyService getCurrencyService() {
         return currencyService;
     }
 
-    public SettingsService getSettingsService() {
-        return settingsService;
+    @Inject
+    public void setCurrencyService(CurrencyService currencyService) {
+        this.currencyService = currencyService;
     }
 
-    public PermissionService getPermissionService() {
-        return permissionService;
+    public AccountTypeService getAccountTypeService() {
+        return accountTypeService;
     }
+
+    @Inject
+    public void setAccountTypeService(AccountTypeService accountTypeService) {
+        this.accountTypeService = accountTypeService;
+    }
+
+    public TransferTypeService getTransferTypeService() {
+        return transferTypeService;
+    }
+
+    @Inject
+    public void setTransferTypeService(TransferTypeService transferTypeService) {
+        this.transferTypeService = transferTypeService;
+    }
+
+    public AccountFeeService getAccountFeeService() {
+        return accountFeeService;
+    }
+
+    @Inject
+    public void setAccountFeeService(AccountFeeService accountFeeService) {
+        this.accountFeeService = accountFeeService;
+    }
+
+    public PaymentFilterService getPaymentFilterService() {
+        return paymentFilterService;
+    }
+
+    @Inject
+    public void setPaymentFilterService(PaymentFilterService paymentFilterService) {
+        this.paymentFilterService = paymentFilterService;
+    }
+    
+    public static class EditAccountTypeRequest extends AccountType{
         
-	
+   private Long id;
+   private Nature nature;
+   private String name;
+   private String description;
+   private Currency currency;
+   private LimitType limitType;
+   private BigDecimal creditLimit;
+   private BigDecimal upperCreditLimit;
 
-	public final void setDataBinders(Map<AccountType.Nature, DataBinder<? extends AccountType>> dataBinders) {
-		this.dataBinders = dataBinders;
-	}
-
-	public final void setLock(ReadWriteLock lock) {
-		this.lock = lock;
-	}
-
-	public final void setSettingsService(SettingsService settingsService) {
-		this.settingsService = settingsService;
-	}
-
-	public final void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
-
-	public AccountFeeService getAccountFeeService() {
-		return accountFeeService;
-	}
-
-	public AccountTypeService getAccountTypeService() {
-		return accountTypeService;
-	}
-
-	public DataBinder<? extends AccountType> getDataBinder(final AccountType.Nature nature) {
-		try {
-			lock.readLock().lock();
-			if (dataBinders == null) {
-				final HashMap<AccountType.Nature, DataBinder<? extends AccountType>> temp = new HashMap<AccountType.Nature, DataBinder<? extends AccountType>>();
-				final LocalSettings localSettings = settingsService.getLocalSettings();
-
-				final BeanBinder<SystemAccountType> systemBinder = BeanBinder.instance(SystemAccountType.class);
-				initBasic(systemBinder);
-				systemBinder.registerBinder("creditLimit",
-						PropertyBinder.instance(BigDecimal.class, "creditLimit", localSettings.getNumberConverter()));
-				systemBinder.registerBinder("upperCreditLimit", PropertyBinder.instance(BigDecimal.class,
-						"upperCreditLimit", localSettings.getNumberConverter()));
-				temp.put(AccountType.Nature.SYSTEM, systemBinder);
-
-				final BeanBinder<MemberAccountType> memberBinder = BeanBinder.instance(MemberAccountType.class);
-				initBasic(memberBinder);
-				temp.put(AccountType.Nature.MEMBER, memberBinder);
-				dataBinders = temp;
-			}
-			return dataBinders.get(nature);
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
-
-	public PaymentFilterService getPaymentFilterService() {
-		return paymentFilterService;
-	}
-
-	public TransferTypeService getTransferTypeService() {
-		return transferTypeService;
-	}
-
-	public void onLocalSettingsUpdate(final LocalSettingsEvent event) {
-		try {
-			lock.writeLock().lock();
-			dataBinders = null;
-		} finally {
-			lock.writeLock().unlock();
-		}
-	}
-
-	@Inject
-	public void setAccountFeeService(final AccountFeeService accountFeeService) {
-		this.accountFeeService = accountFeeService;
-	}
-
-	@Inject
-	public void setAccountTypeService(final AccountTypeService accountTypeService) {
-		this.accountTypeService = accountTypeService;
-	}
-
-	@Inject
-	public void setCurrencyService(final CurrencyService currencyService) {
-		this.currencyService = currencyService;
-	}
-
-	@Inject
-	public void setPaymentFilterService(final PaymentFilterService paymentFilterService) {
-		this.paymentFilterService = paymentFilterService;
-	}
-
-	@Inject
-	public void setTransferTypeService(final TransferTypeService transferTypeService) {
-		this.transferTypeService = transferTypeService;
-	}
-
-	public static class EditAccountTypeRequestDTO {
-		private long accountTypeId;
-		protected Map<String, Object> values=new HashMap<String,Object>();
-
-		public Map<String, Object> getValues() {
-			return values;
-		}
-
-		public void setValues(final Map<String, Object> values) {
-			this.values = values;
-		}
-
-		public Map<String, Object> getAccountType() {
-			return values;
-		}
-
-		public Object getAccountType(final String key) {
-			return values.get(key);
-		}
-
-		public long getAccountTypeId() {
-			return accountTypeId;
-		}
-
-		public void setAccountType(final Map<String, Object> map) {
-			values = map;
-		}
-
-		public void setAccountType(final String key, final Object value) {
-			values.put(key, value);
-		}
-
-		public void setAccountTypeId(final long accountTypeId) {
-			this.accountTypeId = accountTypeId;
-		}
-	}
-
-	public static class EditAccountTypeResponseDTO {
-		String message;
-		Map<String, Object> param=new HashMap<String,Object>();
-
-		public EditAccountTypeResponseDTO(String message, Map<String, Object> param) {
-			super();
-			this.message = message;
-			this.param = param;
-		}
-                public EditAccountTypeResponseDTO(){
-                }
-
-        public String getMessage() {
-            return message;
+        public Nature getNature() {
+            return nature;
         }
 
-        public void setMessage(String message) {
-            this.message = message;
+        public void setNature(Nature nature) {
+            this.nature = nature;
         }
 
-        public Map<String, Object> getParam() {
-            return param;
+        public String getName() {
+            return name;
         }
 
-        public void setParam(Map<String, Object> param) {
-            this.param = param;
+        public void setName(String name) {
+            this.name = name;
         }
-                
-                
 
-	}
+        public String getDescription() {
+            return description;
+        }
 
-	@RequestMapping(value = "admin/editAccountType", method = RequestMethod.POST)
-	@ResponseBody
-	protected EditAccountTypeResponseDTO handleSubmit(@RequestBody EditAccountTypeRequestDTO form) throws Exception {
-            System.out.println("Request Came");  
-            String message;	
-               EditAccountTypeResponseDTO response = null;
-                try{
-		AccountType accountType = resolveAccountType(form);
-                Map<String, Object> param = new HashMap<String, Object>();
-		param.put("accountTypeId", accountType.getId());
-                
-                
-		final boolean isInsert = accountType.getId() == null;
-		accountType = accountTypeService.save(accountType);
-		//String message = null;
-		if (isInsert) {
-			message = "accountType.inserted";
-		} else {
-			message = "accountType.modified";
-		}
+        public void setDescription(String description) {
+            this.description = description;
+        }
 
-		response = new EditAccountTypeResponseDTO(message, param);
-                }
-                catch(Exception e){
-                    e.printStackTrace();
-                }
-	
-		return response;
-	}
+        public Currency getCurrency() {
+            return currency;
+        }
 
-	private void initBasic(final BeanBinder<? extends AccountType> binder) {
-		binder.registerBinder("id", PropertyBinder.instance(Long.class, "id", IdConverter.instance()));
-		binder.registerBinder("name", PropertyBinder.instance(String.class, "name"));
-		binder.registerBinder("description", PropertyBinder.instance(String.class, "description"));
-		binder.registerBinder("currency", PropertyBinder.instance(Currency.class, "currency"));
-	}
+        public void setCurrency(Currency currency) {
+            this.currency = currency;
+        }
 
-	private AccountType resolveAccountType(final EditAccountTypeRequestDTO form) {
-		final long id = form.getAccountTypeId();
-		AccountType.Nature nature;
-		if (id <= 0L) {
-			try {
-				nature = AccountType.Nature.valueOf(form.getAccountType("nature").toString());
-			} catch (final Exception e) {
-				throw new ValidationException();
-			}
-		} else {
-			nature = accountTypeService.load(id).getNature();
-		}
-		return getDataBinder(nature).readFromString(form.getAccountType());
-	}
+        public LimitType getLimitType() {
+            return limitType;
+        }
+
+        public void setLimitType(LimitType limitType) {
+            this.limitType = limitType;
+        }
+
+        public BigDecimal getCreditLimit() {
+            return creditLimit;
+        }
+
+        public void setCreditLimit(BigDecimal creditLimit) {
+            this.creditLimit = creditLimit;
+        }
+
+        public BigDecimal getUpperCreditLimit() {
+            return upperCreditLimit;
+        }
+
+        public void setUpperCreditLimit(BigDecimal upperCreditLimit) {
+            this.upperCreditLimit = upperCreditLimit;
+        }
+        
+     
+   
+   
+        
+    }
+ 
+
+    @RequestMapping(value = "admin/editAccountType", method = RequestMethod.POST)
+    @ResponseBody
+    public GenericResponse addAccount(@RequestBody EditAccountTypeRequest request) {
+        GenericResponse response = new GenericResponse();
+         AccountType accountType = resolveAccountType(request);
+      final boolean isInsert = accountType.getId() == null;
+      
+      accountType = accountTypeService.save(accountType);
+         if(isInsert){
+             response.setMessage("Account inserted !!");
+         }
+         else
+         {
+             response.setMessage("Account modified !!");
+         }
+         response.setStatus(0);
+        
+
+        return response;
+    }
+    
+        private AccountType resolveAccountType(final EditAccountTypeRequest form) {
+        final long id = form.getId();
+        AccountType accountType=null;
+        AccountType.Nature nature;
+        if (id <= 0L) {
+            try {
+               // nature = AccountType.Nature.valueOf(form.getNature());
+            } catch (final Exception e) {
+                throw new ValidationException();
+            }
+        } else {
+            accountType = accountTypeService.load(id);
+        }
+        return accountType;
+    }
 }
+
+
 // having prepared form to complete later full implementation 

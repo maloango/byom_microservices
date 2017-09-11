@@ -89,22 +89,30 @@ public class EditAccountTypeController extends BaseRestController {
         this.paymentFilterService = paymentFilterService;
     }
     
-    public static class EditAccountTypeRequest extends AccountType{
+    public static class EditAccountTypeRequest{
         
    private Long id;
-   private Nature nature;
+   private String nature;
    private String name;
    private String description;
-   private Currency currency;
-   private LimitType limitType;
+   private Long currency;
+   private String limitType;
    private BigDecimal creditLimit;
    private BigDecimal upperCreditLimit;
 
-        public Nature getNature() {
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getNature() {
             return nature;
         }
 
-        public void setNature(Nature nature) {
+        public void setNature(String nature) {
             this.nature = nature;
         }
 
@@ -124,19 +132,19 @@ public class EditAccountTypeController extends BaseRestController {
             this.description = description;
         }
 
-        public Currency getCurrency() {
+        public Long getCurrency() {
             return currency;
         }
 
-        public void setCurrency(Currency currency) {
+        public void setCurrency(Long currency) {
             this.currency = currency;
         }
 
-        public LimitType getLimitType() {
+        public String getLimitType() {
             return limitType;
         }
 
-        public void setLimitType(LimitType limitType) {
+        public void setLimitType(String limitType) {
             this.limitType = limitType;
         }
 
@@ -155,7 +163,8 @@ public class EditAccountTypeController extends BaseRestController {
         public void setUpperCreditLimit(BigDecimal upperCreditLimit) {
             this.upperCreditLimit = upperCreditLimit;
         }
-        
+
+       
      
    
    
@@ -167,10 +176,24 @@ public class EditAccountTypeController extends BaseRestController {
     @ResponseBody
     public GenericResponse addAccount(@RequestBody EditAccountTypeRequest request) {
         GenericResponse response = new GenericResponse();
-         AccountType accountType = resolveAccountType(request);
-      final boolean isInsert = accountType.getId() == null;
+        SystemAccountType systemAccoutType=new SystemAccountType();
+        systemAccoutType.setCreditLimit(request.getCreditLimit());
+        systemAccoutType.setUpperCreditLimit(request.getUpperCreditLimit());
+        systemAccoutType.setDescription(request.getDescription());
+        systemAccoutType.setName(request.getName());
+        Currency currency=new Currency();
+        currency.setId(request.getId());
+        systemAccoutType.setCurrency(currency);
+        
+        
+   
+        
+        //AccountType.LimitType.LIMITED;
+     
+         //AccountType accountType = resolveAccountType(request);
+      final boolean isInsert = systemAccoutType.getId() == null;
       
-      accountType = accountTypeService.save(accountType);
+      systemAccoutType = accountTypeService.save(systemAccoutType);
          if(isInsert){
              response.setMessage("Account inserted !!");
          }
@@ -184,21 +207,22 @@ public class EditAccountTypeController extends BaseRestController {
         return response;
     }
     
-        private AccountType resolveAccountType(final EditAccountTypeRequest form) {
-        final long id = form.getId();
-        AccountType accountType=null;
-        AccountType.Nature nature;
-        if (id <= 0L) {
-            try {
-               // nature = AccountType.Nature.valueOf(form.getNature());
-            } catch (final Exception e) {
-                throw new ValidationException();
-            }
-        } else {
-            accountType = accountTypeService.load(id);
-        }
-        return accountType;
-    }
+//        private AccountType resolveAccountType(final EditAccountTypeRequest form) {
+//        final long id = form.getId();
+//        AccountType accountType=null;
+//        AccountType.Nature nature;
+//        if (id <= 0L) {
+//            try {
+//                nature = AccountType.Nature.valueOf(form.getNature());
+//            } catch (final Exception e) {
+//                throw new ValidationException();
+//            }
+//        } else {
+//            accountType = accountTypeService.load(id);
+//            
+//        }
+//        return accountType;
+//    }
 }
 
 

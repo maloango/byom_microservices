@@ -71,7 +71,6 @@ import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -578,8 +577,6 @@ public class MemberProfileController extends BaseRestController {
         }
     }
    
-        
-  
   
     @RequestMapping(value = "member/memberProfile", method = RequestMethod.GET)
     @ResponseBody

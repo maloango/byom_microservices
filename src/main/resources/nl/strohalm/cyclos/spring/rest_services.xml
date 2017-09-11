@@ -545,5 +545,9 @@ webshop
     <!-- General -->
     <bean id="homeController"
            class="nl.strohalm.cyclos.webservices.rest.general.HomeController" />
+    
+     <bean id="loadMemberController"
+           class="nl.strohalm.cyclos.webservices.rest.members.LoadMemberController" />
+    
         
 </beans>

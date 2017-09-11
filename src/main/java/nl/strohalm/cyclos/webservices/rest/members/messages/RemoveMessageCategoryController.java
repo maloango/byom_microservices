@@ -1,91 +1,76 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package nl.strohalm.cyclos.webservices.rest.members.messages;
 
-import org.apache.struts.action.ActionForward;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.controls.ActionContext;
-//import nl.strohalm.cyclos.controls.members.messages.RemoveMessageCategoryForm;
 import nl.strohalm.cyclos.entities.exceptions.DaoException;
 import nl.strohalm.cyclos.services.elements.MessageCategoryService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ *
+ * @author Lue
+ */
 @Controller
 public class RemoveMessageCategoryController extends BaseRestController {
-	private MessageCategoryService messageCategoryService;
 
-	public MessageCategoryService getMessageCategoryService() {
-		return messageCategoryService;
-	}
+    private MessageCategoryService messageCategoryService;
 
-	@Inject
-	public void setMessageCategoryService(
-			final MessageCategoryService messageCategoryService) {
-		this.messageCategoryService = messageCategoryService;
-	}
+    public MessageCategoryService getMessageCategoryService() {
+        return messageCategoryService;
+    }
 
-	public static class RemoveMessageCategoryRequestDto {
-		private long messageCategoryId;
+    @Inject
+    public void setMessageCategoryService(final MessageCategoryService messageCategoryService) {
+        this.messageCategoryService = messageCategoryService;
+    }
 
-		public long getMessageCategoryId() {
-			return messageCategoryId;
-		}
+    public static class RemoveMessageResponse extends GenericResponse {
 
-		public void setMessageCategoryId(final long messageCategoryId) {
-			this.messageCategoryId = messageCategoryId;
-		}
-	}
+        private long messageCategoryId;
 
-	public static class RemoveMessageCategoryResponseDto {
-		private String message;
+        public long getMessageCategoryId() {
+            return messageCategoryId;
+        }
 
-		public String getMessage() {
-			return message;
-		}
+        public void setMessageCategoryId(final long messageCategoryId) {
+            this.messageCategoryId = messageCategoryId;
+        }
+    }
 
-		public void setMessage(String message) {
-			this.message = message;
-		}
-	}
+    @RequestMapping(value = "member/removeMessage/{messageCategoryId}", method = RequestMethod.GET)
+    @ResponseBody
+    public RemoveMessageResponse removeMessage(@PathVariable("messageCategoryId") long messageCategoryId) throws Exception {
+        //final RemoveMessageCategoryForm form = context.getForm();
+        RemoveMessageResponse response = new RemoveMessageResponse();
+       // final long id = LoggedUser.user().getId();
+        if (messageCategoryId <= 0L) {
+            throw new ValidationException();
+        }
 
-	@RequestMapping(value = "admin/removeMessageCategory", method = RequestMethod.DELETE)
-	@ResponseBody
-	protected RemoveMessageCategoryResponseDto executeAction(
-			@RequestBody RemoveMessageCategoryRequestDto form) throws Exception {
-		RemoveMessageCategoryResponseDto response = null;
-                try{
-		final long id = form.getMessageCategoryId();
-		if (id <= 0L) {
-			throw new ValidationException();
-		}
-		String message = null;
-		//response = new RemoveMessageCategoryResponseDto();
-		try {
-			messageCategoryService.remove(id);
-			message = "messageCategory.removed";
-			response.setMessage(message);
-			return response;
-		} catch (final DaoException e) {
+        try {
+            messageCategoryService.remove(messageCategoryId);
+            response.setMessage("messageCategory.removed");
+        } catch (final DaoException e) {
+            response.setMessage("messageCategory.error.removing");
+        } catch (final DataIntegrityViolationException e) {
+            response.setMessage("messageCategory.error.removing");
+        }
+        response.setStatus(0);
+        response.setMessage("Message removed...");
 
-			message = "messageCategory.error.removing";
-			response.setMessage(message);
-			return response;
-		} catch (final DataIntegrityViolationException e) {
+        return response;
 
-			message = "messageCategory.error.removing";
-			response.setMessage(message);}
-                        response = new RemoveMessageCategoryResponseDto();}
-                catch(Exception e){
-                    e.printStackTrace();
-                }
-			return response;
-		}
-	}
-
-
+    }
+}

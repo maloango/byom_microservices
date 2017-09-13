@@ -294,6 +294,7 @@
 		class="nl.strohalm.cyclos.webservices.rest.groups.accounts.EditGroupAccountSettingsController" />
 	<bean id="removeGroupAccountController"
 		class="nl.strohalm.cyclos.webservices.rest.groups.accounts.RemoveGroupAccountController" />
+        
 	<!--customizedFiles-->
 
 	<bean id="editGroupCustomizedFileController"
@@ -544,10 +545,18 @@ webshop
 
     <!-- General -->
     <bean id="homeController"
-           class="nl.strohalm.cyclos.webservices.rest.general.HomeController" />
+          class="nl.strohalm.cyclos.webservices.rest.general.HomeController" />
     
-     <bean id="loadMemberController"
+    <bean id="loadMemberController"
            class="nl.strohalm.cyclos.webservices.rest.members.LoadMemberController" />
+     
+    <!--card-->
+    <bean id="listCardTypeController"
+             class="nl.strohalm.cyclos.webservices.rest.accounts.cards.ListCardTypeController" />
+    <!--account-->
+      <bean id="accountHistoryController"
+             class="nl.strohalm.cyclos.webservices.rest.accounts.details.AccountHistoryController" />
+    
     
         
 </beans>

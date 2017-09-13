@@ -8,9 +8,11 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.entities.alerts.Alert;
 import nl.strohalm.cyclos.entities.alerts.ErrorLogEntry;
 import nl.strohalm.cyclos.entities.alerts.ErrorLogEntryQuery;
+import nl.strohalm.cyclos.entities.settings.LocalSettings;
 import static nl.strohalm.cyclos.http.AttributeHolder.Factory.context;
 import nl.strohalm.cyclos.services.alerts.AlertService;
 import nl.strohalm.cyclos.services.alerts.ErrorLogService;
+import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.utils.Period;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 import org.springframework.stereotype.Controller;
@@ -26,11 +28,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class SearchErrorLogController extends BaseRestController {
 
     private ErrorLogService errorLogService;
+    private SettingsService settingsService;
 
-   
+    public ErrorLogService getErrorLogService() {
+        return errorLogService;
+    }
+
     @Inject
-    public void setErrorLogServic(ErrorLogService errorLogServic) {
-        this.errorLogService = errorLogServic;
+    public void setErrorLogService(ErrorLogService errorLogService) {
+        this.errorLogService = errorLogService;
+    }
+
+    public SettingsService getSettingsService() {
+        return settingsService;
+    }
+
+    @Inject
+    public void setSettingsService(SettingsService settingsService) {
+        this.settingsService = settingsService;
     }
 
     public static class SerachErrorLogRequest {
@@ -58,7 +73,7 @@ public class SearchErrorLogController extends BaseRestController {
 
     public static class SearchErrorLogResponse extends GenericResponse {
 
-     List<ErrorLogEntry> errorHistory;
+        List<ErrorLogEntry> errorHistory;
 
         public List<ErrorLogEntry> getErrorHistory() {
             return errorHistory;
@@ -67,7 +82,6 @@ public class SearchErrorLogController extends BaseRestController {
         public void setErrorHistory(List<ErrorLogEntry> errorHistory) {
             this.errorHistory = errorHistory;
         }
-     
 
     }
 
@@ -75,16 +89,17 @@ public class SearchErrorLogController extends BaseRestController {
     @ResponseBody
     public SearchErrorLogResponse searchErrorLog(@RequestBody SerachErrorLogRequest request) {
         SearchErrorLogResponse response = new SearchErrorLogResponse();
+        final LocalSettings localSettings = settingsService.getLocalSettings();
         Period period = new Period();
-        period.setBegin(formatDate(request.getBegin()));
-        period.setEnd(formatDate(request.getEnd()));
+        period.setBegin(localSettings.getDateConverter().valueOf(request.getBegin()));
+        period.setEnd(localSettings.getDateConverter().valueOf(request.getEnd()));
         final ErrorLogEntryQuery query = new ErrorLogEntryQuery();
         query.setPeriod(period);
         query.setShowRemoved(true);
         query.setResultType(QueryParameters.ResultType.LIST);
-        System.out.println("query------"+query);
+        System.out.println("query------" + query);
         final List<ErrorLogEntry> errorHistory = errorLogService.search(query);
-         System.out.println("alerts size------"+errorHistory.size());
+        System.out.println("alerts size------" + errorHistory.size());
         response.setErrorHistory(errorHistory);
         response.setStatus(0);
         response.setMessage("error history list!!");
@@ -92,16 +107,16 @@ public class SearchErrorLogController extends BaseRestController {
 
     }
 
-    public Calendar formatDate(String d) {
-        Calendar cal = Calendar.getInstance();
-        try {
-            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-            cal.setTime(df.parse(d));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return cal;
-    }
+//    public Calendar formatDate(String d) {
+//        Calendar cal = Calendar.getInstance();
+//        try {
+//            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+//            cal.setTime(df.parse(d));
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return cal;
+//    }
 
 }

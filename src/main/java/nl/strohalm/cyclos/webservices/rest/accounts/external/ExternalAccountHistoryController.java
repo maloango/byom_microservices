@@ -36,167 +36,42 @@ import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class ExternalAccountHistoryController extends BaseRestController
-		implements LocalSettingsChangeListener {
-	private PermissionService permissionService;
-	public final SettingsService getSettingsService() {
-		return settingsService;
-	}
+public class ExternalAccountHistoryController extends BaseRestController {
 
-	public final void setSettingsService(SettingsService settingsService) {
-		this.settingsService = settingsService;
-	}
+    public static class ExternalAccountHistoryResponse extends GenericResponse {
 
-	public final ExternalAccountService getExternalAccountService() {
-		return externalAccountService;
-	}
+        private List<ExternalTransfer> externalTransfers;
 
-	public final ExternalTransferImportService getExternalTransferImportService() {
-		return externalTransferImportService;
-	}
+        public List<ExternalTransfer> getExternalTransfers() {
+            return externalTransfers;
+        }
 
-	public final ExternalTransferService getExternalTransferService() {
-		return externalTransferService;
-	}
+        public void setExternalTransfers(List<ExternalTransfer> externalTransfers) {
+            this.externalTransfers = externalTransfers;
+        }
 
-	private SettingsService settingsService;
-	public PermissionService getPermissionService() {
-		return permissionService;
-	}
+    }
 
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
+    @RequestMapping(value = "admin/externalAccountHistory", method = RequestMethod.GET)
+    @ResponseBody
+    public ExternalAccountHistoryResponse executeQuery() {
+//        final HttpServletRequest request = context.getRequest();
+        ExternalAccountHistoryResponse response =new ExternalAccountHistoryResponse();
+        final ExternalTransferQuery query = new ExternalTransferQuery();
+        query.setStatus(SummaryStatus.TOTAL);
+        query.setResultType(QueryParameters.ResultType.LIST);
+        query.fetch(ExternalTransfer.Relationships.TRANSFER_IMPORT, ExternalTransfer.Relationships.TYPE);
+        final List<ExternalTransfer> externalTransfers = externalTransferService.search(query);
+        response.setExternalTransfers(externalTransfers);
+        response.setStatus(0);
+        response.setMessage("External account list");
+        return response;
+    }
 
-	public static DataBinder<ExternalTransferQuery> externalTransferQueryDataBinder(
-			final LocalSettings localSettings) {
-		final BeanBinder<ExternalTransferQuery> binder = BeanBinder
-				.instance(ExternalTransferQuery.class);
-		binder.registerBinder("account", PropertyBinder.instance(
-				ExternalAccount.class, "account",
-				ReferenceConverter.instance(ExternalAccount.class)));
-		binder.registerBinder("type", PropertyBinder.instance(
-				ExternalTransferType.class, "type",
-				ReferenceConverter.instance(ExternalTransferType.class)));
-		binder.registerBinder("transferImport", PropertyBinder.instance(
-				ExternalTransferImport.class, "transferImport",
-				ReferenceConverter.instance(ExternalTransferImport.class)));
-		binder.registerBinder("status", PropertyBinder.instance(
-				ExternalTransfer.SummaryStatus.class, "status"));
-		binder.registerBinder("member", PropertyBinder.instance(Member.class,
-				"member", ReferenceConverter.instance(Member.class)));
-		binder.registerBinder("initialAmount",
-				PropertyBinder.instance(BigDecimal.class, "initialAmount"));
-		binder.registerBinder("finalAmount",
-				PropertyBinder.instance(BigDecimal.class, "finalAmount"));
-		binder.registerBinder("period",
-				DataBinderHelper.periodBinder(localSettings, "period"));
-		binder.registerBinder("pageParameters", DataBinderHelper.pageBinder());
-		return binder;
-	}
-
-	private DataBinder<ExternalTransferQuery> dataBinder;
-	private ExternalAccountService externalAccountService;
-	private ExternalTransferImportService externalTransferImportService;
-
-	private ExternalTransferService externalTransferService;
-
-	public DataBinder<ExternalTransferQuery> getDataBinder() {
-		if (dataBinder == null) {
-			final LocalSettings localSettings = settingsService
-					.getLocalSettings();
-			dataBinder = externalTransferQueryDataBinder(localSettings);
-		}
-		return dataBinder;
-	}
-
-	
-
-	@Inject
-	public void setExternalAccountService(
-			final ExternalAccountService externalAccountService) {
-		this.externalAccountService = externalAccountService;
-	}
-
-	@Inject
-	public void setExternalTransferImportService(
-			final ExternalTransferImportService externalTransferImportService) {
-		this.externalTransferImportService = externalTransferImportService;
-	}
-
-	@Inject
-	public void setExternalTransferService(
-			final ExternalTransferService externalTransferService) {
-		this.externalTransferService = externalTransferService;
-	}
-
-
-	protected void executeQuery(final ActionContext context,
-			final QueryParameters queryParameters) {
-		final HttpServletRequest request = context.getRequest();
-		final ExternalTransferQuery query = (ExternalTransferQuery) queryParameters;
-		final List<ExternalTransfer> externalTransfers = externalTransferService
-				.search(query);
-		request.setAttribute("externalTransfers", externalTransfers);
-		request.setAttribute("summary", processSummary(externalTransfers));
-	}
-
-
-	protected boolean willExecuteQuery(final ActionContext context,
-			final QueryParameters queryParameters) throws Exception {
-		// The query is always executed
-		return true;
-	}
-
-	private Map<ExternalTransfer.SummaryStatus, TransactionSummaryVO> processSummary(
-			final List<ExternalTransfer> externalTransfers) {
-		// Initialize summary VOs with 0 values
-		final Map<ExternalTransfer.SummaryStatus, TransactionSummaryVO> summary = new EnumMap<ExternalTransfer.SummaryStatus, TransactionSummaryVO>(
-				ExternalTransfer.SummaryStatus.class);
-		for (final SummaryStatus summaryStatus : ExternalTransfer.SummaryStatus
-				.values()) {
-			summary.put(summaryStatus, new NegativeAllowedTransactionSummaryVO(
-					0, new BigDecimal(0)));
-		}
-		final TransactionSummaryVO totalVo = summary
-				.get(ExternalTransfer.SummaryStatus.TOTAL);
-		for (final ExternalTransfer transfer : externalTransfers) {
-			final ExternalTransfer.Status status = transfer.getStatus();
-			// Get the summary VO corresponding to the external transfer status
-			TransactionSummaryVO vo = null;
-			switch (status) {
-			case PENDING:
-				if (transfer.isComplete()) {
-					vo = summary
-							.get(ExternalTransfer.SummaryStatus.COMPLETE_PENDING);
-				} else {
-					vo = summary
-							.get(ExternalTransfer.SummaryStatus.INCOMPLETE_PENDING);
-				}
-				break;
-			case CHECKED:
-				vo = summary.get(ExternalTransfer.SummaryStatus.CHECKED);
-				break;
-			case PROCESSED:
-				vo = summary.get(ExternalTransfer.SummaryStatus.PROCESSED);
-				break;
-			}
-			// Update summary on both current and total
-			final BigDecimal amount = BigDecimalHelper
-					.nvl(transfer.getAmount());
-			vo.setCount(vo.getCount() + 1);
-			vo.setAmount(vo.getAmount().add(amount));
-			totalVo.setCount(totalVo.getCount() + 1);
-			totalVo.setAmount(totalVo.getAmount().add(amount));
-		}
-		return summary;
-	}
-
-	@Override
-	public void onLocalSettingsUpdate(LocalSettingsEvent event) {
-	
-		
-	}
 }

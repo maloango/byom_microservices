@@ -22,6 +22,9 @@ package nl.strohalm.cyclos.webservices.rest;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
+import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.services.accounts.external.ExternalTransferService;
+import nl.strohalm.cyclos.services.settings.SettingsService;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,11 +36,26 @@ import nl.strohalm.cyclos.webservices.model.ServerErrorVO;
 
 /**
  * Base class for REST controllers
+ *
  * @author luis
  */
 public abstract class BaseRestController {
 
     private static final Log LOG = LogFactory.getLog(BaseRestController.class);
+
+    protected SettingsService settingsService;
+    protected ExternalTransferService externalTransferService;
+   
+
+    @Inject
+    public void setExternalTransferService(ExternalTransferService externalTransferService) {
+        this.externalTransferService = externalTransferService;
+    }
+
+    @Inject
+    public void setSettingsService(SettingsService settingsService) {
+        this.settingsService = settingsService;
+    }
 
     /**
      * Handles {@link Exception}s

@@ -118,8 +118,7 @@
 		class="nl.strohalm.cyclos.webservices.rest.accounts.external.EditExternalAccountController" />
 	<bean id="editExternalTransferTypeController"
 		class="nl.strohalm.cyclos.webservices.rest.accounts.external.EditExternalTransferTypeController" />
-	<bean id="externalAccountHistoryController"
-		class="nl.strohalm.cyclos.webservices.rest.accounts.external.ExternalAccountHistoryController" />
+	
 	<bean id="listExternalAccountsController"
 		class="nl.strohalm.cyclos.webservices.rest.accounts.external.ListExternalAccountsController" />
 	<bean id="listExternalTransferTypesController"
@@ -130,6 +129,10 @@
 		class="nl.strohalm.cyclos.webservices.rest.accounts.external.RemoveExternalAccountController" />
 	<bean id="removeExternalTransferTypeController"
 		class="nl.strohalm.cyclos.webservices.rest.accounts.external.RemoveExternalTransferTypeController" />
+        <bean id="externalAccountHistoryController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.external.ExternalAccountHistoryController" />
+        
+      
 	<!--filemapping-->
 	<bean id="editFieldMappingController"
 		class="nl.strohalm.cyclos.webservices.rest.accounts.external.filemappings.EditFieldMappingController" />
@@ -548,14 +551,18 @@ webshop
           class="nl.strohalm.cyclos.webservices.rest.general.HomeController" />
     
     <bean id="loadMemberController"
-           class="nl.strohalm.cyclos.webservices.rest.members.LoadMemberController" />
+          class="nl.strohalm.cyclos.webservices.rest.members.LoadMemberController" />
      
     <!--card-->
     <bean id="listCardTypeController"
-             class="nl.strohalm.cyclos.webservices.rest.accounts.cards.ListCardTypeController" />
+          class="nl.strohalm.cyclos.webservices.rest.accounts.cards.ListCardTypeController" />
     <!--account-->
-      <bean id="accountHistoryController"
-             class="nl.strohalm.cyclos.webservices.rest.accounts.details.AccountHistoryController" />
+    <bean id="accountHistoryController"
+            class="nl.strohalm.cyclos.webservices.rest.accounts.details.AccountHistoryController" />
+    
+    <!---settings-->
+     <bean id="editMailSettingsController"
+            class="nl.strohalm.cyclos.webservices.rest.settings.EditMailSettingsController" />
     
     
         

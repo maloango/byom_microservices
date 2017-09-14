@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
 import nl.strohalm.cyclos.access.MemberPermission;
@@ -34,8 +32,10 @@ import nl.strohalm.cyclos.entities.Relationship;
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.access.MemberUser;
 import nl.strohalm.cyclos.entities.access.User;
+import nl.strohalm.cyclos.entities.customization.fields.CustomFieldValue;
 import nl.strohalm.cyclos.entities.customization.fields.MemberCustomField;
 import nl.strohalm.cyclos.entities.customization.fields.MemberCustomField.Access;
+import nl.strohalm.cyclos.entities.customization.fields.MemberCustomFieldValue;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
 import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.entities.groups.GroupFilter;
@@ -54,9 +54,11 @@ import nl.strohalm.cyclos.exceptions.PermissionDeniedException;
 import nl.strohalm.cyclos.services.access.AccessService;
 import nl.strohalm.cyclos.services.access.exceptions.NotConnectedException;
 import nl.strohalm.cyclos.services.accounts.AccountService;
+import nl.strohalm.cyclos.services.customization.ImageService;
 import nl.strohalm.cyclos.services.customization.MemberCustomFieldService;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.elements.MemberRecordService;
+import nl.strohalm.cyclos.services.elements.MemberService;
 import nl.strohalm.cyclos.services.elements.ReferenceService;
 import nl.strohalm.cyclos.services.groups.GroupFilterService;
 import nl.strohalm.cyclos.services.groups.GroupService;
@@ -66,11 +68,12 @@ import nl.strohalm.cyclos.utils.CustomFieldHelper;
 import nl.strohalm.cyclos.utils.MessageResolver;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
 import nl.strohalm.cyclos.utils.access.LoggedUser;
-import nl.strohalm.cyclos.utils.binding.MapBean;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
+import nl.strohalm.cyclos.webservices.model.MemberVO;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
-
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -84,65 +87,49 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class MemberProfileController extends BaseRestController {
 
-    private static final Relationship[] FETCH = {
-        RelationshipHelper.nested(User.Relationships.ELEMENT, Element.Relationships.GROUP),
-        RelationshipHelper.nested(User.Relationships.ELEMENT, Member.Relationships.BROKER),
-        RelationshipHelper.nested(User.Relationships.ELEMENT, Member.Relationships.CUSTOM_VALUES)
-    };
+   private static final Relationship[] FETCH = {
+                                              RelationshipHelper.nested(User.Relationships.ELEMENT, Element.Relationships.GROUP),
+                                              RelationshipHelper.nested(User.Relationships.ELEMENT, Member.Relationships.BROKER),
+                                              RelationshipHelper.nested(User.Relationships.ELEMENT, Member.Relationships.CUSTOM_VALUES)
+                                              };
 
-    private AccountService accountService;
-    private MemberCustomFieldService memberCustomFieldService;
-    private GroupFilterService groupFilterService;
-    private MemberRecordService memberRecordService;
-    private ReferenceService referenceService;
-    private ElementService elementService;
-    private AccessService accessService;
-    private PermissionService permissionService;
+    private AccountService              accountService;
+    private MemberCustomFieldService    memberCustomFieldService;
+    private GroupFilterService          groupFilterService;
+    private ImageService                imageService;
+    private MemberRecordService         memberRecordService;
+    private ReferenceService            referenceService;
+
+    private CustomFieldHelper           customFieldHelper;
     private GroupService groupService;
+    private ElementService elementService;
+    private PermissionService permissionService;
+    private AccessService accessService;
     private SettingsService settingsService;
     private MessageResolver messageResolver;
+    private MemberService              memberService;
+    
 
-    private CustomFieldHelper customFieldHelper;
-
-    public ElementService getElementService() {
-        return elementService;
+    public void setGroupService(GroupService groupService) {
+        this.groupService = groupService;
     }
 
     public void setElementService(ElementService elementService) {
         this.elementService = elementService;
     }
 
-    public AccessService getAccessService() {
-        return accessService;
+    public void setPermissionService(PermissionService permissionService) {
+        this.permissionService = permissionService;
     }
 
     public void setAccessService(AccessService accessService) {
         this.accessService = accessService;
     }
 
-    public PermissionService getPermissionService() {
-        return permissionService;
-    }
-
-    public void setPermissionService(PermissionService permissionService) {
-        this.permissionService = permissionService;
-    }
-
-    public GroupService getGroupService() {
-        return groupService;
-    }
-
-    public void setGroupService(GroupService groupService) {
-        this.groupService = groupService;
-    }
-
-    public SettingsService getSettingsService() {
-        return settingsService;
-    }
-
     public void setSettingsService(SettingsService settingsService) {
         this.settingsService = settingsService;
     }
+    
 
     @Inject
     public void setAccountService(final AccountService accountService) {
@@ -159,7 +146,11 @@ public class MemberProfileController extends BaseRestController {
         this.groupFilterService = groupFilterService;
     }
 
-    
+//    @Inject
+//    public void setImageService(final ImageService imageService) {
+//        this.imageService = imageService;
+//    }
+
     @Inject
     public void setMemberCustomFieldService(final MemberCustomFieldService memberCustomFieldService) {
         this.memberCustomFieldService = memberCustomFieldService;
@@ -174,96 +165,126 @@ public class MemberProfileController extends BaseRestController {
     public void setReferenceService(final ReferenceService referenceService) {
         this.referenceService = referenceService;
     }
+    
+    
     @Inject
     public void setMessageResolver(MessageResolver messageResolver) {
         this.messageResolver = messageResolver;
     }
+
+    @Inject
+    public void setMemberService(MemberService memberService) {
+        this.memberService = memberService;
+    }
     
     
 
-//    @Override
-//    @SuppressWarnings("unchecked")
-//    protected <CFV extends CustomFieldValue> Class<CFV> getCustomFieldValueClass() {
-//        return (Class<CFV>) MemberCustomFieldValue.class;
-//    }
+ //   @Override
+    @SuppressWarnings("unchecked")
+    protected <CFV extends CustomFieldValue> Class<CFV> getCustomFieldValueClass() {
+        return (Class<CFV>) MemberCustomFieldValue.class;
+    }
+
     //@Override
     protected Class<Member> getElementClass() {
         return Member.class;
     }
 
-    //@Override
+   // @Override
     @SuppressWarnings("unchecked")
     protected <G extends Group> Class<G> getGroupClass() {
         return (Class<G>) MemberGroup.class;
     }
 
-    //@Override
+   // @Override
     @SuppressWarnings("unchecked")
     protected <U extends User> Class<U> getUserClass() {
         return (Class<U>) MemberUser.class;
     }
 
-    public static class MemberProfileControllerRequestDTO {
+    public static class MemberProfileResponse extends GenericResponse{
+         private Map<MemberRecordType, Integer> countByRecordType;
+         private Collection<CustomFieldHelper.Entry> customFields;
+         private MemberVO member;
+         private boolean isLoggedIn;
+         private boolean profileOfBrokered;
+         private boolean myProfile;
+         private boolean profileOfOtherMember;
+         private boolean operatorCanViewReports;
+         private boolean editable;
+         private boolean removed;
+         private boolean disabledLogin;
+         private boolean canChangeName;
+         private boolean canChangeEmail;
+         private boolean canChangeUsername;
+         private boolean pendingEmailChange;
+         private boolean hasCardType;
+         private boolean hasTransactionFeedbacks;
+         private String groupFilter;
+         private boolean memberCanAccessExternalChannels;
+         private boolean byBroker;
+         private boolean editableFields;
+         private boolean hasAccounts;
 
-        private long memberId;
-
-        public MemberProfileControllerRequestDTO() {
-            setMember("user", new MapBean("id", "username"));
-            setMember("group", new MapBean("id", "name"));
-            setMember("broker", new MapBean("id", "name"));
-            setMember("customValues", new MapBean(true, "field", "value", "hidden"));
+        public boolean isHasAccounts() {
+            return hasAccounts;
         }
 
-        public Map<String, Object> getMember(Map<String, Object> values) {
-            return values;
+        public void setHasAccounts(boolean hasAccounts) {
+            this.hasAccounts = hasAccounts;
+        }
+         
+        public boolean isEditableFields() {
+            return editableFields;
         }
 
-//    public Object getMember(final String key,final Object value) {
-//       return values;
-//    }
-        public long getMemberId() {
-            return memberId;
+        public void setEditableFields(boolean editableFields) {
+            this.editableFields = editableFields;
+        }
+         
+        public boolean isByBroker() {
+            return byBroker;
         }
 
-        public void setMember(final Map<String, Object> map) {
-
+        public void setByBroker(boolean byBroker) {
+            this.byBroker = byBroker;
+        }
+         
+        public boolean isMemberCanAccessExternalChannels() {
+            return memberCanAccessExternalChannels;
         }
 
-        public final void setMember(final String key, final Object value) {
-            //values.put(key, value);
+        public void setMemberCanAccessExternalChannels(boolean memberCanAccessExternalChannels) {
+            this.memberCanAccessExternalChannels = memberCanAccessExternalChannels;
+        }
+         
+
+        public String getGroupFilter() {
+            return groupFilter;
         }
 
-        public void setMemberId(final long memberId) {
-            this.memberId = memberId;
+        public void setGroupFilter(String groupFilter) {
+            this.groupFilter = groupFilter;
+        }
+         
+         
+
+        public boolean isHasTransactionFeedbacks() {
+            return hasTransactionFeedbacks;
         }
 
-    }
+        public void setHasTransactionFeedbacks(boolean hasTransactionFeedbacks) {
+            this.hasTransactionFeedbacks = hasTransactionFeedbacks;
+        }
+         
 
-    public static class MemberProfileControllerResponseDTO {
+        public Map<MemberRecordType, Integer> getCountByRecordType() {
+            return countByRecordType;
+        }
 
-        private Member member;
-        private boolean hasAccounts;
-        private boolean removed;
-        private boolean disabledLogin;
-        private boolean editableFields;
-        private boolean canChangeName;
-        private boolean canChangeEmail;
-        private boolean canChangeUsername;
-        private boolean pendingEmailChange;
-        private boolean editable;
-        private boolean byBroker;
-        private boolean myProfile;
-        private boolean profileOfOtherMember;
-        private boolean profileOfBrokered;
-        private boolean operatorCanViewReports;
-        private boolean hasCardType;
-        String message;
-        private boolean isLoggedIn;
-        private boolean memberCanAccessExternalChannels;
-        private boolean hasTransactionFeedbacks;
-        private String groupFilters;
-        private Map<MemberRecordType, Integer>  countByRecordType;
-        private Collection<CustomFieldHelper.Entry> customFields;
+        public void setCountByRecordType(Map<MemberRecordType, Integer> countByRecordType) {
+            this.countByRecordType = countByRecordType;
+        }
 
         public Collection<CustomFieldHelper.Entry> getCustomFields() {
             return customFields;
@@ -272,31 +293,68 @@ public class MemberProfileController extends BaseRestController {
         public void setCustomFields(Collection<CustomFieldHelper.Entry> customFields) {
             this.customFields = customFields;
         }
-        
 
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
-        
-
-        public Member getMember() {
+        public MemberVO getMember() {
             return member;
         }
 
-        public void setMember(Member member) {
+        public void setMember(MemberVO member) {
             this.member = member;
         }
+        
+        
 
-        public boolean isHasAccounts() {
-            return hasAccounts;
+      
+      
+
+        public boolean isIsLoggedIn() {
+            return isLoggedIn;
         }
 
-        public void setHasAccounts(boolean hasAccounts) {
-            this.hasAccounts = hasAccounts;
+        public void setIsLoggedIn(boolean isLoggedIn) {
+            this.isLoggedIn = isLoggedIn;
+        }
+
+       
+
+        public boolean isProfileOfBrokered() {
+            return profileOfBrokered;
+        }
+
+        public void setProfileOfBrokered(boolean profileOfBrokered) {
+            this.profileOfBrokered = profileOfBrokered;
+        }
+
+        public boolean isMyProfile() {
+            return myProfile;
+        }
+
+        public void setMyProfile(boolean myProfile) {
+            this.myProfile = myProfile;
+        }
+
+        public boolean isProfileOfOtherMember() {
+            return profileOfOtherMember;
+        }
+
+        public void setProfileOfOtherMember(boolean profileOfOtherMember) {
+            this.profileOfOtherMember = profileOfOtherMember;
+        }
+
+        public boolean isOperatorCanViewReports() {
+            return operatorCanViewReports;
+        }
+
+        public void setOperatorCanViewReports(boolean operatorCanViewReports) {
+            this.operatorCanViewReports = operatorCanViewReports;
+        }
+
+        public boolean isEditable() {
+            return editable;
+        }
+
+        public void setEditable(boolean editable) {
+            this.editable = editable;
         }
 
         public boolean isRemoved() {
@@ -313,13 +371,6 @@ public class MemberProfileController extends BaseRestController {
 
         public void setDisabledLogin(boolean disabledLogin) {
             this.disabledLogin = disabledLogin;
-        }
-        public boolean isEditableFields() {
-            return editableFields;
-        }
-
-        public void setEditableFields(boolean editableFields) {
-            this.editableFields = editableFields;
         }
 
         public boolean isCanChangeName() {
@@ -354,54 +405,6 @@ public class MemberProfileController extends BaseRestController {
             this.pendingEmailChange = pendingEmailChange;
         }
 
-        public boolean isEditable() {
-            return editable;
-        }
-
-        public void setEditable(boolean editable) {
-            this.editable = editable;
-        }
-
-        public boolean isByBroker() {
-            return byBroker;
-        }
-
-        public void setByBroker(boolean byBroker) {
-            this.byBroker = byBroker;
-        }
-
-        public boolean isMyProfile() {
-            return myProfile;
-        }
-
-        public void setMyProfile(boolean myProfile) {
-            this.myProfile = myProfile;
-        }
-
-        public boolean isProfileOfOtherMember() {
-            return profileOfOtherMember;
-        }
-
-        public void setProfileOfOtherMember(boolean profileOfOtherMember) {
-            this.profileOfOtherMember = profileOfOtherMember;
-        }
-
-        public boolean isProfileOfBrokered() {
-            return profileOfBrokered;
-        }
-
-        public void setProfileOfBrokered(boolean profileOfBrokered) {
-            this.profileOfBrokered = profileOfBrokered;
-        }
-
-        public boolean isOperatorCanViewReports() {
-            return operatorCanViewReports;
-        }
-
-        public void setOperatorCanViewReports(boolean operatorCanViewReports) {
-            this.operatorCanViewReports = operatorCanViewReports;
-        }
-
         public boolean isHasCardType() {
             return hasCardType;
         }
@@ -409,194 +412,29 @@ public class MemberProfileController extends BaseRestController {
         public void setHasCardType(boolean hasCardType) {
             this.hasCardType = hasCardType;
         }
-        
-        public  MemberProfileControllerResponseDTO(){
-        }
 
-        public boolean isIsLoggedIn() {
-            return isLoggedIn;
-        }
-
-        public void setIsLoggedIn(boolean isLoggedIn) {
-            this.isLoggedIn = isLoggedIn;
-        }
-
-        public boolean isMemberCanAccessExternalChannels() {
-            return memberCanAccessExternalChannels;
-        }
-
-        public void setMemberCanAccessExternalChannels(boolean memberCanAccessExternalChannels) {
-            this.memberCanAccessExternalChannels = memberCanAccessExternalChannels;
-        }
-
-        public boolean isHasTransactionFeedbacks() {
-            return hasTransactionFeedbacks;
-        }
-
-        public void setHasTransactionFeedbacks(boolean hasTransactionFeedbacks) {
-            this.hasTransactionFeedbacks = hasTransactionFeedbacks;
-        }
-
-        public String getGroupFilters() {
-            return groupFilters;
-        }
-
-        public void setGroupFilters(String groupFilters) {
-            this.groupFilters = groupFilters;
-        }
-
-        public Map<MemberRecordType, Integer> getCountByRecordType() {
-            return countByRecordType;
-        }
-
-        public void setCountByRecordType(Map<MemberRecordType, Integer> countByRecordType) {
-            this.countByRecordType = countByRecordType;
-        }
-        public static class MemberDataResponse{
-            private String memberLogin;
-            private String fullName;
-            private String eMail;
-            private String birthday;
-            private String gender;
-            private String address;
-            private String postalCode;
-            private String city;
-            private String area;
-            private String phone;
-            private String mobilePhone;
-            private String fax;
-            private String url;
-
-            public String getMemberLogin() {
-                return memberLogin;
-            }
-
-            public void setMemberLogin(String memberLogin) {
-                this.memberLogin = memberLogin;
-            }
-
-            public String getFullName() {
-                return fullName;
-            }
-
-            public void setFullName(String fullName) {
-                this.fullName = fullName;
-            }
-
-            public String geteMail() {
-                return eMail;
-            }
-
-            public void seteMail(String eMail) {
-                this.eMail = eMail;
-            }
-
-            public String getBirthday() {
-                return birthday;
-            }
-
-            public void setBirthday(String birthday) {
-                this.birthday = birthday;
-            }
-
-            public String getGender() {
-                return gender;
-            }
-
-            public void setGender(String gender) {
-                this.gender = gender;
-            }
-
-            public String getAddress() {
-                return address;
-            }
-
-            public void setAddress(String address) {
-                this.address = address;
-            }
-
-            public String getPostalCode() {
-                return postalCode;
-            }
-
-            public void setPostalCode(String postalCode) {
-                this.postalCode = postalCode;
-            }
-
-            public String getCity() {
-                return city;
-            }
-
-            public void setCity(String city) {
-                this.city = city;
-            }
-
-            public String getArea() {
-                return area;
-            }
-
-            public void setArea(String area) {
-                this.area = area;
-            }
-
-            public String getPhone() {
-                return phone;
-            }
-
-            public void setPhone(String phone) {
-                this.phone = phone;
-            }
-
-            public String getMobilePhone() {
-                return mobilePhone;
-            }
-
-            public void setMobilePhone(String mobilePhone) {
-                this.mobilePhone = mobilePhone;
-            }
-
-            public String getFax() {
-                return fax;
-            }
-
-            public void setFax(String fax) {
-                this.fax = fax;
-            }
-
-            public String getUrl() {
-                return url;
-            }
-
-            public void setUrl(String url) {
-                this.url = url;
-            }
-            
-            
-            
-            
-        }
+       
+         
+         
     }
-   
-  
-    @RequestMapping(value = "member/memberProfile", method = RequestMethod.GET)
+   @RequestMapping(value = "member/memberProfile", method = RequestMethod.GET)
     @ResponseBody
     @SuppressWarnings("unchecked")
-    public MemberProfileControllerResponseDTO memberProfile() throws Exception {
-        MemberProfileControllerResponseDTO response = new MemberProfileControllerResponseDTO();
-        // final MemberProfileForm form = context.getForm();
+    public MemberProfileResponse memberProfileDisplay() throws Exception {
+        MemberProfileResponse response = new MemberProfileResponse();
+
+        //final MemberProfileForm form = context.getForm();
         final boolean profileOfBrokered = false;
         boolean myProfile = false;
         boolean profileOfOtherMember = false;
         boolean operatorCanViewReports = false;
         MemberUser memberUser = null;
-        //final HttpServletRequest request = context.getRequest();
+       // final HttpServletRequest request = context.getRequest();
 
         final Element loggedElement = LoggedUser.element();
-        long memberId=LoggedUser.group().getId();
         // Load the user
-        //if (memberId > 0 && form.getMemberId() != loggedElement.getId()) {
-        if (memberId > 0 && memberId != loggedElement.getId()) {
-            final User loaded = elementService.loadUser(memberId, FETCH);
+        if (LoggedUser.user().getId()> 0 && LoggedUser.user().getId()!=loggedElement.getId()) {
+            final User loaded = elementService.loadUser(LoggedUser.user().getId(), FETCH);
             if (loaded instanceof MemberUser) {
                 memberUser = (MemberUser) loaded;
                 profileOfOtherMember = true;
@@ -652,12 +490,12 @@ public class MemberProfileController extends BaseRestController {
                 memberCanAccessExternalChannels = true;
             }
         }
-        response.setMemberCanAccessExternalChannels( memberCanAccessExternalChannels);
+        response.setMemberCanAccessExternalChannels(memberCanAccessExternalChannels);
 
         // Check whether the given member has transaction feedbacks
         final Collection<Nature> referenceNatures = referenceService.getNaturesByGroup(member.getMemberGroup());
         final boolean hasTransactionFeedbacks = referenceNatures.contains(Nature.TRANSACTION);
-         response.setHasTransactionFeedbacks(hasTransactionFeedbacks);
+        response.setHasTransactionFeedbacks(hasTransactionFeedbacks);
 
         // Check if the member belongs to a group managed by the admin
         if (LoggedUser.isAdministrator()) {
@@ -668,7 +506,8 @@ public class MemberProfileController extends BaseRestController {
             }
         }
 
-        // getReadDataBinder(context).writeAsString(form.getMember(), member);
+       // getReadDataBinder(context).writeAsString(form.getMember(), member);
+
         // Retrieve the group filters
         if (LoggedUser.isMember()) {
             final GroupFilterQuery groupFilterQuery = new GroupFilterQuery();
@@ -685,7 +524,7 @@ public class MemberProfileController extends BaseRestController {
                     }
                 }
                 if (!"".equals(groupFiltersStr.toString())) {
-                    response.setGroupFilters(groupFiltersStr.toString());
+                    response.setGroupFilter( groupFiltersStr.toString());
                 }
             }
         }
@@ -724,8 +563,7 @@ public class MemberProfileController extends BaseRestController {
                 }
             }
             if (canViewRecords) {
-             
-                 response.setCountByRecordType( memberRecordService.countByType(member));
+                response.setCountByRecordType(memberRecordService.countByType(member));
             }
         } else {
             canChangeName = permissionService.hasPermission(MemberPermission.PROFILE_CHANGE_NAME);
@@ -762,54 +600,51 @@ public class MemberProfileController extends BaseRestController {
         if (member.getMemberGroup().getCardType() != null) {
             hasCardType = true;
         }
-        
-     
 
-//        PendingEmailChange pendingEmailChange = null;
-//        if (editable) {
-//            pendingEmailChange = elementService.getPendingEmailChange(member);
-//        }
-        
-
+        PendingEmailChange pendingEmailChange = null;
+        if (editable) {
+            pendingEmailChange = elementService.getPendingEmailChange(member);
+        }
+        MemberVO memberVO = memberService.getMemberVO(member, true, true);
         // Store the request attributes
-        response.setMember(member);
+        response.setMember(memberVO);
         response.setRemoved(editable);
         response.setHasAccounts(accountService.hasAccounts(member));
         response.setDisabledLogin(accessService.isLoginBlocked(member.getUser()));
-       
-        response.setCustomFields(customFieldHelper.buildEntries(customFields,member.getCustomValues()));
+        //response.setCustomFields(customFieldHelper.buildEntries(customFields, member.getCustomValues()));
         response.setEditableFields(editable);
         response.setCanChangeName(canChangeName);
         response.setCanChangeEmail(canChangeEmail);
         response.setCanChangeUsername(canChangeUsername);
         response.setPendingEmailChange(canChangeEmail);
+       // response.setAttribute("images", images);
+        //response.setAttribute("maxImages", maxImages);
+        response.setEditable(editable);
         response.setByBroker(byBroker);
         response.setMyProfile(myProfile);
         response.setProfileOfOtherMember(profileOfOtherMember);
         response.setProfileOfBrokered(profileOfBrokered);
         response.setOperatorCanViewReports(operatorCanViewReports);
         response.setHasCardType(hasCardType);
-        
 
 //        if (editable) {
-//            return context.getInputForward();
+//            return response.getInputForward();
 //        } else {
-//            return context.findForward("view");
+//            return response.findForward("view");
 //        }
-               
-       
-       return response;
+            response.setStatus(0);
+            response.setMessage("Profile retrieved successfully");
+            return response;
     }
 
-    @RequestMapping(value = "member/memberProfile", method = RequestMethod.POST)
-    @ResponseBody
-    public MemberProfileControllerResponseDTO handleSubmit() throws Exception {
+   @RequestMapping(value = "member/memberProfile", method = RequestMethod.POST)
+   @ResponseBody
+    public GenericResponse updatememberProfile(@RequestBody MemberVO request) throws Exception {
        // final MemberProfileForm form = context.getForm();
+       GenericResponse response =new GenericResponse();
         // Save the member
-        MemberProfileControllerResponseDTO response = new MemberProfileControllerResponseDTO();
-       // long memberId=LoggedUser.user().getId();
-        Member member = LoggedUser.member();
-
+        Member member = resolveMember();
+           
         // Load the member's broker
         Member currentMember;
         try {
@@ -829,7 +664,8 @@ public class MemberProfileController extends BaseRestController {
         try {
             member = elementService.changeProfile(member);
         } catch (final MailSendingException e) {
-            response.setMessage(messageResolver.message("profile.error.changeEmailValidationFailed","Email"));
+           // return context.sendError("profile.error.changeEmailValidationFailed");
+           response.setMessage("profile.error.changeEmailValidationFailed");
         }
         final PendingEmailChange pendingEmailChange = elementService.getPendingEmailChange(member);
 
@@ -837,19 +673,19 @@ public class MemberProfileController extends BaseRestController {
 //        final FormFile upload = form.getPicture();
 //        if (upload != null && upload.getFileSize() > 0) {
 //            try {
-//                imageService.save(member, form.getPictureCaption(), ImageType.getByContentType(upload.getContentType()), upload.getFileName(), upload.getInputStream());
+//                imageService.save(member, form.getPictureCaption(), ImageHelper.ImageType.getByContentType(upload.getContentType()), upload.getFileName(), upload.getInputStream());
 //            } finally {
 //                upload.destroy();
 //            }
 //        }
 
         if (!hadPendingEmailChange && pendingEmailChange != null) {
-            //Context.sendMessage("profile.modified.emailPending", pendingEmailChange.getNewEmail());
-            response.setMessage(messageResolver.message("profile.modified","AdminProfile"));
+            response.setMessage(pendingEmailChange.getNewEmail());
         } else {
             response.setMessage("profile.modified");
         }
-        return response;
+        response.setMessage(messageResolver.message("profile.modified","MemberProfile"));
+       return response;
 
         //return ActionHelper.redirectWithParam(context.getRequest(), super.handleSubmit(context), "memberId", member.getId());
     }
@@ -860,6 +696,7 @@ public class MemberProfileController extends BaseRestController {
 //        dataBinder.registerBinder("hideEmail", PropertyBinder.instance(Boolean.TYPE, "hideEmail"));
 //        return dataBinder;
 //    }
+//
 //    @Override
 //    @SuppressWarnings({ "unchecked", "rawtypes" })
 //    protected DataBinder<Member> initDataBinderForWrite(final ActionContext context) {
@@ -877,14 +714,16 @@ public class MemberProfileController extends BaseRestController {
 //
 //        return dataBinder;
 //    }
+//
 //    @Override
 //    protected void validateForm(final ActionContext context) {
 //        final Member member = resolveMember(context);
 //        elementService.validate(member, WhenSaving.PROFILE, false);
 //    }
 //
-//    private Member resolveMember(final ActionContext context) {
-//        final MemberProfileForm form = context.getForm();
-//        return getWriteDataBinder(context).readFromString(form.getMember());
-//    }
+    private Member resolveMember() {
+        //final MemberProfileForm form = context.getForm();
+      // return getWriteDataBinder(context).readFromString(form.getMember());
+      return null;
+   }
 }

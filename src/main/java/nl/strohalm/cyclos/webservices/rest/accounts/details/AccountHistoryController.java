@@ -70,6 +70,7 @@ import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -459,8 +460,11 @@ public class AccountHistoryController extends BaseRestController {
 //
 //    }
     
-    public static class AdminAccountHistoryResponse extends GenericResponse{
+    public static class AccountHistoryResponse extends GenericResponse{
         private List<Transfer> transfers =new ArrayList<Transfer>();
+        private List<? extends Element> operators=new ArrayList();
+        private  GroupQuery groups;
+        
 
         public List<Transfer> getTransfers() {
             return transfers;
@@ -491,7 +495,7 @@ public class AccountHistoryController extends BaseRestController {
          final TransferQuery query = getDataBinder().readFromString(queryParameter);
          
       //  final TransferQuery query = (TransferQuery) queryParameters;
-        AdminAccountHistoryResponse response = new AdminAccountHistoryResponse();
+        AccountHistoryResponse response = new AccountHistoryResponse();
        // final Account account = accountService.getAccount(new AccountDTO(owner, type));
         final List<Transfer> transfers = paymentService.search(query);
         response.setTransfers(transfers);
@@ -501,9 +505,9 @@ public class AccountHistoryController extends BaseRestController {
 //        request.setAttribute("accountHistory", Entry.build(permissionService, elementService, account, transfers, fetchMember()));
     }
 
-//    @RequestMapping(value = "admin/accountHistory", method = RequestMethod.GET)
+//    @RequestMapping(value = "admin/accountHistory/{typeId}", method = RequestMethod.GET)
 //    @ResponseBody
-//    public AccountHistoryResponse prepareForm() {
+//    public AccountHistoryResponse prepareForm(@PathVariable("typeId") long typeId) {
 //        AccountHistoryResponse response = new AccountHistoryResponse();
 //
 //        final LocalSettings localSettings = settingsService.getLocalSettings();
@@ -560,7 +564,7 @@ public class AccountHistoryController extends BaseRestController {
 //            showStatus = permissionService.hasPermission(BrokerPermission.ACCOUNTS_AUTHORIZED_INFORMATION);
 //        }
 //        if (showStatus) {
-//            response.setPaymentStatus(EnumSet.of(Transfer.Status.PROCESSED, Transfer.Status.PENDING, Transfer.Status.DENIED, Transfer.Status.CANCELED));
+//            //response.setPaymentStatus(EnumSet.of(Transfer.Status.PROCESSED, Transfer.Status.PENDING, Transfer.Status.DENIED, Transfer.Status.CANCELED));
 //        }
 //
 //        // Retrieve the account

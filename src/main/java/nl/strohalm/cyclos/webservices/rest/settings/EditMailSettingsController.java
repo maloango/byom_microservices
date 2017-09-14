@@ -11,111 +11,158 @@ import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class EditMailSettingsController extends BaseRestController {
-	private DataBinder<MailSettings> dataBinder;
-	private SettingsService settingsService;
 
-	public DataBinder<MailSettings> getDataBinder() {
-		if (dataBinder == null) {
-			final BeanBinder<MailSettings> binder = BeanBinder
-					.instance(MailSettings.class);
-			binder.registerBinder("fromMail",
-					PropertyBinder.instance(String.class, "fromMail"));
-			binder.registerBinder("smtpServer",
-					PropertyBinder.instance(String.class, "smtpServer"));
-			binder.registerBinder("smtpPort",
-					PropertyBinder.instance(Integer.TYPE, "smtpPort"));
-			binder.registerBinder("smtpUsername",
-					PropertyBinder.instance(String.class, "smtpUsername"));
-			binder.registerBinder("smtpPassword",
-					PropertyBinder.instance(String.class, "smtpPassword"));
-			binder.registerBinder("smtpUseTLS",
-					PropertyBinder.instance(boolean.class, "smtpUseTLS"));
-			dataBinder = binder;
-		}
-		return dataBinder;
-	}
+    public static class EditMailSettingResponse extends GenericResponse {
 
-	public SettingsService getSettingsService() {
-		return settingsService;
-	}
+        private String fromMail = "noreply@cyclos.org";
+        private String smtpServer = "localhost";
+        private int smtpPort = 25;
+        private String smtpUsername;
+        private String smtpPassword;
+        private boolean smtpUseTLS = false;
 
-	public static class EditMailSettingsRequestDto {
-		public Map<String, Object> getSetting() {
-			return values;
-		}
+        public String getFromMail() {
+            return fromMail;
+        }
 
-		public Object getSetting(final String key) {
-			return values.get(key);
-		}
+        public void setFromMail(String fromMail) {
+            this.fromMail = fromMail;
+        }
 
-		public void setSetting(final Map<String, Object> map) {
-			values = map;
-		}
+        public String getSmtpServer() {
+            return smtpServer;
+        }
 
-		public void setSetting(final String key, final Object value) {
-			values.put(key, value);
-		}
+        public void setSmtpServer(String smtpServer) {
+            this.smtpServer = smtpServer;
+        }
 
-		protected Map<String, Object> values;
+        public int getSmtpPort() {
+            return smtpPort;
+        }
 
-		public Map<String, Object> getValues() {
-			return values;
-		}
+        public void setSmtpPort(int smtpPort) {
+            this.smtpPort = smtpPort;
+        }
 
-		public void setValues(final Map<String, Object> values) {
-			this.values = values;
-		}
-	}
+        public String getSmtpUsername() {
+            return smtpUsername;
+        }
 
-	public static class EditMailSettingsResponseDto {
-		private String message;
+        public void setSmtpUsername(String smtpUsername) {
+            this.smtpUsername = smtpUsername;
+        }
 
-		public String getMessage() {
-			return message;
-		}
+        public String getSmtpPassword() {
+            return smtpPassword;
+        }
 
-		public void setMessage(String message) {
-			this.message = message;
-		}
-	}
+        public void setSmtpPassword(String smtpPassword) {
+            this.smtpPassword = smtpPassword;
+        }
 
-	@RequestMapping(value = "admin/editMailSettings", method = RequestMethod.PUT)
-	@ResponseBody
-	protected EditMailSettingsResponseDto formAction(
-			final EditMailSettingsRequestDto form) throws Exception {
-	
-		MailSettings settings = getDataBinder().readFromString(
-				form.getSetting());
-                EditMailSettingsResponseDto response =null;
-                try{
-		settings = settingsService.save(settings);
-		 response = new EditMailSettingsResponseDto();
-		response.setMessage("settings.mail.modified");}
-                catch(Exception e){
-                    e.printStackTrace();
-                }
-		return response;
-	}
+        public boolean isSmtpUseTLS() {
+            return smtpUseTLS;
+        }
 
-//	protected void prepareForm(final ActionContext context) throws Exception {
-//		final EditMailSettingsForm form = context.getForm();
-//		getDataBinder().writeAsString(form.getSetting(),
-//				settingsService.getMailSettings());
-//	}
-//
-//	protected void validateForm(final ActionContext context) {
-//		final EditMailSettingsForm form = context.getForm();
-//		final MailSettings settings = getDataBinder().readFromString(
-//				form.getSetting());
-//		settingsService.validate(settings);
-//	}
+        public void setSmtpUseTLS(boolean smtpUseTLS) {
+            this.smtpUseTLS = smtpUseTLS;
+        }
+
+    }
+
+    public static class EditMailSettingsRequest extends MailSettings{
+
+        private String fromMail;
+        private String smtpServer;
+        private int smtpPort;
+        private String smtpUsername;
+        private String smtpPassword;
+        private boolean smtpUseTLS;
+
+        public String getFromMail() {
+            return fromMail;
+        }
+
+        public void setFromMail(String fromMail) {
+            this.fromMail = fromMail;
+        }
+
+        public String getSmtpServer() {
+            return smtpServer;
+        }
+
+        public void setSmtpServer(String smtpServer) {
+            this.smtpServer = smtpServer;
+        }
+
+        public int getSmtpPort() {
+            return smtpPort;
+        }
+
+        public void setSmtpPort(int smtpPort) {
+            this.smtpPort = smtpPort;
+        }
+
+        public String getSmtpUsername() {
+            return smtpUsername;
+        }
+
+        public void setSmtpUsername(String smtpUsername) {
+            this.smtpUsername = smtpUsername;
+        }
+
+        public String getSmtpPassword() {
+            return smtpPassword;
+        }
+
+        public void setSmtpPassword(String smtpPassword) {
+            this.smtpPassword = smtpPassword;
+        }
+
+        public boolean isSmtpUseTLS() {
+            return smtpUseTLS;
+        }
+
+        public void setSmtpUseTLS(boolean smtpUseTLS) {
+            this.smtpUseTLS = smtpUseTLS;
+        }
+        
+    }
+
+    @RequestMapping(value = "admin/editMailSettings", method = RequestMethod.GET)
+    @ResponseBody
+    public EditMailSettingResponse prepareForm() throws Exception {
+        EditMailSettingResponse response = new EditMailSettingResponse();
+        response.setFromMail(settingsService.getMailSettings().getFromMail());
+        response.setSmtpUsername(settingsService.getMailSettings().getSmtpUsername());
+        response.setSmtpPassword(settingsService.getMailSettings().getSmtpPassword());
+
+        response.setStatus(0);
+        response.setMessage("Mail setting data");
+        return response;
+    }
+
+    @RequestMapping(value = "admin/editMailSettings", method = RequestMethod.POST)
+    @ResponseBody
+    public GenericResponse formAction(@RequestBody EditMailSettingsRequest request) throws Exception {
+      GenericResponse response=new GenericResponse();
+        MailSettings settings =request;
+        settings = settingsService.save(settings);
+        response.setMessage("settings.mail.modified");
+        response.setStatus(0);
+        return response;
+        
+    }
 
 }

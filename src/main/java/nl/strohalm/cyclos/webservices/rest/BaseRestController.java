@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.services.access.ChannelService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 
@@ -45,7 +46,12 @@ public abstract class BaseRestController {
 
     protected SettingsService settingsService;
     protected ExternalTransferService externalTransferService;
-   
+    protected ChannelService channelService;
+
+    @Inject
+    public void setChannelService(ChannelService channelService) {
+        this.channelService = channelService;
+    }
 
     @Inject
     public void setExternalTransferService(ExternalTransferService externalTransferService) {

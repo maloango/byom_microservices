@@ -5,6 +5,7 @@
  */
 package nl.strohalm.cyclos.webservices.rest.members;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -90,7 +91,7 @@ public class LoadMemberController extends BaseRestController{
         private String name;
         private boolean brokers;
         private boolean viewableGroup;
-        private boolean enabled;
+        private boolean enabled=true;
         private boolean maxScheduledPayments;
         private Long              exclude;
     private Long[]            groupIds;
@@ -166,15 +167,18 @@ public class LoadMemberController extends BaseRestController{
 
     public static class LoadMemberResponse extends GenericResponse {
 
-        private   Member member;
+        private  List<MemberEntity> members;
 
-        public Member getMember() {
-            return member;
+        public List<MemberEntity> getMembers() {
+            return members;
         }
 
-        public void setMember(Member member) {
-            this.member = member;
+        public void setMembers(List<MemberEntity> members) {
+            this.members = members;
         }
+        
+
+     
         
 
     }
@@ -192,7 +196,7 @@ public class LoadMemberController extends BaseRestController{
         }
         memberQuery.setExcludeRemoved(true);
         memberQuery.limitResults(localSettings.getMaxAjaxResults());
-        memberQuery.setName(form.getName());
+        //memberQuery.setName(form.getName());
         memberQuery.setUsername(form.getUserName());
         // Search only brokered users
         if (LoggedUser.isBroker()) {
@@ -201,30 +205,39 @@ public class LoadMemberController extends BaseRestController{
                 memberQuery.setBroker(broker);
             }
         }
-        Element exclude;
-        if (form.getExclude() != null) {
-            // When specifying a member to exclude from search, apply it...
-            exclude = EntityHelper.reference(Element.class, form.getExclude());
-        } else {
-            // ... otherwise, exclude the logged member himself
-            if (LoggedUser.isOperator()) {
-                exclude = (Element) LoggedUser.accountOwner();
-            } else {
-                exclude = LoggedUser.element();
-            }
-        }
-        memberQuery.setExcludeElements(Collections.singleton(exclude));
+//        Element exclude;
+//        if (form.getExclude() != null) {
+//            // When specifying a member to exclude from search, apply it...
+//            exclude = EntityHelper.reference(Element.class, form.getExclude());
+//        } else {
+//            // ... otherwise, exclude the logged member himself
+//            if (LoggedUser.isOperator()) {
+//                exclude = (Element) LoggedUser.accountOwner();
+//            } else {
+//                exclude = LoggedUser.element();
+//            }
+//        }
+//        memberQuery.setExcludeElements(Collections.singleton(exclude));
         if (form.isMaxScheduledPayments()) {
             memberQuery.fetch(Element.Relationships.GROUP);
         }
-        final Collection<MemberGroup> groups = resolveGroups(form.getGroupIds());
-        memberQuery.setGroups(groups);
+        System.out.println("----- "+memberQuery);
+//        final Collection<MemberGroup> groups = resolveGroups(form.getGroupIds());
+//        memberQuery.setGroups(groups);
         final List<? extends Element> members = elementService.search(memberQuery);
         final String json = (form.isMaxScheduledPayments() ? getDataBinderWithMaxScheduledPayments() : getDataBinder()).readAsString(members);
         //responseHelper.writeJSON(context.getResponse(), json);
-        
+        List<MemberEntity> memberList=new ArrayList();
+        for(Element member:members){
+            MemberEntity memberEntity=new MemberEntity();
+            memberEntity.setId(member.getId());
+            memberEntity.setName(member.getName());
+            memberEntity.setUserName(member.getUsername());
+            memberList.add(memberEntity);
+        }
         response.setStatus(0);
-        response.setMessage(json);
+        response.setMembers(memberList);
+        response.setMessage("Member found!!");
         
         return response;
        
@@ -243,4 +256,35 @@ public class LoadMemberController extends BaseRestController{
         }
         return groups;
     }
+     
+     public static class MemberEntity{
+         private long id;
+         private String name;
+         private String userName;
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+         
+     }
 }

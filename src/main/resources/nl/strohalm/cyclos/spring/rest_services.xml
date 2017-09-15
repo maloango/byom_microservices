@@ -219,8 +219,7 @@
 	<!--alerts channels open-->
 	<bean id="editChannelController"
 		class="nl.strohalm.cyclos.webservices.rest.channels.EditChannelController" />
-	<bean id="listChannelsController"
-		class="nl.strohalm.cyclos.webservices.rest.channels.ListChannelsController" />
+	
 	<bean id="removeChannelController"
 		class="nl.strohalm.cyclos.webservices.rest.channels.RemoveChannelController" />
        
@@ -563,6 +562,11 @@ webshop
     <!---settings-->
      <bean id="editMailSettingsController"
             class="nl.strohalm.cyclos.webservices.rest.settings.EditMailSettingsController" />
+     <bean id="editLogSettingsContoller"
+		class="nl.strohalm.cyclos.webservices.rest.settings.EditLogSettingsContoller" />
+     
+     <bean id="listChannelsController"
+		class="nl.strohalm.cyclos.webservices.rest.settings.ListChannelsController" />
     
     
         

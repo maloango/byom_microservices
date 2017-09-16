@@ -23,9 +23,13 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.services.access.AccessService;
 import nl.strohalm.cyclos.services.access.ChannelService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferService;
+import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
+import nl.strohalm.cyclos.services.transactions.InvoiceService;
+import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,6 +51,30 @@ public abstract class BaseRestController {
     protected SettingsService settingsService;
     protected ExternalTransferService externalTransferService;
     protected ChannelService channelService;
+    protected InvoiceService invoiceService;
+    protected TransferTypeService transferTypeService;
+    protected GroupService groupService;
+    protected AccessService accessService;
+
+    @Inject
+    public void setAccessService(AccessService accessService) {
+        this.accessService = accessService;
+    }
+
+    @Inject
+    public void setGroupService(GroupService groupService) {
+        this.groupService = groupService;
+    }
+
+    @Inject
+    public void setInvoiceService(InvoiceService invoiceService) {
+        this.invoiceService = invoiceService;
+    }
+
+    @Inject
+    public void setTransferTypeService(TransferTypeService transferTypeService) {
+        this.transferTypeService = transferTypeService;
+    }
 
     @Inject
     public void setChannelService(ChannelService channelService) {

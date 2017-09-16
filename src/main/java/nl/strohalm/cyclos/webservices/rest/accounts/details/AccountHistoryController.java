@@ -461,18 +461,32 @@ public class AccountHistoryController extends BaseRestController {
 //    }
     
     public static class AccountHistoryResponse extends GenericResponse{
-        private List<Transfer> transfers =new ArrayList<Transfer>();
-        private List<? extends Element> operators=new ArrayList();
-        private  GroupQuery groups;
+
+        private List<PaymentFilter> paymentFilters ;
+        private BigDecimal creditLimit;
+        private AccountType type;
         
 
-        public List<Transfer> getTransfers() {
-            return transfers;
+        public List<PaymentFilter> getPaymentFilters() {
+            return paymentFilters;
         }
 
-        public void setTransfers(List<Transfer> transfers) {
-            this.transfers = transfers;
+        public void setPaymentFilters(List<PaymentFilter> paymentFilters) {
+            this.paymentFilters = paymentFilters;
         }
+
+        public BigDecimal getCreditLimit() {
+            return creditLimit;
+        }
+
+        public void setCreditLimit(BigDecimal creditLimit) {
+            this.creditLimit = creditLimit;
+        }
+
+      
+        
+        
+
         
         
     }
@@ -498,38 +512,39 @@ public class AccountHistoryController extends BaseRestController {
         AccountHistoryResponse response = new AccountHistoryResponse();
        // final Account account = accountService.getAccount(new AccountDTO(owner, type));
         final List<Transfer> transfers = paymentService.search(query);
-        response.setTransfers(transfers);
+     //   response.setTransfers(transfers);
         response.setStatus(0);
         response.setMessage("tranfer list!!");
         return response;
 //        request.setAttribute("accountHistory", Entry.build(permissionService, elementService, account, transfers, fetchMember()));
     }
 
-//    @RequestMapping(value = "admin/accountHistory/{typeId}", method = RequestMethod.GET)
-//    @ResponseBody
-//    public AccountHistoryResponse prepareForm(@PathVariable("typeId") long typeId) {
-//        AccountHistoryResponse response = new AccountHistoryResponse();
-//
-//        final LocalSettings localSettings = settingsService.getLocalSettings();
-//
-//        // Set the owner and the account type on the first request
-//        boolean firstTime = false;
-////        if (RequestHelper.isGet(request)) {
-////            form.setQuery("owner", form.getMemberId());
-////            form.setQuery("type", form.getTypeId());
-////            firstTime = true;
-////        }
-//
-//        // Retrieve the query parameters
-//        final TransferQuery query = new TransferQuery();
-//
-//        query.fetch(Payment.Relationships.CUSTOM_VALUES, Payment.Relationships.FROM, Payment.Relationships.TO, Payment.Relationships.TYPE);
-//        query.setReverseOrder(true);
-//
-//        // Fetch the account type, and add relationship externalAccounts
-//        final AccountType type = accountTypeService.load(query.getType().getId());
-//
-//        // Set the default status to PROCESSED
+    @RequestMapping(value = "admin/accountHistory/{typeId}", method = RequestMethod.GET)
+    @ResponseBody
+    public AccountHistoryResponse prepareForm(@PathVariable("typeId") long typeId) {
+        AccountHistoryResponse response = new AccountHistoryResponse();
+
+        final LocalSettings localSettings = settingsService.getLocalSettings();
+
+        // Set the owner and the account type on the first request
+        boolean firstTime = false;
+//        if (RequestHelper.isGet(request)) {
+//            form.setQuery("owner", form.getMemberId());
+//            form.setQuery("type", form.getTypeId());
+//            firstTime = true;
+//        }
+
+        // Retrieve the query parameters
+        final TransferQuery query = new TransferQuery();
+
+        query.fetch(Payment.Relationships.CUSTOM_VALUES, Payment.Relationships.FROM, Payment.Relationships.TO, Payment.Relationships.TYPE);
+        query.setReverseOrder(true);
+
+        // Fetch the account type, and add relationship externalAccounts
+      //  final AccountType type = accountTypeService.load(query.getType().getId());
+     
+
+        // Set the default status to PROCESSED
 //        if (query.getStatus() == null) {
 //            query.setStatus(Transfer.Status.PROCESSED);
 //            // form.setQuery("status", query.getStatus().name());
@@ -543,39 +558,39 @@ public class AccountHistoryController extends BaseRestController {
 //                //PropertyHelper.set(form.getQuery("period"), "begin", formattedDate);
 //            }
 //        }
-//
-//        // Fetch the owner if is a member
-//        AccountOwner owner = query.getOwner();
-//        if (owner == null) {
-//            owner = SystemAccountOwner.instance();
-//        } else if (owner instanceof EntityReference) {
-//            owner = (AccountOwner) elementService.load(((Member) owner).getId());
-//        }
-//
-//        // Check if authorization status will be shown
-//        boolean showStatus = false;
-//        if (owner instanceof SystemAccountOwner) {
-//            showStatus = permissionService.hasPermission(AdminSystemPermission.ACCOUNTS_AUTHORIZED_INFORMATION);
-//        } else if (LoggedUser.isAdministrator()) {
-//            showStatus = permissionService.hasPermission(AdminMemberPermission.ACCOUNTS_AUTHORIZED_INFORMATION);
-//        } else if (LoggedUser.accountOwner().equals(owner)) {
-//            showStatus = permissionService.hasPermission(MemberPermission.ACCOUNT_AUTHORIZED_INFORMATION);
-//        } else if (owner instanceof Member && LoggedUser.isBroker()) {
-//            showStatus = permissionService.hasPermission(BrokerPermission.ACCOUNTS_AUTHORIZED_INFORMATION);
-//        }
-//        if (showStatus) {
-//            //response.setPaymentStatus(EnumSet.of(Transfer.Status.PROCESSED, Transfer.Status.PENDING, Transfer.Status.DENIED, Transfer.Status.CANCELED));
-//        }
-//
-//        // Retrieve the account
+
+        // Fetch the owner if is a member
+        AccountOwner owner = query.getOwner();
+        if (owner == null) {
+            owner = SystemAccountOwner.instance();
+        } else if (owner instanceof EntityReference) {
+            owner = (AccountOwner) elementService.load(((Member) owner).getId());
+        }
+
+        // Check if authorization status will be shown
+        boolean showStatus = false;
+        if (owner instanceof SystemAccountOwner) {
+            showStatus = permissionService.hasPermission(AdminSystemPermission.ACCOUNTS_AUTHORIZED_INFORMATION);
+        } else if (LoggedUser.isAdministrator()) {
+            showStatus = permissionService.hasPermission(AdminMemberPermission.ACCOUNTS_AUTHORIZED_INFORMATION);
+        } else if (LoggedUser.accountOwner().equals(owner)) {
+            showStatus = permissionService.hasPermission(MemberPermission.ACCOUNT_AUTHORIZED_INFORMATION);
+        } else if (owner instanceof Member && LoggedUser.isBroker()) {
+            showStatus = permissionService.hasPermission(BrokerPermission.ACCOUNTS_AUTHORIZED_INFORMATION);
+        }
+        if (showStatus) {
+            //response.setPaymentStatus(EnumSet.of(Transfer.Status.PROCESSED, Transfer.Status.PENDING, Transfer.Status.DENIED, Transfer.Status.CANCELED));
+        }
+
+        // Retrieve the account
 //        final Account account = accountService.getAccount(new AccountDTO(owner, type));
 //
 //        // Fetch the member on filter
 //        if (query.getMember() instanceof EntityReference) {
 //            query.setMember((Member) elementService.load(query.getMember().getId(), Element.Relationships.USER));
 //        }
-//
-//        // When a member, get it's operators
+
+        // When a member, get it's operators
 //        final Member loggedMember = LoggedUser.member();
 //        if (loggedMember != null) {
 //            final OperatorQuery oq = new OperatorQuery();
@@ -583,8 +598,8 @@ public class AccountHistoryController extends BaseRestController {
 //            final List<? extends Element> operators = elementService.search(oq);
 //            response.setOperators(operators);
 //        }
-//
-//        // When a system account, get groups / group filters
+
+        // When a system account, get groups / group filters
 //        if (type instanceof SystemAccountType) {
 //            final AdminGroup adminGroup = LoggedUser.group();
 //
@@ -598,27 +613,29 @@ public class AccountHistoryController extends BaseRestController {
 //            groupFilters.setAdminGroup(adminGroup);
 //            response.setGroupFilters(groupFilterService.search(groupFilters));
 //        }
-//
-//        // Get the account status
-//        final AccountStatus status = accountService.getRatedStatus(account, null);
-//
-//        // Get the credit limit
-//        final BigDecimal min = paymentService.getMinimumPayment();
-//        final GetTransactionsDTO params = new GetTransactionsDTO(query.getOwner(), query.getType());
-//        final BigDecimal creditLimit = accountService.getCreditLimit(params);
-//        // Don't show if zero
-//        if (creditLimit != null && creditLimit.abs().compareTo(min) == 1) {
-//            response.setCreditLimit(creditLimit.negate());
-//        }
-//
-//        // Retrieve the payment filters
-//        final PaymentFilterQuery pfQuery = new PaymentFilterQuery();
-//        pfQuery.setAccountType(query.getType());
-//        pfQuery.setContext(PaymentFilterQuery.Context.ACCOUNT_HISTORY);
-//        pfQuery.setElement(owner instanceof SystemAccountOwner ? LoggedUser.element(): (Member) owner);
-//        final List<PaymentFilter> paymentFilters = paymentFilterService.search(pfQuery);
-//
-//        // Set the required request attributes
+
+        // Get the account status
+       // final AccountStatus status = accountService.getRatedStatus(account, null);
+
+        // Get the credit limit
+        final BigDecimal min = paymentService.getMinimumPayment();
+        final GetTransactionsDTO params = new GetTransactionsDTO(query.getOwner(), query.getType());
+        final BigDecimal creditLimit = accountService.getCreditLimit(params);
+        // Don't show if zero
+        if (creditLimit != null && creditLimit.abs().compareTo(min) == 1) {
+            response.setCreditLimit(creditLimit.negate());
+        }
+
+        // Retrieve the payment filters
+        final PaymentFilterQuery pfQuery = new PaymentFilterQuery();
+        pfQuery.setAccountType(query.getType());
+        pfQuery.setContext(PaymentFilterQuery.Context.ACCOUNT_HISTORY);
+        pfQuery.setElement(owner instanceof SystemAccountOwner ? LoggedUser.element(): (Member) owner);
+        final List<PaymentFilter> paymentFilters = paymentFilterService.search(pfQuery);
+        response.setPaymentFilters(paymentFilters);
+        response.setStatus(0);
+
+        // Set the required request attributes
 //        response.setOwner(owner instanceof SystemAccountOwner ? null : owner);
 //        response.setType(type);
 //        response.setPaymentFilters(paymentFilters);
@@ -639,26 +656,26 @@ public class AccountHistoryController extends BaseRestController {
 //        final List<PaymentCustomField> customFieldsForList = paymentCustomFieldService.listForList(account, false);
 //        // request.setAttribute("customFieldsForSearch", customFieldHelper.buildEntries(customFieldsForSearch, query.getCustomValues()));
 //        response.setCustomFieldsForList(customFieldsForList);
-//
-//        // Determine where to go back
-////        String backTo = null;
-////        if (type instanceof SystemAccountType) {
-////            if (!form.isSingleAccount()) {
-////                // On system accounts, only go back when there's an account overview
-////                backTo = context.getPathPrefix() + "/accountOverview";
-////            }
-////        } else {
-////            // A member account, go back to either overview or profile
-////            final Member member = (Member) owner;
-////            if (form.isSingleAccount()) {
-////                backTo = context.getPathPrefix() + "/profile?memberId=" + member.getId();
-////            } else {
-////                backTo = context.getPathPrefix() + "/accountOverview?memberId=" + member.getId();
-////            }
-////        }
-////        request.setAttribute("backTo", backTo);
-//
-//        return response;
-//    }
+
+        // Determine where to go back
+//        String backTo = null;
+//        if (type instanceof SystemAccountType) {
+//            if (!form.isSingleAccount()) {
+//                // On system accounts, only go back when there's an account overview
+//                backTo = context.getPathPrefix() + "/accountOverview";
+//            }
+//        } else {
+//            // A member account, go back to either overview or profile
+//            final Member member = (Member) owner;
+//            if (form.isSingleAccount()) {
+//                backTo = context.getPathPrefix() + "/profile?memberId=" + member.getId();
+//            } else {
+//                backTo = context.getPathPrefix() + "/accountOverview?memberId=" + member.getId();
+//            }
+//        }
+//        request.setAttribute("backTo", backTo);
+
+        return response;
+    }
 
 }

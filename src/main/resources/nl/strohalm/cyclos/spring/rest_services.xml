@@ -567,6 +567,11 @@ webshop
      
      <bean id="listChannelsController"
 		class="nl.strohalm.cyclos.webservices.rest.settings.ListChannelsController" />
+     
+     <!--Access -->
+      <bean id="listConnectedUsersController"
+		class="  nl.strohalm.cyclos.webservices.rest.access.ListConnectedUsersController" />
+   
     
     
         

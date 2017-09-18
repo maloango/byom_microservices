@@ -26,7 +26,9 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.services.access.AccessService;
 import nl.strohalm.cyclos.services.access.ChannelService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferService;
+import nl.strohalm.cyclos.services.elements.MemberRecordTypeService;
 import nl.strohalm.cyclos.services.groups.GroupService;
+import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.services.transactions.InvoiceService;
 import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
@@ -55,6 +57,18 @@ public abstract class BaseRestController {
     protected TransferTypeService transferTypeService;
     protected GroupService groupService;
     protected AccessService accessService;
+    protected MemberRecordTypeService memberRecordTypeService;
+    protected PermissionService permissionService;
+
+    @Inject
+    public void setMemberRecordTypeService(MemberRecordTypeService memberRecordTypeService) {
+        this.memberRecordTypeService = memberRecordTypeService;
+    }
+
+    @Inject
+    public void setPermissionService(PermissionService permissionService) {
+        this.permissionService = permissionService;
+    }
 
     @Inject
     public void setAccessService(AccessService accessService) {

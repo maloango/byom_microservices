@@ -58,9 +58,9 @@ public class MemberAdsController extends BaseRestController {
 		return permissionService;
 	}
 
-	public static final void setPermissionService(PermissionService permissionService) {
-		MemberAdsController.permissionService = permissionService;
-	}
+//	public static final void setPermissionService(PermissionService permissionService) {
+//		MemberAdsController.permissionService = permissionService;
+//	}
 
 	public final SettingsService getSettingsService() {
 		return settingsService;

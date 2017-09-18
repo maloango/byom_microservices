@@ -571,6 +571,12 @@ webshop
      <!--Access -->
       <bean id="listConnectedUsersController"
 		class="  nl.strohalm.cyclos.webservices.rest.access.ListConnectedUsersController" />
+      
+      <!--Users and group-->
+      <bean id="listMemberRecordTypesController"
+		class="nl.strohalm.cyclos.webservices.rest.members.records.ListMemberRecordTypesController" />
+        <bean id="editMemberRecordTypeController"
+		class="nl.strohalm.cyclos.webservices.rest.members.records.EditMemberRecordTypeController" />
    
     
     

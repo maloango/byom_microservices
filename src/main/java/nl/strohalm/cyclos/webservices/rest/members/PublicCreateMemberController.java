@@ -161,7 +161,7 @@ public class PublicCreateMemberController extends BaseRestController {
         private String name;
         private String email;
         private String password;
-    
+        
         private String customField1;
          private String customField2;
           private String customField3;

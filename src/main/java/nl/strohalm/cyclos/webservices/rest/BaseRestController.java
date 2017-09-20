@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.services.access.AccessService;
 import nl.strohalm.cyclos.services.access.ChannelService;
+import nl.strohalm.cyclos.services.accounts.AccountService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferService;
 import nl.strohalm.cyclos.services.elements.MemberRecordTypeService;
 import nl.strohalm.cyclos.services.groups.GroupService;
@@ -59,6 +60,12 @@ public abstract class BaseRestController {
     protected AccessService accessService;
     protected MemberRecordTypeService memberRecordTypeService;
     protected PermissionService permissionService;
+    protected AccountService accountService;
+
+    @Inject
+    public void setAccountService(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @Inject
     public void setMemberRecordTypeService(MemberRecordTypeService memberRecordTypeService) {

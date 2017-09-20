@@ -32,6 +32,7 @@ import nl.strohalm.cyclos.entities.accounts.transactions.TransferTypeQuery;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
 import nl.strohalm.cyclos.entities.settings.events.LocalSettingsEvent;
 import nl.strohalm.cyclos.services.accountfees.AccountFeeService;
+import nl.strohalm.cyclos.services.accounts.AccountService;
 import nl.strohalm.cyclos.services.accounts.AccountTypeService;
 import nl.strohalm.cyclos.services.accounts.CurrencyService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
@@ -39,6 +40,7 @@ import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.services.transactions.TransactionContext;
 import nl.strohalm.cyclos.services.transfertypes.PaymentFilterService;
 import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
+import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
 import nl.strohalm.cyclos.utils.RequestHelper;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
@@ -121,7 +123,7 @@ public class EditAccountTypeController extends BaseRestController {
         private String nature;
         private String name;
         private String description;
-        private Long currency;
+        private Long currencyId;
         private String limitType;
         private BigDecimal creditLimit;
         private BigDecimal upperCreditLimit;
@@ -166,12 +168,12 @@ public class EditAccountTypeController extends BaseRestController {
             this.description = description;
         }
 
-        public Long getCurrency() {
-            return currency;
+        public Long getCurrencyId() {
+            return currencyId;
         }
 
-        public void setCurrency(Long currency) {
-            this.currency = currency;
+        public void setCurrencyId(Long currencyId) {
+            this.currencyId = currencyId;
         }
 
         public String getLimitType() {
@@ -202,10 +204,6 @@ public class EditAccountTypeController extends BaseRestController {
 
     public static class EditAccountResponse extends GenericResponse {
 
-        private AccountType accountType;
-        private List<TransferType> transferTypes;
-        private List<AccountFee> accountFees;
-        private List<PaymentFilter> paymentFilters;
         private List<Currency> currencies;
         private boolean isInsert;
         private boolean isSystem;
@@ -243,131 +241,66 @@ public class EditAccountTypeController extends BaseRestController {
             this.editable = editable;
         }
 
-        public AccountType getAccountType() {
-            return accountType;
-        }
-
-        public void setAccountType(AccountType accountType) {
-            this.accountType = accountType;
-        }
-
-        public List<TransferType> getTransferTypes() {
-            return transferTypes;
-        }
-
-        public void setTransferTypes(List<TransferType> transferTypes) {
-            this.transferTypes = transferTypes;
-        }
-
-        public List<AccountFee> getAccountFees() {
-            return accountFees;
-        }
-
-        public void setAccountFees(List<AccountFee> accountFees) {
-            this.accountFees = accountFees;
-        }
-
-        public List<PaymentFilter> getPaymentFilters() {
-            return paymentFilters;
-        }
-
-        public void setPaymentFilters(List<PaymentFilter> paymentFilters) {
-            this.paymentFilters = paymentFilters;
-        }
     }
 
     @RequestMapping(value = "admin/editAccountType", method = RequestMethod.POST)
     @ResponseBody
-    public EditAccountResponse addAccount(@RequestBody EditAccountTypeRequest request) {
-        EditAccountResponse response = new EditAccountResponse();
-//        SystemAccountType systemAccoutType=new SystemAccountType();
-//        systemAccoutType.setCreditLimit(request.getCreditLimit());
-//        systemAccoutType.setUpperCreditLimit(request.getUpperCreditLimit());
-//        systemAccoutType.setDescription(request.getDescription());
-//        systemAccoutType.setName(request.getName());
-//        Currency currency=new Currency();
-//        currency.setId(request.getId());
-//        systemAccoutType.setCurrency(currency);
-
-//        final HttpServletRequest request = context.getRequest();
-//        final EditAccountTypeForm form = context.getForm();
-        final long id = request.getAccountTypeId();
-        final boolean isInsert = id <= 0L;
-        final boolean editable = permissionService.hasPermission(AdminSystemPermission.ACCOUNTS_MANAGE);
-        boolean isSystem = false;
-        if (isInsert) {
-//            RequestHelper.storeEnum(request, AccountType.Nature.class, "natures");
-//            RequestHelper.storeEnum(request, AccountType.LimitType.class, "limitTypes");
-        } else {
-            final AccountType accountType = accountTypeService.load(id);
-            isSystem = accountType instanceof SystemAccountType;
-            response.setAccountType(accountType);
-             accountTypeService.save(accountType);
-//            getDataBinder(accountType.getNature()).writeAsString(form.getAccountType(), accountType);
-
-            final TransferTypeQuery ttQuery = new TransferTypeQuery();
-            ttQuery.fetch(TransferType.Relationships.FROM, TransferType.Relationships.TO);
-            ttQuery.setContext(TransactionContext.ANY);
-            ttQuery.setFromAccountType(accountType);
-            response.setTransferTypes(transferTypeService.search(ttQuery));
-
-            if (!isSystem) {
-                final AccountFeeQuery feeQuery = new AccountFeeQuery();
-                final Set<Relationship> fetch = new HashSet<Relationship>();
-                fetch.add(RelationshipHelper.nested(AccountFee.Relationships.ACCOUNT_TYPE, AccountType.Relationships.CURRENCY));
-                feeQuery.setFetch(fetch);
-                feeQuery.setAccountType(accountType);
-                feeQuery.setReturnDisabled(true);
-                response.setAccountFees(accountFeeService.search(feeQuery));
-            }
-
-            final PaymentFilterQuery filterQuery = new PaymentFilterQuery();
-            filterQuery.setAccountType(accountType);
-            response.setPaymentFilters(paymentFilterService.search(filterQuery));
-
-        }
-        response.setCurrencies(currencyService.listAll());
-        response.setIsInsert(isInsert);
-        response.setIsSystem(isSystem);
-        response.setEditable(editable);
+    public GenericResponse EditAccount(@RequestBody EditAccountTypeRequest request) throws Exception {
+        GenericResponse response = new GenericResponse();
+        try{
+        AccountType accountType = resolveAccountType(request);
+        final boolean isInsert = accountType.getId() == null;
+        accountType = accountTypeService.save(accountType);
+        response.setMessage(isInsert ? "accountType.inserted" : "accountType.modified");
         response.setStatus(0);
-        response.setMessage("account edited!!");
-
-        //AccountType.LimitType.LIMITED;
-        //AccountType accountType = resolveAccountType(request);
-//      final boolean isInsert = systemAccoutType.getId() == null;
-//      
-//      systemAccoutType = accountTypeService.save(systemAccoutType);
-//         if(isInsert){
-//             response.setMessage("Account inserted !!");
-//         }
-//         else
-//         {
-//             response.setMessage("Account modified !!");
-//         }
-//         response.setStatus(0);
-//        
-//
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         return response;
     }
 
-//        private AccountType resolveAccountType(final EditAccountTypeRequest form) {
-//        final long id = form.getId();
-//        AccountType accountType=null;
-//        AccountType.Nature nature;
-//        if (id <= 0L) {
-//            try {
-//                nature = AccountType.Nature.valueOf(form.getNature());
-//            } catch (final Exception e) {
-//                throw new ValidationException();
-//            }
-//        } else {
-//            accountType = accountTypeService.load(id);
-//            
-//        }
-//        return accountType;
-//    }
+    @RequestMapping(value = "admin/editAccountType", method = RequestMethod.GET)
+    @ResponseBody
+    public EditAccountResponse addAccount() {
+        EditAccountResponse response = new EditAccountResponse();
+        final boolean editable = permissionService.hasPermission(AdminSystemPermission.ACCOUNTS_MANAGE);
+        boolean isSystem = false;
+        response.setCurrencies(currencyService.listAll());
+        response.setIsInsert(false);
+        response.setIsSystem(isSystem);
+        response.setEditable(editable);
+        return response;
+    }
+
+    private AccountType resolveAccountType(final EditAccountTypeRequest form) {
+        final long id = form.getId();
+        SystemAccountType systemType = null;
+        MemberAccountType memberType = null;
+        Currency currency = null;
+        AccountType accountType = null;
+        if (form.getNature().equals("system")) {
+            systemType.setId(form.getId());
+            systemType.setName(form.getName());
+            systemType.setCreditLimit(form.getCreditLimit());
+            systemType.setDescription(form.getDescription());
+            systemType.setCurrency(currencyService.load(form.getCurrencyId()));
+            systemType.setUpperCreditLimit(form.getUpperCreditLimit());
+            accountType = systemType;
+
+        } else if (form.getNature().equals("member")) {
+            memberType.setId(form.getId());
+            memberType.setName(form.getName());
+            // memberType.setCreditLimit(form.getCreditLimit());
+            memberType.setDescription(form.getDescription());
+            memberType.setCurrency(currencyService.load(form.getCurrencyId()));
+            //  memberType.setUpperCreditLimit(form.getUpperCreditLimit());
+
+            accountType = memberType;
+        }
+        return accountType;
+    }
 }
+
 
 
 // having prepared form to complete later full implementation 

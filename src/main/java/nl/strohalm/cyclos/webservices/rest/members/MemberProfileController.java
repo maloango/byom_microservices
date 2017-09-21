@@ -146,10 +146,10 @@ public class MemberProfileController extends BaseRestController {
         this.groupFilterService = groupFilterService;
     }
 
-//    @Inject
-//    public void setImageService(final ImageService imageService) {
-//        this.imageService = imageService;
-//    }
+    @Inject
+    public void setImageService(final ImageService imageService) {
+        this.imageService = imageService;
+    }
 
     @Inject
     public void setMemberCustomFieldService(final MemberCustomFieldService memberCustomFieldService) {

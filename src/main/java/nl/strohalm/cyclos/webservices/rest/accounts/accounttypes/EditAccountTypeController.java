@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -61,6 +62,39 @@ public class EditAccountTypeController extends BaseRestController {
     private AccountFeeService accountFeeService;
     private PaymentFilterService paymentFilterService;
     private PermissionService permissionService;
+    private Map<AccountType.Nature, DataBinder<? extends AccountType>> dataBinders;
+    private ReadWriteLock lock = new ReentrantReadWriteLock(true);
+
+    public DataBinder<? extends AccountType> getDataBinder(final AccountType.Nature nature) {
+        try {
+            lock.readLock().lock();
+            if (dataBinders == null) {
+                final HashMap<AccountType.Nature, DataBinder<? extends AccountType>> temp = new HashMap<AccountType.Nature, DataBinder<? extends AccountType>>();
+                final LocalSettings localSettings = settingsService.getLocalSettings();
+
+                final BeanBinder<SystemAccountType> systemBinder = BeanBinder.instance(SystemAccountType.class);
+                initBasic(systemBinder);
+                systemBinder.registerBinder("creditLimit", PropertyBinder.instance(BigDecimal.class, "creditLimit", localSettings.getNumberConverter()));
+                systemBinder.registerBinder("upperCreditLimit", PropertyBinder.instance(BigDecimal.class, "upperCreditLimit", localSettings.getNumberConverter()));
+                temp.put(AccountType.Nature.SYSTEM, systemBinder);
+
+                final BeanBinder<MemberAccountType> memberBinder = BeanBinder.instance(MemberAccountType.class);
+                initBasic(memberBinder);
+                temp.put(AccountType.Nature.MEMBER, memberBinder);
+                dataBinders = temp;
+            }
+            return dataBinders.get(nature);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    private void initBasic(final BeanBinder<? extends AccountType> binder) {
+        binder.registerBinder("id", PropertyBinder.instance(Long.class, "id", IdConverter.instance()));
+        binder.registerBinder("name", PropertyBinder.instance(String.class, "name"));
+        binder.registerBinder("description", PropertyBinder.instance(String.class, "description"));
+        binder.registerBinder("currency", PropertyBinder.instance(Currency.class, "currency"));
+    }
 
     public PermissionService getPermissionService() {
         return permissionService;
@@ -205,9 +239,18 @@ public class EditAccountTypeController extends BaseRestController {
     public static class EditAccountResponse extends GenericResponse {
 
         private List<Currency> currencies;
+        private Set<Entry<String, AccountType.Nature>> set;
         private boolean isInsert;
         private boolean isSystem;
         private boolean editable;
+
+        public Set<Entry<String, AccountType.Nature>> getSet() {
+            return set;
+        }
+
+        public void setSet(Set<Entry<String, AccountType.Nature>> set) {
+            this.set = set;
+        }
 
         public List<Currency> getCurrencies() {
             return currencies;
@@ -247,13 +290,50 @@ public class EditAccountTypeController extends BaseRestController {
     @ResponseBody
     public GenericResponse EditAccount(@RequestBody EditAccountTypeRequest request) throws Exception {
         GenericResponse response = new GenericResponse();
-        try{
-        AccountType accountType = resolveAccountType(request);
-        final boolean isInsert = accountType.getId() == null;
-        accountType = accountTypeService.save(accountType);
-        response.setMessage(isInsert ? "accountType.inserted" : "accountType.modified");
-        response.setStatus(0);
-        }catch(Exception e){
+        try {
+            AccountType accountType = null;
+
+            final boolean isInsert = request.getAccountTypeId() == null;
+            Currency currency = new Currency();
+            currency.setId(request.getCurrencyId());
+            System.out.println("------id: "+request.getAccountTypeId());
+            AccountType.Nature nature ;
+            if (request.getAccountTypeId() <= 0L) {
+                try {
+                    nature = AccountType.Nature.valueOf(request.getNature().toString());
+                } catch (final Exception e) {
+                    throw new ValidationException();
+                }
+            } else {
+                nature = accountTypeService.load(request.getAccountTypeId()).getNature();
+            }
+            
+            System.out.print("nature------: "+nature);
+            if (nature.equals(AccountType.Nature.SYSTEM)) {
+                SystemAccountType systemAccount = new SystemAccountType();
+                systemAccount.setId(request.getAccountTypeId());
+                systemAccount.setName(request.getName());
+                systemAccount.setDescription(request.getDescription());
+                systemAccount.setCurrency(currency);
+                systemAccount.setUpperCreditLimit(request.getUpperCreditLimit());
+                systemAccount.setCreditLimit(request.getCreditLimit());
+                accountType = systemAccount;
+
+            } else if (nature.equals(AccountType.Nature.MEMBER)) {
+                MemberAccountType memberAccount = new MemberAccountType();
+                memberAccount.setId(request.getAccountTypeId());
+                memberAccount.setName(request.getName());
+                memberAccount.setDescription(request.getDescription());
+                memberAccount.setCurrency(currency);
+                // memberAccount.setUpperCreditLimit(request.getUpperCreditLimit());
+                //memberAccount.setCreditLimit(request.getCreditLimit());
+                accountType = memberAccount;
+            }
+            accountType = accountTypeService.save(accountType);
+           
+            response.setMessage(isInsert ? "accountType.inserted" : "accountType.modified");
+            response.setStatus(0);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return response;
@@ -261,11 +341,17 @@ public class EditAccountTypeController extends BaseRestController {
 
     @RequestMapping(value = "admin/editAccountType", method = RequestMethod.GET)
     @ResponseBody
-    public EditAccountResponse addAccount() {
+    public EditAccountResponse prepareForm() {
         EditAccountResponse response = new EditAccountResponse();
+        Map<String, AccountType.Nature> nature = new HashMap<String, AccountType.Nature>();
+        nature.put("Member", AccountType.Nature.MEMBER);
+        nature.put("System", AccountType.Nature.SYSTEM);
+        Set<Entry<String, AccountType.Nature>> type = nature.entrySet();
         final boolean editable = permissionService.hasPermission(AdminSystemPermission.ACCOUNTS_MANAGE);
         boolean isSystem = false;
+        response.setSet(type);
         response.setCurrencies(currencyService.listAll());
+
         response.setIsInsert(false);
         response.setIsSystem(isSystem);
         response.setEditable(editable);
@@ -273,31 +359,18 @@ public class EditAccountTypeController extends BaseRestController {
     }
 
     private AccountType resolveAccountType(final EditAccountTypeRequest form) {
-        final long id = form.getId();
-        SystemAccountType systemType = null;
-        MemberAccountType memberType = null;
-        Currency currency = null;
-        AccountType accountType = null;
-        if (form.getNature().equals("system")) {
-            systemType.setId(form.getId());
-            systemType.setName(form.getName());
-            systemType.setCreditLimit(form.getCreditLimit());
-            systemType.setDescription(form.getDescription());
-            systemType.setCurrency(currencyService.load(form.getCurrencyId()));
-            systemType.setUpperCreditLimit(form.getUpperCreditLimit());
-            accountType = systemType;
-
-        } else if (form.getNature().equals("member")) {
-            memberType.setId(form.getId());
-            memberType.setName(form.getName());
-            // memberType.setCreditLimit(form.getCreditLimit());
-            memberType.setDescription(form.getDescription());
-            memberType.setCurrency(currencyService.load(form.getCurrencyId()));
-            //  memberType.setUpperCreditLimit(form.getUpperCreditLimit());
-
-            accountType = memberType;
+        final long id = form.getAccountTypeId();
+        AccountType.Nature nature;
+        if (id <= 0L) {
+            try {
+                nature = AccountType.Nature.valueOf(form.getNature().toString());
+            } catch (final Exception e) {
+                throw new ValidationException();
+            }
+        } else {
+            nature = accountTypeService.load(id).getNature();
         }
-        return accountType;
+        return getDataBinder(nature).readFromString(form.getNature());
     }
 }
 

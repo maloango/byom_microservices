@@ -4,7 +4,7 @@
 
    <modelVersion>4.0.0</modelVersion>
    <groupId>smartbank</groupId>
-   <artifactId>core-ui</artifactId>
+   <artifactId>core-service</artifactId>
    <packaging>war</packaging>
    <version>1.0-SNAPSHOT</version>
    <name>SmartBank</name>
@@ -846,7 +846,7 @@
 
 
    <build>
-      <finalName>core-ui</finalName>
+      <finalName>core-service</finalName>
       <plugins>
             <plugin>
                  <groupId>org.codehaus.cargo</groupId>

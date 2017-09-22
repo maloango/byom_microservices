@@ -223,7 +223,7 @@ public class MemberAdsController extends BaseRestController {
         final int adCount = ads.size();
         final int maxAdsPerMember = member.getMemberGroup().getMemberSettings().getMaxAdsPerMember();
 
-        response.setMember(member);
+       // response.setMember(member);
         response.setHasImages(hasImages);
         response.setMyAds(myAds);
         response.setEditable(editable);

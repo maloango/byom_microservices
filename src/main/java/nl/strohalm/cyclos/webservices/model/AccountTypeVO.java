@@ -20,6 +20,7 @@
 package nl.strohalm.cyclos.webservices.model;
 
 import javax.xml.bind.annotation.XmlType;
+import nl.strohalm.cyclos.entities.accounts.AccountType;
 
 /**
  * Represents an account type
@@ -30,7 +31,17 @@ import javax.xml.bind.annotation.XmlType;
 public class AccountTypeVO extends EntityVO {
     private static final long serialVersionUID = 1341447064794442570L;
     private String            name;
+    private AccountType.Nature nature;
     private CurrencyVO        currency;
+
+    public AccountType.Nature getNature() {
+        return nature;
+    }
+
+    public void setNature(AccountType.Nature nature) {
+        this.nature = nature;
+    }
+    
 
     public CurrencyVO getCurrency() {
         return currency;

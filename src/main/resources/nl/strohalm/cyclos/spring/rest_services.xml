@@ -88,7 +88,8 @@
 	<bean id="runAccountFeeController"
 		class="nl.strohalm.cyclos.webservices.rest.accounts.accountfees.RunAccountFeeController" />
 	<!-- accounttypes -->
-
+         <bean id="getAccountTypeByIdController"
+		class="nl.strohalm.cyclos.webservices.rest.accounts.accounttypes.GetAccountTypeByIdController" />
  
 	<bean id="editAccountTypeController"
 		class="nl.strohalm.cyclos.webservices.rest.accounts.accounttypes.EditAccountTypeController" />
@@ -364,9 +365,9 @@
 	<bean id="searchLoansController"
 		class="nl.strohalm.cyclos.webservices.rest.loans.SearchLoansController" />
 	<!--Members activities-->
-	<bean id="activitiesController"
+<!--	<bean id="activitiesController"
 		class="nl.strohalm.cyclos.webservices.rest.members.activities.ActivitiesController" />
-	<!--adinterests-->
+	adinterests
 	<bean id="editAdInterestController"
 		class="nl.strohalm.cyclos.webservices.rest.members.adinterests.EditAdInterestController" />
 
@@ -377,7 +378,7 @@
 <bean id="publicCreateMemberController"
 		class="nl.strohalm.cyclos.webservices.rest.members.PublicCreateMemberController" />
 
-	<!--agreements-->
+	agreements
 
 	<bean id="editRegistrationAgreementController"
 		class="nl.strohalm.cyclos.webservices.rest.members.agreements.EditRegistrationAgreementController" />
@@ -386,7 +387,7 @@
 	<bean id="removeRegistrationAgreementController"
 		class="nl.strohalm.cyclos.webservices.rest.members.agreements.RemoveRegistrationAgreementController" />
 
-	<!--brokering bulk-->
+	brokering bulk
 	<bean id="memberBulkChangeBrokerController"
 		class="nl.strohalm.cyclos.webservices.rest.members.bulk.MemberBulkChangeBrokerController" />
 	<bean id="memberBulkChangeChannelsController"
@@ -395,7 +396,7 @@
 		class="nl.strohalm.cyclos.webservices.rest.members.bulk.MemberBulkChangeGroupController" />
 	<bean id="memberBulkGenerateCardController"
 		class="nl.strohalm.cyclos.webservices.rest.members.bulk.MemberBulkGenerateCardController" />
-	<!--contacts-->
+	contacts
 	<bean id="deleteContactController"
 		class="nl.strohalm.cyclos.webservices.rest.members.contacts.DeleteContactController" />
 	<bean id="editContactController"
@@ -405,21 +406,21 @@
 	
 
 
-	<!-- creditlimit -->
+	 creditlimit 
 	<bean id="editCreditLimitController"
 		class="nl.strohalm.cyclos.webservices.rest.members.creditlimit.EditCreditLimitController" />
-	<!-- documents -->
+	 documents 
 	<bean id="selectDocumentController"
 		class="nl.strohalm.cyclos.webservices.rest.members.documents.SelectDocumentController" />
 
-	<!-- imports -->
+	 imports 
 	<bean id="importedMembersDetailsController"
 		class="nl.strohalm.cyclos.webservices.rest.members.imports.ImportedMembersDetailsController" />
 	<bean id="importedMembersSummaryController"
 		class="nl.strohalm.cyclos.webservices.rest.members.imports.ImportedMembersSummaryController" />
 	<bean id="importMembersController"
 		class="nl.strohalm.cyclos.webservices.rest.members.imports.ImportMembersController" />
-	<!-- loangroups messages -->
+	 loangroups messages 
 	<bean id="changeMessageStatusController"
 		class="nl.strohalm.cyclos.webservices.rest.members.messages.ChangeMessageStatusController" />
 	<bean id="editMessageCategoryController"
@@ -430,20 +431,20 @@
 		class="nl.strohalm.cyclos.webservices.rest.members.messages.SendMessageController" />
 	<bean id="viewMessageController"
 		class="nl.strohalm.cyclos.webservices.rest.members.messages.ViewMessageController" />
-	<!-- pending -->
+	 pending 
 	<bean id="pendingMemberProfileController"
 		class="nl.strohalm.cyclos.webservices.rest.members.pending.PendingMemberProfileController" />
 	<bean id="removePendingMemberController"
 		class="nl.strohalm.cyclos.webservices.rest.members.pending.RemovePendingMemberController" />
 	<bean id="resendEmailValidationController"
 		class="nl.strohalm.cyclos.webservices.rest.members.pending.ResendEmailValidationController" />
-	<!-- preferences printsettings -->
+	 preferences printsettings 
 	<bean id="editReceiptPrinterSettingsController"
 		class="nl.strohalm.cyclos.webservices.rest.members.printsettings.EditReceiptPrinterSettingsController" />
 	<bean id="listReceiptPrinterSettingsController"
 		class="nl.strohalm.cyclos.webservices.rest.members.printsettings.ListReceiptPrinterSettingsController" />
 	<bean id="removeReceiptPrinterSettingsController"
-		class="nl.strohalm.cyclos.webservices.rest.members.printsettings.RemoveReceiptPrinterSettingsController" />
+		class="nl.strohalm.cyclos.webservices.rest.members.printsettings.RemoveReceiptPrinterSettingsController" />-->
         
 
 	<!-- records -->
@@ -549,35 +550,35 @@ webshop
     <bean id="homeController"
           class="nl.strohalm.cyclos.webservices.rest.general.HomeController" />
     
-    <bean id="loadMemberController"
-          class="nl.strohalm.cyclos.webservices.rest.members.LoadMemberController" />
+        <bean id="loadMemberController"
+    class="nl.strohalm.cyclos.webservices.rest.members.LoadMemberController" />
      
     <!--card-->
     <bean id="listCardTypeController"
           class="nl.strohalm.cyclos.webservices.rest.accounts.cards.ListCardTypeController" />
     <!--account-->
     <bean id="accountHistoryController"
-            class="nl.strohalm.cyclos.webservices.rest.accounts.details.AccountHistoryController" />
+          class="nl.strohalm.cyclos.webservices.rest.accounts.details.AccountHistoryController" />
     
     <!---settings-->
-     <bean id="editMailSettingsController"
-            class="nl.strohalm.cyclos.webservices.rest.settings.EditMailSettingsController" />
-     <bean id="editLogSettingsContoller"
-		class="nl.strohalm.cyclos.webservices.rest.settings.EditLogSettingsContoller" />
+    <bean id="editMailSettingsController"
+          class="nl.strohalm.cyclos.webservices.rest.settings.EditMailSettingsController" />
+    <bean id="editLogSettingsContoller"
+          class="nl.strohalm.cyclos.webservices.rest.settings.EditLogSettingsContoller" />
      
-     <bean id="listChannelsController"
-		class="nl.strohalm.cyclos.webservices.rest.settings.ListChannelsController" />
+    <bean id="listChannelsController"
+          class="nl.strohalm.cyclos.webservices.rest.settings.ListChannelsController" />
      
-     <!--Access -->
-      <bean id="listConnectedUsersController"
-		class="  nl.strohalm.cyclos.webservices.rest.access.ListConnectedUsersController" />
+    <!--Access -->
+    <bean id="listConnectedUsersController"
+          class="  nl.strohalm.cyclos.webservices.rest.access.ListConnectedUsersController" />
       
-      <!--Users and group-->
-      <bean id="listMemberRecordTypesController"
-		class="nl.strohalm.cyclos.webservices.rest.members.records.ListMemberRecordTypesController" />
-        <bean id="editMemberRecordTypeController"
-		class="nl.strohalm.cyclos.webservices.rest.members.records.EditMemberRecordTypeController" />
-   
+    <!--Users and group-->
+    <!--      <bean id="listMemberRecordTypesController"
+                 class="nl.strohalm.cyclos.webservices.rest.members.records.ListMemberRecordTypesController" />
+         <bean id="editMemberRecordTypeController"
+                 class="nl.strohalm.cyclos.webservices.rest.members.records.EditMemberRecordTypeController" />
+    -->
     
     
         

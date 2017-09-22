@@ -26,6 +26,7 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.services.access.AccessService;
 import nl.strohalm.cyclos.services.access.ChannelService;
 import nl.strohalm.cyclos.services.accounts.AccountService;
+import nl.strohalm.cyclos.services.accounts.AccountTypeService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferService;
 import nl.strohalm.cyclos.services.elements.MemberRecordTypeService;
 import nl.strohalm.cyclos.services.groups.GroupService;
@@ -41,6 +42,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.utils.Pair;
 import nl.strohalm.cyclos.webservices.model.ServerErrorVO;
+import nl.strohalm.cyclos.webservices.utils.AccountHelper;
 
 /**
  * Base class for REST controllers
@@ -61,6 +63,18 @@ public abstract class BaseRestController {
     protected MemberRecordTypeService memberRecordTypeService;
     protected PermissionService permissionService;
     protected AccountService accountService;
+    protected AccountTypeService accountTypeService;
+    protected AccountHelper accountHelper;
+
+    @Inject
+    public void setAccountTypeService(AccountTypeService accountTypeService) {
+        this.accountTypeService = accountTypeService;
+    }
+
+    @Inject
+    public void setAccountHelper(AccountHelper accountHelper) {
+        this.accountHelper = accountHelper;
+    }
 
     @Inject
     public void setAccountService(AccountService accountService) {

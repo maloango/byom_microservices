@@ -8,9 +8,12 @@ package nl.strohalm.cyclos.webservices.rest.accounts.accounttypes;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import nl.strohalm.cyclos.entities.accounts.Account;
+import nl.strohalm.cyclos.entities.accounts.AccountLimitLog;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.accounts.AccountTypeQuery;
 import nl.strohalm.cyclos.entities.accounts.Currency;
+import nl.strohalm.cyclos.services.accounts.AccountDTO;
 import nl.strohalm.cyclos.services.accounts.MemberAccountTypeQuery;
 import nl.strohalm.cyclos.services.accounts.SystemAccountTypeQuery;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
@@ -45,8 +48,6 @@ public class GetAccountTypeByIdController extends BaseRestController {
         public void setNature(AccountType.Nature nature) {
             this.nature = nature;
         }
-        
-        
 
         public String getName() {
             return name;
@@ -80,7 +81,6 @@ public class GetAccountTypeByIdController extends BaseRestController {
             this.limitType = limitType;
         }
 
-
         public BigDecimal getLowerCreditLimit() {
             return lowerCreditLimit;
         }
@@ -96,9 +96,6 @@ public class GetAccountTypeByIdController extends BaseRestController {
         public void setUpperCreditLimit(BigDecimal upperCreditLimit) {
             this.upperCreditLimit = upperCreditLimit;
         }
-        
-        
-        
 
     }
 
@@ -110,14 +107,16 @@ public class GetAccountTypeByIdController extends BaseRestController {
         final AccountTypeQuery accountQuery = new SystemAccountTypeQuery();
         accountQuery.fetch(AccountType.Relationships.CURRENCY);
         //accountTypes.addAll(accountTypeService.search(memberQuery));
-       response.setName(accountTypeService.load(accountTypeId).getName());
-       response.setDescrption(accountTypeService.load(accountTypeId).getDescription());
-       response.setLimitType(accountTypeService.load(accountTypeId).getLimitType());
-       response.setCurrency(accountTypeService.load(accountTypeId).getCurrency());
-       response.setNature(accountTypeService.load(accountTypeId).getNature());
-       
+//        Account ac = accountService.getAccount(params, Account.Relationships.TYPE);
+        response.setName(accountTypeService.load(accountTypeId).getName());
+        response.setDescrption(accountTypeService.load(accountTypeId).getDescription());
+        response.setLimitType(accountTypeService.load(accountTypeId).getLimitType());
+        response.setCurrency(accountTypeService.load(accountTypeId).getCurrency());
+        response.setNature(accountTypeService.load(accountTypeId).getNature());
+        Account account=accountService.load(accountTypeId,Account.Relationships.TYPE);
+        //response.getLowerCreditLimit(account.getCreditLimit());
+        response.setUpperCreditLimit(account.getUpperCreditLimit());
         
-
         response.setStatus(0);
         response.setMessage("Account type list!!");
         //response.setAccountType(accountTypes);

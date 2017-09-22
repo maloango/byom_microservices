@@ -59,6 +59,7 @@ import nl.strohalm.cyclos.utils.access.LoggedUser;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 //import nl.strohalm.cyclos.webservices.payments.PaymentStatus;
 import nl.strohalm.cyclos.entities.groups.Group.Status;
+import nl.strohalm.cyclos.services.accounts.rates.RatesResultDTO;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.BeanCollectionBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
@@ -461,18 +462,13 @@ public class AccountHistoryController extends BaseRestController {
 //    }
     public static class AccountHistoryResponse extends GenericResponse {
 
-        private List<PaymentFilter> paymentFilters;
-        private BigDecimal creditLimit;
-        private AccountType type;
-        private List<Transfer> transfers = new ArrayList<Transfer>();
-
-        public AccountType getType() {
-            return type;
-        }
-
-        public void setType(AccountType type) {
-            this.type = type;
-        }
+         private String   name;
+        private BigDecimal balance = BigDecimal.ZERO;
+        private BigDecimal reservedAmount = BigDecimal.ZERO;
+        private BigDecimal creditLimit = BigDecimal.ZERO;
+        private BigDecimal upperCreditLimit = BigDecimal.ZERO;
+        private Calendar date;
+        private List<Transfer> transfers;
 
         public List<Transfer> getTransfers() {
             return transfers;
@@ -481,13 +477,30 @@ public class AccountHistoryController extends BaseRestController {
         public void setTransfers(List<Transfer> transfers) {
             this.transfers = transfers;
         }
+        
 
-        public List<PaymentFilter> getPaymentFilters() {
-            return paymentFilters;
+        public String getName() {
+            return name;
         }
 
-        public void setPaymentFilters(List<PaymentFilter> paymentFilters) {
-            this.paymentFilters = paymentFilters;
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public BigDecimal getBalance() {
+            return balance;
+        }
+
+        public void setBalance(BigDecimal balance) {
+            this.balance = balance;
+        }
+
+        public BigDecimal getReservedAmount() {
+            return reservedAmount;
+        }
+
+        public void setReservedAmount(BigDecimal reservedAmount) {
+            this.reservedAmount = reservedAmount;
         }
 
         public BigDecimal getCreditLimit() {
@@ -497,6 +510,24 @@ public class AccountHistoryController extends BaseRestController {
         public void setCreditLimit(BigDecimal creditLimit) {
             this.creditLimit = creditLimit;
         }
+
+        public BigDecimal getUpperCreditLimit() {
+            return upperCreditLimit;
+        }
+
+        public void setUpperCreditLimit(BigDecimal upperCreditLimit) {
+            this.upperCreditLimit = upperCreditLimit;
+        }
+
+        public Calendar getDate() {
+            return date;
+        }
+
+        public void setDate(Calendar date) {
+            this.date = date;
+        }
+       
+        
 
     }
 
@@ -527,19 +558,18 @@ public class AccountHistoryController extends BaseRestController {
 //        request.setAttribute("accountHistory", Entry.build(permissionService, elementService, account, transfers, fetchMember()));
     }
 
-    @RequestMapping(value = "admin/accountHistory/{typeId}", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/accountHistory/{typeId}/{memberId}", method = RequestMethod.GET)
     @ResponseBody
-    public AccountHistoryResponse prepareForm(@PathVariable("typeId") long typeId) {
+    public AccountHistoryResponse prepareForm(@PathVariable("typeId") long typeId, @PathVariable("memberId") Long memberId) {
         AccountHistoryResponse response = new AccountHistoryResponse();
         final LocalSettings localSettings = settingsService.getLocalSettings();
 
         // Set the owner and the account type on the first request
         boolean firstTime = false;
-        Map<String,Object>form=new HashMap<String,Object>();
-   
-            form.put("owner", "");
-            form.put("type", typeId);
-      
+        Map<String, Object> form = new HashMap<String, Object>();
+
+        form.put("owner", memberId);
+        form.put("type", typeId);
 
         // Retrieve the query parameters
         final TransferQuery query = getDataBinder().readFromString(form);
@@ -586,7 +616,7 @@ public class AccountHistoryController extends BaseRestController {
         }
 
         // Retrieve the account
-//        final Account account = accountService.getAccount(new AccountDTO(owner, type));
+        final Account account = accountService.getAccount(new AccountDTO(owner, type));
 //
 //        // Fetch the member on filter
 //        if (query.getMember() instanceof EntityReference) {
@@ -615,7 +645,13 @@ public class AccountHistoryController extends BaseRestController {
 //            response.setGroupFilters(groupFilterService.search(groupFilters));
 //        }
         // Get the account status
-        // final AccountStatus status = accountService.getRatedStatus(account, null);
+        final AccountStatus accountStatus = accountService.getRatedStatus(account, null);
+        response.setBalance(accountStatus.getBalance());
+        response.setCreditLimit(accountStatus.getCreditLimit());
+        response.setDate(accountStatus.getDate());
+        response.setReservedAmount(accountStatus.getReservedAmount());
+        response.setUpperCreditLimit(accountStatus.getUpperCreditLimit());
+        response.setName(accountStatus.getAccount().getType().getName());
         // Get the credit limit
         final BigDecimal min = paymentService.getMinimumPayment();
         final GetTransactionsDTO params = new GetTransactionsDTO(query.getOwner(), query.getType());
@@ -626,13 +662,14 @@ public class AccountHistoryController extends BaseRestController {
         }
 
         // Retrieve the payment filters
-        final PaymentFilterQuery pfQuery = new PaymentFilterQuery();
-        pfQuery.setAccountType(query.getType());
-        pfQuery.setContext(PaymentFilterQuery.Context.ACCOUNT_HISTORY);
-        pfQuery.setElement(owner instanceof SystemAccountOwner ? LoggedUser.element() : (Member) owner);
-        final List<PaymentFilter> paymentFilters = paymentFilterService.search(pfQuery);
-        response.setPaymentFilters(paymentFilters);
+//        final PaymentFilterQuery pfQuery = new PaymentFilterQuery();
+//        pfQuery.setAccountType(query.getType());
+//        pfQuery.setContext(PaymentFilterQuery.Context.ACCOUNT_HISTORY);
+//        pfQuery.setElement(owner instanceof SystemAccountOwner ? LoggedUser.element() : (Member) owner);
+//        final List<PaymentFilter> paymentFilters = paymentFilterService.search(pfQuery);
+//        response.setPaymentFilters(paymentFilters);
         response.setStatus(0);
+ 
 
         // Set the required request attributes
 //        response.setOwner(owner instanceof SystemAccountOwner ? null : owner);

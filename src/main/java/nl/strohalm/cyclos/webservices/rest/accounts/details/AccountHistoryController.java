@@ -68,6 +68,7 @@ import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.binding.SimpleCollectionBinder;
 import nl.strohalm.cyclos.utils.conversion.AccountOwnerConverter;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
+import nl.strohalm.cyclos.webservices.model.PaymentFilterVO;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 import org.springframework.stereotype.Controller;
@@ -460,15 +461,120 @@ public class AccountHistoryController extends BaseRestController {
 //        }
 //
 //    }
+    public static class PaymentEntity {
+
+        private Long id;
+        private String name;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
+
+    public static class PermissionGroupEntity {
+
+        private Long id;
+        private String name;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
+
+    public static class MemberGroupEntity {
+
+        private Long id;
+        private String name;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
+
     public static class AccountHistoryResponse extends GenericResponse {
 
-         private String   name;
+        private String name;
         private BigDecimal balance = BigDecimal.ZERO;
         private BigDecimal reservedAmount = BigDecimal.ZERO;
         private BigDecimal creditLimit = BigDecimal.ZERO;
         private BigDecimal upperCreditLimit = BigDecimal.ZERO;
         private Calendar date;
         private List<Transfer> transfers;
+        private String begin;
+        private List<PaymentEntity> paymentList = new ArrayList();
+        private List<PermissionGroupEntity> permissionGroupList = new ArrayList();
+        private List<MemberGroupEntity> memberGroupList = new ArrayList();
+
+        public List<MemberGroupEntity> getMemberGroupList() {
+            return memberGroupList;
+        }
+
+        public void setMemberGroupList(List<MemberGroupEntity> memberGroupList) {
+            this.memberGroupList = memberGroupList;
+        }
+        
+        public List<PermissionGroupEntity> getPermissionGroupList() {
+            return permissionGroupList;
+        }
+
+        public void setPermissionGroupList(List<PermissionGroupEntity> permissionGroupList) {
+            this.permissionGroupList = permissionGroupList;
+        }
+
+        public List<PaymentEntity> getPaymentList() {
+            return paymentList;
+        }
+
+        public void setPaymentList(List<PaymentEntity> paymentList) {
+            this.paymentList = paymentList;
+        }
+
+        public String getBegin() {
+            return begin;
+        }
+
+        public void setBegin(String begin) {
+            this.begin = begin;
+        }
 
         public List<Transfer> getTransfers() {
             return transfers;
@@ -477,7 +583,6 @@ public class AccountHistoryController extends BaseRestController {
         public void setTransfers(List<Transfer> transfers) {
             this.transfers = transfers;
         }
-        
 
         public String getName() {
             return name;
@@ -526,8 +631,6 @@ public class AccountHistoryController extends BaseRestController {
         public void setDate(Calendar date) {
             this.date = date;
         }
-       
-        
 
     }
 
@@ -558,9 +661,9 @@ public class AccountHistoryController extends BaseRestController {
 //        request.setAttribute("accountHistory", Entry.build(permissionService, elementService, account, transfers, fetchMember()));
     }
 
-    @RequestMapping(value = "admin/accountHistory/{typeId}/{memberId}", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/accountHistory/{typeId}", method = RequestMethod.GET)
     @ResponseBody
-    public AccountHistoryResponse prepareForm(@PathVariable("typeId") long typeId, @PathVariable("memberId") Long memberId) {
+    public AccountHistoryResponse prepareForm(@PathVariable("typeId") long typeId) {
         AccountHistoryResponse response = new AccountHistoryResponse();
         final LocalSettings localSettings = settingsService.getLocalSettings();
 
@@ -568,7 +671,7 @@ public class AccountHistoryController extends BaseRestController {
         boolean firstTime = false;
         Map<String, Object> form = new HashMap<String, Object>();
 
-        form.put("owner", memberId);
+        form.put("owner", LoggedUser.accountOwner());
         form.put("type", typeId);
 
         // Retrieve the query parameters
@@ -590,6 +693,7 @@ public class AccountHistoryController extends BaseRestController {
             query.setPeriod(Period.begginingAt(lastMonthPeriod.getBegin()));
             final String formattedDate = localSettings.getDateConverter().toString(lastMonthPeriod.getBegin());
             //PropertyHelper.set(form.getQuery("period"), "begin", formattedDate);
+            response.setBegin(formattedDate);
         }
 
         // Fetch the owner if is a member
@@ -631,19 +735,40 @@ public class AccountHistoryController extends BaseRestController {
 //            response.setOperators(operators);
 //        }
         // When a system account, get groups / group filters
-//        if (type instanceof SystemAccountType) {
-//            final AdminGroup adminGroup = LoggedUser.group();
-//
-//            final GroupQuery groups = new GroupQuery();
-//            groups.setManagedBy(adminGroup);
-//            groups.setNatures(Group.Nature.MEMBER, Group.Nature.BROKER);
-//            groups.setStatus(Group.Status.NORMAL);
-//            response.setMemberGroups(groupService.search(groups));
-//
-//            final GroupFilterQuery groupFilters = new GroupFilterQuery();
-//            groupFilters.setAdminGroup(adminGroup);
+        if (type instanceof SystemAccountType) {
+            final AdminGroup adminGroup = LoggedUser.group();
+
+            final GroupQuery groups = new GroupQuery();
+            groups.setManagedBy(adminGroup);
+            groups.setNatures(Group.Nature.MEMBER, Group.Nature.BROKER);
+            groups.setStatus(Group.Status.NORMAL);
+            //response.setMemberGroups(groupService.search(groups));
+            List<MemberGroup> memberGroups = (List<MemberGroup>) groupService.search(groups);
+            List<MemberGroupEntity> memberGroupList = new ArrayList();
+            for (MemberGroup list : memberGroups) {
+                MemberGroupEntity memberGroup = new MemberGroupEntity();
+                memberGroup.setId(list.getId());
+                memberGroup.setName(list.getName());
+                memberGroupList.add(memberGroup);
+            }
+
+            final GroupFilterQuery groupFilters = new GroupFilterQuery();
+            groupFilters.setAdminGroup(adminGroup);
 //            response.setGroupFilters(groupFilterService.search(groupFilters));
-//        }
+            List<GroupFilter> permissionList = groupFilterService.search(groupFilters);
+
+            List<PermissionGroupEntity> permissionGroupList = new ArrayList();
+            for (GroupFilter list : permissionList) {
+                PermissionGroupEntity permissionGroup = new PermissionGroupEntity();
+                permissionGroup.setId(list.getId());
+                permissionGroup.setName(list.getName());
+                permissionGroupList.add(permissionGroup);
+
+            }
+            response.setPermissionGroupList(permissionGroupList);
+            response.setMemberGroupList(memberGroupList);
+        }
+
         // Get the account status
         final AccountStatus accountStatus = accountService.getRatedStatus(account, null);
         response.setBalance(accountStatus.getBalance());
@@ -654,6 +779,7 @@ public class AccountHistoryController extends BaseRestController {
         response.setName(accountStatus.getAccount().getType().getName());
         // Get the credit limit
         final BigDecimal min = paymentService.getMinimumPayment();
+
         final GetTransactionsDTO params = new GetTransactionsDTO(query.getOwner(), query.getType());
         final BigDecimal creditLimit = accountService.getCreditLimit(params);
         // Don't show if zero
@@ -661,15 +787,23 @@ public class AccountHistoryController extends BaseRestController {
             response.setCreditLimit(creditLimit.negate());
         }
 
-        // Retrieve the payment filters
-//        final PaymentFilterQuery pfQuery = new PaymentFilterQuery();
-//        pfQuery.setAccountType(query.getType());
-//        pfQuery.setContext(PaymentFilterQuery.Context.ACCOUNT_HISTORY);
-//        pfQuery.setElement(owner instanceof SystemAccountOwner ? LoggedUser.element() : (Member) owner);
-//        final List<PaymentFilter> paymentFilters = paymentFilterService.search(pfQuery);
-//        response.setPaymentFilters(paymentFilters);
+//         Retrieve the payment filters
+        final PaymentFilterQuery pfQuery = new PaymentFilterQuery();
+        pfQuery.setAccountType(query.getType());
+        pfQuery.setContext(PaymentFilterQuery.Context.ACCOUNT_HISTORY);
+        pfQuery.setElement(owner instanceof SystemAccountOwner ? LoggedUser.element() : (Member) owner);
+        final List<PaymentFilter> paymentFilters = paymentFilterService.search(pfQuery);
+        List<PaymentEntity> payList = new ArrayList();
+        for (PaymentFilter list : paymentFilters) {
+            PaymentEntity paymentDetails = new PaymentEntity();
+            paymentDetails.setId(list.getId());
+            paymentDetails.setName(list.getName());
+            payList.add(paymentDetails);
+
+        }
+
+        response.setPaymentList(payList);
         response.setStatus(0);
- 
 
         // Set the required request attributes
 //        response.setOwner(owner instanceof SystemAccountOwner ? null : owner);

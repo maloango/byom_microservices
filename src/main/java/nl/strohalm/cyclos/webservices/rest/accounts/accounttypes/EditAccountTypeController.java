@@ -294,11 +294,11 @@ public class EditAccountTypeController extends BaseRestController {
             AccountType accountType = null;
 
             final boolean isInsert = request.getAccountTypeId() == null;
-            Currency currency = new Currency();
-            currency.setId(request.getCurrencyId());
-            System.out.println("------id: "+request.getAccountTypeId());
+            Currency currency =  currencyService.load(request.getCurrencyId());
+           
+            System.out.println("------id: "+currency+"   "+currency.getId());
             AccountType.Nature nature ;
-            if (request.getAccountTypeId() <= 0L) {
+            if (request.getAccountTypeId()==null) {
                 try {
                     nature = AccountType.Nature.valueOf(request.getNature().toString());
                 } catch (final Exception e) {
@@ -311,7 +311,9 @@ public class EditAccountTypeController extends BaseRestController {
             System.out.print("nature------: "+nature);
             if (nature.equals(AccountType.Nature.SYSTEM)) {
                 SystemAccountType systemAccount = new SystemAccountType();
+                if (request.getAccountTypeId()!=null ) {
                 systemAccount.setId(request.getAccountTypeId());
+                }
                 systemAccount.setName(request.getName());
                 systemAccount.setDescription(request.getDescription());
                 systemAccount.setCurrency(currency);
@@ -321,7 +323,9 @@ public class EditAccountTypeController extends BaseRestController {
 
             } else if (nature.equals(AccountType.Nature.MEMBER)) {
                 MemberAccountType memberAccount = new MemberAccountType();
+                 if (request.getAccountTypeId()!=null) {
                 memberAccount.setId(request.getAccountTypeId());
+                 }
                 memberAccount.setName(request.getName());
                 memberAccount.setDescription(request.getDescription());
                 memberAccount.setCurrency(currency);
@@ -329,6 +333,7 @@ public class EditAccountTypeController extends BaseRestController {
                 //memberAccount.setCreditLimit(request.getCreditLimit());
                 accountType = memberAccount;
             }
+            System.out.println("----- "+accountType.getId());
             accountType = accountTypeService.save(accountType);
            
             response.setMessage(isInsert ? "accountType.inserted" : "accountType.modified");

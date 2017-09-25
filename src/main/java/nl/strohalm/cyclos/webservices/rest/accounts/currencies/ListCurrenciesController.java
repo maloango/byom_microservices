@@ -71,6 +71,7 @@ public class ListCurrenciesController extends BaseRestController {
     protected ListCurrenciesResponse executeAction() throws Exception {
         ListCurrenciesResponse response = new ListCurrenciesResponse();
         final List<Currency> currencies = currencyService.listAll();
+       
         response.setCurrencies(currencies);
         response.setEditable(permissionService.hasPermission(AdminSystemPermission.CURRENCIES_MANAGE));
         response.setStatus(0);

@@ -33,13 +33,22 @@ public class GetAccountTypeByIdController extends BaseRestController {
 
     public static class GetAccountResponse extends GenericResponse {
 
+        private Long accountTypeId;
         private String name;
-        private String descrption;
+        private String description;
         private Currency currency;
         private AccountType.LimitType limitType;
         private AccountType.Nature nature;
         private BigDecimal lowerCreditLimit;
         private BigDecimal upperCreditLimit;
+
+        public Long getAccountTypeId() {
+            return accountTypeId;
+        }
+
+        public void setAccountTypeId(Long accountTypeId) {
+            this.accountTypeId = accountTypeId;
+        }
 
         public AccountType.Nature getNature() {
             return nature;
@@ -57,13 +66,15 @@ public class GetAccountTypeByIdController extends BaseRestController {
             this.name = name;
         }
 
-        public String getDescrption() {
-            return descrption;
+        public String getDescription() {
+            return description;
         }
 
-        public void setDescrption(String descrption) {
-            this.descrption = descrption;
+        public void setDescription(String description) {
+            this.description = description;
         }
+
+   
 
         public Currency getCurrency() {
             return currency;
@@ -108,15 +119,17 @@ public class GetAccountTypeByIdController extends BaseRestController {
         accountQuery.fetch(AccountType.Relationships.CURRENCY);
         //accountTypes.addAll(accountTypeService.search(memberQuery));
 //        Account ac = accountService.getAccount(params, Account.Relationships.TYPE);
-        response.setName(accountTypeService.load(accountTypeId).getName());
-        response.setDescrption(accountTypeService.load(accountTypeId).getDescription());
-        response.setLimitType(accountTypeService.load(accountTypeId).getLimitType());
-        response.setCurrency(accountTypeService.load(accountTypeId).getCurrency());
-        response.setNature(accountTypeService.load(accountTypeId).getNature());
-        Account account=accountService.load(accountTypeId,Account.Relationships.TYPE);
-        //response.getLowerCreditLimit(account.getCreditLimit());
+        AccountType accountType = accountTypeService.load(accountTypeId);
+        response.setName(accountType.getName());
+        response.setDescription(accountType.getDescription());
+        response.setLimitType(accountType.getLimitType());
+        response.setCurrency(accountType.getCurrency());
+        response.setNature(accountType.getNature());
+        response.setAccountTypeId(accountType.getId());
+        Account account = accountService.load(accountTypeId, Account.Relationships.TYPE);
+        response.setLowerCreditLimit(account.getCreditLimit());
         response.setUpperCreditLimit(account.getUpperCreditLimit());
-        
+
         response.setStatus(0);
         response.setMessage("Account type list!!");
         //response.setAccountType(accountTypes);

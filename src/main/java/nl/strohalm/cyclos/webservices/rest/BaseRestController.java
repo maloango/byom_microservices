@@ -28,6 +28,7 @@ import nl.strohalm.cyclos.services.access.ChannelService;
 import nl.strohalm.cyclos.services.accounts.AccountService;
 import nl.strohalm.cyclos.services.accounts.AccountTypeService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferService;
+import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.elements.MemberRecordTypeService;
 import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
@@ -65,6 +66,12 @@ public abstract class BaseRestController {
     protected AccountService accountService;
     protected AccountTypeService accountTypeService;
     protected AccountHelper accountHelper;
+    protected ElementService elementService;
+
+    @Inject
+    public void setElementService(ElementService elementService) {
+        this.elementService = elementService;
+    }
 
     @Inject
     public void setAccountTypeService(AccountTypeService accountTypeService) {

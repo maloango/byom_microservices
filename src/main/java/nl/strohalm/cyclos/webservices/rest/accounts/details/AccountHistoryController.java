@@ -7,6 +7,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.AdminSystemPermission;
@@ -21,6 +22,7 @@ import nl.strohalm.cyclos.entities.accounts.AccountStatus;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.accounts.SystemAccountOwner;
 import nl.strohalm.cyclos.entities.accounts.SystemAccountType;
+import nl.strohalm.cyclos.entities.accounts.guarantees.PaymentObligationLog;
 import nl.strohalm.cyclos.entities.accounts.transactions.Payment;
 import nl.strohalm.cyclos.entities.accounts.transactions.PaymentFilter;
 import nl.strohalm.cyclos.entities.accounts.transactions.PaymentFilterQuery;
@@ -209,6 +211,7 @@ public class AccountHistoryController extends BaseRestController {
         binder.registerBinder("pageParameters", DataBinderHelper.pageBinder());
         return binder;
     }
+    
 
     public DataBinder<TransferQuery> getDataBinder() {
         if (dataBinder == null) {
@@ -543,6 +546,45 @@ public class AccountHistoryController extends BaseRestController {
         private List<PaymentEntity> paymentList = new ArrayList();
         private List<PermissionGroupEntity> permissionGroupList = new ArrayList();
         private List<MemberGroupEntity> memberGroupList = new ArrayList();
+        private Set<Map.Entry<String, AccountType.Nature>> natureType;
+        private boolean showConciliated;
+        private List<PaymentCustomField> customFieldsForList;
+        private List<PaymentCustomField> customFieldsForSearch;
+
+        public List<PaymentCustomField> getCustomFieldsForSearch() {
+            return customFieldsForSearch;
+        }
+
+        public void setCustomFieldsForSearch(List<PaymentCustomField> customFieldsForSearch) {
+            this.customFieldsForSearch = customFieldsForSearch;
+        }
+        
+
+        public List<PaymentCustomField> getCustomFieldsForList() {
+            return customFieldsForList;
+        }
+
+        public void setCustomFieldsForList(List<PaymentCustomField> customFieldsForList) {
+            this.customFieldsForList = customFieldsForList;
+        }
+        
+
+        public boolean isShowConciliated() {
+            return showConciliated;
+        }
+
+        public void setShowConciliated(boolean showConciliated) {
+            this.showConciliated = showConciliated;
+        }
+        
+
+        public Set<Map.Entry<String, AccountType.Nature>> getNatureType() {
+            return natureType;
+        }
+
+        public void setNatureType(Set<Map.Entry<String, AccountType.Nature>> natureType) {
+            this.natureType = natureType;
+        }
 
         public List<MemberGroupEntity> getMemberGroupList() {
             return memberGroupList;
@@ -551,7 +593,7 @@ public class AccountHistoryController extends BaseRestController {
         public void setMemberGroupList(List<MemberGroupEntity> memberGroupList) {
             this.memberGroupList = memberGroupList;
         }
-        
+
         public List<PermissionGroupEntity> getPermissionGroupList() {
             return permissionGroupList;
         }
@@ -802,6 +844,23 @@ public class AccountHistoryController extends BaseRestController {
 
         }
 
+        //set of nature
+        Map<String, AccountType.Nature> nature = new HashMap<String, AccountType.Nature>();
+        nature.put("Member", AccountType.Nature.MEMBER);
+        nature.put("System", AccountType.Nature.SYSTEM);
+        Set<Map.Entry<String, AccountType.Nature>> natureType = nature.entrySet();
+        response.setNatureType(natureType);
+
+        if (type instanceof SystemAccountType) {
+            final SystemAccountType systemType = (SystemAccountType) type;
+            response.setShowConciliated(!systemType.getExternalAccounts().isEmpty());
+        } else {
+            response.setShowConciliated(Boolean.FALSE);
+        }
+        final List<PaymentCustomField> customFieldsForList = paymentCustomFieldService.listForList(account, false);
+         final List<PaymentCustomField> customFieldsForSearch = paymentCustomFieldService.listForSearch(account, false);
+        response.setCustomFieldsForList(customFieldsForList);
+        response.setCustomFieldsForSearch(customFieldsForSearch);
         response.setPaymentList(payList);
         response.setStatus(0);
 

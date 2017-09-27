@@ -1,6 +1,7 @@
 package nl.strohalm.cyclos.webservices.rest.invoices;
 
 import static com.google.common.util.concurrent.Striped.lock;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -19,6 +20,7 @@ import nl.strohalm.cyclos.entities.accounts.transactions.Invoice;
 import nl.strohalm.cyclos.entities.accounts.transactions.InvoiceQuery;
 import nl.strohalm.cyclos.entities.accounts.transactions.TransferType;
 import nl.strohalm.cyclos.entities.accounts.transactions.TransferTypeQuery;
+import nl.strohalm.cyclos.entities.customization.fields.PaymentCustomField;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
 import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.entities.members.Element;
@@ -63,13 +65,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class SearchInvoicesController extends BaseRestController {
-    
-   private DataBinder<InvoiceQuery> dataBinder;
-    
-    
-      public DataBinder<InvoiceQuery> getDataBinder() {
+
+    private DataBinder<InvoiceQuery> dataBinder;
+
+    public DataBinder<InvoiceQuery> getDataBinder() {
         try {
-           
+
             if (dataBinder == null) {
                 final LocalSettings localSettings = settingsService.getLocalSettings();
                 final BeanBinder<InvoiceQuery> binder = BeanBinder.instance(InvoiceQuery.class);
@@ -87,15 +88,129 @@ public class SearchInvoicesController extends BaseRestController {
             }
             return dataBinder;
         } finally {
-           
+
         }
     }
 
+    public static class SearchInvoicesRequest {
+
+        private Long memberId;
+        private String status;
+        private String direction;
+        private String begin;
+        private String end;
+        private Long relatedMemberId;
+        private Long transferType;
+        private String description;
+
+        public Long getMemberId() {
+            return memberId;
+        }
+
+        public void setMemberId(Long memberId) {
+            this.memberId = memberId;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public String getDirection() {
+            return direction;
+        }
+
+        public void setDirection(String direction) {
+            this.direction = direction;
+        }
+
+        public String getBegin() {
+            return begin;
+        }
+
+        public void setBegin(String begin) {
+            this.begin = begin;
+        }
+
+        public String getEnd() {
+            return end;
+        }
+
+        public void setEnd(String end) {
+            this.end = end;
+        }
+
+        public Long getRelatedMemberId() {
+            return relatedMemberId;
+        }
+
+        public void setRelatedMemberId(Long relatedMemberId) {
+            this.relatedMemberId = relatedMemberId;
+        }
+
+        public Long getTransferType() {
+            return transferType;
+        }
+
+        public void setTransferType(Long transferType) {
+            this.transferType = transferType;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+    }
+
+    public static class TransferTypeEntity {
+
+        private Long id;
+        private String name;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
+
+    public static class SearchInvoiceResponsePostResponse extends GenericResponse {
+
+        private List<Invoice> invoices;
+
+        public List<Invoice> getInvoices() {
+            return invoices;
+        }
+
+        public void setInvoices(List<Invoice> invoices) {
+            this.invoices = invoices;
+        }
+
+    }
+
     public static class SearchInvoiceResponse extends GenericResponse {
-        
-     private Map<Invoice.Status, String> statusList;
-        private Map<InvoiceQuery.Direction, String> directions;
-        private List<TransferType> transferTypes;
+
+        private List<Invoice.Status> invoiceList;
+        private List<InvoiceQuery.Direction> dirList;
+        private List<TransferTypeEntity> transferList;
         private Member member;
         private boolean myInvoices;
         private boolean byBroker;
@@ -124,30 +239,60 @@ public class SearchInvoicesController extends BaseRestController {
             this.byBroker = byBroker;
         }
 
-        public List<TransferType> getTransferTypes() {
-            return transferTypes;
+        public List<TransferTypeEntity> getTransferList() {
+            return transferList;
         }
 
-        public void setTransferTypes(List<TransferType> transferTypes) {
-            this.transferTypes = transferTypes;
+        public void setTransferList(List<TransferTypeEntity> transferList) {
+            this.transferList = transferList;
         }
 
-        public Map<InvoiceQuery.Direction, String> getDirections() {
-            return directions;
+        public List<InvoiceQuery.Direction> getDirList() {
+            return dirList;
         }
 
-        public void setDirections(Map<InvoiceQuery.Direction, String> directions) {
-            this.directions = directions;
+        public void setDirList(List<InvoiceQuery.Direction> dirList) {
+            this.dirList = dirList;
         }
 
-        public Map<Invoice.Status, String> getStatusList() {
-            return statusList;
+        public List<Invoice.Status> getInvoiceList() {
+            return invoiceList;
         }
 
-        public void setStatusList(Map<Invoice.Status, String> statusList) {
-            this.statusList = statusList;
+        public void setInvoiceList(List<Invoice.Status> invoiceList) {
+            this.invoiceList = invoiceList;
         }
 
+    }
+
+    @RequestMapping(value = "admin/searchInvoices", method = RequestMethod.POST)
+    @ResponseBody
+    protected SearchInvoiceResponsePostResponse executeQuery(@RequestBody SearchInvoicesRequest request) {
+        SearchInvoiceResponsePostResponse response = new SearchInvoiceResponsePostResponse();
+        Map<String, Object> queryParameters = new HashMap();
+        queryParameters.put("owner", 0L);
+        queryParameters.put("status", request.getStatus());
+        queryParameters.put("direction", request.getDirection());
+        queryParameters.put("description", request.getDescription());
+        queryParameters.put("begin", request.getBegin());
+        queryParameters.put("end", request.getEnd());
+        queryParameters.put("relatedMemberId", request.getRelatedMemberId());
+        queryParameters.put("transferType", request.getTransferType());
+
+        final InvoiceQuery query = (InvoiceQuery) queryParameters;
+        final List<Invoice> invoices = invoiceService.search(query);
+        response.setInvoices(invoices);
+        response.setStatus(0);
+        response.setMessage("Invoce list");
+
+//        final TransformInvoiceInEntry transformer = new TransformInvoiceInEntry(query.getOwner());
+//        List<Entry> entries = new TransformedIteratorList<Invoice, Entry>(transformer, invoices);
+//        if (invoices instanceof Page<?>) {
+//            final Page<Invoice> page = (Page<Invoice>) invoices;
+//            entries = new PageImpl<Entry>(queryParameters.getPageParameters(), page.getTotalCount(), new LinkedList<Entry>(entries));
+//        }
+//        context.getRequest().setAttribute("invoices", entries);
+        return response;
     }
 
     @RequestMapping(value = "admin/searchInvoices", method = RequestMethod.GET)
@@ -161,9 +306,8 @@ public class SearchInvoicesController extends BaseRestController {
         form.put("memberId", owner instanceof Member ? ((Member) owner).getId().toString() : "0");
         form.put("direction", InvoiceQuery.Direction.INCOMING.name());
         form.put("owner", owner);
-       
 
-        final InvoiceQuery query =  getDataBinder().readFromString(form);
+        final InvoiceQuery query = getDataBinder().readFromString(form);
 
         final Element loggedElement = LoggedUser.element();
 //         Set the initial parameters
@@ -188,7 +332,7 @@ public class SearchInvoicesController extends BaseRestController {
         boolean myInvoices = false;
         boolean byBroker = false;
         boolean byOperator = false;
-      
+
         if (owner instanceof SystemAccountOwner) {
             if (LoggedUser.isAdministrator()) {
                 myInvoices = true;
@@ -215,6 +359,15 @@ public class SearchInvoicesController extends BaseRestController {
             ttQuery.setFromOrToGroups(adminGroup.getManagesGroups());
         }
         final List<TransferType> transferTypes = transferTypeService.search(ttQuery);
+        List<TransferTypeEntity> trasferList = new ArrayList();
+        for (TransferType transfer : transferTypes) {
+            TransferTypeEntity transferEntiry = new TransferTypeEntity();
+            transferEntiry.setId(transfer.getId());
+            transferEntiry.setName(transfer.getName());
+            trasferList.add(transferEntiry);
+        }
+
+        response.setTransferList(trasferList);
 
         // Fetch the query entities
         if (query.getRelatedMember() instanceof EntityReference) {
@@ -239,25 +392,37 @@ public class SearchInvoicesController extends BaseRestController {
 //        request.setAttribute("transferTypes", transferTypes);
 //        RequestHelper.storeEnum(request, InvoiceQuery.Direction.class, "directions");
 //        RequestHelper.storeEnum(request, Invoice.Status.class, "status");
+//        response.setTransferTypes(transferTypes);
         response.setMyInvoices(myInvoices);
         response.setMember(member);
         //retrive directions
         response.setByBroker(byBroker);
-        response.setTransferTypes(transferTypes);
-        Map<Invoice.Status, String> statusList = new HashMap();
-        Map<InvoiceQuery.Direction, String> directions = new HashMap();
-        directions.put(InvoiceQuery.Direction.INCOMING, "Incoming");
-        directions.put(InvoiceQuery.Direction.OUTGOING, "Outgoing");
-        response.setDirections(directions);
+//        response.setTransferTypes(transferTypes);
+//        Map<Invoice.Status, String> statusList = new HashMap();
+//        Map<InvoiceQuery.Direction, String> directions = new HashMap();
+//        directions.put(InvoiceQuery.Direction.INCOMING, "Incoming");
+//        directions.put(InvoiceQuery.Direction.OUTGOING, "Outgoing");
+
+        List<InvoiceQuery.Direction> dirList = new ArrayList();
+        dirList.add(InvoiceQuery.Direction.INCOMING);
+        dirList.add(InvoiceQuery.Direction.OUTGOING);
+        response.setDirList(dirList);
         //retrive status
-        statusList.put(Invoice.Status.OPEN, "Open");
-        statusList.put(Invoice.Status.ACCEPTED, "Accepted");
-        statusList.put(Invoice.Status.CANCELLED, "Cancelled");
-        statusList.put(Invoice.Status.DENIED, "Denied");
-        statusList.put(Invoice.Status.EXPIRED, "Expired");
-        response.setStatusList(statusList);
-       response.setStatus(0);
-       response.setMessage("Invoices list");
-       return response;
+        List<Invoice.Status> invoiceList = new ArrayList();
+        invoiceList.add(Invoice.Status.OPEN);
+        invoiceList.add(Invoice.Status.ACCEPTED);
+        invoiceList.add(Invoice.Status.CANCELLED);
+        invoiceList.add(Invoice.Status.DENIED);
+        invoiceList.add(Invoice.Status.EXPIRED);
+        response.setInvoiceList(invoiceList);
+//        statusList.put(Invoice.Status.OPEN, "Open");
+//        statusList.put(Invoice.Status.ACCEPTED, "Accepted");
+//        statusList.put(Invoice.Status.CANCELLED, "Cancelled");
+//        statusList.put(Invoice.Status.DENIED, "Denied");
+//        statusList.put(Invoice.Status.EXPIRED, "Expired");
+//        response.setStatusList(statusList);
+        response.setStatus(0);
+        response.setMessage("Invoices list");
+        return response;
     }
 }

@@ -34,6 +34,7 @@ import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.services.transactions.InvoiceService;
+import nl.strohalm.cyclos.services.transactions.PaymentService;
 import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
 
 import org.apache.commons.logging.Log;
@@ -67,6 +68,12 @@ public abstract class BaseRestController {
     protected AccountTypeService accountTypeService;
     protected AccountHelper accountHelper;
     protected ElementService elementService;
+    protected PaymentService paymentService;
+
+    @Inject
+    public void setPaymentService(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
 
     @Inject
     public void setElementService(ElementService elementService) {

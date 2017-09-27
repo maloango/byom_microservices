@@ -53,17 +53,19 @@ public class ListMemberAlertsController extends BaseRestController {
     }
     
     public static class ListMemberAlertResponse extends GenericResponse{
-       private  List<? extends Alert> alerts;
+       private  List<MemberAlert> alerts;
        private boolean isSystem;
        private boolean isMember;
 
-        public List<? extends Alert> getAlerts() {
+        public List<MemberAlert> getAlerts() {
             return alerts;
         }
 
-        public void setAlerts(List<? extends Alert> alerts) {
+        public void setAlerts(List<MemberAlert> alerts) {
             this.alerts = alerts;
         }
+
+     
 
         public boolean isIsSystem() {
             return isSystem;
@@ -85,17 +87,18 @@ public class ListMemberAlertsController extends BaseRestController {
         
     }
 
-    @RequestMapping(value = "admin/listMemberAlerts/{show}", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/listMemberAlerts", method = RequestMethod.GET)
     @ResponseBody
-    public ListMemberAlertResponse listSystemAlerts(@PathVariable boolean show) {
+    public ListMemberAlertResponse listSystemAlerts() {
         final AlertQuery query = new AlertQuery();
         ListMemberAlertResponse response=new ListMemberAlertResponse();
-        query.setResultType(QueryParameters.ResultType.LIST);
+        query.setResultType(QueryParameters.ResultType.ITERATOR);
         query.setPageParameters(PageParameters.max(MAX_ALERTS));
         query.setShowRemoved(false);
 
         final Alert.Type type = getType();
         query.setType(type);
+        System.out.println("-----type:---"+type);
          
         if (Alert.Type.MEMBER.equals(type) && LoggedUser.isAdministrator()) {
             System.out.println("------within loop--------------------");
@@ -109,7 +112,7 @@ public class ListMemberAlertsController extends BaseRestController {
           
         }
 
-        final List<? extends Alert> alerts = alertService.search(query);
+        final List<MemberAlert> alerts = (List<MemberAlert>) alertService.search(query);
          System.out.println(alerts.size());
         //request.setAttribute("alerts", alerts);
         response.setAlerts(alerts);

@@ -2,14 +2,12 @@ package nl.strohalm.cyclos.webservices.rest.accounts.accounttypes;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import javax.servlet.http.HttpServletRequest;
 import nl.strohalm.cyclos.access.AdminSystemPermission;
 
 import org.springframework.stereotype.Controller;
@@ -19,31 +17,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.entities.Relationship;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.accounts.Currency;
 import nl.strohalm.cyclos.entities.accounts.MemberAccountType;
 import nl.strohalm.cyclos.entities.accounts.SystemAccountType;
-import nl.strohalm.cyclos.entities.accounts.fees.account.AccountFee;
-import nl.strohalm.cyclos.entities.accounts.fees.account.AccountFeeQuery;
-import nl.strohalm.cyclos.entities.accounts.transactions.PaymentFilter;
-import nl.strohalm.cyclos.entities.accounts.transactions.PaymentFilterQuery;
-import nl.strohalm.cyclos.entities.accounts.transactions.TransferType;
-import nl.strohalm.cyclos.entities.accounts.transactions.TransferTypeQuery;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
-import nl.strohalm.cyclos.entities.settings.events.LocalSettingsEvent;
 import nl.strohalm.cyclos.services.accountfees.AccountFeeService;
-import nl.strohalm.cyclos.services.accounts.AccountService;
 import nl.strohalm.cyclos.services.accounts.AccountTypeService;
 import nl.strohalm.cyclos.services.accounts.CurrencyService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
-import nl.strohalm.cyclos.services.settings.SettingsService;
-import nl.strohalm.cyclos.services.transactions.TransactionContext;
 import nl.strohalm.cyclos.services.transfertypes.PaymentFilterService;
 import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
-import nl.strohalm.cyclos.utils.ActionHelper;
-import nl.strohalm.cyclos.utils.RelationshipHelper;
-import nl.strohalm.cyclos.utils.RequestHelper;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
@@ -294,11 +278,11 @@ public class EditAccountTypeController extends BaseRestController {
             AccountType accountType = null;
 
             final boolean isInsert = request.getAccountTypeId() == null;
-            Currency currency =  currencyService.load(request.getCurrencyId());
-           
-            System.out.println("------id: "+currency+"   "+currency.getId());
-            AccountType.Nature nature ;
-            if (request.getAccountTypeId()==null) {
+            Currency currency = currencyService.load(request.getCurrencyId());
+
+            System.out.println("------id: " + currency + "   " + currency.getId());
+            AccountType.Nature nature;
+            if (request.getAccountTypeId() == null) {
                 try {
                     nature = AccountType.Nature.valueOf(request.getNature().toString());
                 } catch (final Exception e) {
@@ -307,12 +291,12 @@ public class EditAccountTypeController extends BaseRestController {
             } else {
                 nature = accountTypeService.load(request.getAccountTypeId()).getNature();
             }
-            
-            System.out.print("nature------: "+nature);
+
+            System.out.print("nature------: " + nature);
             if (nature.equals(AccountType.Nature.SYSTEM)) {
                 SystemAccountType systemAccount = new SystemAccountType();
-                if (request.getAccountTypeId()!=null ) {
-                systemAccount.setId(request.getAccountTypeId());
+                if (request.getAccountTypeId() != null) {
+                    systemAccount.setId(request.getAccountTypeId());
                 }
                 systemAccount.setName(request.getName());
                 systemAccount.setDescription(request.getDescription());
@@ -323,9 +307,9 @@ public class EditAccountTypeController extends BaseRestController {
 
             } else if (nature.equals(AccountType.Nature.MEMBER)) {
                 MemberAccountType memberAccount = new MemberAccountType();
-                 if (request.getAccountTypeId()!=null) {
-                memberAccount.setId(request.getAccountTypeId());
-                 }
+                if (request.getAccountTypeId() != null) {
+                    memberAccount.setId(request.getAccountTypeId());
+                }
                 memberAccount.setName(request.getName());
                 memberAccount.setDescription(request.getDescription());
                 memberAccount.setCurrency(currency);
@@ -333,9 +317,9 @@ public class EditAccountTypeController extends BaseRestController {
                 //memberAccount.setCreditLimit(request.getCreditLimit());
                 accountType = memberAccount;
             }
-            System.out.println("----- "+accountType.getId());
+            System.out.println("----- " + accountType.getId());
             accountType = accountTypeService.save(accountType);
-           
+
             response.setMessage(isInsert ? "accountType.inserted" : "accountType.modified");
             response.setStatus(0);
         } catch (Exception e) {

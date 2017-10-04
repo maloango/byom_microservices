@@ -55,22 +55,31 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class ConfirmPaymentController extends BaseRestController {
+    
 
     public static class PaymentEntity {
 
-        private String amount;
+        private BigDecimal amount;
         private String description;
-        private String type;
-        private String date;
-        private String currency;
+        private Long transferTypeId;
+      
+        private Long currencyId;
         private String from;
 
-        public String getAmount() {
+        public BigDecimal getAmount() {
             return amount;
         }
 
-        public void setAmount(String amount) {
+        public void setAmount(BigDecimal amount) {
             this.amount = amount;
+        }
+
+        public Long getCurrencyId() {
+            return currencyId;
+        }
+
+        public void setCurrencyId(Long currencyId) {
+            this.currencyId = currencyId;
         }
 
         public String getDescription() {
@@ -81,29 +90,15 @@ public class ConfirmPaymentController extends BaseRestController {
             this.description = description;
         }
 
-        public String getType() {
-            return type;
+        public Long getTransferTypeId() {
+            return transferTypeId;
         }
 
-        public void setType(String type) {
-            this.type = type;
+        public void setTransferTypeId(Long transferTypeId) {
+            this.transferTypeId = transferTypeId;
         }
 
-        public String getDate() {
-            return date;
-        }
-
-        public void setDate(String date) {
-            this.date = date;
-        }
-
-        public String getCurrency() {
-            return currency;
-        }
-
-        public void setCurrency(String currency) {
-            this.currency = currency;
-        }
+    
 
         public String getFrom() {
             return from;
@@ -117,42 +112,78 @@ public class ConfirmPaymentController extends BaseRestController {
 
     public static class ConfirmPaymentResponse extends GenericResponse {
 
-        private Member fromMember;
-        private boolean asMember;
+        private List<TransferTypeEntity> transferTypes;
+        private CurrencyEntity singleCurrency;
+        private String preselectCurrencySymbol;
 
-        public boolean isAsMember() {
-            return asMember;
+        public CurrencyEntity getSingleCurrency() {
+            return singleCurrency;
         }
 
-        public void setAsMember(boolean asMember) {
-            this.asMember = asMember;
+        public void setSingleCurrency(CurrencyEntity singleCurrency) {
+            this.singleCurrency = singleCurrency;
         }
 
-        public Member getFromMember() {
-            return fromMember;
+        public String getPreselectCurrencySymbol() {
+            return preselectCurrencySymbol;
         }
 
-        public void setFromMember(Member fromMember) {
-            this.fromMember = fromMember;
+        public void setPreselectCurrencySymbol(String preselectCurrencySymbol) {
+            this.preselectCurrencySymbol = preselectCurrencySymbol;
         }
 
-        private List<TransferType> allTransferTypes;
-        private Currency currency;
-
-        public List<TransferType> getAllTransferTypes() {
-            return allTransferTypes;
+        public List<TransferTypeEntity> getTransferTypes() {
+            return transferTypes;
         }
 
-        public void setAllTransferTypes(List<TransferType> allTransferTypes) {
-            this.allTransferTypes = allTransferTypes;
+        public void setTransferTypes(List<TransferTypeEntity> transferTypes) {
+            this.transferTypes = transferTypes;
         }
 
-        public Currency getCurrency() {
-            return currency;
+    }
+
+    public static class TransferTypeEntity {
+
+        private String name;
+        private Long id;
+
+        public String getName() {
+            return name;
         }
 
-        public void setCurrency(Currency currency) {
-            this.currency = currency;
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+    }
+
+    public static class CurrencyEntity {
+
+        private String symbol;
+        private Long id;
+
+        public String getSymbol() {
+            return symbol;
+        }
+
+        public void setSymbol(String symbol) {
+            this.symbol = symbol;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
         }
 
     }
@@ -181,6 +212,7 @@ public class ConfirmPaymentController extends BaseRestController {
             // Special case: There is a single currency. The JSP will use this object
 //            request.setAttribute("singleCurrency", currencies.get(0));
         }
+        System.out.println("-----currency:-------" + currencies);
         return currencies;
     }
 
@@ -199,28 +231,27 @@ public class ConfirmPaymentController extends BaseRestController {
         } else {
             query.setGroup(LoggedUser.group());
         }
+        System.out.println("-----query:-------" + query);
         return query;
     }
 
-    @RequestMapping(value = "admin/confirmPayment/{from}", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/confirmPayment", method = RequestMethod.GET)
     @ResponseBody
-    public ConfirmPaymentResponse prepareForm(@PathVariable("from") Long from) {
+    public ConfirmPaymentResponse prepareForm() {
         ConfirmPaymentResponse response = new ConfirmPaymentResponse();
-//        final BasePaymentForm form = context.getForm();
-//        final HttpServletRequest request = context.getRequest();
 
         // Check whether the payment is as a member
-        final Long fromId = from;
+        final Long fromId = LoggedUser.user().getId();
         final boolean asMember = fromId != null;
         Member fromMember = null;
         if (asMember) {
             final Element element = elementService.load(fromId, Element.Relationships.GROUP, Element.Relationships.USER);
             if (element instanceof Member) {
                 fromMember = (Member) element;
-                response.setFromMember(fromMember);
+//                request.setAttribute("member", fromMember);
             }
         }
-        response.setAsMember(asMember);
+//        request.setAttribute("asMember", asMember);
 
         // Get the member in action
         Member member = fromMember;
@@ -254,12 +285,12 @@ public class ConfirmPaymentController extends BaseRestController {
                 final List<TransferType> tts = transferTypeService.search(currentQuery);
                 allTransferTypes.addAll(tts);
                 if (tts.isEmpty()) {
-                    iterator.remove();
+                    //iterator.remove();
                 } else {
                     transferTypesPerCurrency.put(currency, tts);
                 }
             }
-
+            System.out.println("---currencies size------------:" + currencies.size());
             // Check which currency to preselect
             Currency currency = null;
             if (CollectionUtils.isNotEmpty(transferTypesPerCurrency.get(defaultCurrency))) {
@@ -269,76 +300,89 @@ public class ConfirmPaymentController extends BaseRestController {
                 // Get the first currency with TTs
                 currency = transferTypesPerCurrency.keySet().iterator().next();
             }
-//            form.setCurrency(CoercionHelper.coerce(String.class, currency));
+//           response.setPreselectCurrencySymbol(currency.getSymbol());
 
             // Store the transfer types associated with the preselected currency
-            response.setAllTransferTypes(allTransferTypes);
+//            request.setAttribute("transferTypes", allTransferTypes);
+            List<TransferTypeEntity> transferList = new ArrayList();
+            for (TransferType transferType : allTransferTypes) {
+                TransferTypeEntity transferEntity = new TransferTypeEntity();
+                transferEntity.setId(transferType.getId());
+                transferEntity.setName(transferType.getName());
+                transferList.add(transferEntity);
+            }
+
+            response.setTransferTypes(transferList);
         }
 
         if (CollectionUtils.isEmpty(currencies)) {
             // No currency with possible transfer type!!!
             throw new ValidationException("payment.error.noTransferType");
         } else if (currencies.size() == 1) {
-            response.setCurrency(currencies.iterator().next());
+            CurrencyEntity currencyEntity = new CurrencyEntity();
+            currencyEntity.setId(currencies.iterator().next().getId());
+            currencyEntity.setSymbol(currencies.iterator().next().getSymbol());
+            response.setSingleCurrency(currencyEntity);
+//            request.setAttribute("singleCurrency", currencies.iterator().next());
         }
-
         response.setStatus(0);
         response.setMessage("!!!");
         return response;
 
     }
 
-//    @RequestMapping(value = "admin/confirmPayment", method = RequestMethod.POST)
-//    @ResponseBody
-//    public GenericResponse doPayment(@RequestBody PaymentEntity request) {
-//        GenericResponse response = new GenericResponse();
-//
-//        final DoPaymentDTO paymentDTO = new DoPaymentDTO();
-//        paymentDTO.setDescription(request.getDescription());
-//        paymentDTO.setAmount(request.getAmount());
-//        Currency currency = new Currency();
-//        currency.setId(request.getCurrencyId());
-//        paymentDTO.setCurrency(currency);
-//
-//        TransferType transferType = new TransferType();
-//        transferType.setId(request.getTransferTypeId());
-//        paymentDTO.setTransferType(transferType);
-//
-//        System.out.println("-----currency: ---" + currency);
-//        System.out.println("-----Transfertyep: ---" + transferType);
-//
-//        // Validate the transaction password if needed
-////        if (shouldValidateTransactionPassword(context, paymentDTO)) {
-////            context.checkTransactionPassword(form.getTransactionPassword());
-////        }
-//        // Perform the actual payment
-//        Payment payment;
-//        try {
-//            payment = paymentService.doPayment(paymentDTO);
-//            System.out.println("---paymentDto---:" + paymentDTO);
-////            context.getSession().removeAttribute("payment");
-//        } catch (final CreditsException e) {
-//            response.setStatus(1);
-//        } catch (final UnexpectedEntityException e) {
-//            response.setMessage("payment.error.invalidTransferType");
-//        } catch (final AuthorizedPaymentInPastException e) {
-//            response.setMessage("payment.error.authorizedInPast");
+    @RequestMapping(value = "admin/confirmPayment", method = RequestMethod.POST)
+    @ResponseBody
+    public GenericResponse doPayment(@RequestBody PaymentEntity request) {
+        GenericResponse response = new GenericResponse();
+
+        final DoPaymentDTO paymentDTO = new DoPaymentDTO();
+        paymentDTO.setDescription(request.getDescription());
+        paymentDTO.setAmount(request.getAmount());
+        Currency currency = new Currency();
+        currency.setId(request.getCurrencyId());
+        paymentDTO.setCurrency(currency);
+
+        TransferType transferType = new TransferType();
+        //transferType.setId(transferTypeService.load(request.getTransferTypeId(),TransferType.Relationships.));
+        
+        paymentDTO.setTransferType(transferType);
+
+        System.out.println("-----currency: ---" + currency);
+        System.out.println("-----Transfertyep: ---" + transferType);
+
+        // Validate the transaction password if needed
+//        if (shouldValidateTransactionPassword(context, paymentDTO)) {
+//            context.checkTransactionPassword(form.getTransactionPassword());
 //        }
-//        // Redirect to the next action
-////        final Map<String, Object> params = new HashMap<String, Object>();
-////        ActionForward forward;
-////        if (payment instanceof Transfer) {
-////            params.put("transferId", payment.getId());
-////            forward = context.getSuccessForward();
-////        } else if (payment instanceof ScheduledPayment) {
-////            params.put("paymentId", payment.getId());
-////            forward = context.findForward("scheduledPayment");
-////        } else {
-////            throw new IllegalStateException("Unknown payment type: " + payment);
-////        }
-////        params.put("selectMember", form.getSelectMember());
-////        params.put("from", form.getFrom());
-//        return response;
-//
-//    }
+        // Perform the actual payment
+        Payment payment;
+        try {
+            payment = paymentService.doPayment(paymentDTO);
+            System.out.println("---paymentDto---:" + paymentDTO);
+//            context.getSession().removeAttribute("payment");
+        } catch (final CreditsException e) {
+            response.setStatus(1);
+        } catch (final UnexpectedEntityException e) {
+            response.setMessage("payment.error.invalidTransferType");
+        } catch (final AuthorizedPaymentInPastException e) {
+            response.setMessage("payment.error.authorizedInPast");
+        }
+        // Redirect to the next action
+//        final Map<String, Object> params = new HashMap<String, Object>();
+//        ActionForward forward;
+//        if (payment instanceof Transfer) {
+//            params.put("transferId", payment.getId());
+//            forward = context.getSuccessForward();
+//        } else if (payment instanceof ScheduledPayment) {
+//            params.put("paymentId", payment.getId());
+//            forward = context.findForward("scheduledPayment");
+//        } else {
+//            throw new IllegalStateException("Unknown payment type: " + payment);
+//        }
+//        params.put("selectMember", form.getSelectMember());
+//        params.put("from", form.getFrom());
+        return response;
+
+    }
 }

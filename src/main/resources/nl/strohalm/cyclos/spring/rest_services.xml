@@ -431,8 +431,11 @@ webshop
           class="  nl.strohalm.cyclos.webservices.rest.access.ListConnectedUsersController" />
     
     <!--payments -->
-    <bean id="confirmPaymentController"
-          class="nl.strohalm.cyclos.webservices.rest.payments.ConfirmPaymentController" />
+<!--    <bean id="confirmPaymentController"
+          class="nl.strohalm.cyclos.webservices.rest.payments.ConfirmPaymentController" />-->
+     
+    
+ 
       
     <!--Users and group-->
     <!--      <bean id="listMemberRecordTypesController"

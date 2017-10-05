@@ -365,43 +365,78 @@
 	<bean id="searchLoansController"
 		class="nl.strohalm.cyclos.webservices.rest.loans.SearchLoansController" />
         
-        <!--        Member-->
+<!--        Member-->
 
+    <bean id="memberProfileController"
+          class="nl.strohalm.cyclos.webservices.rest.members.MemberProfileController" />
     
-	<!-- members.transactions -->
+    <bean id="loadMemberController"
+          class="nl.strohalm.cyclos.webservices.rest.members.LoadMemberController" />
+        
+    <bean id="ChangeMemberPasswordController"
+          class="nl.strohalm.cyclos.webservices.rest.members.ChangeMemberPasswordController" />
+        
+    
+    
+    
+   
+    <!--                Member Message-->
+        
+    <bean id="searchMessagesController"
+          class="nl.strohalm.cyclos.webservices.rest.members.messages.SearchMessagesController" />
+	
+    <bean id="changeMessageStatusController"
+          class="nl.strohalm.cyclos.webservices.rest.members.messages.ChangeMessageStatusController" />
+        
+    <bean id="viewMessageController"
+          class="nl.strohalm.cyclos.webservices.rest.members.messages.ViewMessageController" />
+        
+    <bean id="sendMessageController"
+          class="nl.strohalm.cyclos.webservices.rest.members.messages.SendMessageController" /> 
+        
+    <bean id="removeMessageCategoryController"
+          class="nl.strohalm.cyclos.webservices.rest.members.messages.RemoveMessageCategoryController" /> 
+         
+    <bean id="listMessageCategoriesController"
+          class="nl.strohalm.cyclos.webservices.rest.members.messages.ListMessageCategoriesController" />       
+                     
+   
+    
+    <!--Member Contact-->
+    <bean id="addContactController"
+          class="nl.strohalm.cyclos.webservices.rest.members.contacts.AddContactController" />
+          
+    <bean id="editContactController"
+          class="nl.strohalm.cyclos.webservices.rest.members.contacts.EditContactController" />
+          
+    <bean id="listContactsController"
+          class="nl.strohalm.cyclos.webservices.rest.members.contacts.ListContactsController" />
+    
+    <bean id="deleteContactController"
+          class="nl.strohalm.cyclos.webservices.rest.members.contacts.DeleteContactController" />
+           
+    <!--           Member Notification    -->
+    <bean id="notificationPreferenceController"
+          class="nl.strohalm.cyclos.webservices.rest.members.preferences.NotificationPreferenceController" />
 
-	<!-- simulations -->
-	<!-- statistics -->
-	<!-- statistics.graphs -->
-	<!-- services -->
-	<!-- setting -->
-
-	<!-- <bean id="editAccessSettingsController"
-		class="nl.strohalm.cyclos.webservices.rest.settings.EditAccessSettingsController" />
-	<bean id="editAlertSettingsController"
-		class="nl.strohalm.cyclos.webservices.rest.settings.EditAlertSettingsController" />
-	<bean id="editLocalSettingsController"
-		class="nl.strohalm.cyclos.webservices.rest.settings.EditLocalSettingsController" />
-	<bean id="editLogSettingsContoller"
-		class="nl.strohalm.cyclos.webservices.rest.settings.EditLogSettingsContoller" />
-	<bean id="editMailSettingsController"
-		class="nl.strohalm.cyclos.webservices.rest.settings.EditMailSettingsController" />
-	<bean id="editMailTranslationController"
-		class="nl.strohalm.cyclos.webservices.rest.settings.EditMailTranslationController" />
-	<bean id="editMessageSettingController"
-		class="nl.strohalm.cyclos.webservices.rest.settings.EditMessageSettingController" />
-	<bean id="exportSettingsController"
-		class="nl.strohalm.cyclos.webservices.rest.settings.ExportSettingsController" />
-	<bean id="importSettingsController"
-		class="nl.strohalm.cyclos.webservices.rest.settings.ImportSettingsController" />
-	<bean id="listMessageSettingsController"
-		class="nl.strohalm.cyclos.webservices.rest.settings.ListMessageSettingsController" />
-	<bean id="manageSettingsController"
-		class="nl.strohalm.cyclos.webservices.rest.settings.ManageSettingsController" />
-
-webshop
-<bean id="cancelWebShopPaymentController"
-    class="nl.strohalm.cyclos.webservices.rest.webshop.CancelWebShopPaymentController" /> -->
+    <!--                  Member Advertisements-->
+    <bean id="memberAdsController"
+          class="nl.strohalm.cyclos.webservices.rest.members.advertisements.MemberAdsController" />
+    
+    <bean id="editAdController"
+          class="nl.strohalm.cyclos.webservices.rest.members.advertisements.EditAdController" />
+    
+    <bean id="removeAdController"
+          class="nl.strohalm.cyclos.webservices.rest.members.advertisements.RemoveAdController" />
+   
+          <!--    Account-->
+    <bean id="accountOverviewController"
+          class="nl.strohalm.cyclos.webservices.rest.members.accounts.AccountOverviewController" />
+    
+     <!--Reports-->
+    <bean id="activitiesController"
+          class="nl.strohalm.cyclos.webservices.rest.members.reports.ActivitiesController" />
+   
 
     <!-- General -->
     <bean id="homeController"
@@ -431,8 +466,15 @@ webshop
           class="  nl.strohalm.cyclos.webservices.rest.access.ListConnectedUsersController" />
     
     <!--payments -->
-<!--    <bean id="confirmPaymentController"
-          class="nl.strohalm.cyclos.webservices.rest.payments.ConfirmPaymentController" />-->
+    <bean id="confirmSystemPaymentController"
+          class=" nl.strohalm.cyclos.webservices.rest.payments.ConfirmSystemPaymentController" />
+    <bean id="confirmMemberPaymentController"
+          class=" nl.strohalm.cyclos.webservices.rest.payments.ConfirmMemberPaymentController" />
+    
+    <bean id="searchScheduledPaymentsController"
+          class=" nl.strohalm.cyclos.webservices.rest.accounts.details.SearchScheduledPaymentsController" />
+    
+   
      
     
  

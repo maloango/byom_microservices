@@ -7,7 +7,6 @@ package nl.strohalm.cyclos.webservices.rest.members;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +16,10 @@ import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.entities.members.MemberQuery;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
-import nl.strohalm.cyclos.services.access.ChannelService;
 import nl.strohalm.cyclos.services.elements.BrokerQuery;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.groups.GroupService;
-import nl.strohalm.cyclos.utils.EntityHelper;
+import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.utils.access.LoggedUser;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.BeanCollectionBinder;
@@ -42,11 +40,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author Lue
  */
 @Controller
-public class LoadMemberController extends BaseRestController{
+public class LoadMemberController extends BaseRestController {
+
     private ElementService elementService;
-    protected GroupService      groupService;
-    
-     private DataBinder<?> dataBinder;
+    protected GroupService groupService;
+    private SettingsService settingsService;
+
+    public SettingsService getSettingsService() {
+        return settingsService;
+    }
+
+    @Inject
+    public void setSettingsService(SettingsService settingsService) {
+        this.settingsService = settingsService;
+    }
+
+    private DataBinder<?> dataBinder;
     private DataBinder<?> dataBinderWithMaxScheduledPayments;
 
     public DataBinder<?> getDataBinder() {
@@ -74,12 +83,10 @@ public class LoadMemberController extends BaseRestController{
         this.elementService = elementService;
     }
 
-     @Inject
+    @Inject
     public void setGroupService(GroupService groupService) {
         this.groupService = groupService;
     }
-    
-    
 
 //    @Override
 //    protected ContentType contentType() {
@@ -91,10 +98,10 @@ public class LoadMemberController extends BaseRestController{
         private String name;
         private boolean brokers;
         private boolean viewableGroup;
-        private boolean enabled=true;
+        private boolean enabled = true;
         private boolean maxScheduledPayments;
-        private Long              exclude;
-    private Long[]            groupIds;
+        private Long exclude;
+        private Long[] groupIds;
 
         public String getUserName() {
             return userName;
@@ -160,14 +167,11 @@ public class LoadMemberController extends BaseRestController{
             this.groupIds = groupIds;
         }
 
-        
-      
-       
     }
 
     public static class LoadMemberResponse extends GenericResponse {
 
-        private  List<MemberEntity> members;
+        private List<MemberEntity> members;
 
         public List<MemberEntity> getMembers() {
             return members;
@@ -176,19 +180,15 @@ public class LoadMemberController extends BaseRestController{
         public void setMembers(List<MemberEntity> members) {
             this.members = members;
         }
-        
-
-     
-        
 
     }
 
     @RequestMapping(value = "member/loadMember", method = RequestMethod.POST)
     @ResponseBody
     public LoadMemberResponse executeAction(@RequestBody LoadMemberRequest form) throws Exception {
-        LoadMemberResponse response=new LoadMemberResponse();
+        LoadMemberResponse response = new LoadMemberResponse();
         final LocalSettings localSettings = settingsService.getLocalSettings();
-        
+
         final MemberQuery memberQuery = form.isBrokers() ? new BrokerQuery() : new MemberQuery();
         //memberQuery.setViewableGroup(form.getViewableGroup());
         if (form.isEnabled()) {
@@ -221,15 +221,15 @@ public class LoadMemberController extends BaseRestController{
         if (form.isMaxScheduledPayments()) {
             memberQuery.fetch(Element.Relationships.GROUP);
         }
-        System.out.println("----- "+memberQuery);
+        System.out.println("----- " + memberQuery);
 //        final Collection<MemberGroup> groups = resolveGroups(form.getGroupIds());
 //        memberQuery.setGroups(groups);
         final List<? extends Element> members = elementService.search(memberQuery);
         final String json = (form.isMaxScheduledPayments() ? getDataBinderWithMaxScheduledPayments() : getDataBinder()).readAsString(members);
         //responseHelper.writeJSON(context.getResponse(), json);
-        List<MemberEntity> memberList=new ArrayList();
-        for(Element member:members){
-            MemberEntity memberEntity=new MemberEntity();
+        List<MemberEntity> memberList = new ArrayList();
+        for (Element member : members) {
+            MemberEntity memberEntity = new MemberEntity();
             memberEntity.setId(member.getId());
             memberEntity.setName(member.getName());
             memberEntity.setUserName(member.getUsername());
@@ -238,12 +238,12 @@ public class LoadMemberController extends BaseRestController{
         response.setStatus(0);
         response.setMembers(memberList);
         response.setMessage("Member found!!");
-        
+
         return response;
-       
+
     }
-    
-     private Collection<MemberGroup> resolveGroups(Long[]groupIds) {
+
+    private Collection<MemberGroup> resolveGroups(Long[] groupIds) {
         // Ensure that only normal groups (not removed) are used
         Collection<MemberGroup> groups = null;
         if (ArrayUtils.isNotEmpty(groupIds)) {
@@ -256,11 +256,12 @@ public class LoadMemberController extends BaseRestController{
         }
         return groups;
     }
-     
-     public static class MemberEntity{
-         private long id;
-         private String name;
-         private String userName;
+
+    public static class MemberEntity {
+
+        private long id;
+        private String name;
+        private String userName;
 
         public long getId() {
             return id;
@@ -285,6 +286,6 @@ public class LoadMemberController extends BaseRestController{
         public void setUserName(String userName) {
             this.userName = userName;
         }
-         
-     }
+
+    }
 }

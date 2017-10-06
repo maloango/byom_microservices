@@ -4,19 +4,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import nl.strohalm.cyclos.controls.ActionContext;
+import nl.strohalm.cyclos.entities.accounts.Account;
 import nl.strohalm.cyclos.entities.accounts.AccountOwner;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.accounts.MemberAccount;
 import nl.strohalm.cyclos.entities.accounts.SystemAccountOwner;
+import nl.strohalm.cyclos.entities.accounts.SystemAccountType;
 import nl.strohalm.cyclos.entities.accounts.transactions.Payment;
 import nl.strohalm.cyclos.entities.accounts.transactions.ScheduledPayment;
 import nl.strohalm.cyclos.entities.accounts.transactions.ScheduledPaymentQuery;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
+import nl.strohalm.cyclos.entities.settings.LocalSettings;
 import nl.strohalm.cyclos.services.accounts.MemberAccountTypeQuery;
 import nl.strohalm.cyclos.services.accounts.SystemAccountTypeQuery;
+import nl.strohalm.cyclos.utils.Period;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
 import nl.strohalm.cyclos.utils.RequestHelper;
 import nl.strohalm.cyclos.utils.access.LoggedUser;
@@ -28,34 +34,102 @@ import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 public class SearchScheduledPaymentsController extends BaseRestController {
 
+    public static class ScheduluedPaymentParameters {
+
+        private Long memberId;
+        private String statusGroup;
+        private Long member;
+        private String begin;
+        private String end;
+        private Long accountType;
+        private String principal;
+
+        public String getPrincipal() {
+            return principal;
+        }
+
+        public void setPrincipal(String principal) {
+            this.principal = principal;
+        }
+        
+
+        public Long getAccountType() {
+            return accountType;
+        }
+
+        public void setAccountType(Long accountType) {
+            this.accountType = accountType;
+        }
+
+        public Long getMemberId() {
+            return memberId;
+        }
+
+        public void setMemberId(Long memberId) {
+            this.memberId = memberId;
+        }
+
+        public String getStatusGroup() {
+            return statusGroup;
+        }
+
+        public void setStatusGroup(String statusGroup) {
+            this.statusGroup = statusGroup;
+        }
+
+        public Long getMember() {
+            return member;
+        }
+
+        public void setMember(Long member) {
+            this.member = member;
+        }
+
+        public String getBegin() {
+            return begin;
+        }
+
+        public void setBegin(String begin) {
+            this.begin = begin;
+        }
+
+        public String getEnd() {
+            return end;
+        }
+
+        public void setEnd(String end) {
+            this.end = end;
+        }
+
+    }
+
     public class SearchScheduledPaymentResponse extends GenericResponse {
 
         private List<AccountTypeEntity> accountTypesList;
-      
-        private Map<String, ScheduledPaymentQuery.SearchType> searchTypes;
-        private Map<String, ScheduledPaymentQuery.StatusGroup> statusGroups;
 
-        public Map<String, ScheduledPaymentQuery.SearchType> getSearchTypes() {
-            return searchTypes;
+        Set<Entry<String, ScheduledPaymentQuery.SearchType>> sType;
+        Set<Entry<String, ScheduledPaymentQuery.StatusGroup>> sGroups;
+
+        public Set<Entry<String, ScheduledPaymentQuery.SearchType>> getsType() {
+            return sType;
         }
 
-        public void setSearchTypes(Map<String, ScheduledPaymentQuery.SearchType> searchTypes) {
-            this.searchTypes = searchTypes;
+        public void setsType(Set<Entry<String, ScheduledPaymentQuery.SearchType>> sType) {
+            this.sType = sType;
         }
 
-        public Map<String, ScheduledPaymentQuery.StatusGroup> getStatusGroups() {
-            return statusGroups;
+        public Set<Entry<String, ScheduledPaymentQuery.StatusGroup>> getsGroups() {
+            return sGroups;
         }
 
-        public void setStatusGroups(Map<String, ScheduledPaymentQuery.StatusGroup> statusGroups) {
-            this.statusGroups = statusGroups;
+        public void setsGroups(Set<Entry<String, ScheduledPaymentQuery.StatusGroup>> sGroups) {
+            this.sGroups = sGroups;
         }
-
-    
 
         public List<AccountTypeEntity> getAccountTypesList() {
             return accountTypesList;
@@ -64,8 +138,6 @@ public class SearchScheduledPaymentsController extends BaseRestController {
         public void setAccountTypesList(List<AccountTypeEntity> accountTypesList) {
             this.accountTypesList = accountTypesList;
         }
-
-     
 
     }
 
@@ -88,6 +160,20 @@ public class SearchScheduledPaymentsController extends BaseRestController {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+    }
+
+    public static class ScheduledPaymentResponse extends GenericResponse {
+
+        private List<ScheduledPayment> payments;
+
+        public List<ScheduledPayment> getPayments() {
+            return payments;
+        }
+
+        public void setPayments(List<ScheduledPayment> payments) {
+            this.payments = payments;
         }
 
     }
@@ -143,17 +229,54 @@ public class SearchScheduledPaymentsController extends BaseRestController {
         searchTypes.put("Outgoing", ScheduledPaymentQuery.SearchType.OUTGOING);
         searchTypes.put("Incoming", ScheduledPaymentQuery.SearchType.INCOMING);
 
+        Set<Entry<String, ScheduledPaymentQuery.SearchType>> sType = searchTypes.entrySet();
+
         Map<String, ScheduledPaymentQuery.StatusGroup> statusGroups = new HashMap();
         statusGroups.put("open", ScheduledPaymentQuery.StatusGroup.OPEN);
         statusGroups.put("closed(entirely paid)", ScheduledPaymentQuery.StatusGroup.CLOSED_WITHOUT_ERRORS);
         statusGroups.put("closed(partialy paid)", ScheduledPaymentQuery.StatusGroup.CLOSED_WITH_ERRORS);
 
-        response.setSearchTypes(searchTypes);
-        response.setStatusGroups(statusGroups);
+        Set<Entry<String, ScheduledPaymentQuery.StatusGroup>> sGroups = statusGroups.entrySet();
+
+        response.setsType(sType);
+        response.setsGroups(sGroups);
 //        response.setOwner(owner);
         response.setStatus(0);
         response.setMessage("Scheduled payment data");
         return response;
+    }
+
+    @RequestMapping(value = "admin/searchScheduledPayment", method = RequestMethod.POST)
+    @ResponseBody
+    public ScheduledPaymentResponse searchScheduledPayment(@RequestBody ScheduluedPaymentParameters params) {
+        ScheduledPaymentResponse response = new ScheduledPaymentResponse();
+        final LocalSettings localSettings = settingsService.getLocalSettings();
+//        Map<String, Object> query = new HashMap();
+//
+//        query.put("accountType", accountTypeService.load(params.getAccountType()));
+//        query.put("statusGroup", ScheduledPaymentQuery.StatusGroup.valueOf(params.getStatusGroup()));
+        Period period = new Period();
+        period.setBegin(localSettings.getDateConverter().valueOf(params.getBegin()));
+        period.setEnd(localSettings.getDateConverter().valueOf(params.getEnd()));
+//        query.put("period", localSettings);
+//        query.put("member", memberService.loadByIdOrPrincipal(params.getMember(), "admin", "1234"));
+        final ScheduledPaymentQuery paymentQuery = new ScheduledPaymentQuery();
+        paymentQuery.setAccountType(accountTypeService.load(params.getAccountType()));
+        paymentQuery.setPeriod(period);
+        paymentQuery.setStatusGroup(ScheduledPaymentQuery.StatusGroup.valueOf(params.getStatusGroup()));
+        paymentQuery.setMember(memberService.loadByIdOrPrincipal(params.getMember(), null,params.getPrincipal()));
+        paymentQuery.setSearchType(ScheduledPaymentQuery.SearchType.OUTGOING);
+
+        List<ScheduledPayment> payments = null;
+        if (LoggedUser.isAdministrator()) {
+//            query.setSearchType(ScheduledPaymentQuery.SearchType.OUTGOING);
+        }
+        payments = scheduledPaymentService.search(paymentQuery);
+        response.setPayments(payments);
+        response.setStatus(0);
+        response.setMessage("scheduled payment successfull!!");
+        return response;
+
     }
 
 }

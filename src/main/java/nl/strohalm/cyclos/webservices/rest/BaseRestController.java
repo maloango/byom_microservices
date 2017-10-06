@@ -37,6 +37,7 @@ import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.services.transactions.InvoiceService;
 import nl.strohalm.cyclos.services.transactions.PaymentService;
+import nl.strohalm.cyclos.services.transactions.ScheduledPaymentService;
 import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
 
 import org.apache.commons.logging.Log;
@@ -73,6 +74,12 @@ public abstract class BaseRestController {
     protected PaymentService paymentService;
     protected CurrencyService currencyService;
     protected MemberService memberService;
+    protected ScheduledPaymentService scheduledPaymentService;
+
+    @Inject
+    public void setScheduledPaymentService(ScheduledPaymentService scheduledPaymentService) {
+        this.scheduledPaymentService = scheduledPaymentService;
+    }
 
     @Inject
     public void setMemberService(MemberService memberService) {

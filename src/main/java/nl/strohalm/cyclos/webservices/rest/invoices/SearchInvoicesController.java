@@ -269,17 +269,30 @@ public class SearchInvoicesController extends BaseRestController {
     @ResponseBody
     protected SearchInvoiceResponsePostResponse executeQuery(@RequestBody SearchInvoicesRequest request) {
         SearchInvoiceResponsePostResponse response = new SearchInvoiceResponsePostResponse();
-        Map<String, Object> queryParameters = new HashMap();
-        queryParameters.put("owner", 0L);
-        queryParameters.put("status", request.getStatus());
-        queryParameters.put("direction", request.getDirection());
-        queryParameters.put("description", request.getDescription());
-        queryParameters.put("begin", request.getBegin());
-        queryParameters.put("end", request.getEnd());
-        queryParameters.put("relatedMemberId", request.getRelatedMemberId());
-        queryParameters.put("transferType", request.getTransferType());
+        final LocalSettings localSettings = settingsService.getLocalSettings();
+//        Map<String, Object> queryParameters = new HashMap();
+//        queryParameters.put("owner", 0L);
+//        queryParameters.put("status", request.getStatus());
+//        queryParameters.put("direction", request.getDirection());
+//        queryParameters.put("description", request.getDescription());
+//        queryParameters.put("begin", request.getBegin());
+//        queryParameters.put("end", request.getEnd());
+//        queryParameters.put("relatedMemberId", request.getRelatedMemberId());
+//        queryParameters.put("transferType", request.getTransferType());
 
-        final InvoiceQuery query = (InvoiceQuery) queryParameters;
+        final InvoiceQuery query = new InvoiceQuery();
+        query.setOwner(LoggedUser.accountOwner());
+        query.setStatus(Invoice.Status.valueOf(request.getStatus()));
+        query.setDescription(request.getDescription());
+        query.setDirection(InvoiceQuery.Direction.valueOf(request.getDirection()));
+        Period period = new Period();
+        period.setBegin(localSettings.getDateConverter().valueOf(request.getBegin()));
+        period.setEnd(localSettings.getDateConverter().valueOf(request.getEnd()));
+        query.setPeriod(period);
+//        query.setRelatedOwner();
+        query.setTransferType(transferTypeService
+                .load(request.getTransferType(),
+                        TransferType.Relationships.FROM));
         final List<Invoice> invoices = invoiceService.search(query);
         response.setInvoices(invoices);
         response.setStatus(0);

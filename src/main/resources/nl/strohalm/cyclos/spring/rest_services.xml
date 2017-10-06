@@ -365,7 +365,9 @@
 	<bean id="searchLoansController"
 		class="nl.strohalm.cyclos.webservices.rest.loans.SearchLoansController" />
         
-<!--        Member-->
+        
+        
+         <!--        Member-->
 
     <bean id="memberProfileController"
           class="nl.strohalm.cyclos.webservices.rest.members.MemberProfileController" />
@@ -430,20 +432,21 @@
           class="nl.strohalm.cyclos.webservices.rest.members.advertisements.RemoveAdController" />
    
           <!--    Account-->
-    <bean id="accountOverviewController"
+    <bean id="memberAccountOverviewController"
           class="nl.strohalm.cyclos.webservices.rest.members.accounts.AccountOverviewController" />
     
      <!--Reports-->
     <bean id="activitiesController"
           class="nl.strohalm.cyclos.webservices.rest.members.reports.ActivitiesController" />
-   
+        
+        
 
     <!-- General -->
     <bean id="homeController"
           class="nl.strohalm.cyclos.webservices.rest.general.HomeController" />
     
-    <bean id="loadMemberController"
-              class="nl.strohalm.cyclos.webservices.rest.members.LoadMemberController" />
+<!--    <bean id="loadMemberController"
+              class="nl.strohalm.cyclos.webservices.rest.members.LoadMemberController" />-->
      
     <!--card-->
     <bean id="listCardTypeController"

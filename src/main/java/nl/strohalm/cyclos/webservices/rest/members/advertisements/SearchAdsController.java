@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.strohalm.cyclos.webservices.rest.members.operators;
+package nl.strohalm.cyclos.webservices.rest.members.advertisements;
 
 /**
  *
  * @author Lue
  */
-public class ListGroupsController {
+public class SearchAdsController {
     
 }

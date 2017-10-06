@@ -14,6 +14,7 @@ import nl.strohalm.cyclos.entities.alerts.AlertQuery;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
+import nl.strohalm.cyclos.entities.settings.LocalSettings;
 import nl.strohalm.cyclos.services.alerts.AlertService;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.groups.GroupService;
@@ -145,17 +146,16 @@ public class SearchAlertsController extends BaseRestController {
     @ResponseBody
     public SearchAlertResponse searchAlerts(@RequestBody SearchAlertRequest request) {
         SearchAlertResponse response = new SearchAlertResponse();
+         final LocalSettings localSettings = settingsService.getLocalSettings();
         Period period = new Period();
         final AlertQuery query = new AlertQuery();
-        period.setBegin(formatDate(request.getBegin()));
-        period.setEnd(formatDate(request.getEnd()));
+        period.setBegin(localSettings.getDateConverter().valueOf(request.getBegin()));
+        period.setEnd(localSettings.getDateConverter().valueOf(request.getEnd()));
         query.setPeriod(period);
-        if ("SYSTEM".equals(request.getType())) {
-            query.setType(Type.SYSTEM);
-        } else {
-            query.setType(Type.MEMBER);
-        }
-        // query.setMember((Member) elementService.load(LoggedUser.user().getId(), Element.Relationships.USER));
+    
+        query.setType(Type.valueOf(request.getType()));
+        //query.setMember();
+        System.out.println("-------"+LoggedUser.member().getId());
 
         if (LoggedUser.isAdministrator()) {
             AdminGroup adminGroup = LoggedUser.group();
@@ -171,21 +171,22 @@ public class SearchAlertsController extends BaseRestController {
             types.add(Alert.Type.MEMBER);
         }
         final List<? extends Alert> alerts = alertService.search(query);
+         System.out.println("-------"+alerts);
         response.setAlerts(alerts);
         response.setTypes(types);
         return response;
     }
-
-    public Calendar formatDate(String d) {
-        Calendar cal = Calendar.getInstance();
-        try {
-            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-            cal.setTime(df.parse(d));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return cal;
-    }
+//
+//    public Calendar formatDate(String d) {
+//        Calendar cal = Calendar.getInstance();
+//        try {
+//            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+//            cal.setTime(df.parse(d));
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return cal;
+//    }
 
 }

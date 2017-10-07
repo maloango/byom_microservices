@@ -367,7 +367,7 @@
         
         
         
-         <!--        Member-->
+      <!--        Member-->
 
     <bean id="memberProfileController"
           class="nl.strohalm.cyclos.webservices.rest.members.MemberProfileController" />
@@ -420,6 +420,9 @@
     <!--           Member Notification    -->
     <bean id="notificationPreferenceController"
           class="nl.strohalm.cyclos.webservices.rest.members.preferences.NotificationPreferenceController" />
+          
+    <bean id="listAdInterestsController"
+          class="nl.strohalm.cyclos.webservices.rest.members.preferences.ListAdInterestsController" />
 
     <!--                  Member Advertisements-->
     <bean id="memberAdsController"
@@ -432,13 +435,13 @@
           class="nl.strohalm.cyclos.webservices.rest.members.advertisements.RemoveAdController" />
    
           <!--    Account-->
-    <bean id="memberAccountOverviewController"
+    <bean id="accountOverviewController"
           class="nl.strohalm.cyclos.webservices.rest.members.accounts.AccountOverviewController" />
     
      <!--Reports-->
     <bean id="activitiesController"
           class="nl.strohalm.cyclos.webservices.rest.members.reports.ActivitiesController" />
-        
+   
         
 
     <!-- General -->

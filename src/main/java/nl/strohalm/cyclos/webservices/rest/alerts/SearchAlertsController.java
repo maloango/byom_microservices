@@ -154,8 +154,8 @@ public class SearchAlertsController extends BaseRestController {
         query.setPeriod(period);
     
         query.setType(Type.valueOf(request.getType()));
-        //query.setMember();
-        System.out.println("-------"+LoggedUser.member().getId());
+        //query.setMember((Member)elementService.load(LoggedUser.user().getId()));
+       
 
         if (LoggedUser.isAdministrator()) {
             AdminGroup adminGroup = LoggedUser.group();

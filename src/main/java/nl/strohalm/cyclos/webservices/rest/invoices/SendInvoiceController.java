@@ -1,4 +1,5 @@
 package nl.strohalm.cyclos.webservices.rest.invoices;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.Map;
 //import nl.strohalm.cyclos.controls.invoices.SendInvoiceForm;
 //import nl.strohalm.cyclos.controls.payments.SchedulingType;
 import nl.strohalm.cyclos.entities.access.Channel;
+import nl.strohalm.cyclos.entities.accounts.Account;
 import nl.strohalm.cyclos.entities.accounts.AccountOwner;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.accounts.Currency;
@@ -20,6 +22,7 @@ import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.entities.settings.LocalSettings;
 import nl.strohalm.cyclos.services.transactions.TransactionContext;
 import nl.strohalm.cyclos.services.transactions.exceptions.SendingInvoiceWithMultipleTransferTypesWithCustomFields;
+import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
 import nl.strohalm.cyclos.utils.ActionHelper;
 import nl.strohalm.cyclos.utils.access.LoggedUser;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
@@ -343,23 +346,20 @@ public class SendInvoiceController extends BaseRestController {
 //        binder.registerBinder("destinationAccountType", PropertyBinder.instance(AccountType.class, "destType", ReferenceConverter.instance(AccountType.class)));
 //        binder.registerBinder("amount", PropertyBinder.instance(BigDecimal.class, "amount", localSettings.getNumberConverter()));
 //        binder.registerBinder("description", PropertyBinder.instance(String.class, "description"));
-        AccountOwner from=LoggedUser.accountOwner();
-        AccountOwner to=(Member) elementService.load(params.getTo()); 
-        Invoice invoiceMessage=new Invoice();
+        AccountOwner from = LoggedUser.accountOwner();
+        AccountOwner to = (Member) elementService.load(params.getTo());
+        Invoice invoiceMessage = new Invoice();
         invoiceMessage.setFrom(from);
         invoiceMessage.setTo(to);
         invoiceMessage.setAmount(params.getAmount());
         invoiceMessage.setDescription(params.getDescription());
         invoiceMessage.setToMember((Member) elementService.load(params.getTo()));
+        invoiceMessage.setTransferType(transferTypeService.load(params.getPaymentType(),TransferType.Relationships.FROM, TransferType.Relationships.TO));
         
-        
-        
-        
-
         try {
             final Invoice invoice = invoiceService.send(invoiceMessage);
             response.setMessage("invoice.sent");
-          
+
         } catch (final SendingInvoiceWithMultipleTransferTypesWithCustomFields e) {
             response.setMessage("invoice.error.sendingWithMultipleTransferTypesWithCustomFields");
         }

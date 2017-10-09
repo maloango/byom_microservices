@@ -289,10 +289,10 @@ public class SearchInvoicesController extends BaseRestController {
         period.setBegin(localSettings.getDateConverter().valueOf(request.getBegin()));
         period.setEnd(localSettings.getDateConverter().valueOf(request.getEnd()));
         query.setPeriod(period);
-//        query.setRelatedOwner();
+        query.setRelatedOwner((Member) elementService.load(request.getRelatedMemberId()));
         query.setTransferType(transferTypeService
                 .load(request.getTransferType(),
-                        TransferType.Relationships.FROM));
+                        TransferType.Relationships.FROM,TransferType.Relationships.TO));
         final List<Invoice> invoices = invoiceService.search(query);
         response.setInvoices(invoices);
         response.setStatus(0);

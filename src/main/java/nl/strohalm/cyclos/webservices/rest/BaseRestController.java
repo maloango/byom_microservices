@@ -28,6 +28,7 @@ import nl.strohalm.cyclos.services.access.ChannelService;
 import nl.strohalm.cyclos.services.accounts.AccountService;
 import nl.strohalm.cyclos.services.accounts.AccountTypeService;
 import nl.strohalm.cyclos.services.accounts.CurrencyService;
+import nl.strohalm.cyclos.services.accounts.external.ExternalAccountService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferService;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.elements.MemberRecordTypeService;
@@ -75,6 +76,12 @@ public abstract class BaseRestController {
     protected CurrencyService currencyService;
     protected MemberService memberService;
     protected ScheduledPaymentService scheduledPaymentService;
+    protected ExternalAccountService externalAccountService;
+
+    @Inject
+    public void setExternalAccountService(ExternalAccountService externalAccountService) {
+        this.externalAccountService = externalAccountService;
+    }
 
     @Inject
     public void setScheduledPaymentService(ScheduledPaymentService scheduledPaymentService) {

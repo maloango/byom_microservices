@@ -14,53 +14,42 @@ import nl.strohalm.cyclos.entities.accounts.external.ExternalAccount;
 import nl.strohalm.cyclos.services.accounts.external.ExternalAccountService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 
 @Controller
 public class ListExternalAccountsController extends BaseRestController {
-	private ExternalAccountService externalAccountService;
 
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
+    public static class ListExternalAccountsResponse extends GenericResponse {
 
-	public final ExternalAccountService getExternalAccountService() {
-		return externalAccountService;
-	}
+        private boolean editable;
+        private List<ExternalAccount> externalAccounts;
 
-	public final PermissionService getPermissionService() {
-		return permissionService;
-	}
+        public boolean isEditable() {
+            return editable;
+        }
 
-	private PermissionService permissionService;
+        public void setEditable(boolean editable) {
+            this.editable = editable;
+        }
 
-	@Inject
-	public void setExternalAccountService(final ExternalAccountService externalAccountService) {
-		this.externalAccountService = externalAccountService;
-	}
+        public List<ExternalAccount> getExternalAccounts() {
+            return externalAccounts;
+        }
 
-	public static class ListExternalAccountsRequestDto {
+        public void setExternalAccounts(List<ExternalAccount> externalAccounts) {
+            this.externalAccounts = externalAccounts;
+        }
 
-	}
+    }
 
-	public static class ListExternalAccountsResponseDto {
-		List<ExternalAccount> externalAccounts;
-		boolean editable;
-
-		public ListExternalAccountsResponseDto(List<ExternalAccount> externalAccounts, boolean editable) {
-			super();
-			this.externalAccounts = externalAccounts;
-			this.editable = editable;
-		}
-
-	}
-
-	@RequestMapping(value = "admin/listExternalAccounts", method = RequestMethod.GET)
-	@ResponseBody
-	protected ListExternalAccountsResponseDto executeAction(@RequestBody ListExternalAccountsRequestDto form)
-			throws Exception {
-		final List<ExternalAccount> externalAccounts = externalAccountService.search();
-		boolean editable = permissionService.hasPermission(AdminSystemPermission.EXTERNAL_ACCOUNTS_MANAGE);
-		ListExternalAccountsResponseDto response = new ListExternalAccountsResponseDto(externalAccounts, editable);
-		return response;
-	}
+    @RequestMapping(value = "admin/listExternalAccounts", method = RequestMethod.GET)
+    @ResponseBody
+    protected ListExternalAccountsResponse executeAction()
+            throws Exception {
+        ListExternalAccountsResponse response = new ListExternalAccountsResponse();
+        final List<ExternalAccount> externalAccounts = externalAccountService.search();
+        response.setExternalAccounts(externalAccounts);
+        response.setEditable(permissionService.hasPermission(AdminSystemPermission.EXTERNAL_ACCOUNTS_MANAGE));
+        return response;
+    }
 }

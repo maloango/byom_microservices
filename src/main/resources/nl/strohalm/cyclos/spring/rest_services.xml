@@ -435,7 +435,7 @@
           class="nl.strohalm.cyclos.webservices.rest.members.advertisements.RemoveAdController" />
    
           <!--    Account-->
-    <bean id="accountOverviewController"
+    <bean id="accountMemberOverviewController"
           class="nl.strohalm.cyclos.webservices.rest.members.accounts.AccountOverviewController" />
     
      <!--Reports-->

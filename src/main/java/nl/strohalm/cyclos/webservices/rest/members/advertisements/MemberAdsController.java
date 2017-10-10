@@ -5,8 +5,11 @@
  */
 package nl.strohalm.cyclos.webservices.rest.members.advertisements;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import jdk.internal.org.objectweb.asm.TypeReference;
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
 import nl.strohalm.cyclos.access.MemberPermission;
@@ -26,6 +29,7 @@ import nl.strohalm.cyclos.utils.access.LoggedUser;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 import nl.strohalm.cyclos.webservices.rest.GenericResponse;
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,26 +40,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author Lue
  */
 @Controller
+@JsonAutoDetect
 public class MemberAdsController extends BaseRestController {
 
     private AdService adService;
-    private ElementService elementService;
     private PermissionService permissionService;
+    private ElementService elementService;
 
-    public ElementService getElementService() {
-        return elementService;
+    public void setPermissionService(PermissionService permissionService) {
+        this.permissionService = permissionService;
     }
 
     public void setElementService(ElementService elementService) {
         this.elementService = elementService;
-    }
-
-    public PermissionService getPermissionService() {
-        return permissionService;
-    }
-
-    public void setPermissionService(PermissionService permissionService) {
-        this.permissionService = permissionService;
     }
 
     public AdService getAdService() {
@@ -71,52 +68,20 @@ public class MemberAdsController extends BaseRestController {
 
         private long memberId;
         private boolean readOnly;
-        private List<Ad> ads;
-        private int maxAds;
+
+        private List<AdsEntity> ads = new ArrayList<AdsEntity>();
+        
         private boolean editable;
-        private Member member;
-        private boolean hasImages;
+        private boolean maxAds;
         private boolean myAds;
         private int adCount;
 
-        public int getAdCount() {
-            return adCount;
-        }
-
-        public void setAdCount(int adCount) {
-            this.adCount = adCount;
-        }
-
-        public boolean isMyAds() {
-            return myAds;
-        }
-
-        public void setMyAds(boolean myAds) {
-            this.myAds = myAds;
-        }
-
-        public boolean isHasImages() {
-            return hasImages;
-        }
-
-        public void setHasImages(boolean hasImages) {
-            this.hasImages = hasImages;
-        }
-
-        public List<Ad> getAds() {
+        public List<AdsEntity> getAds() {
             return ads;
         }
 
-        public void setAds(List<Ad> ads) {
+        public void setAds(List<AdsEntity> ads) {
             this.ads = ads;
-        }
-
-        public int getMaxAds() {
-            return maxAds;
-        }
-
-        public void setMaxAds(int maxAds) {
-            this.maxAds = maxAds;
         }
 
         public boolean isEditable() {
@@ -127,12 +92,28 @@ public class MemberAdsController extends BaseRestController {
             this.editable = editable;
         }
 
-        public Member getMember() {
-            return member;
+        public boolean isMaxAds() {
+            return maxAds;
         }
 
-        public void setMember(Member member) {
-            this.member = member;
+        public void setMaxAds(boolean maxAds) {
+            this.maxAds = maxAds;
+        }
+
+        public boolean isMyAds() {
+            return myAds;
+        }
+
+        public void setMyAds(boolean myAds) {
+            this.myAds = myAds;
+        }
+
+        public int getAdCount() {
+            return adCount;
+        }
+
+        public void setAdCount(int adCount) {
+            this.adCount = adCount;
         }
 
         public long getMemberId() {
@@ -151,12 +132,13 @@ public class MemberAdsController extends BaseRestController {
             this.readOnly = readOnly;
         }
 
+        public MemberAdsResponse() {
+        }
     }
 
     @RequestMapping(value = "member/advertisements", method = RequestMethod.GET)
     @ResponseBody
-    protected MemberAdsResponse executeAction() throws Exception {
-        // final MemberAdsForm form = context.getForm();
+    public MemberAdsResponse memberAds() throws Exception {
         MemberAdsResponse response = new MemberAdsResponse();
         Member member;
         boolean myAds = false;
@@ -222,17 +204,48 @@ public class MemberAdsController extends BaseRestController {
         member = elementService.load(member.getId(), Element.Relationships.GROUP);
         final int adCount = ads.size();
         final int maxAdsPerMember = member.getMemberGroup().getMemberSettings().getMaxAdsPerMember();
-
-     //   response.setMember(member);
-        response.setHasImages(hasImages);
-        response.setMyAds(myAds);
-        response.setEditable(editable);
-        response.setAds(ads);
-        response.setReadOnly(brokerViewingAsMember);
+        System.out.println("-----size: " + ads.size());
+        List<AdsEntity> addEntityList = new ArrayList();
+        
+        for (Ad ad : ads) {
+            AdsEntity adEntity = new AdsEntity();
+            adEntity.setDescription(ad.getDescription());
+            adEntity.setPrice(ad.getPrice());
+            addEntityList.add(adEntity);
+        }
+        response.setAds(addEntityList);
         response.setAdCount(adCount);
-        response.setStatus(0);
-        response.setMessage("!!Advertisements details");
+        response.setEditable(editable);
+        
+        response.setMyAds(myAds);
+        response.setMaxAds(adCount >= maxAdsPerMember);
+        response.setStatus(adCount);
+        response.setMessage("!! List of Ads");
+
         return response;
+    }
+
+    public static class AdsEntity {
+
+        private String description;
+        private BigDecimal price;
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public BigDecimal getPrice() {
+            return price;
+        }
+
+        public void setPrice(BigDecimal price) {
+            this.price = price;
+        }
+
     }
 
 }

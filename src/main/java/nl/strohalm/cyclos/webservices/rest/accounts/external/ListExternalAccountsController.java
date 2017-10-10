@@ -1,5 +1,6 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.external;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -22,7 +23,15 @@ public class ListExternalAccountsController extends BaseRestController {
     public static class ListExternalAccountsResponse extends GenericResponse {
 
         private boolean editable;
-        private List<ExternalAccount> externalAccounts;
+        private List<ExternalAccountEntity> listExternalAccount;
+
+        public List<ExternalAccountEntity> getListExternalAccount() {
+            return listExternalAccount;
+        }
+
+        public void setListExternalAccount(List<ExternalAccountEntity> listExternalAccount) {
+            this.listExternalAccount = listExternalAccount;
+        }
 
         public boolean isEditable() {
             return editable;
@@ -31,13 +40,27 @@ public class ListExternalAccountsController extends BaseRestController {
         public void setEditable(boolean editable) {
             this.editable = editable;
         }
+    }
 
-        public List<ExternalAccount> getExternalAccounts() {
-            return externalAccounts;
+    public static class ExternalAccountEntity {
+
+        private Long id;
+        private String name;
+
+        public Long getId() {
+            return id;
         }
 
-        public void setExternalAccounts(List<ExternalAccount> externalAccounts) {
-            this.externalAccounts = externalAccounts;
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
 
     }
@@ -48,7 +71,14 @@ public class ListExternalAccountsController extends BaseRestController {
             throws Exception {
         ListExternalAccountsResponse response = new ListExternalAccountsResponse();
         final List<ExternalAccount> externalAccounts = externalAccountService.search();
-        response.setExternalAccounts(externalAccounts);
+        List<ExternalAccountEntity> listExternalAccount = new ArrayList();
+        for (ExternalAccount account : externalAccounts) {
+            ExternalAccountEntity accountEntity = new ExternalAccountEntity();
+            accountEntity.setId(account.getId());
+            accountEntity.setName(account.getName());
+            listExternalAccount.add(accountEntity);
+        }
+        response.setListExternalAccount(listExternalAccount);
         response.setEditable(permissionService.hasPermission(AdminSystemPermission.EXTERNAL_ACCOUNTS_MANAGE));
         return response;
     }

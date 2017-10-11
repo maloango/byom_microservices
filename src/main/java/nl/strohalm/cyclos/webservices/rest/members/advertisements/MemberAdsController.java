@@ -70,11 +70,29 @@ public class MemberAdsController extends BaseRestController {
         private boolean readOnly;
 
         private List<AdsEntity> ads = new ArrayList<AdsEntity>();
-        
+
         private boolean editable;
         private boolean maxAds;
         private boolean myAds;
         private int adCount;
+        private Collection<AdImage> images;
+        private boolean hasImages;
+
+        public boolean isHasImages() {
+            return hasImages;
+        }
+
+        public void setHasImages(boolean hasImages) {
+            this.hasImages = hasImages;
+        }
+
+        public Collection<AdImage> getImages() {
+            return images;
+        }
+
+        public void setImages(Collection<AdImage> images) {
+            this.images = images;
+        }
 
         public List<AdsEntity> getAds() {
             return ads;
@@ -204,22 +222,24 @@ public class MemberAdsController extends BaseRestController {
         member = elementService.load(member.getId(), Element.Relationships.GROUP);
         final int adCount = ads.size();
         final int maxAdsPerMember = member.getMemberGroup().getMemberSettings().getMaxAdsPerMember();
-        System.out.println("-----size: " + ads.size());
+        //  System.out.println("-----size: " + ads.size());
         List<AdsEntity> addEntityList = new ArrayList();
-        
+
         for (Ad ad : ads) {
             AdsEntity adEntity = new AdsEntity();
             adEntity.setDescription(ad.getDescription());
             adEntity.setPrice(ad.getPrice());
+            adEntity.setStatus(ad.getStatus().name());
+            adEntity.setType(ad.getTradeType().name());
             addEntityList.add(adEntity);
         }
         response.setAds(addEntityList);
         response.setAdCount(adCount);
         response.setEditable(editable);
-        
+        response.setHasImages(hasImages);
         response.setMyAds(myAds);
         response.setMaxAds(adCount >= maxAdsPerMember);
-        response.setStatus(adCount);
+        response.setStatus(0);
         response.setMessage("!! List of Ads");
 
         return response;
@@ -229,6 +249,8 @@ public class MemberAdsController extends BaseRestController {
 
         private String description;
         private BigDecimal price;
+        private String type;
+        private String status;
 
         public String getDescription() {
             return description;
@@ -244,6 +266,22 @@ public class MemberAdsController extends BaseRestController {
 
         public void setPrice(BigDecimal price) {
             this.price = price;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
         }
 
     }

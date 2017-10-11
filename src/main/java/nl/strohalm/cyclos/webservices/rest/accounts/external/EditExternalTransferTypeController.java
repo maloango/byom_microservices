@@ -1,6 +1,11 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.external;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import nl.strohalm.cyclos.access.AdminSystemPermission;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,156 +18,127 @@ import nl.strohalm.cyclos.entities.accounts.external.ExternalAccount;
 import nl.strohalm.cyclos.entities.accounts.external.ExternalTransferType;
 import nl.strohalm.cyclos.entities.accounts.external.ExternalTransferType.Action;
 import nl.strohalm.cyclos.entities.accounts.transactions.TransferType;
+import nl.strohalm.cyclos.entities.accounts.transactions.TransferTypeQuery;
 import nl.strohalm.cyclos.services.accounts.external.ExternalAccountService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferTypeService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
+import nl.strohalm.cyclos.services.transactions.TransactionContext;
 import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
+import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class EditExternalTransferTypeController extends BaseRestController {
-	private ExternalTransferTypeService externalTransferTypeService;
-	private DataBinder<ExternalTransferType> dataBinder;
-	private TransferTypeService transferTypeService;
-	public final ExternalTransferTypeService getExternalTransferTypeService() {
-		return externalTransferTypeService;
-	}
 
-	public final TransferTypeService getTransferTypeService() {
-		return transferTypeService;
-	}
+    public static class EditExternalTransferResponse extends GenericResponse {
 
-	public final ExternalAccountService getExternalAccountService() {
-		return externalAccountService;
-	}
+        private Set<Entry<String, ExternalTransferType.Action>> actionsSet;
+        private List<TransferType> toMemberTransferTypes;
+        private List<TransferType> toSystemTransferTypes;
+        private ExternalAccount externalAccount;
 
+        public ExternalAccount getExternalAccount() {
+            return externalAccount;
+        }
 
-	private ExternalAccountService externalAccountService;
-	private PermissionService permissionService;
+        public void setExternalAccount(ExternalAccount externalAccount) {
+            this.externalAccount = externalAccount;
+        }
 
-	public PermissionService getPermissionService() {
-		return permissionService;
-	}
+        public List<TransferType> getToMemberTransferTypes() {
+            return toMemberTransferTypes;
+        }
 
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
+        public void setToMemberTransferTypes(List<TransferType> toMemberTransferTypes) {
+            this.toMemberTransferTypes = toMemberTransferTypes;
+        }
 
-	@Inject
-	public void setExternalAccountService(
-			final ExternalAccountService externalAccountService) {
-		this.externalAccountService = externalAccountService;
-	}
+        public List<TransferType> getToSystemTransferTypes() {
+            return toSystemTransferTypes;
+        }
 
-	@Inject
-	public void setExternalTransferTypeService(
-			final ExternalTransferTypeService externalTransferTypeService) {
-		this.externalTransferTypeService = externalTransferTypeService;
-	}
+        public void setToSystemTransferTypes(List<TransferType> toSystemTransferTypes) {
+            this.toSystemTransferTypes = toSystemTransferTypes;
+        }
 
-	@Inject
-	public void setTransferTypeService(
-			final TransferTypeService transferTypeService) {
-		this.transferTypeService = transferTypeService;
-	}
+        private boolean editable;
 
-	public static class EditExternalTransferTypeRequestDTO {
-		private long externalTransferTypeId;
-		private long account;
-		protected Map<String, Object> values;
+        public boolean isEditable() {
+            return editable;
+        }
 
-		public Map<String, Object> getValues() {
-			return values;
-		}
+        public void setEditable(boolean editable) {
+            this.editable = editable;
+        }
 
-		public void setValues(final Map<String, Object> values) {
-			this.values = values;
-		}
+        public Set<Entry<String, Action>> getActionsSet() {
+            return actionsSet;
+        }
 
-		public Map<String, Object> getExternalTransferType() {
-			return values;
-		}
+        public void setActionsSet(Set<Entry<String, Action>> actionsSet) {
+            this.actionsSet = actionsSet;
+        }
 
-		public long getAccount() {
-			return account;
-		}
+    }
 
-		public void setAccount(long account) {
-			this.account = account;
-		}
+    @RequestMapping(value = "admin/editExternalTransferType/{accountId}", method = RequestMethod.GET)
+    @ResponseBody
+    protected EditExternalTransferResponse prepareForm(@PathVariable("accountId") Long accountId)
+            throws Exception {
 
-		public long getExternalTransferTypeId() {
-			return externalTransferTypeId;
-		}
+//        final boolean isInsert = id <= 0L;
+        EditExternalTransferResponse response = new EditExternalTransferResponse();
+        boolean editable = permissionService.hasPermission(AdminSystemPermission.EXTERNAL_ACCOUNTS_MANAGE);
+        ExternalTransferType externalTransferType;
+        ExternalAccount externalAccount;
 
-		public void setExternalTransferTypeId(long externalTransferTypeId) {
-			this.externalTransferTypeId = externalTransferTypeId;
-		}
+        externalTransferType = new ExternalTransferType();
+        final long account = accountId;
+        if (account <= 0L) {
+            throw new ValidationException();
+        }
+        externalAccount = externalAccountService.load(account);
+        externalTransferType.setAccount(externalAccount);
+        editable = true;
+//        } else {
+//            externalTransferType = externalTransferTypeService.load(id, ExternalTransferType.Relationships.ACCOUNT);
+//            externalAccount = externalTransferType.getAccount();
 
-	}
+//        RequestHelper.storeEnum(request, ExternalTransferType.Action.class, "actions");
+        Map<String, ExternalTransferType.Action> actions = new HashMap();
+        actions.put("DISCARD_LOAN", ExternalTransferType.Action.DISCARD_LOAN);
+        actions.put("IGNORE", ExternalTransferType.Action.IGNORE);
+        actions.put("CONCILIATE_PAYMENT",ExternalTransferType.Action.CONCILIATE_PAYMENT);
+        actions.put("GENERATE_MEMBER_PAYMENT",ExternalTransferType.Action.GENERATE_MEMBER_PAYMENT );
+        actions.put("GENERATE_SYSTEM_PAYMENT", ExternalTransferType.Action.GENERATE_SYSTEM_PAYMENT);
+        
+        Set<Entry<String, ExternalTransferType.Action>> actionsSet = actions.entrySet();
+        response.setEditable(editable);
+        response.setActionsSet(actionsSet);
+        final TransferTypeQuery toMemberQuery = new TransferTypeQuery();
+        toMemberQuery.setContext(TransactionContext.AUTOMATIC);
+        toMemberQuery.setFromAccountType(externalAccount.getSystemAccountType());
+        toMemberQuery.setToAccountType(externalAccount.getMemberAccountType());
+        final List<TransferType> toMemberTransferTypes = transferTypeService.search(toMemberQuery);
+//        response.setToMemberTransferTypes(toMemberTransferTypes);
 
-	public static class EditExternalTransferTypeResponseDTO {
-		public String message;
+        final TransferTypeQuery toSystemQuery = new TransferTypeQuery();
+        toSystemQuery.setContext(TransactionContext.AUTOMATIC);
+        toSystemQuery.setFromAccountType(externalAccount.getMemberAccountType());
+        toSystemQuery.setToAccountType(externalAccount.getSystemAccountType());
+        final List<TransferType> toSystemTransferTypes = transferTypeService.search(toSystemQuery);
+//        response.setToSystemTransferTypes(toSystemTransferTypes);
 
-		public String getMessage() {
-			return message;
-		}
+//        response.setExternalAccount(externalAccount);
+        response.setStatus(0);
+        response.setMessage("edit transfer type");
+        return response;
+    }
 
-		public void setMessage(String message) {
-			this.message = message;
-		}
-
-	}
-
-	@RequestMapping(value = "admin/editExternalTransferType", method = RequestMethod.POST)
-	@ResponseBody
-	protected EditExternalTransferTypeResponseDTO handleSubmit(
-			@RequestBody EditExternalTransferTypeRequestDTO form)
-			throws Exception {
-
-		ExternalTransferType externalTransferType = getDataBinder()
-				.readFromString(form.getExternalTransferType());
-		final boolean isInsert = externalTransferType.isTransient();
-		externalTransferType = externalTransferTypeService
-				.save(externalTransferType);
-		EditExternalTransferTypeResponseDTO response = new EditExternalTransferTypeResponseDTO();
-		if (isInsert) {
-			response.setMessage("externalTransferType.inserted");
-		} else {
-			response.setMessage("externalTransferType.modified");
-		}
-		return response;
-	}
-
-
-	private DataBinder<ExternalTransferType> getDataBinder() {
-		if (dataBinder == null) {
-
-			final BeanBinder<ExternalTransferType> binder = BeanBinder
-					.instance(ExternalTransferType.class);
-			binder.registerBinder(
-					"id",
-					PropertyBinder.instance(Long.class, "id",
-							IdConverter.instance()));
-			binder.registerBinder("name",
-					PropertyBinder.instance(String.class, "name"));
-			binder.registerBinder("code",
-					PropertyBinder.instance(String.class, "code"));
-			binder.registerBinder("description",
-					PropertyBinder.instance(String.class, "description"));
-			binder.registerBinder("action",
-					PropertyBinder.instance(Action.class, "action"));
-			binder.registerBinder("account",
-					PropertyBinder.instance(ExternalAccount.class, "account"));
-			binder.registerBinder("transferType",
-					PropertyBinder.instance(TransferType.class, "transferType"));
-
-			dataBinder = binder;
-		}
-		return dataBinder;
-	}
 }

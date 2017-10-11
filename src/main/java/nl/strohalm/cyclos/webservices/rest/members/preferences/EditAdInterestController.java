@@ -6,6 +6,7 @@
 package nl.strohalm.cyclos.webservices.rest.members.preferences;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,12 +118,21 @@ public class EditAdInterestController extends BaseRestController {
 
         private long id;
         private long memberId;
-        private Map<String,Object>values = new HashMap<String,Object>();
+        private Map<String, Object> values = new HashMap<String, Object>();
         private List<GroupFilter> groupFilters;
         private List<Currency> currencies;
         private int singleCurrency;
         private AdInterest adInterest;
-        private List<AdCategory>adCategorie;
+        private List<AdCategory> adCategorie;
+        private List<Ad.TradeType> tradeTypes = new ArrayList();
+
+        public List<Ad.TradeType> getTradeTypes() {
+            return tradeTypes;
+        }
+
+        public void setTradeTypes(List<Ad.TradeType> tradeTypes) {
+            this.tradeTypes = tradeTypes;
+        }
         
         public Map<String, Object> getValues() {
             return values;
@@ -139,19 +149,19 @@ public class EditAdInterestController extends BaseRestController {
         public void setAdCategorie(List<AdCategory> adCategorie) {
             this.adCategorie = adCategorie;
         }
-        
+
         public void setAdInterest(AdInterest adInterest) {
             this.adInterest = adInterest;
         }
-        
-        
-        
-        public int getSingleCurrency(){
+
+        public int getSingleCurrency() {
             return singleCurrency;
         }
-        public void setSingleCurrency(final int singleCurrency){
-            this.singleCurrency=singleCurrency;
+
+        public void setSingleCurrency(final int singleCurrency) {
+            this.singleCurrency = singleCurrency;
         }
+
         public List<GroupFilter> getGroupFilters() {
             return groupFilters;
         }
@@ -167,7 +177,7 @@ public class EditAdInterestController extends BaseRestController {
         public void setCurrencies(List<Currency> currencies) {
             this.currencies = currencies;
         }
-        
+
         public Map<String, Object> getAdInterest() {
             return values;
         }
@@ -212,13 +222,13 @@ public class EditAdInterestController extends BaseRestController {
         response.setStatus(0);
         response.setMessage(isInsert ? "adInterest.inserted" : "adInterest.modified");
         return response;
-        
+
     }
 
     @RequestMapping(value = "member/editAdInterest", method = RequestMethod.GET)
     @ResponseBody
     public EditAdInterestResponse prepareForm(EditAdInterestResponse request) throws Exception {
-       EditAdInterestResponse response = new EditAdInterestResponse();
+        EditAdInterestResponse response = new EditAdInterestResponse();
         // Send ad interest to JSP
         AdInterest adInterest = resolveAdInterest(request);
         final Long id = adInterest.getId();
@@ -229,11 +239,14 @@ public class EditAdInterestController extends BaseRestController {
         response.setAdInterest(adInterest);
 
         // Send trade types to JSP
-      // RequestHelper.storeEnum(request, Ad.TradeType.class, "tradeTypes");
+         // RequestHelper.storeEnum(request, Ad.TradeType.class, "tradeTypes");
+        List<Ad.TradeType> tradeTypes = new ArrayList();
+        tradeTypes.add(Ad.TradeType.OFFER);
+        tradeTypes.add(Ad.TradeType.SEARCH);
+        response.setTradeTypes(tradeTypes);
 
         // Send categories to JSP
         response.setAdCategorie(adCategoryService.listLeaf());
-     
 
         // Send group filters to JSP
         final MemberGroup memberGroup = LoggedUser.group();
@@ -249,9 +262,9 @@ public class EditAdInterestController extends BaseRestController {
         response.setCurrencies(currencies);
         if (currencies.size() == 1) {
             // Set a single currency variable when there's only one option
-          //  response.setSingleCurrency(currencies.get(0));
-           response.setSingleCurrency(0);
-           
+            //  response.setSingleCurrency(currencies.get(0));
+            response.setSingleCurrency(0);
+
         } else if (currencies.size() > 1 && adInterest.getCurrency() == null) {
             // When there's multiple currencies, pre select the one of the default account
             final MemberAccountType defaultAccountType = accountTypeService.getDefault(memberGroup, AccountType.Relationships.CURRENCY);
@@ -263,14 +276,13 @@ public class EditAdInterestController extends BaseRestController {
 
     }
 
-  
-    protected void validateForm( final EditAdInterestResponse request) {
+    protected void validateForm(final EditAdInterestResponse request) {
         final AdInterest adInterest = resolveAdInterest(request);
         adInterestService.validate(adInterest);
     }
 
     private AdInterest resolveAdInterest(final EditAdInterestResponse request) {
-        
+
         final AdInterest adInterest = getDataBinder().readFromString(request.getAdInterest());
         if (adInterest.getOwner() == null && LoggedUser.isMember()) {
             adInterest.setOwner((Member) LoggedUser.element());

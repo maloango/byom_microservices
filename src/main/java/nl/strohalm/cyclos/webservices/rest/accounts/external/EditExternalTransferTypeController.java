@@ -114,10 +114,10 @@ public class EditExternalTransferTypeController extends BaseRestController {
         Map<String, ExternalTransferType.Action> actions = new HashMap();
         actions.put("DISCARD_LOAN", ExternalTransferType.Action.DISCARD_LOAN);
         actions.put("IGNORE", ExternalTransferType.Action.IGNORE);
-        actions.put("CONCILIATE_PAYMENT",ExternalTransferType.Action.CONCILIATE_PAYMENT);
-        actions.put("GENERATE_MEMBER_PAYMENT",ExternalTransferType.Action.GENERATE_MEMBER_PAYMENT );
+        actions.put("CONCILIATE_PAYMENT", ExternalTransferType.Action.CONCILIATE_PAYMENT);
+        actions.put("GENERATE_MEMBER_PAYMENT", ExternalTransferType.Action.GENERATE_MEMBER_PAYMENT);
         actions.put("GENERATE_SYSTEM_PAYMENT", ExternalTransferType.Action.GENERATE_SYSTEM_PAYMENT);
-        
+
         Set<Entry<String, ExternalTransferType.Action>> actionsSet = actions.entrySet();
         response.setEditable(editable);
         response.setActionsSet(actionsSet);
@@ -139,6 +139,98 @@ public class EditExternalTransferTypeController extends BaseRestController {
         response.setStatus(0);
         response.setMessage("edit transfer type");
         return response;
+    }
+
+    @RequestMapping(value = "admin/editExternalTransferType", method = RequestMethod.POST)
+    @ResponseBody
+    public GenericResponse handleSubmit(@RequestBody ExternalTransferTypeParameters params) {
+        GenericResponse response = new GenericResponse();
+        ExternalTransferType externalTransferType = new ExternalTransferType();
+        if(params.getId()>0L)
+        externalTransferType.setId(params.getId());
+        externalTransferType.setName(params.getName());
+        externalTransferType.setDescription(params.getDescription());
+        externalTransferType.setAction(Action.valueOf(params.getAction()));
+        externalTransferType.setAccount(externalAccountService.load(params.getAccountId()));
+        externalTransferType.setCode(params.getCode());
+      // externalTransferType.setTransferType(transferTypeService.load(params.getAccountId(), TransferType.Relationships.FROM, TransferType.Relationships.TO));
+
+        final boolean isInsert = externalTransferType.isTransient();
+        externalTransferType = externalTransferTypeService.save(externalTransferType);
+        if (isInsert) {
+            response.setMessage("externalTransferType.inserted");
+        } else {
+            response.setMessage("externalTransferType.modified");
+        }
+        return response;
+    }
+
+    public static class ExternalTransferTypeParameters {
+
+        private Long id;
+        private String name;
+        private String code;
+        private String description;
+        private String action;
+        private Long accountId;
+        private Long transferTypeId;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getAction() {
+            return action;
+        }
+
+        public void setAction(String action) {
+            this.action = action;
+        }
+
+        public Long getAccountId() {
+            return accountId;
+        }
+
+        public void setAccountId(Long accountId) {
+            this.accountId = accountId;
+        }
+
+        public Long getTransferTypeId() {
+            return transferTypeId;
+        }
+
+        public void setTransferTypeId(Long transferTypeId) {
+            this.transferTypeId = transferTypeId;
+        }
+
     }
 
 }

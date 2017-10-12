@@ -1,5 +1,6 @@
 package nl.strohalm.cyclos.webservices.rest.accounts.external;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,65 +14,99 @@ import nl.strohalm.cyclos.entities.accounts.external.ExternalAccount;
 import nl.strohalm.cyclos.entities.accounts.external.ExternalTransferType;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferTypeService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
+import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 
-public class ListExternalTransferTypesController {
-	// later will be the implementation if required..
-	private ExternalTransferTypeService externalTransferTypeService;
-	private PermissionService permissionService;
+@Controller
+public class ListExternalTransferTypesController extends BaseRestController {
 
-	@Inject
-	public void setExternalTransferTypeService(
-			final ExternalTransferTypeService externalTransferTypeService) {
-		this.externalTransferTypeService = externalTransferTypeService;
-	}
+    public static class ListExternalTransferTypeResponse extends GenericResponse {
+     private List<ExternalTransferTypeEntity> externalTransferTypes;
+     private  boolean editable;
 
-	public final PermissionService getPermissionService() {
-		return permissionService;
-	}
+        public boolean isEditable() {
+            return editable;
+        }
 
-	public final void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
+        public void setEditable(boolean editable) {
+            this.editable = editable;
+        }
+     
 
-	public final ExternalTransferTypeService getExternalTransferTypeService() {
-		return externalTransferTypeService;
-	}
+        public List<ExternalTransferTypeEntity> getExternalTransferTypes() {
+            return externalTransferTypes;
+        }
 
-	public static class ListExternalTransferTypesRequestDto {
-		public Object getAttribute(String name) {
-			//kindly check with sir..
-			return null;
-		}
-	}
+        public void setExternalTransferTypes(List<ExternalTransferTypeEntity> externalTransferTypes) {
+            this.externalTransferTypes = externalTransferTypes;
+        }
+     
+    }
 
-	public static class ListExternalTransferTypesResponseDto {
-		List<ExternalTransferType> externalTransferTypes;
-		boolean editable;
+    public static class ExternalTransferTypeEntity {
 
-		public ListExternalTransferTypesResponseDto(
-				List<ExternalTransferType> externalTransferTypes,
-				boolean editable) {
-			super();
-			this.externalTransferTypes = externalTransferTypes;
-			this.editable = editable;
-		}
+        private Long id;
+        private String name;
+        private ExternalTransferType.Action action;
 
-	}
+        public Long getId() {
+            return id;
+        }
 
-	@RequestMapping(value = "admin/listExternalTransferTypes", method = RequestMethod.GET)
-	@ResponseBody
-	protected ListExternalTransferTypesResponseDto executeAction(
-			@RequestBody ListExternalTransferTypesRequestDto form)
-			throws Exception {
-		// final HttpServletRequest request = context.getRequest();
-		final ExternalAccount externalAccount = (ExternalAccount) form
-				.getAttribute("externalAccount");
-		final List<ExternalTransferType> externalTransferTypes = externalTransferTypeService
-				.listByAccount(externalAccount);
-		boolean editable = permissionService
-				.hasPermission(AdminSystemPermission.EXTERNAL_ACCOUNTS_MANAGE);
-		ListExternalTransferTypesResponseDto response = new ListExternalTransferTypesResponseDto(
-				externalTransferTypes, editable);
-		return response;
-	}
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public ExternalTransferType.Action getAction() {
+            return action;
+        }
+
+        public void setAction(ExternalTransferType.Action action) {
+            this.action = action;
+        }
+
+    }
+
+    @RequestMapping(value = "admin/listExternalTransferTypes/{externalAccountId}", method = RequestMethod.GET)
+    @ResponseBody
+    protected ListExternalTransferTypeResponse executeAction(@PathVariable("externalAccountId") Long externalAccountId)
+            throws Exception {
+        ListExternalTransferTypeResponse response = new ListExternalTransferTypeResponse();
+        final long id = externalAccountId;
+        final boolean isInsert = id <= 0L;
+        boolean editable = permissionService.hasPermission(AdminSystemPermission.EXTERNAL_ACCOUNTS_MANAGE);
+        ExternalAccount externalAccount;
+        if (isInsert) {
+            externalAccount = new ExternalAccount();
+            editable = true;
+        } else {
+            externalAccount = externalAccountService.load(id);
+        }
+
+        final List<ExternalTransferType> externalTransferTypes = externalTransferTypeService.listByAccount(externalAccount);
+        List<ExternalTransferTypeEntity> transferTypeList=new ArrayList();
+        for(ExternalTransferType tt:externalTransferTypes){
+            ExternalTransferTypeEntity transferTypeEntity=new ExternalTransferTypeEntity();
+            transferTypeEntity.setId(tt.getId());
+            transferTypeEntity.setName(tt.getName());
+            transferTypeEntity.setAction(tt.getAction());
+            transferTypeList.add(transferTypeEntity);
+            
+        }
+        response.setEditable(editable);
+        response.setExternalTransferTypes(transferTypeList);
+        response.setStatus(0);
+        response.setMessage("External transfer type list!");
+        return response;
+    }
 }

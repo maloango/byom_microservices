@@ -126,6 +126,10 @@
               class="nl.strohalm.cyclos.webservices.rest.accounts.external.ListExternalAccountsController" />
     <bean id="listExternalTransferTypesController"
               class="nl.strohalm.cyclos.webservices.rest.accounts.external.ListExternalTransferTypesController" />
+    <bean id="getExternalTransferTypeByIdController"
+              class="nl.strohalm.cyclos.webservices.rest.accounts.external.GetExternalTransferTypeByIdController" />
+    
+    
     <bean id="overviewviewErrorLogEntryxternalAccountsController"
               class="nl.strohalm.cyclos.webservices.rest.accounts.external.OverviewExternalAccountsController" />
     <bean id="removeExternalAccountController"
@@ -440,7 +444,7 @@
           class="nl.strohalm.cyclos.webservices.rest.members.advertisements.RemoveAdController" />
    
           <!--    Account-->
-    <bean id="accountOverviewController"
+    <bean id="memberAccountOverviewController"
           class="nl.strohalm.cyclos.webservices.rest.members.accounts.AccountOverviewController" />
     
     <bean id="searchLoansController"

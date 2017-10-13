@@ -12,69 +12,33 @@ import nl.strohalm.cyclos.exceptions.PermissionDeniedException;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferTypeService;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class RemoveExternalTransferTypeController extends BaseRestController {
 
-	private ExternalTransferTypeService externalTransferTypeService;
+    @RequestMapping(value = "admin/removeExternalTransferType/{ExternalTransferTypeId}", method = RequestMethod.GET)
+    @ResponseBody
+    protected GenericResponse executeAction(@PathVariable("ExternalTransferTypeId") long ExternalTransferTypeId)
+            throws Exception {
+        // final RemoveExternalTransferTypeForm form = context.getForm();
+        GenericResponse response = new GenericResponse();
+        final long id = ExternalTransferTypeId;
+        if (id <= 0L) {
+            throw new ValidationException();
+        }
+        final ExternalTransferType transferType = externalTransferTypeService.load(id);
+        try {
+            externalTransferTypeService.remove(id);
+            response.setMessage("externalTransferType.removed");
+        } catch (final PermissionDeniedException e) {
+            throw e;
+        } catch (final Exception e) {
+            response.setMessage("externalTransferType.error.removing");
+        }
 
-	public final ExternalTransferTypeService getExternalTransferTypeService() {
-		return externalTransferTypeService;
-	}
+        return response;
 
-	@Inject
-	public void setExternalTransferTypeService(
-			final ExternalTransferTypeService externalTransferTypeService) {
-		this.externalTransferTypeService = externalTransferTypeService;
-	}
-
-	public static class RemoveExternalTransferTypeRequestDto {
-		private long externalTransferTypeId;
-
-		public long getExternalTransferTypeId() {
-			return externalTransferTypeId;
-		}
-
-		public void setExternalTransferTypeId(final long externalTransferType) {
-			externalTransferTypeId = externalTransferType;
-		}
-	}
-
-	public static class RemoveExternalTransferTypeResponseDto {
-		public String message;
-
-		public String getMessage() {
-			return message;
-		}
-
-		public void setMessage(String message) {
-			this.message = message;
-		}
-	}
-
-	@RequestMapping(value = "admin/removeExternalTransferType/{ExternalTransferTypeId}", method = RequestMethod.GET)
-	@ResponseBody
-	protected RemoveExternalTransferTypeResponseDto executeAction(@PathVariable ("ExternalTransferTypeId") long ExternalTransferTypeId)
-			throws Exception {
-		// final RemoveExternalTransferTypeForm form = context.getForm();
-		final long id = ExternalTransferTypeId;
-		if (id <= 0L) {
-			throw new ValidationException();
-		}
-		final ExternalTransferType transferType = externalTransferTypeService
-				.load(id);
-		RemoveExternalTransferTypeResponseDto response = new RemoveExternalTransferTypeResponseDto();
-		try {
-			externalTransferTypeService.remove(id);
-			response.setMessage("externalTransferType.removed");
-		} catch (final PermissionDeniedException e) {
-			throw e;
-		} catch (final Exception e) {
-			response.setMessage("externalTransferType.error.removing");
-		}
-                
-		return response;
-
-	}
+    }
 }

@@ -349,6 +349,12 @@
               class="nl.strohalm.cyclos.webservices.rest.invoices.SearchInvoicesController" />
     <bean id="sendInvoiceController"
               class="nl.strohalm.cyclos.webservices.rest.invoices.SendInvoiceController" />
+    
+    
+    <!--manage member-->
+    <bean id="searchMembersController"
+              class="nl.strohalm.cyclos.webservices.rest.members.SearchMembersController" />
+    
 
 
     <!--loans loangroups-->

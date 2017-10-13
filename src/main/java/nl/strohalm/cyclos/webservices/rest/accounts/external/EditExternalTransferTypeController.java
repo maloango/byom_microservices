@@ -146,7 +146,7 @@ public class EditExternalTransferTypeController extends BaseRestController {
     public GenericResponse handleSubmit(@RequestBody ExternalTransferTypeParameters params) {
         GenericResponse response = new GenericResponse();
         ExternalTransferType externalTransferType = new ExternalTransferType();
-        if(params.getId()>0L)
+        if(params.getId() !=null)
         externalTransferType.setId(params.getId());
         externalTransferType.setName(params.getName());
         externalTransferType.setDescription(params.getDescription());

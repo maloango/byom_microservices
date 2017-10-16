@@ -350,7 +350,7 @@
     <bean id="sendInvoiceController"
               class="nl.strohalm.cyclos.webservices.rest.invoices.SendInvoiceController" />
     
-    
+      
     <!--manage member-->
     <bean id="searchMembersController"
               class="nl.strohalm.cyclos.webservices.rest.members.SearchMembersController" />
@@ -440,14 +440,14 @@
           class="nl.strohalm.cyclos.webservices.rest.members.preferences.EditAdInterestController" />
 
     <!--                  Member Advertisements-->
-    <bean id="memberAdsController"
-          class="nl.strohalm.cyclos.webservices.rest.members.advertisements.MemberAdsController" />
+<!--    <bean id="memberAdsController"
+          class="nl.strohalm.cyclos.webservices.rest.members.advertisements.MemberAdsController" />-->
     
-    <bean id="editAdController"
+<!--    <bean id="editAdController"
           class="nl.strohalm.cyclos.webservices.rest.members.advertisements.EditAdController" />
     
     <bean id="removeAdController"
-          class="nl.strohalm.cyclos.webservices.rest.members.advertisements.RemoveAdController" />
+          class="nl.strohalm.cyclos.webservices.rest.members.advertisements.RemoveAdController" />-->
    
           <!--    Account-->
     <bean id="memberAccountOverviewController"

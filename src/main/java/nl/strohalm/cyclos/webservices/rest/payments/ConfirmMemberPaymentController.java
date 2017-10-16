@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.access.User;
@@ -27,6 +28,7 @@ import nl.strohalm.cyclos.entities.accounts.transactions.TransferTypeQuery;
 import nl.strohalm.cyclos.entities.customization.fields.PaymentCustomField;
 import nl.strohalm.cyclos.entities.customization.fields.PaymentCustomFieldValue;
 import nl.strohalm.cyclos.entities.exceptions.EntityNotFoundException;
+import nl.strohalm.cyclos.entities.exceptions.UnexpectedEntityException;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.services.access.exceptions.BlockedCredentialsException;
@@ -34,10 +36,15 @@ import nl.strohalm.cyclos.services.access.exceptions.InvalidCredentialsException
 import nl.strohalm.cyclos.services.customization.PaymentCustomFieldService;
 import nl.strohalm.cyclos.services.transactions.DoPaymentDTO;
 import nl.strohalm.cyclos.services.transactions.TransactionContext;
+import nl.strohalm.cyclos.services.transactions.exceptions.AuthorizedPaymentInPastException;
+import nl.strohalm.cyclos.services.transactions.exceptions.CreditsException;
 import nl.strohalm.cyclos.services.transfertypes.TransactionFeeService;
 import nl.strohalm.cyclos.utils.CustomFieldHelper;
+import nl.strohalm.cyclos.utils.EntityHelper;
 import nl.strohalm.cyclos.utils.EntityVO;
 import nl.strohalm.cyclos.utils.access.LoggedUser;
+import nl.strohalm.cyclos.utils.conversion.CoercionHelper;
+import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.model.FieldValueVO;
@@ -51,6 +58,7 @@ import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 import nl.strohalm.cyclos.webservices.rest.PaymentsRestController;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -63,304 +71,63 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class ConfirmMemberPaymentController extends BaseRestController {
 
-    private static final String NO_POSSIBLE_TRANSFER_TYPES_ERROR = "NO_POSSIBLE_TRANSFER_TYPES";
-    private static final String BLOCKED_TRANSACTION_PASSWORD_ERROR = "BLOCKED_TRANSACTION_PASSWORD";
-    private static final String INVALID_TRANSACTION_PASSWORD_ERROR = "INVALID_TRANSACTION_PASSWORD";
-    private static final String MISSING_TRANSACTION_PASSWORD_ERROR = "MISSING_TRANSACTION_PASSWORD";
-    private static final String INACTIVE_TRANSACTION_PASSWORD_ERROR = "INACTIVE_TRANSACTION_PASSWORD";
-    private static final String INVALID_AMOUNT_ERROR = "INVALID_AMOUNT";
+    public static class DoPaymentParameters {
 
-    private static final String MAX_AMOUNT_PER_DAY_EXCEEDED = "MAX_AMOUNT_PER_DAY_EXCEEDED";
-    private static final String NOT_ENOUGH_CREDITS = "NOT_ENOUGH_FUNDS";
-    private static final String UPPER_CREDIT_LIMIT_REACHED = "UPPER_CREDIT_LIMIT_REACHED";
-    protected static final String TRANSFER_MINIMUM_PAYMENT = "TRANSFER_MINIMUM_PAYMENT";
-    protected static final String UNKNOWN_PAYMENT_ERROR = "UNKNOWN_PAYMENT_ERROR";
+        private BigDecimal ammount;
+        private Long currency;
+        private Long type;
+        private String description;
+        private Long to;
+        private boolean toSystem;
+        private boolean selectedMember;
 
-    private AccountsRestController accountsRestController;
-    private PaymentCustomFieldService paymentCustomFieldService;
-    private CustomFieldHelper customFieldHelper;
-    private TransactionFeeService transactionFeeService;
-    private AccessRestController accessRestController;
-
-    public AccessRestController getAccessRestController() {
-        return accessRestController;
-    }
-
-    @Inject
-    public void setAccessRestController(AccessRestController accessRestController) {
-        this.accessRestController = accessRestController;
-    }
-
-    public TransactionFeeService getTransactionFeeService() {
-        return transactionFeeService;
-    }
-
-    @Inject
-    public void setTransactionFeeService(TransactionFeeService transactionFeeService) {
-        this.transactionFeeService = transactionFeeService;
-    }
-
-    public CustomFieldHelper getCustomFieldHelper() {
-        return customFieldHelper;
-    }
-
-    @Inject
-    public void setCustomFieldHelper(CustomFieldHelper customFieldHelper) {
-        this.customFieldHelper = customFieldHelper;
-    }
-
-    public PaymentCustomFieldService getPaymentCustomFieldService() {
-        return paymentCustomFieldService;
-    }
-
-    @Inject
-    public void setPaymentCustomFieldService(PaymentCustomFieldService paymentCustomFieldService) {
-        this.paymentCustomFieldService = paymentCustomFieldService;
-    }
-
-    public AccountsRestController getAccountsRestController() {
-        return accountsRestController;
-    }
-
-    @Inject
-    public void setAccountsRestController(AccountsRestController accountsRestController) {
-        this.accountsRestController = accountsRestController;
-    }
-    
-       public static class DoMemberPaymentParameters extends DoPaymentParameters {
-        private Long     toMemberId;
-        private String   toMemberPrincipal;
-        private Integer  installments = 0;
-        private Calendar firstInstallmentDate;
-
-        public Calendar getFirstInstallmentDate() {
-            return firstInstallmentDate;
+        public boolean isToSystem() {
+            return toSystem;
         }
 
-        public int getInstallments() {
-            return installments;
+        public void setToSystem(boolean toSystem) {
+            this.toSystem = toSystem;
         }
 
-        public Long getToMemberId() {
-            return toMemberId;
+        public boolean isSelectedMember() {
+            return selectedMember;
         }
 
-        public String getToMemberPrincipal() {
-            return toMemberPrincipal;
+        public void setSelectedMember(boolean selectedMember) {
+            this.selectedMember = selectedMember;
         }
+        
 
-        public void setFirstInstallmentDate(final Calendar firstInstallmentDate) {
-            this.firstInstallmentDate = firstInstallmentDate;
-        }
-
-        public void setInstallments(final int installments) {
-            this.installments = installments;
-        }
-
-        public void setToMemberId(final Long toMemberId) {
-            this.toMemberId = toMemberId;
-        }
-
-        public void setToMemberPrincipal(final String toMemberPrincipal) {
-            this.toMemberPrincipal = toMemberPrincipal;
-        }
-    }
-
-    public static class ConfirmPaymentResult {
-
-        private Long id;
-        private boolean pending;
-
-        public Long getId() {
-            return id;
-        }
-
-        public boolean isPending() {
-            return pending;
-        }
-
-        public void setId(final Long id) {
-            this.id = id;
-        }
-
-        public void setPending(final boolean pending) {
-            this.pending = pending;
-        }
-    }
-
-    public static class DoPaymentResult {
-
-        private boolean wouldRequireAuthorization;
-        private MemberVO from;
-        private MemberVO to;
-        private BigDecimal finalAmount;
-        private String formattedFinalAmount;
-        private List<TransactionFeeVO> fees;
-        private TransferTypeVO transferType;
-        private Map<String, String> customValues;
-
-        public Map<String, String> getCustomValues() {
-            return customValues;
-        }
-
-        public List<TransactionFeeVO> getFees() {
-            return fees;
-        }
-
-        public BigDecimal getFinalAmount() {
-            return finalAmount;
-        }
-
-        public String getFormattedFinalAmount() {
-            return formattedFinalAmount;
-        }
-
-        public MemberVO getFrom() {
-            return from;
-        }
-
-        public MemberVO getTo() {
+        public Long getTo() {
             return to;
         }
 
-        public TransferTypeVO getTransferType() {
-            return transferType;
-        }
-
-        public boolean isWouldRequireAuthorization() {
-            return wouldRequireAuthorization;
-        }
-
-        public void setCustomValues(final Map<String, String> customValues) {
-            this.customValues = customValues;
-        }
-
-        public void setFees(final List<TransactionFeeVO> fees) {
-            this.fees = fees;
-        }
-
-        public void setFinalAmount(final BigDecimal finalAmount) {
-            this.finalAmount = finalAmount;
-        }
-
-        public void setFormattedFinalAmount(final String formattedFinalAmount) {
-            this.formattedFinalAmount = formattedFinalAmount;
-        }
-
-        public void setFrom(final MemberVO from) {
-            this.from = from;
-        }
-
-        public void setTo(final MemberVO to) {
+        public void setTo(Long to) {
             this.to = to;
         }
 
-        public void setTransferType(final TransferTypeVO transferType) {
-            this.transferType = transferType;
+        public BigDecimal getAmmount() {
+            return ammount;
         }
 
-        public void setWouldRequireAuthorization(final boolean wouldRequireAuthorization) {
-            this.wouldRequireAuthorization = wouldRequireAuthorization;
+        public void setAmmount(BigDecimal ammount) {
+            this.ammount = ammount;
         }
 
-    }
-
-    public static class DoPaymentParameters {
-
-        private Long currencyId;
-        private String currencySymbol;
-        private Long transferTypeId;
-        private BigDecimal amount;
-        private String description;
-        private String transactionPassword;
-        private List<FieldValueVO> customValues;
-
-        public BigDecimal getAmount() {
-            return amount;
+        public Long getCurrency() {
+            return currency;
         }
 
-        public Long getCurrencyId() {
-            return currencyId;
+        public void setCurrency(Long currency) {
+            this.currency = currency;
         }
 
-        public String getCurrencySymbol() {
-            return currencySymbol;
+        public Long getType() {
+            return type;
         }
 
-        public List<FieldValueVO> getCustomValues() {
-            return customValues;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public String getTransactionPassword() {
-            return transactionPassword;
-        }
-
-        public Long getTransferTypeId() {
-            return transferTypeId;
-        }
-
-        public void setAmount(final BigDecimal amount) {
-            this.amount = amount;
-        }
-
-        public void setCurrencyId(final Long currencyId) {
-            this.currencyId = currencyId;
-        }
-
-        public void setCurrencySymbol(final String currencySymbol) {
-            this.currencySymbol = currencySymbol;
-        }
-
-        public void setCustomValues(final List<FieldValueVO> customValues) {
-            this.customValues = customValues;
-        }
-
-        public void setDescription(final String description) {
-            this.description = description;
-        }
-
-        public void setTransactionPassword(final String transactionPassword) {
-            this.transactionPassword = transactionPassword;
-        }
-
-        public void setTransferTypeId(final Long transferTypeId) {
-            this.transferTypeId = transferTypeId;
-        }
-
-        @Override
-        public String toString() {
-            return "DoPaymentParameters [currencyId=" + currencyId + ", currencySymbol=" + currencySymbol + ", transferTypeId=" + transferTypeId + ", amount=" + amount + ", description=" + description + ", transactionPassword=" + transactionPassword + ", customValues=" + customValues + "]";
-        }
-
-    }
-
-    public static class PaymentEntity {
-
-        private BigDecimal amount;
-        private String description;
-        private Long transferTypeId;
-
-        private Long currencyId;
-        private String from;
-
-        public BigDecimal getAmount() {
-            return amount;
-        }
-
-        public void setAmount(BigDecimal amount) {
-            this.amount = amount;
-        }
-
-        public Long getCurrencyId() {
-            return currencyId;
-        }
-
-        public void setCurrencyId(Long currencyId) {
-            this.currencyId = currencyId;
+        public void setType(Long type) {
+            this.type = type;
         }
 
         public String getDescription() {
@@ -371,28 +138,74 @@ public class ConfirmMemberPaymentController extends BaseRestController {
             this.description = description;
         }
 
-        public Long getTransferTypeId() {
-            return transferTypeId;
-        }
+    }
 
-        public void setTransferTypeId(Long transferTypeId) {
-            this.transferTypeId = transferTypeId;
-        }
+    @RequestMapping(value = "admin/confirmMemberPayment", method = RequestMethod.POST)
+    @ResponseBody
+    public GenericResponse doPayment(@RequestBody DoPaymentParameters params) {
 
-        public String getFrom() {
-            return from;
-        }
+        GenericResponse response = new GenericResponse();
 
-        public void setFrom(String from) {
-            this.from = from;
-        }
+        final DoPaymentDTO paymentDTO = new DoPaymentDTO();
+        paymentDTO.setAmount(params.getAmmount());
+        paymentDTO.setTransferType(transferTypeService.load(params.getType(), TransferType.Relationships.FROM, TransferType.Relationships.TO));
+        paymentDTO.setDescription(params.getDescription());
+        paymentDTO.setCurrency(currencyService.load(params.getCurrency()));
+        paymentDTO.setContext(TransactionContext.PAYMENT);
+        paymentDTO.setFrom(LoggedUser.accountOwner());
+        paymentDTO.setTo((Member)elementService.load(params.getTo(),Element.Relationships.GROUP));
 
+//        // Validate the transaction password if needed
+//        if (shouldValidateTransactionPassword(context, paymentDTO)) {
+//            context.checkTransactionPassword(form.getTransactionPassword());
+//        }
+//        // Perform the actual payment
+        Payment payment;
+        try {
+            payment = paymentService.doPayment(paymentDTO);
+
+        } catch (final CreditsException e) {
+            //return context.sendError(actionHelper.resolveErrorKey(e), actionHelper.resolveParameters(e));
+        } catch (final UnexpectedEntityException e) {
+            response.setMessage("payment.error.invalidTransferType");
+            return response;
+        } catch (final AuthorizedPaymentInPastException e) {
+            response.setMessage("payment.error.authorizedInPast");
+            return response;
+        }
+//        // Redirect to the next action
+//        final Map<String, Object> params = new HashMap<String, Object>();
+//        ActionForward forward;
+//        if (payment instanceof Transfer) {
+//            params.put("transferId", payment.getId());
+//            forward = context.getSuccessForward();
+//        } else if (payment instanceof ScheduledPayment) {
+//            params.put("paymentId", payment.getId());
+//            forward = context.findForward("scheduledPayment");
+//        } else {
+//            throw new IllegalStateException("Unknown payment type: " + payment);
+//        }
+//        params.put("selectMember", form.getSelectMember());
+//        params.put("from", form.getFrom());
+//        return ActionHelper.redirectWithParams(context.getRequest(), forward, params);
+//   
+        response.setStatus(0);
+        response.setMessage("payment successfull !!");
+        return response;
     }
 
     public static class ConfirmPaymentResponse extends GenericResponse {
 
-        private List<EntityVO> transferTypes;
         private List<Currency> currencies;
+        private List<TransferTypeEntity> allTransferTypes;
+
+        public List<TransferTypeEntity> getAllTransferTypes() {
+            return allTransferTypes;
+        }
+
+        public void setAllTransferTypes(List<TransferTypeEntity> allTransferTypes) {
+            this.allTransferTypes = allTransferTypes;
+        }
 
         public List<Currency> getCurrencies() {
             return currencies;
@@ -402,241 +215,213 @@ public class ConfirmMemberPaymentController extends BaseRestController {
             this.currencies = currencies;
         }
 
-        public List<EntityVO> getTransferTypes() {
-            return transferTypes;
+    }
+
+    public static class TransferTypeEntity {
+
+        private Long id;
+        private String name;
+
+        public Long getId() {
+            return id;
         }
 
-        public void setTransferTypes(List<EntityVO> transferTypes) {
-            this.transferTypes = transferTypes;
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
 
     }
 
-    public List<Currency> resolveCurrencies() {
+    @RequestMapping(value = "admin/confirmMemberPayment/{ownerId}", method = RequestMethod.GET)
+    @ResponseBody
+    public ConfirmPaymentResponse prepareForm(@PathVariable("ownerId") Long ownerId) {
+        ConfirmPaymentResponse response = new ConfirmPaymentResponse();
+
+//         final Long fromId = IdConverter.instance().valueOf(form.getFrom());
+//        final boolean asMember = fromId != null;
+//        Member fromMember = null;
+//        if (asMember) {
+//            final Element element = elementService.load(fromId, Element.Relationships.GROUP, Element.Relationships.USER);
+//            if (element instanceof Member) {
+//                fromMember = (Member) element;
+//                
+//            }
+//        }
+        // Get the member in action
+        Member member = null;
+        if (member == null && LoggedUser.isMember()) {
+            member = LoggedUser.element();
+        }
+        // Resolve the possible currencies
+        final List<Currency> currencies = resolveCurrencies(LoggedUser.accountOwner());
+
+        // Resolve the transfer types
+        final TransferTypeQuery ttQuery = resolveTransferTypeQuery(ownerId);
+        final List<TransferType> tts = transferTypeService.search(ttQuery);
+        List<TransferTypeEntity> transferList = new ArrayList();
+        for (TransferType tt : tts) {
+            TransferTypeEntity transferEntity = new TransferTypeEntity();
+            transferEntity.setId(tt.getId());
+            transferEntity.setName(tt.getName());
+            transferList.add(transferEntity);
+
+        }
+//        if (ttQuery != null) {
+//            
+//            Currency defaultCurrency = null;
+//            if (member != null) {
+//                final MemberAccountType defaultAccountType = accountTypeService.getDefault(member.getMemberGroup(), AccountType.Relationships.CURRENCY);
+//                if (defaultAccountType != null) {
+//                    defaultCurrency = defaultAccountType.getCurrency();
+//                }
+//            }
+//
+//            // Check for transfer types for each currency, removing those currencies without transfer types
+////            final Map<Currency, List<TransferType>> transferTypesPerCurrency = new LinkedHashMap<Currency, List<TransferType>>();
+////            final List<TransferType> allTransferTypes = new ArrayList<TransferType>();
+////            
+////            for (final Iterator<Currency> iterator = currencies.iterator(); iterator.hasNext();) {
+////                final Currency currency = iterator.next();
+////                final TransferTypeQuery currentQuery = (TransferTypeQuery) ttQuery.clone();
+////                currentQuery.setCurrency(currency);
+////                final List<TransferType> tts = transferTypeService.search(currentQuery);
+////                allTransferTypes.addAll(tts);
+////                if (tts.isEmpty()) {
+////                    iterator.remove();
+////                } else {
+////                    transferTypesPerCurrency.put(currency, tts);
+////                }
+////            }
+////
+////            // Check which currency to preselect
+////            Currency currency = null;
+////            if (CollectionUtils.isNotEmpty(transferTypesPerCurrency.get(defaultCurrency))) {
+////                // There are TTs for the default currency: preselect it
+////                currency = defaultCurrency;
+////            } else if (!transferTypesPerCurrency.isEmpty()) {
+////                // Get the first currency with TTs
+////                currency = transferTypesPerCurrency.keySet().iterator().next();
+////            }
+////            //form.setCurrency(CoercionHelper.coerce(String.class, currency));
+////
+////            // Store the transfer types associated with the preselected currency
+////            //request.setAttribute("transferTypes", allTransferTypes);
+////            response.setAllTransferTypes(allTransferTypes);
+//            
+//        }
+//        if (CollectionUtils.isEmpty(currencies)) {
+//            // No currency with possible transfer type!!!
+//            throw new ValidationException("payment.error.noTransferType");
+//        } else if (currencies.size() == 1) {
+//            //request.setAttribute("singleCurrency", currencies.iterator().next());
+//        }
+        response.setAllTransferTypes(transferList);
+        response.setCurrencies(currencies);
+        response.setStatus(0);
+        return response;
+    }
+
+    public List<Currency> resolveCurrencies(final AccountOwner accountOwner) {
 
         final List<Currency> currencies;
-        final AccountOwner fromOwner = LoggedUser.accountOwner();
+        final AccountOwner fromOwner = accountOwner;
         if (fromOwner instanceof Member) {
             final Member member = elementService.load(((Member) fromOwner).getId(), Element.Relationships.GROUP);
             currencies = currencyService.listByMember(member);
             final MemberAccountType defaultAccountType = accountTypeService.getDefault(member.getMemberGroup(), AccountType.Relationships.CURRENCY);
             // Preselect the default currency
             if (defaultAccountType != null) {
-//                form.setCurrency(CoercionHelper.coerce(String.class, defaultAccountType.getCurrency()));
+                //form.setCurrency(CoercionHelper.coerce(String.class, defaultAccountType.getCurrency()));
             }
         } else {
             currencies = currencyService.listAll();
         }
-//        request.setAttribute("currencies", currencies);
 
-        if (currencies.isEmpty()) {
-            // No currencies means no possible payment!!!
-            throw new ValidationException("payment.error.noTransferType");
-        } else if (currencies.size() == 1) {
-            // Special case: There is a single currency. The JSP will use this object
-//            request.setAttribute("singleCurrency", currencies.get(0));
-        }
-        System.out.println("-----currency:-------" + currencies);
         return currencies;
     }
 
-    protected TransferTypeQuery resolveTransferTypeQuery() {
+    public TransferTypeQuery resolveTransferTypeQuery(Long toIds) {
+//        final TransferTypeQuery query = new TransferTypeQuery();
+//        query.setUsePriority(true);
+//        query.setContext(TransactionContext.SELF_PAYMENT);
+//        final AccountOwner owner = accountOwner;
+//        System.out.println("-----accout owner: " + owner);
+//        query.setFromOwner(owner);
+//        query.setToOwner(owner);
+//        
+//        query.setGroup(LoggedUser.group());
+//        
+//        return query;
+    
+        final Long fromId = null;
+        final Long toId = toIds;
 
-        final Long memberId = LoggedUser.user().getId();
+        final boolean fromMe = fromId == null;
+        final boolean asMember = !fromMe;
+        final boolean toSpecificMember = !selectedMember() && !toSystem();
+        final boolean toUnknownMember = selectedMember();
+        final boolean toSystem = toSystem();
 
+        if (toUnknownMember || (asMember && !toSystem)) {
+            // Since we don't know who will receive the payment yet, we cannot resolve transfer types
+            return null;
+        }
+
+        // Check the preselected currency
+//        Currency currency = CoercionHelper.coerce(Currency.class, form.getCurrency());
+
+        // When there's none, use the first one
+//        if (currency == null) {
+//            final HttpServletRequest request = context.getRequest();
+//            final Collection<Currency> currencies = (Collection<Currency>) request.getAttribute("currencies");
+//            if (!currencies.isEmpty()) {
+//                currency = currencies.iterator().next();
+//            }
+//        }
+
+        // Build the query
         final TransferTypeQuery query = new TransferTypeQuery();
+        query.setChannel(Channel.WEB);
+        query.setContext(TransactionContext.PAYMENT);
         query.setUsePriority(true);
-        query.setContext(TransactionContext.SELF_PAYMENT);
-        final AccountOwner owner = LoggedUser.accountOwner();
-        query.setFromOwner(owner);
-        query.setToOwner(owner);
-        if (memberId != null) {
-            query.setBy(LoggedUser.element());
-        } else {
+        // query.setCurrency(currency);
+
+        // Determine the from
+        if (fromMe) {
             query.setGroup(LoggedUser.group());
-        }
-        System.out.println("-----query:-------" + query);
-        return query;
-    }
-
-    @RequestMapping(value = "admin/confirmMemberPayment", method = RequestMethod.GET)
-    @ResponseBody
-    public ConfirmPaymentResponse prepareForm() {
-        ConfirmPaymentResponse response = new ConfirmPaymentResponse();
-//        Currency currency = new Currency();
-//        currency.setId(CurrencyId);
-        final Long memberId = LoggedUser.user().getId();
-
-        // Resolve the possible currencies
-        final List<Currency> currencies = currencyService.listAll();
-        final TransferTypeQuery query = new TransferTypeQuery();
-        query.setUsePriority(true);
-        query.setContext(TransactionContext.SELF_PAYMENT);
-        final AccountOwner owner = LoggedUser.accountOwner();
-        query.setFromOwner(owner);
-        query.setToOwner(owner);
-
-        query.setGroup(LoggedUser.group());
-
-        // Check for transfer types for each currency, removing those currencies without transfer types
-        final Map<Currency, List<TransferType>> transferTypesPerCurrency = new LinkedHashMap<Currency, List<TransferType>>();
-        final List<TransferType> allTransferTypes = new ArrayList<TransferType>();
-
-        for (final Iterator<Currency> iterator = currencies.iterator(); iterator.hasNext();) {
-            final Currency currency = iterator.next();
-            final TransferTypeQuery currentQuery = (TransferTypeQuery) query.clone();
-            currentQuery.setCurrency(currency);
-            final List<TransferType> tts = transferTypeService.search(currentQuery);
-            allTransferTypes.addAll(tts);
-            if (tts.isEmpty()) {
-                iterator.remove();
-            } else {
-                transferTypesPerCurrency.put(currency, tts);
-
-            }
-        }
-
-        System.out.println("-------------  " + allTransferTypes.toString());
-        List<EntityVO> ttVo = new ArrayList<EntityVO>();
-        for (TransferType allTransferType : allTransferTypes) {
-            ttVo.add(allTransferType.readOnlyView());
-        }
-
-        response.setTransferTypes(ttVo);
-        response.setCurrencies(currencies);
-
-        response.setStatus(0);
-        response.setMessage("Transfer type list");
-        return response;
-
-    }
-
-    @RequestMapping(value = "admin/confirmMemberPayment", method = RequestMethod.POST)
-    @ResponseBody
-    public ConfirmPaymentResult doPayment(@RequestBody DoMemberPaymentParameters params) {
-
-        if (params == null) {
-            throw new ValidationException();
-        }
-
-        Member toMember = memberService.loadByIdOrPrincipal(params.getToMemberId(), null, params.getToMemberPrincipal());
-        if (toMember == null) {
-            throw new EntityNotFoundException(Member.class);
-        }
-        if (params == null) {
-            throw new ValidationException();
-        }
-
-        Member loggedMember = LoggedUser.member();
-
-        BigDecimal amount = params.getAmount();
-        if (amount == null) {
-            throw new IllegalArgumentException(INVALID_AMOUNT_ERROR);
-        }
-        AccountOwner toOwner = toMember;
-        TransferType transferType = resolveTransferType(params, toOwner);
-
-        // Calculate the installments
-        // List<ScheduledPaymentDTO> installments = buildInstallments(params, amount, transferType);
-        // Check the transaction password, if needed
-        if (accessRestController.isRequireTransactionPassword()) {
-            String transactionPassword = params.getTransactionPassword();
-            User.TransactionPasswordStatus status = loggedMember.getUser().getTransactionPasswordStatus();
-            if (status == null || status == User.TransactionPasswordStatus.PENDING || status == User.TransactionPasswordStatus.NEVER_CREATED) {
-                throw new IllegalArgumentException(INACTIVE_TRANSACTION_PASSWORD_ERROR);
-            }
-            if (StringUtils.isEmpty(transactionPassword)) {
-                throw new IllegalArgumentException(MISSING_TRANSACTION_PASSWORD_ERROR);
-            }
-            try {
-                accessService.checkTransactionPassword(transactionPassword);
-            } catch (InvalidCredentialsException e) {
-                throw new IllegalArgumentException(INVALID_TRANSACTION_PASSWORD_ERROR);
-            } catch (BlockedCredentialsException e) {
-                throw new IllegalArgumentException(BLOCKED_TRANSACTION_PASSWORD_ERROR);
-            }
-        }
-
-        // Create the DoPaymentDTO
-        DoPaymentDTO dto = buildDoPaymentDTO(params, toOwner, transferType);
-
-        // Perform the payment
-        Payment payment = paymentService.doPayment(dto);
-
-        // Create the result
-        ConfirmPaymentResult result = new ConfirmPaymentResult();
-        result.setId(payment.getId());
-        result.setPending(payment.getProcessDate() == null);
-        return result;
-    }
-
-    private TransferType resolveTransferType(final DoPaymentParameters params, final AccountOwner toOwner) {
-        Member loggedMember = LoggedUser.member();
-        Currency currency = accountsRestController.loadCurrencyByIdOrSymbol(params.getCurrencyId(), params.getCurrencySymbol());
-        final TransferTypeQuery query = new TransferTypeQuery();
-        query.setResultType(QueryParameters.ResultType.LIST);
-        if (loggedMember == null) {
-            query.setContext(LoggedUser.accountOwner().equals(toOwner) ? TransactionContext.SELF_PAYMENT : TransactionContext.PAYMENT);
             query.setFromOwner(LoggedUser.accountOwner());
         } else {
-            query.setContext(loggedMember.equals(toOwner) ? TransactionContext.SELF_PAYMENT : TransactionContext.PAYMENT);
-            query.setFromOwner(loggedMember);
-        }
-        query.setChannel(Channel.REST);
-
-        query.setToOwner(toOwner);
-        query.setCurrency(currency);
-        List<TransferType> possibleTransferTypes = transferTypeService.search(query);
-        if (possibleTransferTypes.isEmpty()) {
-            throw new IllegalArgumentException(NO_POSSIBLE_TRANSFER_TYPES_ERROR);
+            query.setBy(LoggedUser.element());
+            query.setFromOwner((Member)elementService.load(fromId, Element.Relationships.GROUP));
         }
 
-        // Resolve the transfer type
-        Long transferTypeId = params.getTransferTypeId();
-        TransferType transferType = null;
-        if (transferTypeId != null) {
-            for (TransferType tt : possibleTransferTypes) {
-                if (tt.getId().equals(transferTypeId)) {
-                    transferType = tt;
-                    break;
-                }
-            }
-        } else {
-            // When there are multiple transfer types, prefer the first one from the default account
-            if (possibleTransferTypes.size() > 1) {
-                MemberAccountType defaultType = accountTypeService.getDefault(loggedMember.getMemberGroup());
-                for (TransferType current : possibleTransferTypes) {
-                    if (current.getFrom().equals(defaultType)) {
-                        transferType = current;
-                        break;
-                    }
-                }
-            }
-            // No TT found so far. Get the first one
-            if (transferType == null) {
-                transferType = possibleTransferTypes.isEmpty() ? null : possibleTransferTypes.get(0);
-            }
+        // Determine the to
+        if (toSystem) {
+            query.setToOwner(SystemAccountOwner.instance());
+        } else if (toSpecificMember) {
+            query.setToOwner(EntityHelper.reference(Member.class, toId));
         }
-        if (transferType == null) {
-            throw new EntityNotFoundException(TransferType.class);
-        }
-        return transferType;
+
+        return query;
+
     }
-
-    private DoPaymentDTO buildDoPaymentDTO(final DoPaymentParameters params, final AccountOwner toOwner, final TransferType transferType) {
-        DoPaymentDTO dto = new DoPaymentDTO();
-        dto.setContext(TransactionContext.PAYMENT);
-        dto.setChannel(Channel.REST);
-        dto.setAmount(params.getAmount());
-        dto.setCurrency(null);
-        dto.setTo(toOwner);
-        dto.setTransferType(transferType);
-        dto.setDescription(params.getDescription());
-        // dto.setPayments(installments);
-        List<PaymentCustomField> allowedFields = paymentCustomFieldService.list(transferType, true);
-        final Collection<PaymentCustomFieldValue> customValues = customFieldHelper.toValueCollection(allowedFields, params.getCustomValues());
-        dto.setCustomValues(customValues);
-        return dto;
+    
+    public boolean toSystem(){
+        return false;
     }
+    
+    public boolean selectedMember(){
+        return true;
+    }
+    
+    
 
 }

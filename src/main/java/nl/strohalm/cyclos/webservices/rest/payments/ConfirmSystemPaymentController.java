@@ -21,6 +21,7 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.entities.access.Channel;
 import nl.strohalm.cyclos.entities.access.User;
+import nl.strohalm.cyclos.entities.accounts.Account;
 import nl.strohalm.cyclos.entities.accounts.AccountOwner;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.accounts.Currency;
@@ -68,8 +69,6 @@ import nl.strohalm.cyclos.webservices.rest.AccessRestController;
 import nl.strohalm.cyclos.webservices.rest.AccountsRestController;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 import nl.strohalm.cyclos.webservices.rest.GenericResponse;
-import nl.strohalm.cyclos.webservices.rest.PaymentsRestController;
-import nl.strohalm.cyclos.webservices.rest.PaymentsRestController.DoPaymentParameters;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -78,29 +77,82 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class ConfirmSystemPaymentController extends BaseRestController {
     
+    public static class DoPaymentParameters {
+
+        private BigDecimal ammount;
+        private Long currency;
+        private Long type;
+        private String description;
+        
+        public BigDecimal getAmmount() {
+            return ammount;
+        }
+        
+        public void setAmmount(BigDecimal ammount) {
+            this.ammount = ammount;
+        }
+        
+        public Long getCurrency() {
+            return currency;
+        }
+        
+        public void setCurrency(Long currency) {
+            this.currency = currency;
+        }
+        
+        public Long getType() {
+            return type;
+        }
+        
+        public void setType(Long type) {
+            this.type = type;
+        }
+        
+        public String getDescription() {
+            return description;
+        }
+        
+        public void setDescription(String description) {
+            this.description = description;
+        }
+        
+    }
+    
     @RequestMapping(value = "admin/confirmSystemPayment", method = RequestMethod.POST)
     @ResponseBody
-    public void doPayment(@RequestBody DoPaymentParameters params) {
+    public GenericResponse doPayment(@RequestBody DoPaymentParameters params) {
+        
+        GenericResponse response = new GenericResponse();
+        
+        final DoPaymentDTO paymentDTO = new DoPaymentDTO();
+        paymentDTO.setAmount(params.getAmmount());
+        paymentDTO.setTransferType(transferTypeService.load(params.getType(),TransferType.Relationships.FROM,TransferType.Relationships.TO));
+        paymentDTO.setDescription(params.getDescription());
+        paymentDTO.setCurrency(currencyService.load(params.getCurrency()));
+        paymentDTO.setContext(TransactionContext.SELF_PAYMENT);
+        paymentDTO.setFrom(LoggedUser.accountOwner());
+        paymentDTO.setTo(LoggedUser.accountOwner());
+        
 
-//        GenericResponse response =new GenericResponse();
-//           final ConfirmPaymentForm form = context.getForm();
-//        final DoPaymentDTO paymentDTO = validatePayment(context);
+        
 //        // Validate the transaction password if needed
 //        if (shouldValidateTransactionPassword(context, paymentDTO)) {
 //            context.checkTransactionPassword(form.getTransactionPassword());
 //        }
 //        // Perform the actual payment
-//        Payment payment;
-//        try {
-//            payment = paymentService.doPayment(paymentDTO);
-//            context.getSession().removeAttribute("payment");
-//        } catch (final CreditsException e) {
-//            return context.sendError(actionHelper.resolveErrorKey(e), actionHelper.resolveParameters(e));
-//        } catch (final UnexpectedEntityException e) {
-//            return context.sendError("payment.error.invalidTransferType");
-//        } catch (final AuthorizedPaymentInPastException e) {
-//            return context.sendError("payment.error.authorizedInPast");
-//        }
+        Payment payment;
+        try {
+            payment = paymentService.doPayment(paymentDTO);
+            
+        } catch (final CreditsException e) {
+            //return context.sendError(actionHelper.resolveErrorKey(e), actionHelper.resolveParameters(e));
+        } catch (final UnexpectedEntityException e) {
+            response.setMessage("payment.error.invalidTransferType");
+            return response;
+        } catch (final AuthorizedPaymentInPastException e) {
+            response.setMessage("payment.error.authorizedInPast");
+            return response;
+        }
 //        // Redirect to the next action
 //        final Map<String, Object> params = new HashMap<String, Object>();
 //        ActionForward forward;
@@ -116,24 +168,24 @@ public class ConfirmSystemPaymentController extends BaseRestController {
 //        params.put("selectMember", form.getSelectMember());
 //        params.put("from", form.getFrom());
 //        return ActionHelper.redirectWithParams(context.getRequest(), forward, params);
-//        
-//        return response;
+//   
+        response.setStatus(0);
+        response.setMessage("payment successfull !!");
+        return response;
     }
     
     public static class ConfirmPaymentResponse extends GenericResponse {
         
         private List<Currency> currencies;
         private List<TransferTypeEntity> allTransferTypes;
-
+        
         public List<TransferTypeEntity> getAllTransferTypes() {
             return allTransferTypes;
         }
-
+        
         public void setAllTransferTypes(List<TransferTypeEntity> allTransferTypes) {
             this.allTransferTypes = allTransferTypes;
         }
-        
-     
         
         public List<Currency> getCurrencies() {
             return currencies;
@@ -145,22 +197,23 @@ public class ConfirmSystemPaymentController extends BaseRestController {
         
     }
     
-    public static class TransferTypeEntity{
+    public static class TransferTypeEntity {
+
         private Long id;
         private String name;
-
+        
         public Long getId() {
             return id;
         }
-
+        
         public void setId(Long id) {
             this.id = id;
         }
-
+        
         public String getName() {
             return name;
         }
-
+        
         public void setName(String name) {
             this.name = name;
         }
@@ -189,18 +242,17 @@ public class ConfirmSystemPaymentController extends BaseRestController {
         }
         // Resolve the possible currencies
         final List<Currency> currencies = resolveCurrencies(LoggedUser.accountOwner());
-     
 
         // Resolve the transfer types
         final TransferTypeQuery ttQuery = resolveTransferTypeQuery(LoggedUser.accountOwner());
         final List<TransferType> tts = transferTypeService.search(ttQuery);
-        List<TransferTypeEntity>transferList=new ArrayList();
-        for(TransferType tt:tts){
-            TransferTypeEntity transferEntity=new TransferTypeEntity();
+        List<TransferTypeEntity> transferList = new ArrayList();
+        for (TransferType tt : tts) {
+            TransferTypeEntity transferEntity = new TransferTypeEntity();
             transferEntity.setId(tt.getId());
             transferEntity.setName(tt.getName());
             transferList.add(transferEntity);
-                    
+            
         }
 //        if (ttQuery != null) {
 //            
@@ -281,7 +333,7 @@ public class ConfirmSystemPaymentController extends BaseRestController {
         query.setUsePriority(true);
         query.setContext(TransactionContext.SELF_PAYMENT);
         final AccountOwner owner = accountOwner;
-        System.out.println("-----accout owner: "+owner);
+        System.out.println("-----accout owner: " + owner);
         query.setFromOwner(owner);
         query.setToOwner(owner);
         

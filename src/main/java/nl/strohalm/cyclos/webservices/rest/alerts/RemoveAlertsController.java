@@ -29,13 +29,38 @@ public class RemoveAlertsController extends BaseRestController {
         RemoveAlertsController.alertService = alertService;
     }
 
-    @RequestMapping(value = "admin/removeAlerts/{alertIds}/alertTypeParam", method = RequestMethod.GET)
+    public static class RemoveAlertsParameter {
+
+        private Long []alertIds;
+        private String alertType;
+
+        public Long[] getAlertIds() {
+            return alertIds;
+        }
+
+        public void setAlertIds(Long[] alertIds) {
+            this.alertIds = alertIds;
+        }
+
+    
+
+        public String getAlertType() {
+            return alertType;
+        }
+
+        public void setAlertType(String alertType) {
+            this.alertType = alertType;
+        }
+
+    }
+
+    @RequestMapping(value = "admin/removeAlerts", method = RequestMethod.POST)
     @ResponseBody
-    public GenericResponse removeAlert(@PathVariable("alertIds") long alertIds, @RequestParam("alertType") String alertType) throws Exception {
+    public GenericResponse removeAlert(@RequestBody RemoveAlertsParameter params) throws Exception {
         GenericResponse response = new GenericResponse();
         try {
-            final boolean isMember = "MEMBER".equals(alertType);
-            alertService.removeAlerts(alertIds);
+            final boolean isMember = "MEMBER".equals(params.getAlertType());
+            alertService.removeAlerts(params.getAlertIds());
             response.setMessage("alert.removed");
             response.setStatus(0);
             response.setMessage("Alerts removed!!");

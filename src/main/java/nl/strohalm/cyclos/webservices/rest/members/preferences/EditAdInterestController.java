@@ -7,14 +7,13 @@ package nl.strohalm.cyclos.webservices.rest.members.preferences;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.accounts.Currency;
 import nl.strohalm.cyclos.entities.accounts.MemberAccountType;
 import nl.strohalm.cyclos.entities.ads.Ad;
+import nl.strohalm.cyclos.entities.ads.Ad.TradeType;
 import nl.strohalm.cyclos.entities.ads.AdCategory;
 import nl.strohalm.cyclos.entities.groups.GroupFilter;
 import nl.strohalm.cyclos.entities.groups.GroupFilterQuery;
@@ -35,7 +34,6 @@ import nl.strohalm.cyclos.utils.access.LoggedUser;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
-import nl.strohalm.cyclos.utils.conversion.CoercionHelper;
 import nl.strohalm.cyclos.utils.conversion.IdConverter;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
@@ -81,10 +79,6 @@ public class EditAdInterestController extends BaseRestController {
         return dataBinder;
     }
 
-    public void setSettingsService(SettingsService settingsService) {
-        this.settingsService = settingsService;
-    }
-
     public void onLocalSettingsUpdate(final LocalSettingsEvent event) {
         dataBinder = null;
     }
@@ -114,60 +108,125 @@ public class EditAdInterestController extends BaseRestController {
         this.groupFilterService = groupFilterService;
     }
 
-    public static class EditAdInterestResponse extends GenericResponse {
+    public static class EditAdInterestRequest {
 
         private long id;
         private long memberId;
-        private Map<String, Object> values = new HashMap<String, Object>();
-        private List<GroupFilter> groupFilters;
-        private List<Currency> currencies;
-        private int singleCurrency;
-        private AdInterest adInterest;
-        private List<AdCategory> adCategorie;
-        private List<Ad.TradeType> tradeTypes = new ArrayList();
+        private AdCategory category;
+        private String title;
+        private Member owner;
+        private Currency currency;
+        private BigDecimal initialPrice;
+        private BigDecimal finalPrice;
+        private String keywords;
+        private String type;
 
-        public List<Ad.TradeType> getTradeTypes() {
-            return tradeTypes;
+        public String getType() {
+            return type;
         }
 
-        public void setTradeTypes(List<Ad.TradeType> tradeTypes) {
-            this.tradeTypes = tradeTypes;
+        public void setType(String type) {
+            this.type = type;
         }
         
-        public Map<String, Object> getValues() {
-            return values;
+       
+        
+        public long getMemberId() {
+            return memberId;
         }
 
-        public void setValues(Map<String, Object> values) {
-            this.values = values;
+        public void setMemberId(long memberId) {
+            this.memberId = memberId;
+        }
+        
+       
+        public AdCategory getCategory() {
+            return category;
         }
 
-        public List<AdCategory> getAdCategorie() {
-            return adCategorie;
+        public void setCategory(AdCategory category) {
+            this.category = category;
         }
 
-        public void setAdCategorie(List<AdCategory> adCategorie) {
-            this.adCategorie = adCategorie;
+        public Member getOwner() {
+            return owner;
         }
 
-        public void setAdInterest(AdInterest adInterest) {
-            this.adInterest = adInterest;
+        public void setOwner(Member owner) {
+            this.owner = owner;
         }
+
+        public Currency getCurrency() {
+            return currency;
+        }
+
+        public void setCurrency(Currency currency) {
+            this.currency = currency;
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public BigDecimal getInitialPrice() {
+            return initialPrice;
+        }
+
+        public void setInitialPrice(BigDecimal initialPrice) {
+            this.initialPrice = initialPrice;
+        }
+
+        public BigDecimal getFinalPrice() {
+            return finalPrice;
+        }
+
+        public void setFinalPrice(BigDecimal finalPrice) {
+            this.finalPrice = finalPrice;
+        }
+
+        public String getKeywords() {
+            return keywords;
+        }
+
+        public void setKeywords(String keywords) {
+            this.keywords = keywords;
+        }
+
+    }
+
+    public static class EditAdInterestResponse extends GenericResponse {
+
+        private Member owner;
+        private String title;
+        private Ad.TradeType type;
+        private List<AdCategory> category = new ArrayList<AdCategory>();
+        private List<GroupFilter> groupFilters;
+        private BigDecimal initialPrice;
+        private BigDecimal finalPrice;
+        private List<Currency> currencies;
+        private String keywords;
+        private AdInterest adInterest;
+        private List<TradeType> tradeTypes = new ArrayList();
+        private int singleCurrency;
 
         public int getSingleCurrency() {
             return singleCurrency;
         }
 
-        public void setSingleCurrency(final int singleCurrency) {
+        public void setSingleCurrency(int singleCurrency) {
             this.singleCurrency = singleCurrency;
-        }
-
-        public List<GroupFilter> getGroupFilters() {
-            return groupFilters;
-        }
-
-        public void setGroupFilters(List<GroupFilter> groupFilters) {
-            this.groupFilters = groupFilters;
         }
 
         public List<Currency> getCurrencies() {
@@ -178,83 +237,144 @@ public class EditAdInterestController extends BaseRestController {
             this.currencies = currencies;
         }
 
-        public Map<String, Object> getAdInterest() {
-            return values;
+        public List<GroupFilter> getGroupFilters() {
+            return groupFilters;
         }
 
-        public Object getAdInterest(final String key) {
-            return values.get(key);
+        public void setGroupFilters(List<GroupFilter> groupFilters) {
+            this.groupFilters = groupFilters;
         }
 
-        public long getId() {
-            return id;
+        public List<AdCategory> getCategory() {
+            return category;
         }
 
-        public long getMemberId() {
-            return memberId;
+        public void setCategory(List<AdCategory> category) {
+            this.category = category;
         }
 
-        public void setAdInterest(final Map<String, Object> map) {
-            values = map;
+        public List<TradeType> getTradeTypes() {
+            return tradeTypes;
         }
 
-        public void setAdInterest(final String key, final Object value) {
-            values.put(key, value);
+        public void setTradeTypes(List<TradeType> tradeTypes) {
+            this.tradeTypes = tradeTypes;
         }
 
-        public void setId(final long memberId) {
-            id = memberId;
+        public AdInterest getAdInterest() {
+            return adInterest;
         }
 
-        public void setMemberId(final long memberId) {
-            this.memberId = memberId;
+        public void setAdInterest(AdInterest adInterest) {
+            this.adInterest = adInterest;
+        }
+
+        public BigDecimal getFinalPrice() {
+            return finalPrice;
+        }
+
+        public BigDecimal getInitialPrice() {
+            return initialPrice;
+        }
+
+        public String getKeywords() {
+            return keywords;
+        }
+
+        public Member getOwner() {
+            return owner;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public Ad.TradeType getType() {
+            return type;
+        }
+
+        public void setFinalPrice(final BigDecimal finalPrice) {
+            this.finalPrice = finalPrice;
+        }
+
+        public void setInitialPrice(final BigDecimal initialPrice) {
+            this.initialPrice = initialPrice;
+        }
+
+        public void setKeywords(final String keywords) {
+            this.keywords = keywords;
+        }
+
+        public void setOwner(final Member owner) {
+            this.owner = owner;
+        }
+
+        public void setTitle(final String title) {
+            this.title = title;
+        }
+
+        public void setType(final Ad.TradeType type) {
+            this.type = type;
         }
 
     }
 
     @RequestMapping(value = "member/editAdInterest", method = RequestMethod.POST)
     @ResponseBody
-    public GenericResponse editAdInterest(@RequestBody EditAdInterestResponse request) throws Exception {
+    public GenericResponse editAd(@RequestBody EditAdInterestRequest request) throws Exception {
         GenericResponse response = new GenericResponse();
-        final AdInterest adInterest = resolveAdInterest(request);
+        final AdInterest adInterest = resolveAdInterest();
+        //final AdInterest adInterest = new AdInterest();
+        adInterest.setId(request.getId());
+        adInterest.setCategory(request.getCategory());
+        adInterest.setCurrency(request.getCurrency());
+        adInterest.setFinalPrice(request.getFinalPrice());
+        adInterest.setInitialPrice(request.getInitialPrice());
+        adInterest.setTitle(request.getTitle());
+        adInterest.setOwner(request.getOwner());
+        adInterest.setType(Ad.TradeType.valueOf(request.getType()));
+        adInterest.setKeywords(request.getKeywords());
+
         final boolean isInsert = adInterest.isTransient();
         adInterestService.save(adInterest);
-        response.setStatus(0);
         response.setMessage(isInsert ? "adInterest.inserted" : "adInterest.modified");
-        return response;
+        response.setStatus(0);
 
+        return response;
     }
 
     @RequestMapping(value = "member/editAdInterest", method = RequestMethod.GET)
     @ResponseBody
-    public EditAdInterestResponse prepareForm(EditAdInterestResponse request) throws Exception {
-        EditAdInterestResponse response = new EditAdInterestResponse();
+    public EditAdInterestResponse prepareForm() throws Exception {
         // Send ad interest to JSP
-        AdInterest adInterest = resolveAdInterest(request);
+        EditAdInterestResponse response = new EditAdInterestResponse();
+//        AdInterest adInterest = resolveAdInterest(context);
+        AdInterest adInterest = new AdInterest();
         final Long id = adInterest.getId();
         if (id != null) {
             adInterest = adInterestService.load(adInterest.getId(), RelationshipHelper.nested(AdInterest.Relationships.MEMBER, Element.Relationships.USER));
         }
-        getDataBinder().writeAsString(request.getAdInterest(), adInterest);
-        response.setAdInterest(adInterest);
+        // getDataBinder().writeAsString(form.getAdInterest(), adInterest);
+//        request.setAttribute("adInterest", adInterest);
+        //  response.setAdInterest(adInterest);
 
         // Send trade types to JSP
-         // RequestHelper.storeEnum(request, Ad.TradeType.class, "tradeTypes");
-        List<Ad.TradeType> tradeTypes = new ArrayList();
-        tradeTypes.add(Ad.TradeType.OFFER);
-        tradeTypes.add(Ad.TradeType.SEARCH);
+        //    RequestHelper.storeEnum(request, Ad.TradeType.class, "tradeTypes");
+        List<TradeType> tradeTypes = new ArrayList();
+        tradeTypes.add(TradeType.OFFER);
+        tradeTypes.add(TradeType.SEARCH);
         response.setTradeTypes(tradeTypes);
 
         // Send categories to JSP
-        response.setAdCategorie(adCategoryService.listLeaf());
-
+        // response.setAttribute("adCategories", adCategoryService.listLeaf());
+        //  response.setCategory(adCategoryService.listLeaf());
         // Send group filters to JSP
         final MemberGroup memberGroup = LoggedUser.group();
         final GroupFilterQuery groupFilterQuery = new GroupFilterQuery();
         groupFilterQuery.setViewableBy(memberGroup);
         final List<GroupFilter> groupFilters = groupFilterService.search(groupFilterQuery);
         if (groupFilters.size() > 0) {
-            response.setGroupFilters(groupFilters);
+            //  response.setGroupFilters(groupFilters);
         }
 
         // Send currencies to JSP
@@ -262,28 +382,41 @@ public class EditAdInterestController extends BaseRestController {
         response.setCurrencies(currencies);
         if (currencies.size() == 1) {
             // Set a single currency variable when there's only one option
-            //  response.setSingleCurrency(currencies.get(0));
             response.setSingleCurrency(0);
-
         } else if (currencies.size() > 1 && adInterest.getCurrency() == null) {
             // When there's multiple currencies, pre select the one of the default account
             final MemberAccountType defaultAccountType = accountTypeService.getDefault(memberGroup, AccountType.Relationships.CURRENCY);
             if (defaultAccountType != null) {
-                request.setAdInterest("currency", CoercionHelper.coerce(String.class, defaultAccountType.getCurrency()));
+                //form.setAdInterest("currency", CoercionHelper.coerce(String.class, defaultAccountType.getCurrency()));
             }
         }
+        response.setFinalPrice(BigDecimal.ONE);
+        response.setInitialPrice(BigDecimal.ONE);
+        response.setSingleCurrency(0);
+        response.setTradeTypes(tradeTypes);
+        
+        response.setAdInterest(adInterest);
+        response.setCurrencies(currencies);
+        //   response.setGroupFilters(groupFilters);
+        response.setKeywords(response.getKeywords());
+        response.setOwner(response.getOwner());
+
+        response.setStatus(0);
+        response.setMessage("!! Ad is modified....");
         return response;
 
     }
 
-    protected void validateForm(final EditAdInterestResponse request) {
-        final AdInterest adInterest = resolveAdInterest(request);
+    // @Override
+    public void validateForm() {
+        final AdInterest adInterest = resolveAdInterest();
         adInterestService.validate(adInterest);
     }
 
-    private AdInterest resolveAdInterest(final EditAdInterestResponse request) {
-
-        final AdInterest adInterest = getDataBinder().readFromString(request.getAdInterest());
+    public AdInterest resolveAdInterest() {
+        // final EditAdInterestForm form = context.getForm();
+        final AdInterest adInterest = getDataBinder().readFromString(LoggedUser.accountOwner());
+        System.out.println("....account Owner:" +LoggedUser.accountOwner());
         if (adInterest.getOwner() == null && LoggedUser.isMember()) {
             adInterest.setOwner((Member) LoggedUser.element());
         }

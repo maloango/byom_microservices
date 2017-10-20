@@ -79,17 +79,17 @@ public class ConfirmSystemPaymentController extends BaseRestController {
     
     public static class DoPaymentParameters {
 
-        private BigDecimal ammount;
+        private BigDecimal amount;
         private Long currency;
         private Long type;
         private String description;
         
-        public BigDecimal getAmmount() {
-            return ammount;
+        public BigDecimal getAmount() {
+            return amount;
         }
         
-        public void setAmmount(BigDecimal ammount) {
-            this.ammount = ammount;
+        public void setAmount(BigDecimal amount) {
+            this.amount = amount;
         }
         
         public Long getCurrency() {
@@ -125,7 +125,7 @@ public class ConfirmSystemPaymentController extends BaseRestController {
         GenericResponse response = new GenericResponse();
         
         final DoPaymentDTO paymentDTO = new DoPaymentDTO();
-        paymentDTO.setAmount(params.getAmmount());
+        paymentDTO.setAmount(params.getAmount());
         paymentDTO.setTransferType(transferTypeService.load(params.getType(),TransferType.Relationships.FROM,TransferType.Relationships.TO));
         paymentDTO.setDescription(params.getDescription());
         paymentDTO.setCurrency(currencyService.load(params.getCurrency()));
@@ -133,6 +133,7 @@ public class ConfirmSystemPaymentController extends BaseRestController {
         paymentDTO.setFrom(LoggedUser.accountOwner());
         paymentDTO.setTo(LoggedUser.accountOwner());
         
+        paymentDTO.setChannel(Channel.REST);
 
         
 //        // Validate the transaction password if needed

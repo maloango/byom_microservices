@@ -454,8 +454,12 @@
           class="nl.strohalm.cyclos.webservices.rest.members.advertisements.RemoveAdController" />
    
           <!--    Account-->
-    <bean id="accountOverviewController"
+    <bean id="memberAccountOverviewController"
           class="nl.strohalm.cyclos.webservices.rest.members.accounts.AccountOverviewController" />
+    
+    <bean id="memberAccountHistoryController"
+          class="nl.strohalm.cyclos.webservices.rest.members.accounts.AccountHistoryController" />
+    
     
     <bean id="searchLoansController"
           class="nl.strohalm.cyclos.webservices.rest.members.accounts.SearchLoansController" />

@@ -5,18 +5,14 @@
  */
 package nl.strohalm.cyclos.webservices.rest.members.messages;
 
-import java.util.Collection;
 import java.util.List;
 import nl.strohalm.cyclos.annotations.Inject;
-import nl.strohalm.cyclos.entities.groups.Group;
-import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.messages.MessageCategory;
 import nl.strohalm.cyclos.entities.members.messages.MessageCategoryQuery;
 import nl.strohalm.cyclos.services.elements.MessageCategoryService;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -102,6 +98,7 @@ public class ListMessageCategoriesController extends BaseRestController {
         }
         response.setStatus(0);
         response.setMessage("List Messsage Searching!!!!!");
+        
 
         return response;
 

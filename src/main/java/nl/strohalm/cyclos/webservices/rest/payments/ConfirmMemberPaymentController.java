@@ -154,6 +154,7 @@ public class ConfirmMemberPaymentController extends BaseRestController {
         paymentDTO.setContext(TransactionContext.PAYMENT);
         paymentDTO.setFrom(LoggedUser.accountOwner());
         paymentDTO.setTo((Member)elementService.load(params.getTo(),Element.Relationships.GROUP));
+         paymentDTO.setChannel(Channel.REST);
 
 //        // Validate the transaction password if needed
 //        if (shouldValidateTransactionPassword(context, paymentDTO)) {
@@ -361,7 +362,7 @@ public class ConfirmMemberPaymentController extends BaseRestController {
 //        
 //        return query;
     
-        final Long fromId = null;
+        final Long fromId = LoggedUser.user().getId();
         final Long toId = toIds;
 
         final boolean fromMe = fromId == null;
@@ -389,7 +390,7 @@ public class ConfirmMemberPaymentController extends BaseRestController {
 
         // Build the query
         final TransferTypeQuery query = new TransferTypeQuery();
-        query.setChannel(Channel.WEB);
+        query.setChannel(Channel.REST);
         query.setContext(TransactionContext.PAYMENT);
         query.setUsePriority(true);
         // query.setCurrency(currency);

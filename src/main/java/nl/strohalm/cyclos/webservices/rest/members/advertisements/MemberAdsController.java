@@ -11,10 +11,8 @@ import java.util.Collection;
 import java.util.List;
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
-
 import nl.strohalm.cyclos.access.MemberPermission;
 import nl.strohalm.cyclos.access.OperatorPermission;
-
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.entities.ads.Ad;
 import nl.strohalm.cyclos.entities.ads.AdQuery;

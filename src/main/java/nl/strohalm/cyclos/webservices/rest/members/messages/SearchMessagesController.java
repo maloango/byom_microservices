@@ -199,8 +199,12 @@ public class SearchMessagesController extends BaseRestController {
         
         final MessageQuery queries = getDataBinder().readFromString(query);
         final List<Message> list = messageService.search(queries);
+            System.out.println("....."+list.size());
+        for(int i=0;i<list.size();i++){
+            System.out.println("------"+list.get(i));
+        }
        // list.getRequest.setAttribute("messages", list);
-       list.listIterator(0);
+       
         }
      
 
@@ -209,7 +213,7 @@ public class SearchMessagesController extends BaseRestController {
                 
                 }
         response.setStatus(0);
-        response.setMessage("messange sent!!");
+        response.setMessage("Message displayed!!");
         return response;
     }
 

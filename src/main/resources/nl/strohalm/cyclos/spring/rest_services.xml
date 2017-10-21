@@ -233,6 +233,8 @@
     <!-- Alerts-->
     <bean id="viewErrorLogEntryController"
           class="nl.strohalm.cyclos.webservices.rest.alerts.ViewErrorLogEntryController"/>
+      <bean id="removeErrorLogEntriesController"
+          class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveErrorLogEntriesController"/>
         
     <bean id="removeErrorLogEntriesController"
           class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveErrorLogEntriesController"/>

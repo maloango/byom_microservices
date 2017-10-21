@@ -1,6 +1,7 @@
 package nl.strohalm.cyclos.webservices.rest.alerts;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import nl.strohalm.cyclos.annotations.Inject;
@@ -53,17 +54,21 @@ public class ListMemberAlertsController extends BaseRestController {
     }
     
     public static class ListMemberAlertResponse extends GenericResponse{
-       private  List<MemberAlert> alerts;
+       private  List<MemberAlertEntity>alerts;
        private boolean isSystem;
        private boolean isMember;
 
-        public List<MemberAlert> getAlerts() {
+        public List<MemberAlertEntity> getAlerts() {
             return alerts;
         }
 
-        public void setAlerts(List<MemberAlert> alerts) {
+        public void setAlerts(List<MemberAlertEntity> alerts) {
             this.alerts = alerts;
         }
+
+    
+
+     
 
      
 
@@ -86,13 +91,54 @@ public class ListMemberAlertsController extends BaseRestController {
         
         
     }
+    
+   public static class MemberAlertEntity{
+      private Long id;
+       private String key;
+       private Calendar date;
+       private String memberName;
+
+        public String getMemberName() {
+            return memberName;
+        }
+
+        public void setMemberName(String memberName) {
+            this.memberName = memberName;
+        }
+       
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public Calendar getDate() {
+            return date;
+        }
+
+        public void setDate(Calendar date) {
+            this.date = date;
+        }
+       
+   }
 
     @RequestMapping(value = "admin/listMemberAlerts", method = RequestMethod.GET)
     @ResponseBody
     public ListMemberAlertResponse listSystemAlerts() {
         final AlertQuery query = new AlertQuery();
         ListMemberAlertResponse response=new ListMemberAlertResponse();
-        query.setResultType(QueryParameters.ResultType.ITERATOR);
+        query.setResultType(QueryParameters.ResultType.LIST);
         query.setPageParameters(PageParameters.max(MAX_ALERTS));
         query.setShowRemoved(false);
 
@@ -112,7 +158,17 @@ public class ListMemberAlertsController extends BaseRestController {
           
         }
 
-        final List<MemberAlert> alerts = (List<MemberAlert>) alertService.search(query);
+        final List<? extends Alert> alertsList =  alertService.search(query);
+        List<MemberAlertEntity>alerts=new ArrayList();
+        for(Alert alert:alertsList){
+            MemberAlertEntity memberAlert=new MemberAlertEntity();
+            memberAlert.setId(alert.getId());
+            memberAlert.setKey(alert.getKey());
+            memberAlert.setDate(alert.getDate());
+            MemberAlert m=(MemberAlert) alert;
+            memberAlert.setMemberName(m.getMember().getName());
+            alerts.add(memberAlert);
+        }
          System.out.println(alerts.size());
         //request.setAttribute("alerts", alerts);
         response.setAlerts(alerts);

@@ -31,7 +31,7 @@ public class RemoveAlertsController extends BaseRestController {
 
     public static class RemoveAlertsParameter {
 
-        private Long []alertIds;
+        private Long[] alertIds;
         private String alertType;
 
         public Long[] getAlertIds() {
@@ -41,8 +41,6 @@ public class RemoveAlertsController extends BaseRestController {
         public void setAlertIds(Long[] alertIds) {
             this.alertIds = alertIds;
         }
-
-    
 
         public String getAlertType() {
             return alertType;
@@ -60,10 +58,12 @@ public class RemoveAlertsController extends BaseRestController {
         GenericResponse response = new GenericResponse();
         try {
             final boolean isMember = "MEMBER".equals(params.getAlertType());
-            alertService.removeAlerts(params.getAlertIds());
-            response.setMessage("alert.removed");
-            response.setStatus(0);
-            response.setMessage("Alerts removed!!");
+            int i = 0;
+            i = alertService.removeAlerts(params.getAlertIds());
+            if (i > 0) {
+                response.setStatus(0);
+                response.setMessage(i + " Alerts removed!!");
+            }
         } catch (Exception e) {
 
             e.printStackTrace();

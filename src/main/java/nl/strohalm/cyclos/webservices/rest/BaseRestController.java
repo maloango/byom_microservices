@@ -32,6 +32,7 @@ import nl.strohalm.cyclos.services.accounts.external.ExternalAccountService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferImportService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferTypeService;
+import nl.strohalm.cyclos.services.alerts.ErrorLogService;
 import nl.strohalm.cyclos.services.customization.MemberCustomFieldService;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.elements.MemberRecordTypeService;
@@ -85,6 +86,12 @@ public abstract class BaseRestController {
     protected ExternalTransferTypeService externalTransferTypeService;
     protected GroupFilterService groupFilterService;
     protected MemberCustomFieldService memberCustomFieldService;
+    protected ErrorLogService errorLogService;
+
+    @Inject
+    public void setErrorLogService(ErrorLogService errorLogService) {
+        this.errorLogService = errorLogService;
+    }
 
     @Inject
     public void setMemberCustomFieldService(MemberCustomFieldService memberCustomFieldService) {

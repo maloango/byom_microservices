@@ -8,41 +8,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.services.alerts.ErrorLogService;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 @Controller
 public class RemoveErrorLogEntriesController extends BaseRestController{
-	
-	private ErrorLogService errorLogService;
 
-    public final ErrorLogService getErrorLogService() {
-		return errorLogService;
-	}
-
-
-
-	@Inject
-    public void setErrorLogService(final ErrorLogService errorLogService) {
-        this.errorLogService = errorLogService;
-    }
-    
-    public static class RemoveErrorLogEntriesRequestDTO {
-    	
-    	private Long[]            entryIds;
-
-        public Long[] getEntryIds() {
-            return entryIds;
-        }
-
-        public void setEntryIds(final Long[] entryIds) {
-            this.entryIds = entryIds;
-        }
-
-	}
-
-	public static class RemoveErrorLogEntriesResponseDTO {
-
-		public String message;
-                private Long[]            entryIds;
+    public static class ErrorLogParameters{
+        private Long[] entryIds;
 
         public Long[] getEntryIds() {
             return entryIds;
@@ -51,33 +24,15 @@ public class RemoveErrorLogEntriesController extends BaseRestController{
         public void setEntryIds(Long[] entryIds) {
             this.entryIds = entryIds;
         }
-                
-		public final String getMessage() {
-			return message;
-		}
-
-		public final void setMessage(String message) {
-			this.message = message;
-		}
-		public RemoveErrorLogEntriesResponseDTO(){
-                }
-		
-	}
-    
-    @RequestMapping(value = "admin/removeErrorLogEntries/{entryIds}", method=RequestMethod.GET)
-    @ResponseBody
-    protected RemoveErrorLogEntriesResponseDTO executeAction(@PathVariable ("entryIds")long entryIds ) throws Exception {
-        RemoveErrorLogEntriesResponseDTO  response = new RemoveErrorLogEntriesResponseDTO();
-        try{
-           
-        errorLogService.remove(response.getEntryIds());
         
-        response.setMessage("errorLog.removed");
-        }
-        catch(Exception e){
-            e.printStackTrace();
-            
-        }
+    }
+    @RequestMapping(value = "admin/removeErrorLogEntries", method=RequestMethod.POST)
+    @ResponseBody
+    protected GenericResponse executeAction(@RequestBody ErrorLogParameters params) throws Exception {
+    GenericResponse response=new GenericResponse();
+     int i=errorLogService.remove(params.getEntryIds());
+        response.setMessage(i+" errorLog.removed");
+        response.setStatus(0);
         return response;
     }
 	

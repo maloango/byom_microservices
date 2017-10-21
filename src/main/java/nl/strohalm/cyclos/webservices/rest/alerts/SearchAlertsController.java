@@ -11,6 +11,7 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.entities.alerts.Alert;
 import nl.strohalm.cyclos.entities.alerts.Alert.Type;
 import nl.strohalm.cyclos.entities.alerts.AlertQuery;
+import nl.strohalm.cyclos.entities.alerts.MemberAlert;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.Member;
@@ -83,7 +84,7 @@ public class SearchAlertsController extends BaseRestController {
         private String type;
         private String begin;
         private String end;
-        private String member;
+        private Long memberId;
 
         public String getType() {
             return type;
@@ -109,19 +110,19 @@ public class SearchAlertsController extends BaseRestController {
             this.end = end;
         }
 
-        public String getMember() {
-            return member;
+        public Long getMemberId() {
+            return memberId;
         }
 
-        public void setMember(String member) {
-            this.member = member;
+        public void setMemberId(Long memberId) {
+            this.memberId = memberId;
         }
 
     }
 
     public static class SearchAlertResponse extends GenericResponse {
 
-        private List<? extends Alert> alerts;
+        private List<AlertsEntity> alerts;
         private Collection<Alert.Type> types;
 
         public Collection<Alert.Type> getTypes() {
@@ -132,30 +133,64 @@ public class SearchAlertsController extends BaseRestController {
             this.types = types;
         }
 
-        public List<? extends Alert> getAlerts() {
+        public List<AlertsEntity> getAlerts() {
             return alerts;
         }
 
-        public void setAlerts(List<? extends Alert> alerts) {
+        public void setAlerts(List<AlertsEntity> alerts) {
             this.alerts = alerts;
         }
 
+     
+
+    }
+    
+    public static class AlertsEntity{
+        private Long id;
+        private String key;
+        private Calendar date;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public Calendar getDate() {
+            return date;
+        }
+
+        public void setDate(Calendar date) {
+            this.date = date;
+        }
+        
     }
 
     @RequestMapping(value = "admin/searchAlerts", method = RequestMethod.POST)
     @ResponseBody
     public SearchAlertResponse searchAlerts(@RequestBody SearchAlertRequest request) {
         SearchAlertResponse response = new SearchAlertResponse();
-         final LocalSettings localSettings = settingsService.getLocalSettings();
+        final LocalSettings localSettings = settingsService.getLocalSettings();
         Period period = new Period();
         final AlertQuery query = new AlertQuery();
         period.setBegin(localSettings.getDateConverter().valueOf(request.getBegin()));
         period.setEnd(localSettings.getDateConverter().valueOf(request.getEnd()));
         query.setPeriod(period);
-    
+
         query.setType(Type.valueOf(request.getType()));
-        //query.setMember((Member)elementService.load(LoggedUser.user().getId()));
-       
+        if (request.getMemberId() != null && request.getMemberId() > 0L) {
+            query.setMember((Member) elementService.load(request.getMemberId(), Element.Relationships.USER));
+        }
 
         if (LoggedUser.isAdministrator()) {
             AdminGroup adminGroup = LoggedUser.group();
@@ -170,8 +205,16 @@ public class SearchAlertsController extends BaseRestController {
         if (permissionService.hasPermission(AdminSystemPermission.ALERTS_VIEW_MEMBER_ALERTS)) {
             types.add(Alert.Type.MEMBER);
         }
-        final List<? extends Alert> alerts = alertService.search(query);
-         System.out.println("-------"+alerts);
+        final List<? extends Alert> alertsList = alertService.search(query);
+        List<AlertsEntity> alerts=new ArrayList();
+        for(Alert alert:alertsList){
+            AlertsEntity alertEntity=new AlertsEntity();
+            alertEntity.setId(alert.getId());
+            alertEntity.setDate(alert.getDate());
+            alertEntity.setKey(alert.getKey());
+            alerts.add(alertEntity);
+        }
+        System.out.println("-------" + alerts);
         response.setAlerts(alerts);
         response.setTypes(types);
         return response;

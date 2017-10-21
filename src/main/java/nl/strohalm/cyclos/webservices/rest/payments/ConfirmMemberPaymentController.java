@@ -396,13 +396,13 @@ public class ConfirmMemberPaymentController extends BaseRestController {
         // query.setCurrency(currency);
 
         // Determine the from
-        if (fromMe) {
+//        if (fromMe) {
             query.setGroup(LoggedUser.group());
             query.setFromOwner(LoggedUser.accountOwner());
-        } else {
-            query.setBy(LoggedUser.element());
-            query.setFromOwner((Member)elementService.load(fromId, Element.Relationships.GROUP));
-        }
+//        } else {
+//            query.setBy(LoggedUser.element());
+//            query.setFromOwner((Member)elementService.load(fromId, Element.Relationships.GROUP));
+//        }
 
         // Determine the to
         if (toSystem) {

@@ -2,9 +2,12 @@ package nl.strohalm.cyclos.webservices.rest.alerts;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import nl.strohalm.cyclos.annotations.Inject;
+import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.alerts.Alert;
 import nl.strohalm.cyclos.entities.alerts.ErrorLogEntry;
 import nl.strohalm.cyclos.entities.alerts.ErrorLogEntryQuery;
@@ -73,14 +76,82 @@ public class SearchErrorLogController extends BaseRestController {
 
     public static class SearchErrorLogResponse extends GenericResponse {
 
-        List<ErrorLogEntry> errorHistory;
+        List<ErrorLogEntity> errorHistory;
 
-        public List<ErrorLogEntry> getErrorHistory() {
+        public List<ErrorLogEntity> getErrorHistory() {
             return errorHistory;
         }
 
-        public void setErrorHistory(List<ErrorLogEntry> errorHistory) {
+        public void setErrorHistory(List<ErrorLogEntity> errorHistory) {
             this.errorHistory = errorHistory;
+        }
+
+    }
+
+    public static class ErrorLogEntity {
+
+        private Calendar date;
+        private String path;
+        private String stackTrace;
+        private String loggedUserName;
+        private boolean removed;
+        private Long id;
+        private Map<String, String> parameters;
+
+        public Map<String, String> getParameters() {
+            return parameters;
+        }
+
+        public void setParameters(Map<String, String> parameters) {
+            this.parameters = parameters;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public Calendar getDate() {
+            return date;
+        }
+
+        public void setDate(Calendar date) {
+            this.date = date;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public String getStackTrace() {
+            return stackTrace;
+        }
+
+        public void setStackTrace(String stackTrace) {
+            this.stackTrace = stackTrace;
+        }
+
+        public String getLoggedUserName() {
+            return loggedUserName;
+        }
+
+        public void setLoggedUserName(String loggedUserName) {
+            this.loggedUserName = loggedUserName;
+        }
+
+        public boolean isRemoved() {
+            return removed;
+        }
+
+        public void setRemoved(boolean removed) {
+            this.removed = removed;
         }
 
     }
@@ -97,8 +168,21 @@ public class SearchErrorLogController extends BaseRestController {
         query.setPeriod(period);
         query.setShowRemoved(true);
         query.setResultType(QueryParameters.ResultType.LIST);
-        System.out.println("query------" + query);
-        final List<ErrorLogEntry> errorHistory = errorLogService.search(query);
+        final List<ErrorLogEntry> errorList = errorLogService.search(query);
+        List<ErrorLogEntity> errorHistory = new ArrayList();
+        for (ErrorLogEntry log : errorList) {
+            ErrorLogEntity errorLogEntity = new ErrorLogEntity();
+            errorLogEntity.setId(log.getId());
+            errorLogEntity.setDate(log.getDate());
+            errorLogEntity.setLoggedUserName(log.getLoggedUser().getUsername());
+            errorLogEntity.setPath(log.getPath());
+            errorLogEntity.setStackTrace(log.getStackTrace());
+            errorLogEntity.setRemoved(log.isRemoved());
+            errorLogEntity.setParameters(log.getParameters());
+            errorHistory.add(errorLogEntity);
+
+        }
+
         System.out.println("alerts size------" + errorHistory.size());
         response.setErrorHistory(errorHistory);
         response.setStatus(0);
@@ -118,5 +202,4 @@ public class SearchErrorLogController extends BaseRestController {
 //        }
 //        return cal;
 //    }
-
 }

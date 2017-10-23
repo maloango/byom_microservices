@@ -233,13 +233,13 @@
     <!-- Alerts-->
     <bean id="viewErrorLogEntryController"
           class="nl.strohalm.cyclos.webservices.rest.alerts.ViewErrorLogEntryController"/>
-      <bean id="removeErrorLogEntriesController"
-          class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveErrorLogEntriesController"/>
-        
     <bean id="removeErrorLogEntriesController"
           class="nl.strohalm.cyclos.webservices.rest.alerts.RemoveErrorLogEntriesController"/>
     <bean id="listSystemAlertsController"
           class="nl.strohalm.cyclos.webservices.rest.alerts.ListSystemAlertsController"/>
+    <bean id="getErrorLogById"
+            class="nl.strohalm.cyclos.webservices.rest.alerts.GetErrorLogById"/>
+    
          
     <bean id="listMemberAlertsController"
           class="nl.strohalm.cyclos.webservices.rest.alerts.ListMemberAlertsController"/>
@@ -381,11 +381,11 @@
               
     <!---user and groups-->
     <bean id="memberBulkActionsController"
-                        class="nl.strohalm.cyclos.webservices.rest.members.bulk.MemberBulkActionsController" />
+          class="nl.strohalm.cyclos.webservices.rest.members.bulk.MemberBulkActionsController" />
         
         
         
-   <!--        Member-->
+    <!--        Member-->
 
     <bean id="memberProfileController"
           class="nl.strohalm.cyclos.webservices.rest.members.MemberProfileController" />
@@ -455,18 +455,20 @@
     <bean id="removeAdController"
           class="nl.strohalm.cyclos.webservices.rest.members.advertisements.RemoveAdController" />
    
-          <!--    Account-->
+    <!--    Account-->
     <bean id="memberAccountOverviewController"
           class="nl.strohalm.cyclos.webservices.rest.members.accounts.AccountOverviewController" />
     
     <bean id="memberAccountHistoryController"
           class="nl.strohalm.cyclos.webservices.rest.members.accounts.AccountHistoryController" />
+    <bean id="memberSearchScheduledPaymentsController"
+           class="nl.strohalm.cyclos.webservices.rest.members.accounts.SearchScheduledPaymentsController" />
     
     
     <bean id="searchLoansController"
           class="nl.strohalm.cyclos.webservices.rest.members.accounts.SearchLoansController" />
     
-     <!--Reports-->
+    <!--Reports-->
     <bean id="activitiesController"
           class="nl.strohalm.cyclos.webservices.rest.members.reports.ActivitiesController" />
    

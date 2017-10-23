@@ -73,7 +73,7 @@ public class ConfirmMemberPaymentController extends BaseRestController {
 
     public static class DoPaymentParameters {
 
-        private BigDecimal ammount;
+        private BigDecimal amount;
         private Long currency;
         private Long type;
         private String description;
@@ -106,13 +106,15 @@ public class ConfirmMemberPaymentController extends BaseRestController {
             this.to = to;
         }
 
-        public BigDecimal getAmmount() {
-            return ammount;
+        public BigDecimal getAmount() {
+            return amount;
         }
 
-        public void setAmmount(BigDecimal ammount) {
-            this.ammount = ammount;
+        public void setAmount(BigDecimal amount) {
+            this.amount = amount;
         }
+
+    
 
         public Long getCurrency() {
             return currency;
@@ -147,7 +149,7 @@ public class ConfirmMemberPaymentController extends BaseRestController {
         GenericResponse response = new GenericResponse();
 
         final DoPaymentDTO paymentDTO = new DoPaymentDTO();
-        paymentDTO.setAmount(params.getAmmount());
+        paymentDTO.setAmount(params.getAmount());
         paymentDTO.setTransferType(transferTypeService.load(params.getType(), TransferType.Relationships.FROM, TransferType.Relationships.TO));
         paymentDTO.setDescription(params.getDescription());
         paymentDTO.setCurrency(currencyService.load(params.getCurrency()));
@@ -241,9 +243,9 @@ public class ConfirmMemberPaymentController extends BaseRestController {
 
     }
 
-    @RequestMapping(value = "admin/confirmMemberPayment/{ownerId}", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/confirmMemberPayment/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public ConfirmPaymentResponse prepareForm(@PathVariable("ownerId") Long ownerId) {
+    public ConfirmPaymentResponse prepareForm(@PathVariable("id") Long id) {
         ConfirmPaymentResponse response = new ConfirmPaymentResponse();
 
 //         final Long fromId = IdConverter.instance().valueOf(form.getFrom());
@@ -265,7 +267,7 @@ public class ConfirmMemberPaymentController extends BaseRestController {
         final List<Currency> currencies = resolveCurrencies(LoggedUser.accountOwner());
 
         // Resolve the transfer types
-        final TransferTypeQuery ttQuery = resolveTransferTypeQuery(ownerId);
+        final TransferTypeQuery ttQuery = resolveTransferTypeQuery(id);
         final List<TransferType> tts = transferTypeService.search(ttQuery);
         List<TransferTypeEntity> transferList = new ArrayList();
         for (TransferType tt : tts) {
@@ -349,7 +351,7 @@ public class ConfirmMemberPaymentController extends BaseRestController {
         return currencies;
     }
 
-    public TransferTypeQuery resolveTransferTypeQuery(Long toIds) {
+    public TransferTypeQuery resolveTransferTypeQuery(Long id) {
 //        final TransferTypeQuery query = new TransferTypeQuery();
 //        query.setUsePriority(true);
 //        query.setContext(TransactionContext.SELF_PAYMENT);
@@ -363,18 +365,18 @@ public class ConfirmMemberPaymentController extends BaseRestController {
 //        return query;
     
         final Long fromId = LoggedUser.user().getId();
-        final Long toId = toIds;
+     
 
-        final boolean fromMe = fromId == null;
-        final boolean asMember = !fromMe;
-        final boolean toSpecificMember = !selectedMember() && !toSystem();
-        final boolean toUnknownMember = selectedMember();
-        final boolean toSystem = toSystem();
-
-        if (toUnknownMember || (asMember && !toSystem)) {
-            // Since we don't know who will receive the payment yet, we cannot resolve transfer types
-            return null;
-        }
+//        final boolean fromMe = fromId == null;
+//        final boolean asMember = !fromMe;
+//        final boolean toSpecificMember = !selectedMember() && !toSystem();
+//        final boolean toUnknownMember = selectedMember();
+//        final boolean toSystem = toSystem();
+//
+//        if (toUnknownMember || (asMember && !toSystem)) {
+//            // Since we don't know who will receive the payment yet, we cannot resolve transfer types
+//            return null;
+//        }
 
         // Check the preselected currency
 //        Currency currency = CoercionHelper.coerce(Currency.class, form.getCurrency());
@@ -405,11 +407,10 @@ public class ConfirmMemberPaymentController extends BaseRestController {
 //        }
 
         // Determine the to
-        if (toSystem) {
-            query.setToOwner(SystemAccountOwner.instance());
-        } else if (toSpecificMember) {
-            query.setToOwner(EntityHelper.reference(Member.class, toId));
-        }
+      
+            query.setToOwner(EntityHelper.reference(Member.class, id));
+           // query.setToOwner(SystemAccountOwner.instance());
+        
 
         return query;
 

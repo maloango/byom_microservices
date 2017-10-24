@@ -1,7 +1,9 @@
 package nl.strohalm.cyclos.webservices.rest.invoices;
 
 import static com.google.common.util.concurrent.Striped.lock;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -194,15 +196,17 @@ public class SearchInvoicesController extends BaseRestController {
 
     public static class SearchInvoiceResponsePostResponse extends GenericResponse {
 
-        private List<Invoice> invoices;
+        private List<InvoiceEntity> invoices;
 
-        public List<Invoice> getInvoices() {
+        public List<InvoiceEntity> getInvoices() {
             return invoices;
         }
 
-        public void setInvoices(List<Invoice> invoices) {
+        public void setInvoices(List<InvoiceEntity> invoices) {
             this.invoices = invoices;
         }
+
+     
 
     }
 
@@ -264,6 +268,55 @@ public class SearchInvoicesController extends BaseRestController {
         }
 
     }
+    
+    public static class InvoiceEntity{
+        private Long id;
+        private Calendar date;
+        private String description;
+        private BigDecimal amount;
+        private String from;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public Calendar getDate() {
+            return date;
+        }
+
+        public void setDate(Calendar date) {
+            this.date = date;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public BigDecimal getAmount() {
+            return amount;
+        }
+
+        public void setAmount(BigDecimal amount) {
+            this.amount = amount;
+        }
+
+        public String getFrom() {
+            return from;
+        }
+
+        public void setFrom(String from) {
+            this.from = from;
+        }
+        
+    }
 
     @RequestMapping(value = "admin/searchInvoices", method = RequestMethod.POST)
     @ResponseBody
@@ -293,7 +346,17 @@ public class SearchInvoicesController extends BaseRestController {
         query.setTransferType(transferTypeService
                 .load(request.getTransferType(),
                         TransferType.Relationships.FROM,TransferType.Relationships.TO));
-        final List<Invoice> invoices = invoiceService.search(query);
+        final List<Invoice> invoicesList = invoiceService.search(query);
+        List<InvoiceEntity>invoices=new ArrayList();
+        for(Invoice invoice:invoicesList){
+            InvoiceEntity invoiceEntity=new InvoiceEntity();
+            invoiceEntity.setId(invoice.getId());
+            invoiceEntity.setAmount(invoice.getAmount());
+            invoiceEntity.setDate(invoice.getDate());
+            invoiceEntity.setDescription(invoice.getDescription());
+            invoiceEntity.setFrom(invoice.getFromMember().getUsername());
+            invoices.add(invoiceEntity);
+        }
         response.setInvoices(invoices);
         response.setStatus(0);
         response.setMessage("Invoce list");

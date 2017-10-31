@@ -376,7 +376,7 @@
           class="nl.strohalm.cyclos.webservices.rest.loans.RepayLoanController" />
     <bean id="searchLoanPaymentsController"
           class="nl.strohalm.cyclos.webservices.rest.loans.SearchLoanPaymentsController" />
-    <!--    <bean id="searchLoansController"
+<!--        <bean id="searchAdminLoansController"
     class="nl.strohalm.cyclos.webservices.rest.loans.SearchLoansController" />-->
               
     <!---user and groups-->
@@ -467,6 +467,7 @@
     
     <bean id="searchLoansController"
           class="nl.strohalm.cyclos.webservices.rest.members.accounts.SearchLoansController" />
+    
     
     <!--Reports-->
     <bean id="activitiesController"

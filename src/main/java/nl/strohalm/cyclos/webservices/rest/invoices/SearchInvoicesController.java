@@ -354,7 +354,7 @@ public class SearchInvoicesController extends BaseRestController {
             invoiceEntity.setAmount(invoice.getAmount());
             invoiceEntity.setDate(invoice.getDate());
             invoiceEntity.setDescription(invoice.getDescription());
-            invoiceEntity.setFrom(invoice.getFromMember().getUsername());
+           // invoiceEntity.setFrom(invoice.getFromMember().getUsername());
             invoices.add(invoiceEntity);
         }
         response.setInvoices(invoices);

@@ -8,6 +8,7 @@ package nl.strohalm.cyclos.webservices.rest.members;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import static javafx.scene.input.KeyCode.Q;
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
 import nl.strohalm.cyclos.entities.groups.Group;
@@ -15,8 +16,12 @@ import nl.strohalm.cyclos.entities.groups.GroupFilter;
 import nl.strohalm.cyclos.entities.groups.GroupFilterQuery;
 import nl.strohalm.cyclos.entities.groups.GroupQuery;
 import nl.strohalm.cyclos.entities.groups.MemberGroup;
+import nl.strohalm.cyclos.entities.members.Element;
+import nl.strohalm.cyclos.entities.members.ElementQuery;
+import nl.strohalm.cyclos.entities.members.FullTextElementQuery;
 import nl.strohalm.cyclos.entities.members.Operator;
 import nl.strohalm.cyclos.utils.access.LoggedUser;
+import nl.strohalm.cyclos.utils.query.QueryParameters;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 import org.apache.commons.collections.CollectionUtils;
@@ -208,11 +213,14 @@ public class SearchMembersController extends BaseRestController {
         return true;
     }
     
+  
     
     @RequestMapping(value = "admin/searchMember", method = RequestMethod.POST)
     @ResponseBody
     public void handleSubmit(){
+       
         
+      //final List<? extends Element> list = elementService.fullTextSearch(query);    
         
         
     }

@@ -37,6 +37,7 @@ import nl.strohalm.cyclos.services.customization.MemberCustomFieldService;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.elements.MemberRecordTypeService;
 import nl.strohalm.cyclos.services.elements.MemberService;
+import nl.strohalm.cyclos.services.elements.RegistrationAgreementService;
 import nl.strohalm.cyclos.services.groups.GroupFilterService;
 import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
@@ -89,6 +90,12 @@ public abstract class BaseRestController {
     protected MemberCustomFieldService memberCustomFieldService;
     protected ErrorLogService errorLogService;
     protected LoanService loanService;
+    protected RegistrationAgreementService registrationAgreementService;
+
+    @Inject
+    public void setRegistrationAgreementService(RegistrationAgreementService registrationAgreementService) {
+        this.registrationAgreementService = registrationAgreementService;
+    }
 
     @Inject
     public void setLoanService(LoanService loanService) {

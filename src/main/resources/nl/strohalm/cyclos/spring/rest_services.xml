@@ -238,7 +238,7 @@
     <bean id="listSystemAlertsController"
           class="nl.strohalm.cyclos.webservices.rest.alerts.ListSystemAlertsController"/>
     <bean id="getErrorLogById"
-            class="nl.strohalm.cyclos.webservices.rest.alerts.GetErrorLogById"/>
+          class="nl.strohalm.cyclos.webservices.rest.alerts.GetErrorLogById"/>
     
          
     <bean id="listMemberAlertsController"
@@ -376,7 +376,7 @@
           class="nl.strohalm.cyclos.webservices.rest.loans.RepayLoanController" />
     <bean id="searchLoanPaymentsController"
           class="nl.strohalm.cyclos.webservices.rest.loans.SearchLoanPaymentsController" />
-<!--        <bean id="searchAdminLoansController"
+    <!--        <bean id="searchAdminLoansController"
     class="nl.strohalm.cyclos.webservices.rest.loans.SearchLoansController" />-->
               
     <!---user and groups-->
@@ -462,7 +462,7 @@
     <bean id="memberAccountHistoryController"
           class="nl.strohalm.cyclos.webservices.rest.members.accounts.AccountHistoryController" />
     <bean id="memberSearchScheduledPaymentsController"
-           class="nl.strohalm.cyclos.webservices.rest.members.accounts.SearchScheduledPaymentsController" />
+          class="nl.strohalm.cyclos.webservices.rest.members.accounts.SearchScheduledPaymentsController" />
     
     
     <bean id="searchLoansController"
@@ -511,10 +511,15 @@
     <bean id="searchScheduledPaymentsController"
           class=" nl.strohalm.cyclos.webservices.rest.accounts.details.SearchScheduledPaymentsController" />
     
+    <!--pending members-->
    
-     
+    <bean id="searchPendingMemberController"
+               class="nl.strohalm.cyclos.webservices.rest.members.pending.SearchPendingMemberController" />
     
- 
+ <!--registration agreements-->
+  <bean id="listRegistrationAgreementsController"
+               class=" nl.strohalm.cyclos.webservices.rest.members.agreements.ListRegistrationAgreementsController" />
+
       
     <!--Users and group-->
     <!--      <bean id="listMemberRecordTypesController"

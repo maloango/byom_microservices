@@ -514,13 +514,17 @@
     <!--pending members-->
    
     <bean id="searchPendingMemberController"
-               class="nl.strohalm.cyclos.webservices.rest.members.pending.SearchPendingMemberController" />
+          class="nl.strohalm.cyclos.webservices.rest.members.pending.SearchPendingMemberController" />
     
- <!--registration agreements-->
-  <bean id="listRegistrationAgreementsController"
-               class=" nl.strohalm.cyclos.webservices.rest.members.agreements.ListRegistrationAgreementsController" />
-
-      
+    <!--registration agreements-->
+    <bean id="listRegistrationAgreementsController"
+          class=" nl.strohalm.cyclos.webservices.rest.members.agreements.ListRegistrationAgreementsController" />
+    <bean id="editRegistrationAgreementController"
+          class=" nl.strohalm.cyclos.webservices.rest.members.agreements.EditRegistrationAgreementController" />
+    <bean id="removeRegistrationAgreementController"
+          class=" nl.strohalm.cyclos.webservices.rest.members.agreements.RemoveRegistrationAgreementController" />
+    <bean id="getRegistrationAgreementById"
+            class=" nl.strohalm.cyclos.webservices.rest.members.agreements.GetRegistrationAgreementById" />
     <!--Users and group-->
     <!--      <bean id="listMemberRecordTypesController"
                  class="nl.strohalm.cyclos.webservices.rest.members.records.ListMemberRecordTypesController" />

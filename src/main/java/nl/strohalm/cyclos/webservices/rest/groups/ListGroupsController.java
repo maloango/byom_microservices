@@ -1,5 +1,6 @@
 package nl.strohalm.cyclos.webservices.rest.groups;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,19 +30,23 @@ import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.entities.groups.GroupFilter;
 import nl.strohalm.cyclos.entities.groups.GroupFilterQuery;
 import nl.strohalm.cyclos.entities.groups.GroupQuery;
+import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.services.groups.GroupFilterService;
 import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
+import nl.strohalm.cyclos.utils.access.LoggedUser;
 import nl.strohalm.cyclos.utils.binding.BeanBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 
 @Controller
 public class ListGroupsController extends BaseRestController {
-	public static Map<Group.Nature, Permission> getManageGroupPermissionByNatureMap() {
+
+    public static Map<Group.Nature, Permission> getManageGroupPermissionByNatureMap() {
         final Map<Group.Nature, Permission> permissionByNature = new EnumMap<Group.Nature, Permission>(Group.Nature.class);
         permissionByNature.put(Group.Nature.ADMIN, AdminSystemPermission.GROUPS_MANAGE_ADMIN);
         permissionByNature.put(Group.Nature.BROKER, AdminSystemPermission.GROUPS_MANAGE_BROKER);
@@ -50,295 +55,211 @@ public class ListGroupsController extends BaseRestController {
         return permissionByNature;
     }
 
-    private GroupFilterService     groupFilterService;
+    public static class GroupsResponse extends GenericResponse {
 
-    private DataBinder<GroupQuery> dataBinder;
-    private PermissionService permissionService;
-    public final PermissionService getPermissionService() {
-		return permissionService;
-	}
+        private Map<Group.Nature, Permission> permissionByNature;
+        private List<Group.Nature> natures;
+        private List<GroupFilterEntity> groupFilters;
+        private Collection<MemberGroup> memberGroups;
+        private List<GroupEntity> groups;
 
-	public final void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
-
-	public final GroupService getGroupService() {
-		return groupService;
-	}
-
-	public final void setGroupService(GroupService groupService) {
-		this.groupService = groupService;
-	}
-
-	public final GroupFilterService getGroupFilterService() {
-		return groupFilterService;
-	}
-
-	private GroupService groupService;
-
-    public DataBinder<GroupQuery> getDataBinder() {
-        if (dataBinder == null) {
-            final BeanBinder<GroupQuery> binder = BeanBinder.instance(GroupQuery.class);
-            binder.registerBinder("nature", PropertyBinder.instance(Group.Nature.class, "nature"));
-            binder.registerBinder("groupFilter", PropertyBinder.instance(GroupFilter.class, "groupFilter"));
-            dataBinder = binder;
-        }
-        return dataBinder;
-    }
-
-    @Inject
-    public void setGroupFilterService(final GroupFilterService groupFilterService) {
-        this.groupFilterService = groupFilterService;
-    }
-    public static class ListGroupsRequestDTO{
-    	private Collection<Group>       possibleGroups;
-        private Collection<GroupFilter> groupFilters;
-        private Group.Nature[]          natures;
-        private Group.Status[]          status;
-        private MemberAccountType       memberAccountType;
-        private PaymentFilter           paymentFilter;
-        private AdminGroup              managedBy;
-        private Member                  member;
-        private boolean                 ignoreManagedBy;
-        private boolean                 sortByNature;
-        private boolean                 onlyActive;
-        private Member                  broker;
-
-        public Member getBroker() {
-            return broker;
+        public List<GroupEntity> getGroups() {
+            return groups;
         }
 
-        public GroupFilter getGroupFilter() {
-            return CollectionUtils.isNotEmpty(groupFilters) ? groupFilters.iterator().next() : null;
+        public void setGroups(List<GroupEntity> groups) {
+            this.groups = groups;
         }
 
-        public Collection<GroupFilter> getGroupFilters() {
+        public Collection<MemberGroup> getMemberGroups() {
+            return memberGroups;
+        }
+
+        public void setMemberGroups(Collection<MemberGroup> memberGroups) {
+            this.memberGroups = memberGroups;
+        }
+
+        public List<GroupFilterEntity> getGroupFilters() {
             return groupFilters;
         }
 
-        public AdminGroup getManagedBy() {
-            return managedBy;
-        }
-
-        public Member getMember() {
-            return member;
-        }
-
-        public MemberAccountType getMemberAccountType() {
-            return memberAccountType;
-        }
-
-        public Group.Nature getNature() {
-            if (natures == null || natures.length == 0) {
-                return null;
-            }
-            return natures[0];
-        }
-
-        public Collection<String> getNatureDiscriminators() {
-            if (natures == null || natures.length == 0) {
-                return null;
-            }
-            final Collection<String> discriminators = new HashSet<String>();
-            for (final Group.Nature nature : natures) {
-                discriminators.add(nature.getDiscriminator());
-            }
-            return discriminators;
-        }
-
-        public Group.Nature[] getNatures() {
-            return natures;
-        }
-
-        public Collection<Group.Nature> getNaturesCollection() {
-            return natures == null ? null : Arrays.asList(natures);
-        }
-
-        public Collection<Group.Nature> getNaturesList() {
-            if (natures != null) {
-                return Arrays.asList(natures);
-            } else {
-                return null;
-            }
-        }
-
-        public PaymentFilter getPaymentFilter() {
-            return paymentFilter;
-        }
-
-        public Collection<Group> getPossibleGroups() {
-            return possibleGroups;
-        }
-
-        public Group.Status[] getStatus() {
-            return status;
-        }
-
-        public Collection<Group.Status> getStatusCollection() {
-            return status == null || status.length == 0 ? null : Arrays.asList(status);
-        }
-
-        public boolean isIgnoreManagedBy() {
-            return ignoreManagedBy;
-        }
-
-        public boolean isOnlyActive() {
-            return onlyActive;
-        }
-
-        public boolean isSortByNature() {
-            return sortByNature;
-        }
-
-        public void setBroker(final Member broker) {
-            this.broker = broker;
-        }
-
-        public void setGroupFilter(final GroupFilter groupFilter) {
-            groupFilters = groupFilter == null ? null : Collections.singletonList(groupFilter);
-        }
-
-        public void setGroupFilters(final Collection<GroupFilter> groupFilters) {
+        public void setGroupFilters(List<GroupFilterEntity> groupFilters) {
             this.groupFilters = groupFilters;
         }
 
-        public void setIgnoreManagedBy(final boolean ignoreManagedBy) {
-            this.ignoreManagedBy = ignoreManagedBy;
+        public List<Group.Nature> getNatures() {
+            return natures;
         }
 
-        public void setManagedBy(final AdminGroup managedBy) {
-            this.managedBy = managedBy;
-        }
-
-        public void setMember(final Member member) {
-            this.member = member;
-        }
-
-        public void setMemberAccountType(final MemberAccountType memberAccountType) {
-            this.memberAccountType = memberAccountType;
-        }
-
-        public void setNature(final Group.Nature nature) {
-            natures = nature == null ? null : new Group.Nature[] { nature };
-        }
-
-        public void setNatures(final Group.Nature... natures) {
+        public void setNatures(List<Group.Nature> natures) {
             this.natures = natures;
         }
 
-        public void setNaturesCollection(final Collection<Group.Nature> natures) {
-            this.natures = natures == null ? null : natures.toArray(new Group.Nature[natures.size()]);
+        private boolean manageAnyGroup;
+
+        public boolean isManageAnyGroup() {
+            return manageAnyGroup;
         }
 
-        public void setOnlyActive(final boolean onlyActive) {
-            this.onlyActive = onlyActive;
+        public void setManageAnyGroup(boolean manageAnyGroup) {
+            this.manageAnyGroup = manageAnyGroup;
         }
 
-        public void setPaymentFilter(final PaymentFilter paymentFilter) {
-            this.paymentFilter = paymentFilter;
+        public Map<Group.Nature, Permission> getPermissionByNature() {
+            return permissionByNature;
         }
 
-        public void setPossibleGroups(final Collection<Group> possibleGroups) {
-            this.possibleGroups = possibleGroups;
+        public void setPermissionByNature(Map<Group.Nature, Permission> permissionByNature) {
+            this.permissionByNature = permissionByNature;
         }
 
-        public void setSortByNature(final boolean sortByNature) {
-            this.sortByNature = sortByNature;
-        }
-
-        public void setStatus(final Group.Status... status) {
-            this.status = status;
-        }
-
-        public void setStatusCollection(final Collection<Group.Status> status) {
-            this.status = status == null ? null : status.toArray(new Group.Status[status.size()]);
-        }
-    }
-    public static class ListGroupsResponseDTO{
-    	List<Group> groups;
-    	public ListGroupsResponseDTO(List<Group> groups){
-    		super();
-    		this.groups=groups;
-    	}
-    	String message;
-
-		public final String getMessage() {
-			return message;
-		}
-
-		public final void setMessage(String message) {
-			this.message = message;
-		}
-    	public ListGroupsResponseDTO(){
-        }
-    	
     }
 
-    @RequestMapping(value = "admin/listGroups" ,method = RequestMethod.POST)
+    public static class GroupFilterEntity {
+
+        private Long id;
+        private String name;
+        private String loginPageName;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getLoginPageName() {
+            return loginPageName;
+        }
+
+        public void setLoginPageName(String loginPageName) {
+            this.loginPageName = loginPageName;
+        }
+
+    }
+
+    public static class GroupEntity {
+
+        private Long id;
+        private String name;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
+
+    @RequestMapping(value = "admin/listGroups", method = RequestMethod.GET)
     @ResponseBody
-    protected ListGroupsResponseDTO executeQuery(@RequestBody ListGroupsRequestDTO form, final QueryParameters queryParameters) {  
-        final GroupQuery groupQuery = (GroupQuery) queryParameters;
-        @SuppressWarnings("unused")
-		final List<? extends Group> groups = groupService.search(groupQuery);
-        @SuppressWarnings("unchecked")
-		ListGroupsResponseDTO response = new ListGroupsResponseDTO((List<Group>) groupQuery);
-       
-        return response;
-        
-        
-    }
-
-    //@Override
-//    protected GroupQuery prepareForm(final ActionContext context) {
-//        final HttpServletRequest request = context.getRequest();
-//        final ListGroupsForm form = context.getForm();
-//        boolean manageAnyGroup = false;
+    public GroupsResponse listGroups() {
+        GroupsResponse response = new GroupsResponse();
+        boolean manageAnyGroup = false;
 //        final GroupQuery groupQuery = getDataBinder().readFromString(form.getQuery());
-//        if (context.isAdmin()) {
-//            groupQuery.setSortByNature(true);
-//
-//            // Put in the request the name of permission used to manage a type of group
-//            final Map<Group.Nature, Permission> permissionByNature = getManageGroupPermissionByNatureMap();
-//            request.setAttribute("permissionByNature", permissionByNature);
-//
-//            // Check if the user has permission to manage any group
-//            for (final Permission permission : permissionByNature.values()) {
-//                if (permissionService.hasPermission(permission)) {
-//                    manageAnyGroup = true;
-//                    break;
-//                }
-//            }
-//
-//            // List of groups that the administrator can manage
-//            AdminGroup adminGroup = context.getGroup();
-//            adminGroup = groupService.load(adminGroup.getId(), AdminGroup.Relationships.MANAGES_GROUPS);
-//            request.setAttribute("managesGroups", adminGroup.getManagesGroups());
-//
-//            // List of group natures
-//            request.setAttribute("natures", Arrays.asList(Group.Nature.ADMIN, Group.Nature.BROKER, Group.Nature.MEMBER));
-//
-//            // Search group filters and send to the JSP page
-//            final GroupFilterQuery groupFilterQuery = new GroupFilterQuery();
-//            groupFilterQuery.setAdminGroup(adminGroup);
-//            final Collection<GroupFilter> groupFilters = groupFilterService.search(groupFilterQuery);
-//            if (CollectionUtils.isNotEmpty(groupFilters)) {
-//                request.setAttribute("groupFilters", groupFilters);
-//            }
-//        } else {
-//            // It's a member listing operators groups
-//            final Member member = (Member) context.getElement();
-//            groupQuery.setNatures(Group.Nature.OPERATOR);
-//            groupQuery.setMember(member);
-//            groupQuery.setSortByNature(false);
-//            manageAnyGroup = true;
-//        }
-//        request.setAttribute("manageAnyGroup", manageAnyGroup);
-//        return groupQuery;
-//    }
 
-    //@Override
-    protected boolean willExecuteQuery(final ActionContext context, final QueryParameters queryParameters) throws Exception {
-        return true;
+        // Put in the request the name of permission used to manage a type of group
+        final Map<Group.Nature, Permission> permissionByNature = getManageGroupPermissionByNatureMap();
+        response.setPermissionByNature(permissionByNature);
+
+        // Check if the user has permission to manage any group
+        for (final Permission permission : permissionByNature.values()) {
+            if (permissionService.hasPermission(permission)) {
+                manageAnyGroup = true;
+                break;
+            }
+        }
+
+        // List of groups that the administrator can manage
+        AdminGroup adminGroup = LoggedUser.group();
+        adminGroup = groupService.load(adminGroup.getId(), AdminGroup.Relationships.MANAGES_GROUPS);
+        //response.setMemberGroups(adminGroup.getManagesGroups());
+
+        // List of group natures
+        response.setNatures(Arrays.asList(Group.Nature.ADMIN, Group.Nature.BROKER, Group.Nature.MEMBER));
+
+        // Search group filters and send to the JSP page
+        final GroupFilterQuery groupFilterQuery = new GroupFilterQuery();
+        groupFilterQuery.setAdminGroup(adminGroup);
+        final Collection<GroupFilter> groupFiltersList = groupFilterService.search(groupFilterQuery);
+        List<GroupFilterEntity> groupFilters = new ArrayList();
+        for (GroupFilter group : groupFiltersList) {
+            GroupFilterEntity groupEntity = new GroupFilterEntity();
+            groupEntity.setId(group.getId());
+            groupEntity.setName(group.getName());
+            groupEntity.setLoginPageName(group.getLoginPageName());
+            groupFilters.add(groupEntity);
+        }
+        System.out.println("------groupFilter: " + groupFiltersList);
+        if (CollectionUtils.isNotEmpty(groupFilters)) {
+            response.setGroupFilters(groupFilters);
+        }
+
+        //list all groups 
+        final GroupQuery groupQuery = new GroupQuery();
+        final List<? extends Group> groupsList = groupService.search(groupQuery);
+        List<GroupEntity> groups = new ArrayList();
+        for (Group group : groupsList) {
+            GroupEntity entity = new GroupEntity();
+            entity.setId(group.getId());
+            entity.setName(group.getName());
+            groups.add(entity);
+        }
+        response.setGroups(groups);
+
+        return response;
+
     }
 
+    public static class GroupParameters {
+
+        private String nature;
+
+        public String getNature() {
+            return nature;
+        }
+
+        public void setNature(String nature) {
+            this.nature = nature;
+        }
+
+    }
+
+    @RequestMapping(value = "admin/listGroups", method = RequestMethod.POST)
+    @ResponseBody
+    public GroupsResponse listGroupsByNature(@RequestBody GroupParameters params) {
+        GroupsResponse response = new GroupsResponse();
+        final GroupQuery groupQuery = new GroupQuery();
+        groupQuery.setNature(Group.Nature.valueOf(params.getNature()));
+        final List<? extends Group> groupsList = groupService.search(groupQuery);
+        List<GroupEntity> groups = new ArrayList();
+        for (Group group : groupsList) {
+            GroupEntity entity = new GroupEntity();
+            entity.setId(group.getId());
+            entity.setName(group.getName());
+            groups.add(entity);
+        }
+        response.setGroups(groups);
+        response.setStatus(0);
+        return response;
+    }
 }

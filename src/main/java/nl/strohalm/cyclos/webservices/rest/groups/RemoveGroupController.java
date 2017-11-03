@@ -13,72 +13,27 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.entities.customization.files.CustomizedFile;
 import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.services.groups.GroupService;
-import nl.strohalm.cyclos.utils.CustomizationHelper;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 import org.springframework.web.bind.annotation.PathVariable;
+
+
 @Controller
 public class RemoveGroupController extends BaseRestController {
-	private CustomizationHelper customizationHelper;
-	private GroupService groupService;
-
-    public final GroupService getGroupService() {
-		return groupService;
-	}
-
-	public final void setGroupService(GroupService groupService) {
-		this.groupService = groupService;
-	}
-
-	@Inject
-    public void setCustomizationHelper(final CustomizationHelper customizationHelper) {
-        this.customizationHelper = customizationHelper;
-    }
-    public static class RemoveGroupRequestDTO{
-    	 private long              groupId;
-
-    	    public long getGroupId() {
-    	        return groupId;
-    	    }
-
-    	    @Inject
-    	    public void setGroupId(final long groupId) {
-    	        this.groupId = groupId;
-    	    }
-    }
     
-    public static class RemoveGroupResponseDTO{
-    	String message;
-
-		public final String getMessage() {
-			return message;
-		}
-
-		public final void setMessage(String message) {
-			this.message = message;
-		}
-                public RemoveGroupResponseDTO(){
-                }
-    	
-    	
-    }
-
-    @RequestMapping(value ="admin/removeGroup/{groupId}" ,method = RequestMethod.GET)
+    @RequestMapping(value = "admin/removeGroup/{groupId}", method = RequestMethod.GET)
     @ResponseBody
-    protected RemoveGroupResponseDTO executeAction(@PathVariable ("groupId") long groupId) throws Exception {
-        RemoveGroupResponseDTO response =new RemoveGroupResponseDTO();
-       
+    protected GenericResponse executeAction(@PathVariable("groupId") Long groupId) throws Exception {
+        GenericResponse response = new GenericResponse();
         final long id = groupId;
         if (id <= 0) {
             throw new ValidationException();
         }
-        
-        
         final Collection<File> toRemove = new ArrayList<File>();
-        //try {
+        try {
             final Group group = groupService.load(id, Group.Relationships.CUSTOMIZED_FILES);
             final Collection<CustomizedFile> customizedFiles = group.getCustomizedFiles();
-            
             // Before removing the group, get the customized files
             for (final CustomizedFile customizedFile : customizedFiles) {
                 final File physicalFile = customizationHelper.customizedFileOf(customizedFile);
@@ -90,12 +45,12 @@ public class RemoveGroupController extends BaseRestController {
                 customizationHelper.deleteFile(file);
             }
             response.setMessage("group.removed");
-        
-        	response.setMessage("group.error.removing");
-        
-        response = new RemoveGroupResponseDTO(); 
+        } catch (final Exception e) {
+            response.setMessage("group.error.removing");
+        }
+        response.setStatus(0);
         
         return response;
     }
-
+    
 }

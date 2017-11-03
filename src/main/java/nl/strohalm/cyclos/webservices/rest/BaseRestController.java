@@ -33,6 +33,7 @@ import nl.strohalm.cyclos.services.accounts.external.ExternalTransferImportServi
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferTypeService;
 import nl.strohalm.cyclos.services.alerts.ErrorLogService;
+import nl.strohalm.cyclos.services.customization.CustomizedFileService;
 import nl.strohalm.cyclos.services.customization.MemberCustomFieldService;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.elements.MemberRecordTypeService;
@@ -47,6 +48,7 @@ import nl.strohalm.cyclos.services.transactions.LoanService;
 import nl.strohalm.cyclos.services.transactions.PaymentService;
 import nl.strohalm.cyclos.services.transactions.ScheduledPaymentService;
 import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
+import nl.strohalm.cyclos.utils.CustomizationHelper;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -91,6 +93,18 @@ public abstract class BaseRestController {
     protected ErrorLogService errorLogService;
     protected LoanService loanService;
     protected RegistrationAgreementService registrationAgreementService;
+    protected CustomizedFileService customizedFileService;
+    protected CustomizationHelper customizationHelper;
+
+    @Inject
+    public void setCustomizationHelper(CustomizationHelper customizationHelper) {
+        this.customizationHelper = customizationHelper;
+    }
+
+    @Inject
+    public void setCustomizedFileService(CustomizedFileService customizedFileService) {
+        this.customizedFileService = customizedFileService;
+    }
 
     @Inject
     public void setRegistrationAgreementService(RegistrationAgreementService registrationAgreementService) {

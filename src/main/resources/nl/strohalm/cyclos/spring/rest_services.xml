@@ -320,6 +320,9 @@
           class="nl.strohalm.cyclos.webservices.rest.groups.groupFilters.ListGroupFiltersController" />
     <bean id="removeGroupFilterController"
           class="nl.strohalm.cyclos.webservices.rest.groups.groupFilters.RemoveGroupFilterController" />
+       <bean id="getGroupFilterByIdController"
+          class="nl.strohalm.cyclos.webservices.rest.groups.GetGroupFilterByIdController" />
+    
     <!--customizedFiles-->
     <bean id="editGroupFilterCustomizedFileController"
           class="nl.strohalm.cyclos.webservices.rest.groups.groupFilters.customizedFiles.EditGroupFilterCustomizedFileController" />

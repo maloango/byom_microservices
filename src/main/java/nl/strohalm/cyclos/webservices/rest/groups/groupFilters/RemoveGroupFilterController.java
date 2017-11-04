@@ -15,82 +15,28 @@ import nl.strohalm.cyclos.entities.groups.GroupFilter;
 import nl.strohalm.cyclos.services.groups.GroupFilterService;
 import nl.strohalm.cyclos.utils.CustomizationHelper;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class RemoveGroupFilterController extends BaseRestController {
-	private GroupFilterService groupFilterService;
-	public final GroupFilterService getGroupFilterService() {
-            
-		return groupFilterService;
-	}
+    
+    @RequestMapping(value = "admin/removeGroupFilter/{groupFilterId}", method = RequestMethod.GET)
+    @ResponseBody
+    protected GenericResponse executeAction(@PathVariable("groupFilterId") Long groupFilterId) throws Exception {
+        GenericResponse response = new GenericResponse();
+        final GroupFilter groupFilter = groupFilterService.load(groupFilterId, GroupFilter.Relationships.CUSTOMIZED_FILES);
+        final Collection<CustomizedFile> customizedFiles = groupFilter.getCustomizedFiles();
+        groupFilterService.remove(groupFilterId);
 
-    public CustomizationHelper getCustomizationHelper() {
-        return customizationHelper;
+        // Remove the physical customized files for the group
+        for (final CustomizedFile customizedFile : customizedFiles) {
+            final File physicalFile = customizationHelper.customizedFileOf(customizedFile);
+            customizationHelper.deleteFile(physicalFile);
+        }
+        
+        response.setMessage("groupFilter.removed");
+        response.setStatus(0);
+        return response;
     }
-
-	private CustomizationHelper customizationHelper;
-
-	@Inject
-	public void setCustomizationHelper(
-			final CustomizationHelper customizationHelper) {
-		this.customizationHelper = customizationHelper;
-	}
-
-	@Inject
-	public void setGroupFilterService(
-			final GroupFilterService groupFilterService) {
-		this.groupFilterService = groupFilterService;
-	}
-
-	public static class RemoveGroupFilterRequestDto {
-		private long groupFilterId;
-
-		public long getGroupFilterId() {
-			return groupFilterId;
-		}
-
-		public void setGroupFilterId(final long groupFilterId) {
-			this.groupFilterId = groupFilterId;
-		}
-
-	}
-
-	public static class RemoveGroupFilterResponseDto {
-		private String message;
-
-		public String getMessage() {
-			return message;
-		}
-
-		public void setMessage(String message) {
-			this.message = message;
-		}
-	}
-
-	@RequestMapping(value = "admin/removeGroupFilter", method = RequestMethod.POST)
-	@ResponseBody
-	protected RemoveGroupFilterResponseDto executeAction(@RequestBody RemoveGroupFilterRequestDto form) throws Exception {
-			
-		RemoveGroupFilterResponseDto response = new RemoveGroupFilterResponseDto();
-                try{
-		final long id = form.getGroupFilterId();
-		 GroupFilter groupFilter = groupFilterService.load(id,GroupFilter.Relationships.CUSTOMIZED_FILES);
-				
-		final Collection<CustomizedFile> customizedFiles = groupFilter
-				.getCustomizedFiles();
-		groupFilterService.remove(id);
-
-		
-		for (final CustomizedFile customizedFile : customizedFiles) {
-			final File physicalFile = customizationHelper
-					.customizedFileOf(customizedFile);
-			customizationHelper.deleteFile(physicalFile);
-		}
-		response = new RemoveGroupFilterResponseDto();
-		response.setMessage("groupFilter.removed");}
-                catch(Exception e){
-                    e.printStackTrace();
-                }
-		return response;
-	}
 }

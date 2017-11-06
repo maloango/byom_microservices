@@ -9,71 +9,24 @@ import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.services.loangroups.LoanGroupService;
 import static nl.strohalm.cyclos.utils.access.LoggedUser.member;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 import org.springframework.web.bind.annotation.PathVariable;
+
 @Controller
-public class RemoveLoanGroupController extends BaseRestController{
-
-    private LoanGroupService loanGroupService;
+public class RemoveLoanGroupController extends BaseRestController {
     
-    public LoanGroupService getLoanGroupService() {
-        return loanGroupService;
-    }
-
-    @Inject
-    public void setLoanGroupService(final LoanGroupService loanGroupService) {
-        this.loanGroupService = loanGroupService;
-    }
-    
-    public static class RemoveLoanGroupRequestDTO{
-    	private long              loanGroupId;
-        
-    public long getLoanGroupId() {
-        return loanGroupId;
-    }
-
-    public void setLoanGroupId(final long loanGroupId) {
-        this.loanGroupId = loanGroupId;
-    }
-    	
-    }
-    public static class RemoveLoanGroupResponseDTO{
-    	String message;
-
-       
-        
-		public final String getMessage() {
-			return message;
-		}
-
-		public final void setMessage(String message) {
-			this.message = message;
-		}
-                public RemoveLoanGroupResponseDTO(){
-                }
-    	
-    }
-    
-    @RequestMapping(value= "admin/removeLoanGroup/{loanGroupId}", method =RequestMethod.GET)
+    @RequestMapping(value = "admin/removeLoanGroup/{loanGroupId}", method = RequestMethod.GET)
     @ResponseBody
-    protected RemoveLoanGroupResponseDTO executeAction(@PathVariable ("loanGroupId") long loanGroupId) throws Exception {
-    	RemoveLoanGroupResponseDTO response = new RemoveLoanGroupResponseDTO();
-        
+    protected GenericResponse executeAction(@PathVariable("loanGroupId") long loanGroupId) throws Exception {
+        GenericResponse response = new GenericResponse();
         try {
             loanGroupService.remove(loanGroupId);
-            
-                
             response.setMessage("loanGroup.removed");
-        } 
-        catch (final Exception e) 
-        {
+        } catch (final Exception e) {
             response.setMessage("loanGroup.errorRemoving");
-            e.printStackTrace();
-           
         }
+        response.setStatus(0);
+        return response;
         
-       
-          return response;
-		
     }
 }
-

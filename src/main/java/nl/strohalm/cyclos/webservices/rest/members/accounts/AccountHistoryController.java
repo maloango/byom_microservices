@@ -78,7 +78,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author Lue
  */
 @Controller
-public class AccountHistoryController extends BaseRestController{
+public class AccountHistoryController extends BaseRestController {
+
     protected AccountService accountService;
     protected PaymentFilterService paymentFilterService;
     protected PaymentCustomFieldService paymentCustomFieldService;
@@ -91,7 +92,7 @@ public class AccountHistoryController extends BaseRestController{
     private PermissionService permissionService;
     private GroupService groupService;
     private DataBinder<TransferQuery> dataBinder;
-    
+
     public GroupService getGroupService() {
         return groupService;
     }
@@ -207,7 +208,6 @@ public class AccountHistoryController extends BaseRestController{
         binder.registerBinder("pageParameters", DataBinderHelper.pageBinder());
         return binder;
     }
-    
 
     public DataBinder<TransferQuery> getDataBinder() {
         if (dataBinder == null) {
@@ -218,7 +218,7 @@ public class AccountHistoryController extends BaseRestController{
     }
 
     public static class AccountHistoryRequest {
-
+        private AccountType accountType;
         private boolean advanced;
         private Long memberId;
         private Long typeId;
@@ -230,6 +230,24 @@ public class AccountHistoryController extends BaseRestController{
         private String begin;
         private String end;
         private String description;
+        private Status status;
+
+        public AccountType getAccountType() {
+            return accountType;
+        }
+
+        public void setAccountType(AccountType accountType) {
+            this.accountType = accountType;
+        }
+        
+
+        public Status getStatus() {
+            return status;
+        }
+
+        public void setStatus(Status status) {
+            this.status = status;
+        }
 
         public boolean isAdvanced() {
             return advanced;
@@ -546,7 +564,7 @@ public class AccountHistoryController extends BaseRestController{
         private boolean showConciliated;
         private List<PaymentCustomField> customFieldsForList;
         private List<PaymentCustomField> customFieldsForSearch;
-        private  List<Status> status1 = new ArrayList();
+        private List<Status> status1 = new ArrayList();
 
         public List<Status> getStatus1() {
             return status1;
@@ -555,11 +573,7 @@ public class AccountHistoryController extends BaseRestController{
         public void setStatus1(List<Status> status1) {
             this.status1 = status1;
         }
-        
 
-        
-
-        
         public List<PaymentCustomField> getCustomFieldsForSearch() {
             return customFieldsForSearch;
         }
@@ -567,7 +581,6 @@ public class AccountHistoryController extends BaseRestController{
         public void setCustomFieldsForSearch(List<PaymentCustomField> customFieldsForSearch) {
             this.customFieldsForSearch = customFieldsForSearch;
         }
-        
 
         public List<PaymentCustomField> getCustomFieldsForList() {
             return customFieldsForList;
@@ -576,7 +589,6 @@ public class AccountHistoryController extends BaseRestController{
         public void setCustomFieldsForList(List<PaymentCustomField> customFieldsForList) {
             this.customFieldsForList = customFieldsForList;
         }
-        
 
         public boolean isShowConciliated() {
             return showConciliated;
@@ -585,7 +597,6 @@ public class AccountHistoryController extends BaseRestController{
         public void setShowConciliated(boolean showConciliated) {
             this.showConciliated = showConciliated;
         }
-        
 
         public Set<Map.Entry<String, AccountType.Nature>> getNatureType() {
             return natureType;
@@ -698,14 +709,17 @@ public class AccountHistoryController extends BaseRestController{
         queryParameter.put("period.begin", request.getBegin());
         queryParameter.put("period.end", request.getEnd());
         queryParameter.put("groups", request.getGroups());
+        queryParameter.put("status", request.getStatus());
 
         final TransferQuery query = getDataBinder().readFromString(queryParameter);
 
         //  final TransferQuery query = (TransferQuery) queryParameters;
         AccountHistoryResponse response = new AccountHistoryResponse();
-        // final Account account = accountService.getAccount(new AccountDTO(owner, type));
+         
+      // final Account account = accountService.getAccount(new AccountDTO(owner, type));
         final List<Transfer> transfers = paymentService.search(query);
         response.setTransfers(transfers);
+        
         response.setStatus(0);
         response.setMessage("tranfer list!!");
         return response;
@@ -734,7 +748,7 @@ public class AccountHistoryController extends BaseRestController{
         final AccountType type = accountTypeService.load(typeId);
         // Set the default status to PROCESSED
         if (query.getStatus() == null) {
-           // query.setStatus(Transfer.Status.PROCESSED);
+            // query.setStatus(Transfer.Status.PROCESSED);
             // form.setQuery("status", query.getStatus().name());
             List<Status> status1 = new ArrayList();
             status1.add(Status.DENIED);
@@ -742,7 +756,7 @@ public class AccountHistoryController extends BaseRestController{
             status1.add(Status.PROCESSED);
             status1.add(Status.CANCELED);
             response.setStatus1(status1);
-           
+
         }
 
         if (type instanceof SystemAccountType) {
@@ -874,12 +888,12 @@ public class AccountHistoryController extends BaseRestController{
             response.setShowConciliated(Boolean.FALSE);
         }
         final List<PaymentCustomField> customFieldsForList = paymentCustomFieldService.listForList(account, false);
-         final List<PaymentCustomField> customFieldsForSearch = paymentCustomFieldService.listForSearch(account, false);
+        final List<PaymentCustomField> customFieldsForSearch = paymentCustomFieldService.listForSearch(account, false);
         response.setCustomFieldsForList(customFieldsForList);
         response.setCustomFieldsForSearch(customFieldsForSearch);
-       
+
         response.setPaymentList(payList);
-       
+
         response.setStatus(0);
 
         // Set the required request attributes

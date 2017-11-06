@@ -1,5 +1,6 @@
 package nl.strohalm.cyclos.webservices.rest.loangroups;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,142 +28,130 @@ import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.ReferenceConverter;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
+
 @Controller
 public class SearchLoanGroupsController extends BaseRestController {
-	
-	private LoanGroupService           loanGroupService;
-    private DataBinder<LoanGroupQuery> dataBinder;
-    private ElementService elementService;
 
-    public DataBinder<LoanGroupQuery> getDataBinder() {
-        if (dataBinder == null) {
-            final BeanBinder<LoanGroupQuery> binder = BeanBinder.instance(LoanGroupQuery.class);
-            binder.registerBinder("name", PropertyBinder.instance(String.class, "name"));
-            binder.registerBinder("description", PropertyBinder.instance(String.class, "description"));
-            binder.registerBinder("member", PropertyBinder.instance(Member.class, "member", ReferenceConverter.instance(Member.class)));
-            dataBinder = binder;
-        }
-        return dataBinder;
-    }
+    public static class LoanGroupsResponse extends GenericResponse {
 
-    public LoanGroupService getLoanGroupService() {
-        return loanGroupService;
-    }
+        private List<LoanGroupsEntity> loanGroups;
 
-    @Inject
-    public void setLoanGroupService(final LoanGroupService loanGroupService) {
-        this.loanGroupService = loanGroupService;
-    }
-    
-    public static class SearchLoanGroupsRequestDTO{
-    	private String                                 description;
-        private Member                                 member;
-        private String                                 name;
-        private Boolean                                noLoans;
-        private boolean                                notOfMember;
-		public Collection<? extends CustomFieldValue> getCustomValues() {
-            return getCustomValues();
+        public List<LoanGroupsEntity> getLoanGroups() {
+            return loanGroups;
         }
 
-        public String getDescription() {
-            return description;
+        public void setLoanGroups(List<LoanGroupsEntity> loanGroups) {
+            this.loanGroups = loanGroups;
         }
 
-        public Member getMember() {
-            return member;
+    }
+
+    public static class LoanGroupsEntity {
+
+        private Long id;
+        private String name;
+        private String description;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
         }
 
         public String getName() {
             return name;
         }
 
-        public Boolean getNoLoans() {
-            return noLoans;
-        }
-
-        public boolean isNotOfMember() {
-            return notOfMember;
-        }
-
-        public void setCustomValues(final Collection<? extends CustomFieldValue> customValues) {
-        }
-
-        public void setDescription(final String description) {
-            this.description = description;
-        }
-
-        public void setMember(final Member member) {
-            this.member = member;
-        }
-
-        public void setName(final String name) {
+        public void setName(String name) {
             this.name = name;
         }
 
-        public void setNoLoans(final Boolean noLoans) {
-            this.noLoans = noLoans;
+        public String getDescription() {
+            return description;
         }
 
-        public void setNotOfMember(final boolean notOfMember) {
-            this.notOfMember = notOfMember;
+        public void setDescription(String description) {
+            this.description = description;
         }
-    	
-    }
-    
-    public static class SearchLoanGroupsResponseDTo{
-    	String message;
-    	public final String getMessage() {
-			return message;
-		}
-
-		public final void setMessage(String message) {
-			this.message = message;
-		}
-
-		List<LoanGroup> loanGroups;
-		public final List<LoanGroup> getLoanGroups() {
-			return loanGroups;
-		}
-
-		public final void setLoanGroups(List<LoanGroup> loanGroups) {
-			this.loanGroups = loanGroups;
-		}
-    	
     }
 
-    @RequestMapping(value= "admin/searchLoanGroups", method =RequestMethod.POST)
+    @RequestMapping(value = "admin/listLoanGroups", method = RequestMethod.GET)
     @ResponseBody
-    protected SearchLoanGroupsResponseDTo executeQuery(@RequestBody SearchLoanGroupsRequestDTO form, final QueryParameters queryParameters) {
-        SearchLoanGroupsResponseDTo  response = new SearchLoanGroupsResponseDTo();
-        try{
-       final LoanGroupQuery query = (LoanGroupQuery) queryParameters;
-        final List<LoanGroup> loanGroups = loanGroupService.search(query);
-            LoggedUser.setAttribute("loanGroups", loanGroups);
-            response= executeQuery(form, queryParameters);
-    }
-        catch(Exception e){
-            e.printStackTrace();
+    protected LoanGroupsResponse listGroups() {
+        LoanGroupsResponse response = new LoanGroupsResponse();
+        final LoanGroupQuery query = new LoanGroupQuery();
+        final List<LoanGroup> loanGroupsList = loanGroupService.search(query);
+        List<LoanGroupsEntity> loanGroups = new ArrayList();
+        for (LoanGroup group : loanGroupsList) {
+            LoanGroupsEntity loanGroupsEntity = new LoanGroupsEntity();
+            loanGroupsEntity.setId(group.getId());
+            loanGroupsEntity.setName(group.getName());
+            loanGroupsEntity.setDescription(group.getDescription());
+            loanGroups.add(loanGroupsEntity);
         }
+        response.setLoanGroups(loanGroups);
+        response.setMessage("");
+        response.setStatus(0);
         return response;
     }
-    
-    
-    @RequestMapping(value="",method =RequestMethod.POST)
+
+    public static class LoanGroupParameteres {
+
+        private String name;
+        private String description;
+        private Long member;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public Long getMember() {
+            return member;
+        }
+
+        public void setMember(Long member) {
+            this.member = member;
+        }
+
+    }
+
+    @RequestMapping(value = "admin/searchLoanGroups", method = RequestMethod.POST)
     @ResponseBody
-
- 
-//    public QueryParameters prepareForm(final ActionContext context) {
-//        final SearchLoanGroupsForm form = context.getForm();
-//        final LoanGroupQuery query = getDataBinder().readFromString(form.getQuery());
-//        if (query.getMember() instanceof EntityReference) {
-//            query.setMember((Member) elementService.load(query.getMember().getId(), Element.Relationships.USER));
-//        }
-//        return query;
-//    }
-
-  //  @Override
-    protected boolean willExecuteQuery(final ActionContext context, final QueryParameters queryParameters) throws Exception {
-        return true;
+    public LoanGroupsResponse searchLoanGroups(@RequestBody LoanGroupParameteres params) {
+        LoanGroupsResponse response = new LoanGroupsResponse();
+        final LoanGroupQuery query = new LoanGroupQuery();
+        query.setName(params.getName());
+        query.setDescription(params.getDescription());
+        if(params.getMember()!=null && params.getMember()>0L)
+        query.setMember((Member) elementService.load(params.getMember(), Element.Relationships.USER));
+        final List<LoanGroup> loanGroupsList = loanGroupService.search(query);
+        List<LoanGroupsEntity> loanGroups = new ArrayList();
+        for (LoanGroup group : loanGroupsList) {
+            LoanGroupsEntity loanGroupsEntity = new LoanGroupsEntity();
+            loanGroupsEntity.setId(group.getId());
+            loanGroupsEntity.setName(group.getName());
+            loanGroupsEntity.setDescription(group.getDescription());
+            loanGroups.add(loanGroupsEntity);
+        }
+        response.setLoanGroups(loanGroups);
+        response.setMessage("");
+        response.setStatus(0);
+        return response;
     }
 
 }

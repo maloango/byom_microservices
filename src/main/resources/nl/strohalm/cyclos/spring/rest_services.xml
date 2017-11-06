@@ -320,7 +320,7 @@
           class="nl.strohalm.cyclos.webservices.rest.groups.groupFilters.ListGroupFiltersController" />
     <bean id="removeGroupFilterController"
           class="nl.strohalm.cyclos.webservices.rest.groups.groupFilters.RemoveGroupFilterController" />
-       <bean id="getGroupFilterByIdController"
+    <bean id="getGroupFilterByIdController"
           class="nl.strohalm.cyclos.webservices.rest.groups.GetGroupFilterByIdController" />
     
     <!--customizedFiles-->
@@ -367,7 +367,13 @@
           class="nl.strohalm.cyclos.webservices.rest.loangroups.RemoveLoanGroupController" />
     <bean id="searchLoanGroupsController"
           class="nl.strohalm.cyclos.webservices.rest.loangroups.SearchLoanGroupsController" />
-
+    
+    <bean id="editLoanGroupController"
+          class="nl.strohalm.cyclos.webservices.rest.loangroups.EditLoanGroupController" />
+    <bean id="getLoanGroupById"
+          class="nl.strohalm.cyclos.webservices.rest.loangroups.GetLoanGroupById" />
+    <bean id="addMemberToLoanGroupController"
+           class="nl.strohalm.cyclos.webservices.rest.loangroups.AddMemberToLoanGroupController" />
 
     <bean id="confirmLoanController"
           class="nl.strohalm.cyclos.webservices.rest.loans.ConfirmLoanController" />
@@ -464,13 +470,25 @@
     
     <bean id="memberAccountHistoryController"
           class="nl.strohalm.cyclos.webservices.rest.members.accounts.AccountHistoryController" />
-    <bean id="memberSearchScheduledPaymentsController"
+    
+    <bean id="searchScheduledPaymentsController"
           class="nl.strohalm.cyclos.webservices.rest.members.accounts.SearchScheduledPaymentsController" />
     
     
-    <bean id="searchLoansController"
-          class="nl.strohalm.cyclos.webservices.rest.members.accounts.SearchLoansController" />
+    <!--    <bean id="searchLoansController"
+    class="nl.strohalm.cyclos.webservices.rest.members.accounts.SearchLoansController" />-->
     
+    <bean id="confirmMemberPaymentController"
+          class="nl.strohalm.cyclos.webservices.rest.members.accounts.ConfirmMemberPaymentController" />
+    
+    <bean id="confirmSystemPaymentController"
+          class="nl.strohalm.cyclos.webservices.rest.members.accounts.ConfirmSystemPaymentController" />
+    
+    <bean id="searchInvoicesController"
+          class="nl.strohalm.cyclos.webservices.rest.members.accounts.SearchInvoicesController" />
+    
+    <bean id="sendInvoiceController"
+          class="nl.strohalm.cyclos.webservices.rest.members.accounts.SendInvoiceController" />
     
     <!--Reports-->
     <bean id="activitiesController"
@@ -527,7 +545,7 @@
     <bean id="removeRegistrationAgreementController"
           class=" nl.strohalm.cyclos.webservices.rest.members.agreements.RemoveRegistrationAgreementController" />
     <bean id="getRegistrationAgreementById"
-            class=" nl.strohalm.cyclos.webservices.rest.members.agreements.GetRegistrationAgreementById" />
+          class=" nl.strohalm.cyclos.webservices.rest.members.agreements.GetRegistrationAgreementById" />
     <!--Users and group-->
     <!--      <bean id="listMemberRecordTypesController"
                  class="nl.strohalm.cyclos.webservices.rest.members.records.ListMemberRecordTypesController" />

@@ -285,13 +285,14 @@ public class SearchScheduledPaymentsController extends BaseRestController {
         payments = scheduledPaymentService.search(query);
         //context.getRequest().setAttribute("payments", payments);
         response.setPayments(payments);
+       
         response.setStatus(0);
         response.setMessage("!! SearchScheduledPayments list...");
         return response;
 
     }
 
-    @RequestMapping(value = "member/SearchScheduledPayments", method = RequestMethod.GET)
+    @RequestMapping(value = "member/searchScheduledPayments", method = RequestMethod.GET)
     @ResponseBody
     public SearchScheduledPaymentsResponse prepareForm() {
        SearchScheduledPaymentsResponse response = new SearchScheduledPaymentsResponse();
@@ -320,7 +321,7 @@ public class SearchScheduledPaymentsController extends BaseRestController {
             matq.setOwner((Member) owner);
             accountTypes = accountTypeService.search(matq);
         }
-        response.setAccountTypes(accountTypes);
+       // response.setAccountTypes(accountTypes);
 
         if (query.getMember() != null) {
             final Member member = elementService.load(query.getMember().getId(), Element.Relationships.USER);
@@ -344,7 +345,7 @@ public class SearchScheduledPaymentsController extends BaseRestController {
         response.setSearchType(searchType);
         
         response.setGroup(group);
-        response.setOwner(owner);
+      //  response.setOwner(owner);
         response.setStatus(0);
         response.setMessage("!! SearchScheduledPayments .....");
         return response;

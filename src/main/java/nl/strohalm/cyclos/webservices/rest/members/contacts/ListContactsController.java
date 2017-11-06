@@ -1,7 +1,5 @@
 package nl.strohalm.cyclos.webservices.rest.members.contacts;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.springframework.stereotype.Controller;
 import nl.strohalm.cyclos.annotations.Inject;
@@ -10,10 +8,8 @@ import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.services.elements.ContactService;
 import nl.strohalm.cyclos.utils.access.LoggedUser;
 import nl.strohalm.cyclos.webservices.model.ContactVO;
-import nl.strohalm.cyclos.webservices.model.MemberVO;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 import nl.strohalm.cyclos.webservices.rest.GenericResponse;
-import nl.strohalm.cyclos.webservices.rest.members.LoadMemberController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;

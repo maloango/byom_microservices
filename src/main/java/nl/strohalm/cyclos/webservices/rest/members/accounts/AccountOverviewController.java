@@ -95,7 +95,7 @@ public class AccountOverviewController extends BaseRestController {
         private Long paymentFilter;
         private Long typeId;
         Set<Entry<Payment.Status, String>>statusSet;
-
+        
         public Set<Entry<Payment.Status, String>> getStatusSet() {
             return statusSet;
         }

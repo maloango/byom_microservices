@@ -32,6 +32,8 @@ import nl.strohalm.cyclos.services.accounts.external.ExternalAccountService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferImportService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferTypeService;
+import nl.strohalm.cyclos.services.ads.AdCategoryService;
+import nl.strohalm.cyclos.services.ads.AdService;
 import nl.strohalm.cyclos.services.alerts.ErrorLogService;
 import nl.strohalm.cyclos.services.customization.CustomizedFileService;
 import nl.strohalm.cyclos.services.customization.MemberCustomFieldService;
@@ -97,12 +99,23 @@ public abstract class BaseRestController {
     protected CustomizedFileService customizedFileService;
     protected CustomizationHelper customizationHelper;
     protected LoanGroupService loanGroupService;
+    protected AdService adService;
+    protected AdCategoryService adCategoryService;
+
+    @Inject
+    public void setAdCategoryService(AdCategoryService adCategoryService) {
+        this.adCategoryService = adCategoryService;
+    }
+
+    @Inject
+    public void setAdService(AdService adService) {
+        this.adService = adService;
+    }
 
     @Inject
     public void setLoanGroupService(LoanGroupService loanGroupService) {
         this.loanGroupService = loanGroupService;
     }
-    
 
     @Inject
     public void setCustomizationHelper(CustomizationHelper customizationHelper) {

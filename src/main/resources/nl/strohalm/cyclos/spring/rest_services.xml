@@ -555,12 +555,25 @@
     <bean id="getRegistrationAgreementById"
           class=" nl.strohalm.cyclos.webservices.rest.members.agreements.GetRegistrationAgreementById" />
     <!--Users and group-->
-    <!--      <bean id="listMemberRecordTypesController"
-                 class="nl.strohalm.cyclos.webservices.rest.members.records.ListMemberRecordTypesController" />
+          <bean id="listMemberRecordTypesController"
+                 class="nl.strohalm.cyclos.webservices.rest.members.records.ListMemberRecordTypesController" /><!--
          <bean id="editMemberRecordTypeController"
                  class="nl.strohalm.cyclos.webservices.rest.members.records.EditMemberRecordTypeController" />
     -->
     
+    <!--admin ads-->
     
+    <bean id="searchAdsController" 
+    class="nl.strohalm.cyclos.webservices.rest.ads.SearchAdsController"/>
+      <bean id="listAdCategoriesController" 
+    class="nl.strohalm.cyclos.webservices.rest.ads.ListAdCategoriesController"/>
+   
+      <bean id="editAdCategoryController" 
+    class="nl.strohalm.cyclos.webservices.rest.ads.EditAdCategoryController"/>
+        <bean id="removeAdCategoryController" 
+    class="nl.strohalm.cyclos.webservices.rest.ads.RemoveAdCategoryController"/>
+      
+      
+      
         
 </beans>

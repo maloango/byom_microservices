@@ -28,11 +28,13 @@ import nl.strohalm.cyclos.services.access.ChannelService;
 import nl.strohalm.cyclos.services.accounts.AccountService;
 import nl.strohalm.cyclos.services.accounts.AccountTypeService;
 import nl.strohalm.cyclos.services.accounts.CurrencyService;
+import nl.strohalm.cyclos.services.accounts.cards.CardTypeService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalAccountService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferImportService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferTypeService;
 import nl.strohalm.cyclos.services.ads.AdCategoryService;
+import nl.strohalm.cyclos.services.ads.AdImportService;
 import nl.strohalm.cyclos.services.ads.AdService;
 import nl.strohalm.cyclos.services.alerts.ErrorLogService;
 import nl.strohalm.cyclos.services.customization.CustomizedFileService;
@@ -101,6 +103,18 @@ public abstract class BaseRestController {
     protected LoanGroupService loanGroupService;
     protected AdService adService;
     protected AdCategoryService adCategoryService;
+    protected AdImportService adImportService;
+    protected CardTypeService cardTypeService;
+
+    @Inject
+    public void setCardTypeService(CardTypeService cardTypeService) {
+        this.cardTypeService = cardTypeService;
+    }
+
+    @Inject
+    public void setAdImportService(AdImportService adImportService) {
+        this.adImportService = adImportService;
+    }
 
     @Inject
     public void setAdCategoryService(AdCategoryService adCategoryService) {

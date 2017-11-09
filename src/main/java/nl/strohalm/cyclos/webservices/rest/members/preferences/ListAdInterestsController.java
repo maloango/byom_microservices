@@ -40,8 +40,16 @@ public class ListAdInterestsController extends BaseRestController {
 
     public static class ListAdInterestsResponse extends GenericResponse {
 
-       
-        private Member owner;
+        private List<InterestEntity> interestList;
+
+        public List<InterestEntity> getInterestList() {
+            return interestList;
+        }
+
+        public void setInterestList(List<InterestEntity> interestList) {
+            this.interestList = interestList;
+        }
+
         private List<AdInterest> adInterests = new ArrayList<AdInterest>();
 
         public List<AdInterest> getAdInterests() {
@@ -51,13 +59,29 @@ public class ListAdInterestsController extends BaseRestController {
         public void setAdInterests(List<AdInterest> adInterests) {
             this.adInterests = adInterests;
         }
-        
-        public Member getOwner() {
+
+    }
+
+    public static class InterestEntity {
+
+        private Long id;
+        private String owner;
+
+        public String getOwner() {
             return owner;
         }
 
-        public void setOwner(Member owner) {
+        public void setOwner(String owner) {
             this.owner = owner;
+        }
+
+      
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
         }
 
     }
@@ -65,15 +89,29 @@ public class ListAdInterestsController extends BaseRestController {
     @RequestMapping(value = "member/listadInterest", method = RequestMethod.GET)
     @ResponseBody
     public ListAdInterestsResponse listAd() throws Exception {
-        
+
         ListAdInterestsResponse response = new ListAdInterestsResponse();
         final Member owner = LoggedUser.element();
         final AdInterestQuery query = new AdInterestQuery();
         query.setOwner(owner);
+        // query.setOwner(LoggedUser.member());
         final List<AdInterest> adInterests = adInterestService.search(query);
-        response.setAdInterests(adInterests);
+        System.out.println(".... adinterest" + adInterestService.search(query));
+
+        List<InterestEntity> interestList = new ArrayList();
+        for (AdInterest ad : adInterests) {
+            InterestEntity entity = new InterestEntity();
+            entity.setId(ad.getId());
+            entity.setOwner(ad.getMember().getName());
+           
+
+            interestList.add(entity);
+        }
+        response.setInterestList(interestList);
+
         response.setStatus(0);
         response.setMessage("!! List of AdInterest...");
+
         return response;
     }
 

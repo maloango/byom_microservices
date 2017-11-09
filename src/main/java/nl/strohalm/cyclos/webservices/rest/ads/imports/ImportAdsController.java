@@ -1,5 +1,6 @@
 package nl.strohalm.cyclos.webservices.rest.ads.imports;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -26,136 +27,134 @@ import nl.strohalm.cyclos.utils.csv.UnknownColumnException;
 import nl.strohalm.cyclos.utils.validation.RequiredError;
 import nl.strohalm.cyclos.utils.validation.ValidationException;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class ImportAdsController extends BaseRestController {
-	private AdImportService adImportService;
-	private CurrencyService currencyService;
-	private DataBinder<AdImport> dataBinder;
+    
+    private static class ImportAdsResponse extends GenericResponse {
+        
+        private List<Currency> currencies;
+        private Currency singleCurrency;
+        
+        public Currency getSingleCurrency() {
+            return singleCurrency;
+        }
+        
+        public void setSingleCurrency(Currency singleCurrency) {
+            this.singleCurrency = singleCurrency;
+        }
+        
+        public List<Currency> getCurrencies() {
+            return currencies;
+        }
+        
+        public void setCurrencies(List<Currency> currencies) {
+            this.currencies = currencies;
+        }
+        
+    }
+    
+    public static class ImportAdsParameters {
+        
+        private Long id;
+        private Long currency;
+        private File file;
+        
+        public Long getId() {
+            return id;
+        }
+        
+        public void setId(Long id) {
+            this.id = id;
+        }
+        
+        public Long getCurrency() {
+            return currency;
+        }
+        
+        public void setCurrency(Long currency) {
+            this.currency = currency;
+        }
+        
+        public File getFile() {
+            return file;
+        }
+        
+        public void setFile(File file) {
+            this.file = file;
+        }
+        
+    }
+    
+    @RequestMapping(value = "admin/importAds", headers = ("content-type=multipart/*"), method = RequestMethod.POST)
+    @ResponseBody
+    protected GenericResponse handleSubmit(@RequestBody ImportAdsParameters params, @RequestParam("file") MultipartFile inputFile) throws Exception {
+        //final ImportAdsForm form = context.getForm();
+        GenericResponse response = new GenericResponse();
+//        final FormFile upload = form.getUpload();
+//        if (upload == null || upload.getFileSize() == 0) {
+//            throw new ValidationException("upload", "adImport.file",
+//                    new RequiredError());
+//        }
+        AdImport adImport = new AdImport();
+        adImport.setCurrency(currencyService.load(params.getCurrency()));
 
-	public final AdImportService getAdImportService() {
-		return adImportService;
-	}
-
-	public final CurrencyService getCurrencyService() {
-		return currencyService;
-	}
-
-	public DataBinder<AdImport> getDataBinder() {
-		if (dataBinder == null) {
-			final BeanBinder<AdImport> binder = BeanBinder
-					.instance(AdImport.class);
-			binder.registerBinder("currency",
-					PropertyBinder.instance(Currency.class, "currency"));
-			dataBinder = binder;
-		}
-		return dataBinder;
-	}
-
-	@Inject
-	public void setAdImportService(final AdImportService adImportService) {
-		this.adImportService = adImportService;
-	}
-
-	@Inject
-	public void setCurrencyService(final CurrencyService currencyService) {
-		this.currencyService = currencyService;
-	}
-
-	public static class ImportAdsRequestDto {
-		private FormFile upload;
-		protected Map<String, Object> values;
-
-		public Map<String, Object> getValues() {
-			return values;
-		}
-
-		public void setValues(final Map<String, Object> values) {
-			this.values = values;
-		}
-
-		public Map<String, Object> getImport() {
-			return values;
-		}
-
-		public Object getImport(final String property) {
-			return values.get(property);
-		}
-
-		public FormFile getUpload() {
-			return upload;
-		}
-
-		public void setImport(final Map<String, Object> values) {
-			this.values = values;
-		}
-
-		public void setImport(final String property, final Object value) {
-			values.put(property, value);
-		}
-
-		public void setUpload(final FormFile upload) {
-			this.upload = upload;
-		}
-
-	}
-
-	public static class ImportAdsResponseDto {
-		private String message;
-		long importId;
-		
-		public long getImportId() {
-			return importId;
-		}
-
-		public void setImportId(long importId) {
-			this.importId = importId;
-		}
-
-		public String getMessage() {
-			return message;
-		}
-
-		public void setMessage(String message) {
-			this.message = message;
-		}
-	}
-
-	@RequestMapping(value = "admin/importAds", method = RequestMethod.GET)
-	@ResponseBody
-	protected ImportAdsResponseDto handleSubmit(
-			@RequestBody ImportAdsRequestDto form) throws Exception {
-		//final ImportAdsForm form = context.getForm();
-		final FormFile upload = form.getUpload();
-		if (upload == null || upload.getFileSize() == 0) {
-			throw new ValidationException("upload", "adImport.file",
-					new RequiredError());
-		}
-		AdImport adImport = getDataBinder().readFromString(form.getImport());
-		ImportAdsResponseDto response = new ImportAdsResponseDto();
-		try {
-			adImport = adImportService.importAds(adImport,
-					upload.getInputStream());
-			long importId =adImport.getId();
-			response.setImportId(importId);
-			
-		} catch (final UnknownColumnException e) {
-			String err = "general.error.csv.unknownColumn";
-			response.setMessage(err);
-		} finally {
-			upload.destroy();
-		}
-		return response;
-	}
-
-	protected void prepareForm(final ActionContext context) throws Exception {
-		final HttpServletRequest request = context.getRequest();
-		final List<Currency> currencies = currencyService.listAll();
-		if (currencies.size() == 1) {
-			request.setAttribute("singleCurrency", currencies.get(0));
-		}
-		request.setAttribute("currencies", currencies);
-	}
+//        try {
+//            adImport = adImportService.importAds(adImport,
+//                    inputFile.getInputStream());
+//            long importId = adImport.getId();
+//            response.setImportId(importId);
+//
+//        } catch (final UnknownColumnException e) {
+//            String err = "general.error.csv.unknownColumn";
+//            response.setMessage(err);
+//        } finally {
+//            upload.destroy();
+//        }
+        HttpHeaders headers = new HttpHeaders();
+        if (!inputFile.isEmpty()) {
+            try {
+//                String originalFilename = inputFile.getOriginalFilename();
+//                File destinationFile = new File(context.getRealPath("/WEB-INF/uploaded") + File.separator + originalFilename);
+//                inputFile.transferTo(destinationFile);
+//                fileInfo.setFileName(destinationFile.getPath());
+//                fileInfo.setFileSize(inputFile.getSize());
+//                headers.add("File Uploaded Successfully - ", originalFilename);
+//                return new ResponseEntity<FileInfo>(fileInfo, headers, HttpStatus.OK);
+                adImport = adImportService.importAds(adImport,
+                        inputFile.getInputStream());
+                long importId = adImport.getId();
+                // response.setImportId(importId);
+            } catch (Exception e) {
+                response.setMessage("HttpStatus.BAD_REQUEST");
+            }
+        } else {
+            response.setMessage("file empty");
+        }
+        response.setMessage("file uploaded successfully!");
+        response.setStatus(0);
+        return response;
+    }
+    
+    @RequestMapping(value = "admin/ImportAds", method = RequestMethod.GET)
+    @ResponseBody
+    public ImportAdsResponse prepareForm() throws Exception {
+        ImportAdsResponse response = new ImportAdsResponse();
+        
+        final List<Currency> currencies = currencyService.listAll();
+        if (currencies.size() == 1) {
+            response.setSingleCurrency(currencies.get(0));
+        }
+        
+        response.setCurrencies(currencies);
+        response.setStatus(0);
+        return response;
+    }
 
 //	protected void validateForm(final ActionContext context) {
 //		final ImportAdsForm form = context.getForm();
@@ -163,5 +162,4 @@ public class ImportAdsController extends BaseRestController {
 //				form.getImport());
 //		adImportService.validate(adImport);
 //	}
-
 }

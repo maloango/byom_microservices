@@ -375,9 +375,9 @@
     <bean id="addMemberToLoanGroupController"
           class="nl.strohalm.cyclos.webservices.rest.loangroups.AddMemberToLoanGroupController" />
     <bean id="listMembersOfLoanGroup"
-           class="nl.strohalm.cyclos.webservices.rest.loangroups.ListMembersOfLoanGroup" />
+          class="nl.strohalm.cyclos.webservices.rest.loangroups.ListMembersOfLoanGroup" />
     <bean id="removeMemberFromLoanGroupController"
-            class="nl.strohalm.cyclos.webservices.rest.loangroups.RemoveMemberFromLoanGroupController" />
+          class="nl.strohalm.cyclos.webservices.rest.loangroups.RemoveMemberFromLoanGroupController" />
     
     
 
@@ -453,7 +453,7 @@
           class="nl.strohalm.cyclos.webservices.rest.members.contacts.DeleteContactController" />
            
     <!--           Member Preferences    -->
-   <!--           Member Preferences    -->
+    <!--           Member Preferences    -->
     <bean id="notificationPreferenceController"
           class="nl.strohalm.cyclos.webservices.rest.members.preferences.NotificationPreferenceController" />
           
@@ -515,8 +515,16 @@
     <!--card-->
     <bean id="listCardTypeController"
           class="nl.strohalm.cyclos.webservices.rest.accounts.cards.ListCardTypeController" />
-     <bean id="editCardTypeContoller"
-          class="nl.strohalm.cyclos.webservices.rest.accounts.cards.EditCardTypeContoller" />
+    <bean id="editCardTypeContoller"
+           class="nl.strohalm.cyclos.webservices.rest.accounts.cards.EditCardTypeContoller" />
+    <bean id="removeCardTypeController"
+            class="nl.strohalm.cyclos.webservices.rest.accounts.cards.RemoveCardTypeController" />
+     <bean id="getCardTypeByIdController"
+            class="nl.strohalm.cyclos.webservices.rest.accounts.cards.GetCardTypeByIdController" />
+      <bean id="searchCardsController"
+            class="nl.strohalm.cyclos.webservices.rest.accounts.cards.SearchCardsController" />
+     
+     
     <!--account-->
     <bean id="accountHistoryController"
           class="nl.strohalm.cyclos.webservices.rest.accounts.details.AccountHistoryController" />
@@ -559,7 +567,7 @@
           class=" nl.strohalm.cyclos.webservices.rest.members.agreements.GetRegistrationAgreementById" />
     <!--Users and group-->
     <bean id="listMemberRecordTypesController"
-                class="nl.strohalm.cyclos.webservices.rest.members.records.ListMemberRecordTypesController" /><!--
+          class="nl.strohalm.cyclos.webservices.rest.members.records.ListMemberRecordTypesController" /><!--
          <bean id="editMemberRecordTypeController"
                  class="nl.strohalm.cyclos.webservices.rest.members.records.EditMemberRecordTypeController" />
     -->
@@ -569,15 +577,18 @@
     <bean id="searchAdsController" 
           class="nl.strohalm.cyclos.webservices.rest.ads.SearchAdsController"/>
     <bean id="listAdCategoriesController" 
-            class="nl.strohalm.cyclos.webservices.rest.ads.ListAdCategoriesController"/>
+          class="nl.strohalm.cyclos.webservices.rest.ads.ListAdCategoriesController"/>
    
     <bean id="editAdCategoryController" 
-            class="nl.strohalm.cyclos.webservices.rest.ads.EditAdCategoryController"/>
+          class="nl.strohalm.cyclos.webservices.rest.ads.EditAdCategoryController"/>
     <bean id="removeAdCategoryController" 
-              class="nl.strohalm.cyclos.webservices.rest.ads.RemoveAdCategoryController"/>
+          class="nl.strohalm.cyclos.webservices.rest.ads.RemoveAdCategoryController"/>
     <bean id="getAdCategoryById" 
-                class="nl.strohalm.cyclos.webservices.rest.ads.GetAdCategoryById"/>
+          class="nl.strohalm.cyclos.webservices.rest.ads.GetAdCategoryById"/>
       
-      
+      <!--ADMIN MESSAGES-->
+       <bean id="ListAdminMessageCategoriesController" 
+          class="nl.strohalm.cyclos.webservices.rest.admins.messages.ListMessageCategoriesController"/>
+     
         
 </beans>

@@ -15,43 +15,60 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ListCardTypeController extends BaseRestController {
-
-    private CardTypeService cardTypeService;
-
-    public CardTypeService getCardTypeService() {
-        return cardTypeService;
-    }
-
-    @Inject
-    public void setCardTypeService(CardTypeService cardTypeService) {
-        this.cardTypeService = cardTypeService;
-    }
-
+    
     public static class ListCardTypeResponse extends GenericResponse {
-
-        private List<CardType> cardTypes;
-
-        public List<CardType> getCardTypes() {
-            return cardTypes;
+        
+        private List<CardTypesEntity> cardTypesList;
+        
+        public List<CardTypesEntity> getCardTypesList() {
+            return cardTypesList;
         }
-
-        public void setCardTypes(List<CardType> cardTypes) {
-            this.cardTypes = cardTypes;
+        
+        public void setCardTypesList(List<CardTypesEntity> cardTypesList) {
+            this.cardTypesList = cardTypesList;
         }
-
+        
     }
+    
+    public static class CardTypesEntity {
 
+        private Long id;
+        private String name;
+        
+        public Long getId() {
+            return id;
+        }
+        
+        public void setId(Long id) {
+            this.id = id;
+        }
+        
+        public String getName() {
+            return name;
+        }
+        
+        public void setName(String name) {
+            this.name = name;
+        }
+        
+    }
+    
     @RequestMapping(value = "admin/listCardTypes", method = RequestMethod.GET)
     @ResponseBody
-    public ListCardTypeResponse listCardType()throws Exception{
-        ListCardTypeResponse response=new ListCardTypeResponse();
-         final List<CardType> cardTypes = new ArrayList<CardType>();
-         cardTypes.addAll(cardTypeService.listAll());
-         response.setCardTypes(cardTypes);
-         response.setStatus(0);
-         response.setMessage("card list!");
-         return response;
+    public ListCardTypeResponse listCardType() throws Exception {
+        ListCardTypeResponse response = new ListCardTypeResponse();
+        final List<CardType> cardTypes = cardTypeService.listAll();
+        List<CardTypesEntity> cardTypesList = new ArrayList();
+        for (CardType type : cardTypes) {
+            CardTypesEntity entity = new CardTypesEntity();
+            entity.setId(type.getId());
+            entity.setName(type.getName());
+            cardTypesList.add(entity);
+        }
+        response.setCardTypesList(cardTypesList);
+        response.setStatus(0);
+        response.setMessage("card list!");
+        return response;
     }
-
-
+    
 }

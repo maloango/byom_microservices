@@ -28,6 +28,7 @@ import nl.strohalm.cyclos.services.access.ChannelService;
 import nl.strohalm.cyclos.services.accounts.AccountService;
 import nl.strohalm.cyclos.services.accounts.AccountTypeService;
 import nl.strohalm.cyclos.services.accounts.CurrencyService;
+import nl.strohalm.cyclos.services.accounts.cards.CardService;
 import nl.strohalm.cyclos.services.accounts.cards.CardTypeService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalAccountService;
 import nl.strohalm.cyclos.services.accounts.external.ExternalTransferImportService;
@@ -42,6 +43,7 @@ import nl.strohalm.cyclos.services.customization.MemberCustomFieldService;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.elements.MemberRecordTypeService;
 import nl.strohalm.cyclos.services.elements.MemberService;
+import nl.strohalm.cyclos.services.elements.MessageCategoryService;
 import nl.strohalm.cyclos.services.elements.RegistrationAgreementService;
 import nl.strohalm.cyclos.services.groups.GroupFilterService;
 import nl.strohalm.cyclos.services.groups.GroupService;
@@ -105,6 +107,18 @@ public abstract class BaseRestController {
     protected AdCategoryService adCategoryService;
     protected AdImportService adImportService;
     protected CardTypeService cardTypeService;
+    protected CardService cardService;
+    protected MessageCategoryService messageCategoryService;
+
+    @Inject
+    public void setMessageCategoryService(MessageCategoryService messageCategoryService) {
+        this.messageCategoryService = messageCategoryService;
+    }
+
+    @Inject
+    public void setCardService(CardService cardService) {
+        this.cardService = cardService;
+    }
 
     @Inject
     public void setCardTypeService(CardTypeService cardTypeService) {

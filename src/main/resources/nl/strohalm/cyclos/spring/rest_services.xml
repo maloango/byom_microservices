@@ -431,11 +431,11 @@
     <bean id="sendMessageController"
           class="nl.strohalm.cyclos.webservices.rest.members.messages.SendMessageController" /> 
         
-    <bean id="removeMessageCategoryController"
-          class="nl.strohalm.cyclos.webservices.rest.members.messages.RemoveMessageCategoryController" /> 
+<!--    <bean id="removeMessageCategoryController"
+          class="nl.strohalm.cyclos.webservices.rest.members.messages.RemoveMessageCategoryController" /> -->
          
-    <bean id="listMessageCategoriesController"
-          class="nl.strohalm.cyclos.webservices.rest.members.messages.ListMessageCategoriesController" />       
+<!--    <bean id="listMessageCategoriesController"
+          class="nl.strohalm.cyclos.webservices.rest.members.messages.ListMessageCategoriesController" />       -->
                      
    
     
@@ -587,8 +587,20 @@
           class="nl.strohalm.cyclos.webservices.rest.ads.GetAdCategoryById"/>
       
       <!--ADMIN MESSAGES-->
-       <bean id="ListAdminMessageCategoriesController" 
+       <bean id="listMessageCategoriesController" 
           class="nl.strohalm.cyclos.webservices.rest.admins.messages.ListMessageCategoriesController"/>
+        <bean id="editMessageCategoryController" 
+          class="nl.strohalm.cyclos.webservices.rest.admins.messages.EditMessageCategoryController"/>
+          <bean id="removeMessageCategoryController" 
+          class="nl.strohalm.cyclos.webservices.rest.admins.messages.RemoveMessageCategoryController"/>
+          <bean id="getMessageCategoryByIdController" 
+          class="nl.strohalm.cyclos.webservices.rest.admins.messages.GetMessageCategoryByIdController"/>
+       
+     <!---ADMIN SMS-->
+     <bean id="searchSmsMailingsController" 
+          class=" nl.strohalm.cyclos.webservices.rest.admins.sms.SearchSmsMailingsController"/>
+     <bean id="sendSmsMailingController" 
+          class=" nl.strohalm.cyclos.webservices.rest.admins.sms.SendSmsMailingController"/>
      
         
 </beans>

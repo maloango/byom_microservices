@@ -5,6 +5,7 @@
  */
 package nl.strohalm.cyclos.webservices.rest.admins.messages;
 
+import java.util.ArrayList;
 import java.util.List;
 import nl.strohalm.cyclos.entities.members.messages.MessageCategory;
 import nl.strohalm.cyclos.entities.members.messages.MessageCategoryQuery;
@@ -20,78 +21,67 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author Lue Infoservices
  */
 @Controller
-public class ListMessageCategoriesController extends BaseRestController{
-    
+public class ListMessageCategoriesController extends BaseRestController {
     
     public static class ListMessageCategories extends GenericResponse {
-
-        //private Element fromElement;
-        //private Element toElement;
-        //private Collection<? extends Group> groups;
-        private List<MessageCategory> search;
-        private MessageCategory messageCategory;
-
-        public MessageCategory getMessageCategory() {
+        
+        private List<MessageEntity> messageCategory;
+        
+        public List<MessageEntity> getMessageCategory() {
             return messageCategory;
         }
-
-        public void setMessageCategory(MessageCategory messageCategory) {
+        
+        public void setMessageCategory(List<MessageEntity> messageCategory) {
             this.messageCategory = messageCategory;
         }
         
-
-        public List<MessageCategory> getSearch() {
-            return search;
-        }
-
-        public void setSearch(List<MessageCategory> search) {
-            this.search = search;
-        }
-
-//        public Element getFromElement() {
-//            return fromElement;
-//        }
-//
-//        public Collection<? extends Group> getGroups() {
-//            return groups;
-//        }
-//
-//        public Element getToElement() {
-//            return toElement;
-//        }
-//
-//        public void setFromElement(final Element fromElement) {
-//            this.fromElement = fromElement;
-//        }
-//
-//        public void setGroups(final Collection<? extends Group> groups) {
-//            this.groups = groups;
-//        }
-//
-//        public void setToElement(final Element toElement) {
-//            this.toElement = toElement;
-//        }
-
     }
-
-    @RequestMapping(value = "member/listMessageCategories", method = RequestMethod.GET)
+    
+    public static class MessageEntity {
+        
+        private Long id;
+        private String name;
+        
+        public Long getId() {
+            return id;
+        }
+        
+        public void setId(Long id) {
+            this.id = id;
+        }
+        
+        public String getName() {
+            return name;
+        }
+        
+        public void setName(String name) {
+            this.name = name;
+        }
+        
+    }
+    
+    @RequestMapping(value = "admin/listMessageCategories", method = RequestMethod.GET)
     @ResponseBody
     public ListMessageCategories ListMessage() throws Exception {
         ListMessageCategories response = new ListMessageCategories();
         try {
             final MessageCategoryQuery query = new MessageCategoryQuery();
             List<MessageCategory> search = messageCategoryService.search(query);
-            //response.setMessageCategories(messageCategoryService.search(query));
-            search.listIterator();
-            response.setSearch(search);
+            List<MessageEntity> messages = new ArrayList();
+            for (MessageCategory mesg : search) {
+                MessageEntity entity = new MessageEntity();
+                entity.setId(mesg.getId());
+                entity.setName(mesg.getName());
+                messages.add(entity);
+            }
+            response.setMessageCategory(messages);
         } catch (Exception e) {
             e.printStackTrace();
         }
         response.setStatus(0);
-        response.setMessage("List Messsage Searching!!!!!");
+        //response.setMessage("List Messsage Searching!!!!!");
         
-
         return response;
-
+        
     }
 }

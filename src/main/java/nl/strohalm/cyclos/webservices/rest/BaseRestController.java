@@ -50,6 +50,7 @@ import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.loangroups.LoanGroupService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
+import nl.strohalm.cyclos.services.sms.SmsMailingService;
 import nl.strohalm.cyclos.services.transactions.InvoiceService;
 import nl.strohalm.cyclos.services.transactions.LoanService;
 import nl.strohalm.cyclos.services.transactions.PaymentService;
@@ -109,6 +110,16 @@ public abstract class BaseRestController {
     protected CardTypeService cardTypeService;
     protected CardService cardService;
     protected MessageCategoryService messageCategoryService;
+    protected SmsMailingService smsMailingService;
+
+    public SmsMailingService getSmsMailingService() {
+        return smsMailingService;
+    }
+
+    public void setSmsMailingService(SmsMailingService smsMailingService) {
+        this.smsMailingService = smsMailingService;
+    }
+    
 
     @Inject
     public void setMessageCategoryService(MessageCategoryService messageCategoryService) {

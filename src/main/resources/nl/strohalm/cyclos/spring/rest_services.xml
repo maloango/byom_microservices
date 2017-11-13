@@ -453,7 +453,7 @@
           class="nl.strohalm.cyclos.webservices.rest.members.contacts.DeleteContactController" />
            
     <!--           Member Preferences    -->
-    <!--           Member Preferences    -->
+ <!--           Member Preferences    -->
     <bean id="notificationPreferenceController"
           class="nl.strohalm.cyclos.webservices.rest.members.preferences.NotificationPreferenceController" />
           
@@ -462,6 +462,9 @@
     
     <bean id="editAdInterestController"
           class="nl.strohalm.cyclos.webservices.rest.members.preferences.EditAdInterestController" />
+    
+    <bean id="removeAdInterestsController"
+          class="nl.strohalm.cyclos.webservices.rest.members.preferences.RemoveAdInterestsController" />
 
     <!--                  Member Advertisements-->
     <bean id="memberAdsController"
@@ -537,6 +540,17 @@
      
     <bean id="listChannelsController"
           class="nl.strohalm.cyclos.webservices.rest.settings.ListChannelsController" />
+    
+      <bean id="editLocalSettingsController"
+          class="nl.strohalm.cyclos.webservices.rest.settings.EditLocalSettingsController" />
+      
+        <bean id="editAlertSettingsController"
+          class="nl.strohalm.cyclos.webservices.rest.settings.EditAlertSettingsController" />
+        
+      <bean id="editAccessSettingsController"
+          class="nl.strohalm.cyclos.webservices.rest.settings.EditAccessSettingsController" />
+      
+    
      
     <!--Access -->
     <bean id="listConnectedUsersController"

@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.entities.accounts.AccountType;
 import nl.strohalm.cyclos.entities.accounts.Currency;
@@ -29,6 +30,7 @@ import nl.strohalm.cyclos.services.accounts.AccountTypeService;
 import nl.strohalm.cyclos.services.accounts.CurrencyService;
 import nl.strohalm.cyclos.services.ads.AdCategoryService;
 import nl.strohalm.cyclos.services.elements.AdInterestService;
+import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.groups.GroupFilterService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.utils.RelationshipHelper;
@@ -52,6 +54,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 public class EditAdInterestController extends BaseRestController {
+
+    private ElementService elementService;
+
+    @Inject
+    public void setElementService(ElementService elementService) {
+        this.elementService = elementService;
+    }
 
     private AdInterestService adInterestService;
     private AdCategoryService adCategoryService;
@@ -112,12 +121,12 @@ public class EditAdInterestController extends BaseRestController {
 
     public static class EditAdInterestRequest {
 
-        private long id;
-        private long memberId;
-        private AdCategory category;
+        private Long id;
+        private Long memberId;
+        private Long category;
         private String title;
-        private Member owner;
-        private Currency currency;
+        private Long owner;
+        private Long currency;
         private BigDecimal initialPrice;
         private BigDecimal finalPrice;
         private String keywords;
@@ -139,27 +148,27 @@ public class EditAdInterestController extends BaseRestController {
             this.memberId = memberId;
         }
 
-        public AdCategory getCategory() {
+        public Long getCategory() {
             return category;
         }
 
-        public void setCategory(AdCategory category) {
+        public void setCategory(Long category) {
             this.category = category;
         }
 
-        public Member getOwner() {
+        public Long getOwner() {
             return owner;
         }
 
-        public void setOwner(Member owner) {
+        public void setOwner(Long owner) {
             this.owner = owner;
         }
 
-        public Currency getCurrency() {
+        public Long getCurrency() {
             return currency;
         }
 
-        public void setCurrency(Currency currency) {
+        public void setCurrency(Long currency) {
             this.currency = currency;
         }
 
@@ -323,18 +332,19 @@ public class EditAdInterestController extends BaseRestController {
     @ResponseBody
     public GenericResponse editAd(@RequestBody EditAdInterestRequest request) throws Exception {
         GenericResponse response = new GenericResponse();
-        final AdInterest adInterest = resolveAdInterest();
-        //final AdInterest adInterest = new AdInterest();
+        //  final AdInterest adInterest = resolveAdInterest();
+        AdInterest adInterest = new AdInterest();
         adInterest.setId(request.getId());
-        adInterest.setCategory(request.getCategory());
-        adInterest.setCurrency(request.getCurrency());
+        adInterest.setCategory(adCategoryService.load(request.getCategory(), AdCategory.Relationships.CHILDREN));
+
+        adInterest.setCurrency(currencyService.load(request.getCurrency()));
         adInterest.setFinalPrice(request.getFinalPrice());
         adInterest.setInitialPrice(request.getInitialPrice());
         adInterest.setTitle(request.getTitle());
-        adInterest.setOwner(request.getOwner());
+        adInterest.setOwner((Member) elementService.load(request.getOwner(), Element.Relationships.USER));
         adInterest.setType(Ad.TradeType.valueOf(request.getType()));
         adInterest.setKeywords(request.getKeywords());
-
+        adInterest.setMember((Member) elementService.load(request.getMemberId(), Element.Relationships.USER));
         final boolean isInsert = adInterest.isTransient();
         adInterestService.save(adInterest);
         response.setMessage(isInsert ? "adInterest.inserted" : "adInterest.modified");
@@ -437,7 +447,7 @@ public class EditAdInterestController extends BaseRestController {
             entity.setChildren(ad.getChildren());
             entity.setName(ad.getName());
             entity.setGlobalOrder(ad.getGlobalOrder());
-          
+
             entity.setActive(ad.isActive());
 
             entity.setOrder(ad.getOrder());
@@ -487,21 +497,20 @@ public class EditAdInterestController extends BaseRestController {
     }
 
     // @Override
-    public void validateForm() {
-        final AdInterest adInterest = resolveAdInterest();
-        adInterestService.validate(adInterest);
-    }
-
-    public AdInterest resolveAdInterest() {
-        // final EditAdInterestForm form = context.getForm();
-        final AdInterest adInterest = getDataBinder().readFromString(LoggedUser.accountOwner());
-        System.out.println("....account Owner:" + LoggedUser.accountOwner());
-        if (adInterest.getOwner() == null && LoggedUser.isMember()) {
-            adInterest.setOwner((Member) LoggedUser.element());
-        }
-        if (adInterest.getType() == null) {
-            adInterest.setType(Ad.TradeType.OFFER);
-        }
-        return adInterest;
-    }
+//    public void validateForm() {
+//        final AdInterest adInterest = resolveAdInterest();
+//        adInterestService.validate(adInterest);
+//    }
+//    public AdInterest resolveAdInterest() {
+//        // final EditAdInterestForm form = context.getForm();
+//        final AdInterest adInterest = getDataBinder().readFromString(LoggedUser.accountOwner());
+//        System.out.println("....account Owner:" + LoggedUser.accountOwner());
+//        if (adInterest.getOwner() == null && LoggedUser.isMember()) {
+//            adInterest.setOwner((Member) LoggedUser.element());
+//        }
+//        if (adInterest.getType() == null) {
+//            adInterest.setType(Ad.TradeType.OFFER);
+//        }
+//        return adInterest;
+//    }
 }

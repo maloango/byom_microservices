@@ -40,6 +40,7 @@ import nl.strohalm.cyclos.services.ads.AdService;
 import nl.strohalm.cyclos.services.alerts.ErrorLogService;
 import nl.strohalm.cyclos.services.customization.CustomizedFileService;
 import nl.strohalm.cyclos.services.customization.MemberCustomFieldService;
+import nl.strohalm.cyclos.services.customization.TranslationMessageService;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.elements.MemberRecordTypeService;
 import nl.strohalm.cyclos.services.elements.MemberService;
@@ -57,6 +58,7 @@ import nl.strohalm.cyclos.services.transactions.PaymentService;
 import nl.strohalm.cyclos.services.transactions.ScheduledPaymentService;
 import nl.strohalm.cyclos.services.transfertypes.TransferTypeService;
 import nl.strohalm.cyclos.utils.CustomizationHelper;
+import nl.strohalm.cyclos.utils.MessageHelper;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -111,15 +113,23 @@ public abstract class BaseRestController {
     protected CardService cardService;
     protected MessageCategoryService messageCategoryService;
     protected SmsMailingService smsMailingService;
+    protected MessageHelper messageHelper;
+    protected TranslationMessageService translationMessageService;
 
-    public SmsMailingService getSmsMailingService() {
-        return smsMailingService;
+    @Inject
+    public void setTranslationMessageService(TranslationMessageService translationMessageService) {
+        this.translationMessageService = translationMessageService;
     }
 
+    @Inject
+    public void setMessageHelper(MessageHelper messageHelper) {
+        this.messageHelper = messageHelper;
+    }
+
+    @Inject
     public void setSmsMailingService(SmsMailingService smsMailingService) {
         this.smsMailingService = smsMailingService;
     }
-    
 
     @Inject
     public void setMessageCategoryService(MessageCategoryService messageCategoryService) {

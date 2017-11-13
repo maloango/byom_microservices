@@ -149,6 +149,35 @@ public class SendSmsMailingController extends BaseRestController {
         private List<Long> groups;
         private Boolean free;
         private Long member;
+        private boolean canSendFree;
+        private boolean canSendPaid;
+        private boolean singleMember;
+
+        public boolean isCanSendFree() {
+            return canSendFree;
+        }
+
+        public void setCanSendFree(boolean canSendFree) {
+            this.canSendFree = canSendFree;
+        }
+
+        public boolean isCanSendPaid() {
+            return canSendPaid;
+        }
+
+        public void setCanSendPaid(boolean canSendPaid) {
+            this.canSendPaid = canSendPaid;
+        }
+
+        public boolean isSingleMember() {
+            return singleMember;
+        }
+
+        public void setSingleMember(boolean singleMember) {
+            this.singleMember = singleMember;
+        }
+
+        
 
         public String getText() {
             return text;
@@ -192,7 +221,12 @@ public class SendSmsMailingController extends BaseRestController {
         query.put("text", params.getText());
         query.put("member", params.getMember());
         query.put("free", params.getFree());
-        query.put("groups", params.getGroups());
+        if (params.getGroups() != null && params.getGroups().isEmpty()) {
+            query.put("groups", params.getGroups());
+        }
+        query.put("canSendFree", params.isCanSendFree());
+        query.put("canSendPaid", params.isCanSendPaid());
+        query.put("singleMember", params.isSingleMember());
         final SmsMailing smsMailing = getDataBinder().readFromString(query);
 
         Permission permission;

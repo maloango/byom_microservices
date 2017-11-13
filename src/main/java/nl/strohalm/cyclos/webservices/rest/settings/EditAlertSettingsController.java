@@ -2,6 +2,7 @@ package nl.strohalm.cyclos.webservices.rest.settings;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.DataBinderHelper;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,104 +28,117 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class EditAlertSettingsController extends BaseRestController {
 
-	private DataBinder<AlertSettings> dataBinder;
-	SettingsService settingsService;
+    public static class AlertSettingsResponse extends GenericResponse {
 
-	public DataBinder<AlertSettings> getDataBinder() {
-		if (dataBinder == null) {
-			final BeanBinder<AlertSettings> binder = BeanBinder
-					.instance(AlertSettings.class);
-			binder.registerBinder("givenVeryBadRefs",
-					PropertyBinder.instance(Integer.TYPE, "givenVeryBadRefs"));
-			binder.registerBinder("receivedVeryBadRefs", PropertyBinder
-					.instance(Integer.TYPE, "receivedVeryBadRefs"));
-			binder.registerBinder("idleInvoiceExpiration",
-					DataBinderHelper.timePeriodBinder("idleInvoiceExpiration"));
-			binder.registerBinder("amountDeniedInvoices", PropertyBinder
-					.instance(Integer.TYPE, "amountDeniedInvoices"));
-			binder.registerBinder("amountIncorrectLogin", PropertyBinder
-					.instance(Integer.TYPE, "amountIncorrectLogin"));
-			dataBinder = binder;
-		}
-		return dataBinder;
-	}
+        private AlertSettings alertSetting;
+        private List<TimePeriod.Field> timePeriodFields;
 
-	public SettingsService getSettingsService() {
-		return settingsService;
-	}
+        public List<TimePeriod.Field> getTimePeriodFields() {
+            return timePeriodFields;
+        }
 
-	public static class EditAlertSettingsRequestDto {
-		protected Map<String, Object> values;
+        public void setTimePeriodFields(List<TimePeriod.Field> timePeriodFields) {
+            this.timePeriodFields = timePeriodFields;
+        }
 
-		public Map<String, Object> getValues() {
-			return values;
-		}
+        public AlertSettings getAlertSetting() {
+            return alertSetting;
+        }
 
-		public void setValues(final Map<String, Object> values) {
-			this.values = values;
-		}
+        public void setAlertSetting(AlertSettings alertSetting) {
+            this.alertSetting = alertSetting;
+        }
 
-		public Map<String, Object> getSetting() {
-			return values;
-		}
+    }
 
-		public Object getSetting(final String key) {
-			return values.get(key);
-		}
+    @RequestMapping(value = "admin/editAlertSettings", method = RequestMethod.GET)
+    @ResponseBody
+    protected AlertSettingsResponse prepareForm() {
+        AlertSettingsResponse response = new AlertSettingsResponse();
+        AlertSettings alertSetting = settingsService.getAlertSettings();
+        response.setAlertSetting(alertSetting);
+        response.setTimePeriodFields(Arrays.asList(TimePeriod.Field.DAYS, TimePeriod.Field.WEEKS, TimePeriod.Field.MONTHS));
+        response.setStatus(0);
+        return response;
+    }
 
-		public void setSetting(final Map<String, Object> map) {
-			values = map;
-		}
+    public static class AlertSettingParameters {
 
-		public void setSetting(final String key, final Object value) {
-			values.put(key, value);
-		}
-	}
+        private Integer givenVeryBadRefs;
+        private Integer receivedVeryBadRefs;
+        private Integer idleInvoiceExpiration_number;
+        private String idleInvoiceExpiration_field;
+        private Integer amountDeniedInvoices;
+        private Integer amountIncorrectLogin;
 
-	public static class EditAlertSettingsResponseDto {
-		private String message;
+        public Integer getGivenVeryBadRefs() {
+            return givenVeryBadRefs;
+        }
 
-		public String getMessage() {
-			return message;
-		}
+        public void setGivenVeryBadRefs(Integer givenVeryBadRefs) {
+            this.givenVeryBadRefs = givenVeryBadRefs;
+        }
 
-		public void setMessage(String message) {
-			this.message = message;
-		}
-	}
+        public Integer getReceivedVeryBadRefs() {
+            return receivedVeryBadRefs;
+        }
 
-	@RequestMapping(value = "admin/editAlertSettings", method = RequestMethod.POST)
-	@ResponseBody
-	protected EditAlertSettingsResponseDto formAction(
-			@RequestBody EditAlertSettingsRequestDto form) throws Exception {
-	
-		AlertSettings settings = getDataBinder().readFromString(
-				form.getSetting());
-                EditAlertSettingsResponseDto response =null;
-                try{
-		settings = settingsService.save(settings);
-		 response = new EditAlertSettingsResponseDto();
-		response.setMessage("settings.alert.modified");}
-                catch(Exception e){
-                    e.printStackTrace();
-                }
-		return response;
-	}
+        public void setReceivedVeryBadRefs(Integer receivedVeryBadRefs) {
+            this.receivedVeryBadRefs = receivedVeryBadRefs;
+        }
 
-//	protected void prepareForm(final ActionContext context) throws Exception {
-//		final HttpServletRequest request = context.getRequest();
-//		final EditAlertSettingsForm form = context.getForm();
-//		getDataBinder().writeAsString(form.getSetting(),
-//				settingsService.getAlertSettings());
-//		request.setAttribute("timePeriodFields", Arrays.asList(
-//				TimePeriod.Field.DAYS, TimePeriod.Field.WEEKS,
-//				TimePeriod.Field.MONTHS));
-//	}
-//
-//	protected void validateForm(final ActionContext context) {
-//		final EditAlertSettingsForm form = context.getForm();
-//		final AlertSettings settings = getDataBinder().readFromString(
-//				form.getSetting());
-//		settingsService.validate(settings);
-//	}
+        public Integer getIdleInvoiceExpiration_number() {
+            return idleInvoiceExpiration_number;
+        }
+
+        public void setIdleInvoiceExpiration_number(Integer idleInvoiceExpiration_number) {
+            this.idleInvoiceExpiration_number = idleInvoiceExpiration_number;
+        }
+
+        public String getIdleInvoiceExpiration_field() {
+            return idleInvoiceExpiration_field;
+        }
+
+        public void setIdleInvoiceExpiration_field(String idleInvoiceExpiration_field) {
+            this.idleInvoiceExpiration_field = idleInvoiceExpiration_field;
+        }
+
+        public Integer getAmountDeniedInvoices() {
+            return amountDeniedInvoices;
+        }
+
+        public void setAmountDeniedInvoices(Integer amountDeniedInvoices) {
+            this.amountDeniedInvoices = amountDeniedInvoices;
+        }
+
+        public Integer getAmountIncorrectLogin() {
+            return amountIncorrectLogin;
+        }
+
+        public void setAmountIncorrectLogin(Integer amountIncorrectLogin) {
+            this.amountIncorrectLogin = amountIncorrectLogin;
+        }
+
+    }
+
+    @RequestMapping(value = "admin/editAlertSettings", method = RequestMethod.POST)
+    @ResponseBody
+    public GenericResponse edit(@RequestBody AlertSettingParameters params) {
+        GenericResponse response = new GenericResponse();
+        AlertSettings settings = new AlertSettings();
+        settings.setAmountDeniedInvoices(params.getAmountDeniedInvoices());
+        settings.setAmountIncorrectLogin(params.getAmountIncorrectLogin());
+        settings.setGivenVeryBadRefs(params.getGivenVeryBadRefs());
+        TimePeriod tp = new TimePeriod();
+        tp.setNumber(params.getIdleInvoiceExpiration_number());
+        tp.setField(TimePeriod.Field.valueOf(params.getIdleInvoiceExpiration_field()));
+        settings.setIdleInvoiceExpiration(tp);
+        settings.setReceivedVeryBadRefs(params.getReceivedVeryBadRefs());
+        settings = settingsService.save(settings);
+        response.setMessage("settings.alert.modified");
+        response.setStatus(0);
+        return response;
+
+    }
+
 }

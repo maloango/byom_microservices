@@ -17,119 +17,66 @@ import nl.strohalm.cyclos.services.application.ApplicationService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
 import nl.strohalm.cyclos.utils.ClassHelper;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 @Controller
-public class AdministrativeTasksController extends BaseRestController{
-	private ApplicationService applicationService;
-	public final PermissionService getPermissionService() {
-		return permissionService;
-	}
+public class AdministrativeTasksController extends BaseRestController {
 
-	public final void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
+    public static class AdminTaskResponse extends GenericResponse {
 
-	public final ApplicationService getApplicationService() {
-		return applicationService;
-	}
+        private boolean allOptimized;
+        private Map<String, IndexStatus> indexesStatusAsString;
+        private boolean canViewIndexes;
+        private boolean systemOnline;
+        private boolean canManageOnlineState;
 
-	protected PermissionService permissionService;
-	
-	
-	public interface Indexable {
+        public boolean isAllOptimized() {
+            return allOptimized;
+        }
 
-	    Long getId();
-	}
+        public void setAllOptimized(boolean allOptimized) {
+            this.allOptimized = allOptimized;
+        }
 
-	public static class AdministrativeTasksRequestDto{
-		public String message;
-		
-		public final String getMessage() {
-			return message;
-		}
+        public Map<String, IndexStatus> getIndexesStatusAsString() {
+            return indexesStatusAsString;
+        }
 
-		public final void setMessage(String message) {
-			this.message = message;
-		}
+        public void setIndexesStatusAsString(Map<String, IndexStatus> indexesStatusAsString) {
+            this.indexesStatusAsString = indexesStatusAsString;
+        }
 
-		public interface Indexable {
+        public boolean isCanViewIndexes() {
+            return canViewIndexes;
+        }
 
-		    Long getId();
-		}
+        public void setCanViewIndexes(boolean canViewIndexes) {
+            this.canViewIndexes = canViewIndexes;
+        }
 
-		 public static String getClassName(final Class<?> clazz) {
-		        final String name = clazz.getName();
-		        final int pos = name.lastIndexOf('.');
-		        if (pos < 0) {
-		            return name;
-		        } else {
-		            return name.substring(pos + 1);
-		        }
-		    }
+        public boolean isSystemOnline() {
+            return systemOnline;
+        }
 
-		public static void setAttribute(String string, Map<String, IndexStatus> indexesStatusAsString) {
-			// TODO Auto-generated method stub
-			
-		}
+        public void setSystemOnline(boolean systemOnline) {
+            this.systemOnline = systemOnline;
+        }
 
-		public static void setAttribute(String string, boolean allOptimized) {
-			// TODO Auto-generated method stub
-			
-		}
-	    public static AdministrativeTasksResponseDto getInputForward() {
-	        return getInputForward();
-	    }
-		
-		
-	}
-	
-	public static class AdministrativeTasksResponseDto{
-		private boolean allOptimized;
-		private boolean systemOnline;
-		public final boolean isAllOptimized() {
-			return allOptimized;
-		}
-		public final void setAllOptimized(boolean allOptimized) {
-			this.allOptimized = allOptimized;
-		}
-		public final boolean isIndexesStatus() {
-			return indexesStatus;
-		}
-		public final void setIndexesStatus(boolean indexesStatus) {
-			this.indexesStatus = indexesStatus;
-		}
-		public final boolean isCanViewIndexes() {
-			return canViewIndexes;
-		}
-		public final void setCanViewIndexes(boolean canViewIndexes) {
-			this.canViewIndexes = canViewIndexes;
-		}
-		private boolean indexesStatus;
-		private boolean canViewIndexes;
-		private boolean canManageOnlineState;
-		public final boolean isSystemOnline() {
-			return systemOnline;
-		}
-		public final void setSystemOnline(boolean systemOnline) {
-			this.systemOnline = systemOnline;
-		}
-		public final boolean isCanManageOnlineState() {
-			return canManageOnlineState;
-		}
-		public final void setCanManageOnlineState(boolean canManageOnlineState) {
-			this.canManageOnlineState = canManageOnlineState;
-		}
-		
-	}
+        public boolean isCanManageOnlineState() {
+            return canManageOnlineState;
+        }
 
-    @Inject
-    public void setApplicationService(final ApplicationService applicationService) {
-        this.applicationService = applicationService;
+        public void setCanManageOnlineState(boolean canManageOnlineState) {
+            this.canManageOnlineState = canManageOnlineState;
+        }
+
     }
 
-    @RequestMapping(value = "admin/adminTasks", method = RequestMethod.HEAD)
-    protected AdministrativeTasksResponseDto executeAction(@RequestBody AdministrativeTasksRequestDto form) throws Exception {
-        
-
+    @RequestMapping(value = "admin/adminTasks", method = RequestMethod.GET)
+    @ResponseBody
+    public AdminTaskResponse executeAction() throws Exception {
+        AdminTaskResponse response = new AdminTaskResponse();
         final boolean canViewIndexes = permissionService.hasPermission(AdminSystemPermission.TASKS_MANAGE_INDEXES);
         if (canViewIndexes) {
             final Map<Class<? extends nl.strohalm.cyclos.entities.Indexable>, IndexStatus> indexesStatus = applicationService.getFullTextIndexesStatus();
@@ -144,27 +91,23 @@ public class AdministrativeTasksController extends BaseRestController{
                 }
                 indexesStatusAsString.put(name, status);
             }
-            AdministrativeTasksRequestDto.setAttribute("allOptimized", allOptimized);
-            AdministrativeTasksRequestDto.setAttribute("indexesStatus", indexesStatusAsString);
+            response.setAllOptimized(allOptimized);
+            response.setIndexesStatusAsString(indexesStatusAsString);
         }
-        AdministrativeTasksRequestDto.setAttribute("canViewIndexes", canViewIndexes);
+        response.setCanViewIndexes(canViewIndexes);
 
         final boolean canManageOnlineState = permissionService.hasPermission(AdminSystemPermission.TASKS_ONLINE_STATE);
         if (canManageOnlineState) {
             final boolean systemOnline = applicationService.isOnline();
-            AdministrativeTasksRequestDto.setAttribute("systemOnline", systemOnline);
+            response.setSystemOnline(systemOnline);
         }
-        AdministrativeTasksRequestDto.setAttribute("canManageOnlineState", canManageOnlineState);
+        response.setCanManageOnlineState(canManageOnlineState);
 
         if (!canViewIndexes && !canManageOnlineState) {
             throw new PermissionDeniedException();
         }
-
-        return AdministrativeTasksRequestDto.getInputForward();
+        response.setStatus(0);
+        return response;
     }
 
 }
-
-
-
-

@@ -229,6 +229,9 @@
 	
     <bean id="removeChannelController"
           class="nl.strohalm.cyclos.webservices.rest.channels.RemoveChannelController" />
+    
+      <bean id="getChannelByIdController"
+          class="nl.strohalm.cyclos.webservices.rest.channels.GetChannelByIdController" />
        
     <!-- Alerts-->
     <bean id="viewErrorLogEntryController"
@@ -550,8 +553,11 @@
       <bean id="editAccessSettingsController"
           class="nl.strohalm.cyclos.webservices.rest.settings.EditAccessSettingsController" />
       
-    
+     <bean id="searchServiceClientController"
+          class="nl.strohalm.cyclos.webservices.rest.settings.SearchServiceClientController" />
      
+      <bean id="editServiceClientController"
+          class="nl.strohalm.cyclos.webservices.rest.settings.EditServiceClientController" />
     <!--Access -->
     <bean id="listConnectedUsersController"
           class="  nl.strohalm.cyclos.webservices.rest.access.ListConnectedUsersController" />

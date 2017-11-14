@@ -41,30 +41,190 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class EditChannelController extends BaseRestController {
 
     public static class EditChannelParameters {
+      private Long id;
+      private String internalName;
+      private String displayName;
+      private String credentials;
+      private String paymentRequestWebServiceUrl;
+      private List<String>principalTypes;
+      private String defaultPrincipalType="USER";
 
+        public String getDefaultPrincipalType() {
+            return defaultPrincipalType;
+        }
+
+        public void setDefaultPrincipalType(String defaultPrincipalType) {
+            this.defaultPrincipalType = defaultPrincipalType;
+        }
+      
+
+        public List<String> getPrincipalTypes() {
+            return principalTypes;
+        }
+
+        public void setPrincipalTypes(List<String> principalTypes) {
+            this.principalTypes = principalTypes;
+        }
+      
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getInternalName() {
+            return internalName;
+        }
+
+        public void setInternalName(String internalName) {
+            this.internalName = internalName;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        public void setDisplayName(String displayName) {
+            this.displayName = displayName;
+        }
+
+        public String getCredentials() {
+            return credentials;
+        }
+
+        public void setCredentials(String credentials) {
+            this.credentials = credentials;
+        }
+
+        public String getPaymentRequestWebServiceUrl() {
+            return paymentRequestWebServiceUrl;
+        }
+
+        public void setPaymentRequestWebServiceUrl(String paymentRequestWebServiceUrl) {
+            this.paymentRequestWebServiceUrl = paymentRequestWebServiceUrl;
+        }
+      
     }
 
     @RequestMapping(value = "admin/editChannel", method = RequestMethod.POST)
     @ResponseBody
-    public GenericResponse edit() {
+    public GenericResponse edit(@RequestBody EditChannelParameters params) {
         GenericResponse response = new GenericResponse();
-
+            Channel channel = resolveChannel(params);
+        final boolean isInsert = channel.isTransient();
+        channel = channelService.save(channel);
+        if (isInsert) {
+            response.setMessage("channel.inserted");
+        } else {
+            response.setMessage("channel.modified");
+        }
         response.setStatus(0);
         return response;
+    }
+    
+    
+     private Channel resolveChannel(EditChannelParameters params) {
+       final Channel channel=new Channel();
+       if(params.getId()!=null && params.getId()>0L){
+           channel.setId(params.getId());
+       }
+       channel.setCredentials(Credentials.valueOf(params.getCredentials()));
+       channel.setDisplayName(params.getDisplayName());
+       channel.setInternalName(params.getInternalName());
+       if(params.getPaymentRequestWebServiceUrl()!=null){
+           channel.setPaymentRequestWebServiceUrl(params.getPaymentRequestWebServiceUrl());
+       }
+      
+        if (params.getPrincipalTypes() != null) {
+            try {
+                final PrincipalType defaultPrincipalType = channelService.resolvePrincipalType(params.getDefaultPrincipalType());
+                final Set<PrincipalType> principalTypes = new HashSet<PrincipalType>();
+                if (params.getPrincipalTypes() != null) {
+                    for (final String principalTypeString : params.getPrincipalTypes()) {
+                        if (StringUtils.isNotEmpty(principalTypeString)) {
+                            principalTypes.add(channelService.resolvePrincipalType(principalTypeString));
+                        }
+                    }
+                }
+                channel.setPrincipalTypes(principalTypes, defaultPrincipalType);
+            } catch (final Exception e) {
+                throw new ValidationException();
+            }
+        }
+        return channel;
     }
 
     public static class EditChannelResponse extends GenericResponse {
 
-        private Channel channel;
+        private boolean isBuiltin;
+        private Set<Credentials> possibleCredentials;
+        private Map<PrincipalType, String> possiblePrincipalTypes;
+        private Credentials singleCredential;
+        private boolean allowsPaymentRequest;
+        private boolean canManage;
 
-        public Channel getChannel() {
-            return channel;
+        public boolean isCanManage() {
+            return canManage;
         }
 
-        public void setChannel(Channel channel) {
-            this.channel = channel;
+        public void setCanManage(boolean canManage) {
+            this.canManage = canManage;
         }
+        
+
+        public boolean isAllowsPaymentRequest() {
+            return allowsPaymentRequest;
+        }
+
+        public void setAllowsPaymentRequest(boolean allowsPaymentRequest) {
+            this.allowsPaymentRequest = allowsPaymentRequest;
+        }
+        
+
+        public Credentials getSingleCredential() {
+            return singleCredential;
+        }
+
+        public void setSingleCredential(Credentials singleCredential) {
+            this.singleCredential = singleCredential;
+        }
+        
+
+        public Map<PrincipalType, String> getPossiblePrincipalTypes() {
+            return possiblePrincipalTypes;
+        }
+
+        public void setPossiblePrincipalTypes(Map<PrincipalType, String> possiblePrincipalTypes) {
+            this.possiblePrincipalTypes = possiblePrincipalTypes;
+        }
+        
+
+        public Set<Credentials> getPossibleCredentials() {
+            return possibleCredentials;
+        }
+
+        public void setPossibleCredentials(Set<Credentials> possibleCredentials) {
+            this.possibleCredentials = possibleCredentials;
+        }
+        
+
+        public boolean isIsBuiltin() {
+            return isBuiltin;
+        }
+
+        public void setIsBuiltin(boolean isBuiltin) {
+            this.isBuiltin = isBuiltin;
+        }
+
+      
+        
+
     }
+
+  
 
     @RequestMapping(value = "admin/editChannel", method = RequestMethod.GET)
     @ResponseBody
@@ -97,8 +257,13 @@ public class EditChannelController extends BaseRestController {
             }
         }
         final Set<Credentials> possibleCredentials = channelService.getPossibleCredentials(channel);
-
-        response.setChannel(channel);
+     response.setPossibleCredentials(possibleCredentials);
+     response.setIsBuiltin(isBuiltin);
+     response.setPossiblePrincipalTypes(possiblePrincipalTypes);
+      response.setSingleCredential(possibleCredentials.size() == 1 ? possibleCredentials.iterator().next() : null);
+     response.setAllowsPaymentRequest(allowsPaymentRequest);
+     response.setCanManage(permissionService.hasPermission(AdminSystemPermission.CHANNELS_MANAGE));
+        //response.setChannel(channel);
 //        request.setAttribute("isBuiltin", isBuiltin);
 //        request.setAttribute("possiblePrincipalTypes", possiblePrincipalTypes);
 //        request.setAttribute("possibleCredentials", possibleCredentials);
@@ -108,5 +273,7 @@ public class EditChannelController extends BaseRestController {
         response.setStatus(0);
         return response;
     }
+    
+    
 
 }

@@ -1,5 +1,6 @@
 package nl.strohalm.cyclos.webservices.rest.customization.translationMessages;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -20,85 +21,109 @@ import nl.strohalm.cyclos.utils.binding.DataBinderHelper;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 
 @Controller
 public class SearchTranslationMessagesController extends BaseRestController {
-
-	private TranslationMessageService translationMessageService;
-	public final TranslationMessageService getTranslationMessageService() {
-		return translationMessageService;
-	}
-
-	private DataBinder<TranslationMessageQuery> dataBinder;
-
-	public DataBinder<TranslationMessageQuery> getDataBinder() {
-		if (dataBinder == null) {
-			final BeanBinder<TranslationMessageQuery> binder = BeanBinder
-					.instance(TranslationMessageQuery.class);
-			binder.registerBinder("key",
-					PropertyBinder.instance(String.class, "key"));
-			binder.registerBinder("value",
-					PropertyBinder.instance(String.class, "value"));
-			binder.registerBinder("showOnlyEmpty",
-					PropertyBinder.instance(Boolean.TYPE, "showOnlyEmpty"));
-			binder.registerBinder("pageParameters",
-					DataBinderHelper.pageBinder());
-			dataBinder = binder;
-		}
-		return dataBinder;
-	}
-
-	@Inject
-	public void setTranslationMessageService(
-			final TranslationMessageService translationMessageService) {
-		this.translationMessageService = translationMessageService;
-	}
-
-//	public static class SearchTranslationMessagesRequestDto {
-//
-//	}
-
-	public static class SearchTranslationMessagesResponseDto {
-		private List<TranslationMessage> translationMessages;
-
-		public SearchTranslationMessagesResponseDto(
-				List<TranslationMessage> translationMessages) {
-			
-			this.translationMessages = translationMessages;
-		}
-
-        public List<TranslationMessage> getTranslationMessages() {
+    
+    public static class TranslationMessageResponse extends GenericResponse {
+        
+        private List<TranslationMessageEntiy> translationMessages;
+        
+        public List<TranslationMessageEntiy> getTranslationMessages() {
             return translationMessages;
         }
-
-        public void setTranslationMessages(List<TranslationMessage> translationMessages) {
+        
+        public void setTranslationMessages(List<TranslationMessageEntiy> translationMessages) {
             this.translationMessages = translationMessages;
         }
-                
-                
+        
+    }
+    
+    public static class TranslationMessageEntiy {
+        
+        private String key;
+        private String value;
+        private Long id;
+        
+        public String getKey() {
+            return key;
+        }
+        
+        public void setKey(String key) {
+            this.key = key;
+        }
+        
+        public String getValue() {
+            return value;
+        }
+        
+        public void setValue(String value) {
+            this.value = value;
+        }
+        
+        public Long getId() {
+            return id;
+        }
+        
+        public void setId(Long id) {
+            this.id = id;
+        }
+        
+    }
+    
+    public static class TranslationMessageParameters {
 
-	}
-
-	@RequestMapping(value = "admin/searchTranslationMessages", method = RequestMethod.POST)
-	@ResponseBody
-	protected SearchTranslationMessagesResponseDto executeQuery(
-			@RequestBody TranslationMessageQuery form) {
-		SearchTranslationMessagesResponseDto response =null;
-                try{
-		final TranslationMessageQuery query = (TranslationMessageQuery) form;
-		final List<TranslationMessage> translationMessages = translationMessageService
-				.search(query);
-		 response = new SearchTranslationMessagesResponseDto(translationMessages);}
-                catch(Exception e){
-                    e.printStackTrace();
-                }
-		          System.out.println("Sending response  "+response.toString());		
-		return response;
-	}
-
-//	protected QueryParameters prepareForm(final ActionContext context) {
-//		final SearchTranslationMessagesForm form = context.getForm();
-//		return getDataBinder().readFromString(form.getQuery());
-//	}
-
+        private String value;
+        private String key;
+        private boolean showOnlyEmpity;
+        
+        public String getValue() {
+            return value;
+        }
+        
+        public void setValue(String value) {
+            this.value = value;
+        }
+        
+        public String getKey() {
+            return key;
+        }
+        
+        public void setKey(String key) {
+            this.key = key;
+        }
+        
+        public boolean isShowOnlyEmpity() {
+            return showOnlyEmpity;
+        }
+        
+        public void setShowOnlyEmpity(boolean showOnlyEmpity) {
+            this.showOnlyEmpity = showOnlyEmpity;
+        }
+        
+    }
+    
+    @RequestMapping(value = "admin/searchTranslationMessages", method = RequestMethod.POST)
+    @ResponseBody
+    protected TranslationMessageResponse executeQuery(@RequestBody TranslationMessageParameters params) {
+        TranslationMessageResponse response = new TranslationMessageResponse();
+        final TranslationMessageQuery query = new TranslationMessageQuery();
+        query.setKey(params.getKey());
+        query.setValue(params.getValue());
+        query.setShowOnlyEmpty(params.isShowOnlyEmpity());
+        final List<TranslationMessage> translationMessages = translationMessageService.search(query);
+        List<TranslationMessageEntiy> translationMessageList = new ArrayList();
+        for (TranslationMessage msg : translationMessages) {
+            TranslationMessageEntiy entity = new TranslationMessageEntiy();
+            entity.setId(msg.getId());
+            entity.setKey(msg.getKey());
+            entity.setValue(msg.getValue());
+            translationMessageList.add(entity);
+        }
+        response.setTranslationMessages(translationMessageList);
+        response.setStatus(0);
+        return response;
+    }
+    
 }

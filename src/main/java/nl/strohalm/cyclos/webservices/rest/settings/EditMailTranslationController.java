@@ -12,6 +12,7 @@ import nl.strohalm.cyclos.utils.binding.DataBinder;
 import nl.strohalm.cyclos.utils.binding.PropertyBinder;
 import nl.strohalm.cyclos.utils.conversion.HtmlConverter;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
+import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,124 +22,138 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class EditMailTranslationController extends BaseRestController {
-	private DataBinder<MailTranslation> dataBinder;
-	private SettingsService settingsService;
+    
+    public static class MailTranslationParameters {
+        
+        private String invitationSubject;
+        private String invitationMessage;
+        private String activationSubject;
+        private String activationMessageWithPassword;
+        private String activationMessageWithoutPassword;
+        private String mailValidationSubject;
+        private String mailValidationMessage;
+        private String resetPasswordSubject;
+        private String resetPasswordMessage;
+        
+        public String getInvitationSubject() {
+            return invitationSubject;
+        }
+        
+        public void setInvitationSubject(String invitationSubject) {
+            this.invitationSubject = invitationSubject;
+        }
+        
+        public String getInvitationMessage() {
+            return invitationMessage;
+        }
+        
+        public void setInvitationMessage(String invitationMessage) {
+            this.invitationMessage = invitationMessage;
+        }
+        
+        public String getActivationSubject() {
+            return activationSubject;
+        }
+        
+        public void setActivationSubject(String activationSubject) {
+            this.activationSubject = activationSubject;
+        }
+        
+        public String getActivationMessageWithPassword() {
+            return activationMessageWithPassword;
+        }
+        
+        public void setActivationMessageWithPassword(String activationMessageWithPassword) {
+            this.activationMessageWithPassword = activationMessageWithPassword;
+        }
+        
+        public String getActivationMessageWithoutPassword() {
+            return activationMessageWithoutPassword;
+        }
+        
+        public void setActivationMessageWithoutPassword(String activationMessageWithoutPassword) {
+            this.activationMessageWithoutPassword = activationMessageWithoutPassword;
+        }
+        
+        public String getMailValidationSubject() {
+            return mailValidationSubject;
+        }
+        
+        public void setMailValidationSubject(String mailValidationSubject) {
+            this.mailValidationSubject = mailValidationSubject;
+        }
+        
+        public String getMailValidationMessage() {
+            return mailValidationMessage;
+        }
+        
+        public void setMailValidationMessage(String mailValidationMessage) {
+            this.mailValidationMessage = mailValidationMessage;
+        }
+        
+        public String getResetPasswordSubject() {
+            return resetPasswordSubject;
+        }
+        
+        public void setResetPasswordSubject(String resetPasswordSubject) {
+            this.resetPasswordSubject = resetPasswordSubject;
+        }
+        
+        public String getResetPasswordMessage() {
+            return resetPasswordMessage;
+        }
+        
+        public void setResetPasswordMessage(String resetPasswordMessage) {
+            this.resetPasswordMessage = resetPasswordMessage;
+        }
+        
+    }
+    
+    @RequestMapping(value = "admin/editMailTranslation", method = RequestMethod.POST)
+    @ResponseBody
+    protected GenericResponse formAction(@RequestBody MailTranslationParameters params) throws Exception {
+        GenericResponse response = new GenericResponse();
+        MailTranslation settings = new MailTranslation();
+        settings.setActivationMessageWithPassword(params.getActivationMessageWithPassword());
+        settings.setActivationMessageWithoutPassword(params.getActivationMessageWithoutPassword());
+        settings.setActivationSubject(params.getActivationSubject());
+        settings.setInvitationMessage(params.getInvitationMessage());
+        settings.setInvitationSubject(params.getInvitationSubject());
+        settings.setMailValidationSubject(params.getMailValidationSubject());
+        settings.setMailValidationMessage(params.getMailValidationMessage());
+        settings.setResetPasswordMessage(params.getResetPasswordMessage());
+        settings.setResetPasswordSubject(params.getResetPasswordSubject());
+        settings = settingsService.save(settings);
+        if (settings != null) {
+            response.setMessage("Mail translation modified!");
+        }
+        response.setStatus(0);
+        
+        return response;
+    }
+    
+    public static class MailTranslationResponse extends GenericResponse {
 
-	public SettingsService getSettingsService() {
-		return settingsService;
-	}
-
-	public void setSettingsService(SettingsService settingsService) {
-		this.settingsService = settingsService;
-	}
-
-	public DataBinder<MailTranslation> getDataBinder() {
-		if (dataBinder == null) {
-			final BeanBinder<MailTranslation> binder = BeanBinder
-					.instance(MailTranslation.class);
-			binder.registerBinder("invitationSubject",
-					PropertyBinder.instance(String.class, "invitationSubject"));
-			binder.registerBinder("invitationMessage",
-					PropertyBinder.instance(String.class, "invitationMessage",
-							HtmlConverter.instance()));
-			binder.registerBinder("activationSubject",
-					PropertyBinder.instance(String.class, "activationSubject"));
-			binder.registerBinder("activationMessageWithPassword",
-					PropertyBinder.instance(String.class,
-							"activationMessageWithPassword",
-							HtmlConverter.instance()));
-			binder.registerBinder("activationMessageWithoutPassword",
-					PropertyBinder.instance(String.class,
-							"activationMessageWithoutPassword",
-							HtmlConverter.instance()));
-			binder.registerBinder("resetPasswordSubject", PropertyBinder
-					.instance(String.class, "resetPasswordSubject"));
-			binder.registerBinder("resetPasswordMessage", PropertyBinder
-					.instance(String.class, "resetPasswordMessage",
-							HtmlConverter.instance()));
-			binder.registerBinder("mailValidationSubject", PropertyBinder
-					.instance(String.class, "mailValidationSubject"));
-			binder.registerBinder("mailValidationMessage", PropertyBinder
-					.instance(String.class, "mailValidationMessage",
-							HtmlConverter.instance()));
-			dataBinder = binder;
-		}
-		return dataBinder;
-	}
-
-	public SettingsService getTranslationService() {
-		return settingsService;
-	}
-
-	public static class EditMailTranslationRequestDto {
-		protected Map<String, Object> values;
-
-		public Map<String, Object> getValues() {
-			return values;
-		}
-
-		public void setValues(final Map<String, Object> values) {
-			this.values = values;
-		}
-
-		public Map<String, Object> getSetting() {
-			return values;
-		}
-
-		public Object getSetting(final String key) {
-			return values.get(key);
-		}
-
-		public void setSetting(final Map<String, Object> map) {
-			values = map;
-		}
-
-		public void setSetting(final String key, final Object value) {
-			values.put(key, value);
-		}
-	}
-
-	public static class EditMailTranslationResponseDto {
-		private String message;
-
-		public String getMessage() {
-			return message;
-		}
-
-		public void setMessage(String message) {
-			this.message = message;
-		}
-	}
-
-	@RequestMapping(value = "admin/editMailTranslation", method = RequestMethod.PUT)
-	@ResponseBody
-	protected EditMailTranslationResponseDto formAction(
-			@RequestBody EditMailTranslationRequestDto form) throws Exception {
-		
-		MailTranslation settings = getDataBinder().readFromString(
-				form.getSetting());
-                EditMailTranslationResponseDto response =null;
-                try{
-		settings = settingsService.save(settings);
-                 response = new EditMailTranslationResponseDto();
-		response.setMessage("settings.mailTranslation.modified");}
-                catch(Exception e){
-                    e.printStackTrace();
-                }
-		return response;
-	}
-
-//	protected void prepareForm(final ActionContext context) throws Exception {
-//		final EditMailTranslationForm form = context.getForm();
-//		getDataBinder().writeAsString(form.getSetting(),
-//				settingsService.getMailTranslation());
-//	}
-//
-//	protected void validateForm(final ActionContext context) {
-//		final EditMailTranslationForm form = context.getForm();
-//		final MailTranslation settings = getDataBinder().readFromString(
-//				form.getSetting());
-//		settingsService.validate(settings);
-//	}
-
+        private MailTranslation mailTransactions;
+        
+        public MailTranslation getMailTransactions() {
+            return mailTransactions;
+        }
+        
+        public void setMailTransactions(MailTranslation mailTransactions) {
+            this.mailTransactions = mailTransactions;
+        }
+        
+    }
+    
+    @RequestMapping(value = "admin/editMailTranslation", method = RequestMethod.GET)
+    @ResponseBody
+    public MailTranslationResponse prepareForm() {
+        MailTranslationResponse response = new MailTranslationResponse();
+        MailTranslation settings = settingsService.getMailTranslation();
+        response.setMailTransactions(settings);
+        response.setStatus(0);
+        return response;
+    }
+    
 }

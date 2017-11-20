@@ -75,6 +75,15 @@ public class SearchLoansController extends BaseRestController {
 
         private Set<LoanQuery.QueryStatus> queryStatus;
         private List<Loan> loans;
+        private List<LoanGroupEntity> loanGroups;
+
+        public List<LoanGroupEntity> getLoanGroups() {
+            return loanGroups;
+        }
+
+        public void setLoanGroups(List<LoanGroupEntity> loanGroups) {
+            this.loanGroups = loanGroups;
+        }
 
         public List<Loan> getLoans() {
             return loans;
@@ -83,7 +92,6 @@ public class SearchLoansController extends BaseRestController {
         public void setLoans(List<Loan> loans) {
             this.loans = loans;
         }
-        
 
         public Set<LoanQuery.QueryStatus> getQueryStatus() {
             return queryStatus;
@@ -95,9 +103,33 @@ public class SearchLoansController extends BaseRestController {
 
     }
 
+    public static class LoanGroupEntity {
+
+        private Long id;
+        private String name;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
+
     public static class SearchLoansParameters {
 
         private String queryStatus;
+        private Long loanGroup;
         private Long transferType;
         private Long member;
         private Long broker;
@@ -107,6 +139,14 @@ public class SearchLoansController extends BaseRestController {
         private String expirationPeriodEnd;
         private String paymentPeriodBegin;
         private String paymentPeriodEnd;
+
+        public Long getLoanGroup() {
+            return loanGroup;
+        }
+
+        public void setLoanGroup(Long loanGroup) {
+            this.loanGroup = loanGroup;
+        }
 
         public String getQueryStatus() {
             return queryStatus;
@@ -193,7 +233,7 @@ public class SearchLoansController extends BaseRestController {
     @RequestMapping(value = "admin/searchLoans", method = RequestMethod.GET)
     @ResponseBody
     public SearchLoansResponse prepareForm() {
-
+        List<LoanGroupEntity> loanGroups = new ArrayList();
         SearchLoansResponse response = new SearchLoansResponse();
         final Set<LoanQuery.QueryStatus> queryStatus = EnumSet.allOf(LoanQuery.QueryStatus.class);
         // When there is no permission to view authorized loans, remove the statuses which are related to authorization
@@ -204,18 +244,34 @@ public class SearchLoansController extends BaseRestController {
                 }
             }
         }
+        if (permissionService.hasPermission(AdminSystemPermission.LOAN_GROUPS_VIEW)) {
+            // Retrieve a list of all loan groups
+            final LoanGroupQuery lgQuery = new LoanGroupQuery();
+            // request.setAttribute("loanGroups", loanGroupService.search(lgQuery));
+
+            for (LoanGroup group : loanGroupService.search(lgQuery)) {
+                LoanGroupEntity entity = new LoanGroupEntity();
+                entity.setId(group.getId());
+                entity.setName(group.getName());
+                loanGroups.add(entity);
+            }
+            response.setLoanGroups(loanGroups);
+
+        } else {
+            response.setLoanGroups(loanGroups);
+        }
+
         response.setQueryStatus(queryStatus);
         response.setStatus(0);
         response.setMessage("");
         return response;
 
     }
-    
 
-    @RequestMapping(value = "admin/searchLoans", method = RequestMethod.GET)
+    @RequestMapping(value = "admin/searchLoans", method = RequestMethod.POST)
     @ResponseBody
     public SearchLoansResponse searchLoans(@RequestBody SearchLoansParameters params) {
-        SearchLoansResponse response=new SearchLoansResponse();
+        SearchLoansResponse response = new SearchLoansResponse();
         final LocalSettings localSettings = settingsService.getLocalSettings();
 //        binder.registerBinder("status", PropertyBinder.instance(Loan.Status.class, "status"));
 //        binder.registerBinder("queryStatus", PropertyBinder.instance(LoanQuery.QueryStatus.class, "queryStatus"));
@@ -248,10 +304,11 @@ public class SearchLoansController extends BaseRestController {
         Period paymentPeriod = new Period();
         paymentPeriod.setBegin(localSettings.getDateConverter().valueOf(params.getPaymentPeriodBegin()));
         paymentPeriod.setEnd(localSettings.getDateConverter().valueOf(params.getPaymentPeriodEnd()));
-        
+
         query.setGrantPeriod(grantPeriod);
         query.setExpirationPeriod(expirePeriod);
         query.setPaymentPeriod(paymentPeriod);
+        query.setLoanGroup(loanGroupService.load(params.getLoanGroup(), LoanGroup.Relationships.LOANS));
         final List<Loan> loans = loanService.search(query);
         response.setLoans(loans);
         response.setStatus(0);

@@ -19,13 +19,18 @@ import nl.strohalm.cyclos.entities.groups.MemberGroup;
 import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.entities.members.ElementQuery;
 import nl.strohalm.cyclos.entities.members.FullTextElementQuery;
+import nl.strohalm.cyclos.entities.members.FullTextMemberQuery;
+import nl.strohalm.cyclos.entities.members.Member;
 import nl.strohalm.cyclos.entities.members.Operator;
+import nl.strohalm.cyclos.entities.settings.LocalSettings;
+import nl.strohalm.cyclos.utils.Period;
 import nl.strohalm.cyclos.utils.access.LoggedUser;
 import nl.strohalm.cyclos.utils.query.QueryParameters;
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
 import nl.strohalm.cyclos.webservices.rest.GenericResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -82,8 +87,8 @@ public class SearchMembersController extends BaseRestController {
         }
 
     }
-    
-       public static class PossibleGroupEntity {
+
+    public static class PossibleGroupEntity {
 
         private Long id;
         private String name;
@@ -110,6 +115,15 @@ public class SearchMembersController extends BaseRestController {
 
         private List<MemberGroupEntity> memberGroups;
         private List<PossibleGroupEntity> possibleGroups;
+        List<GroupFilterEntity> groupFilters;
+
+        public List<GroupFilterEntity> getGroupFilters() {
+            return groupFilters;
+        }
+
+        public void setGroupFilters(List<GroupFilterEntity> groupFilters) {
+            this.groupFilters = groupFilters;
+        }
 
         public List<PossibleGroupEntity> getPossibleGroups() {
             return possibleGroups;
@@ -118,8 +132,6 @@ public class SearchMembersController extends BaseRestController {
         public void setPossibleGroups(List<PossibleGroupEntity> possibleGroups) {
             this.possibleGroups = possibleGroups;
         }
-
-       
 
         public List<MemberGroupEntity> getMemberGroups() {
             return memberGroups;
@@ -197,6 +209,14 @@ public class SearchMembersController extends BaseRestController {
         final Collection<GroupFilter> groupFilters = groupFilterService.search(groupFilterQuery);
         if (CollectionUtils.isNotEmpty(groupFilters)) {
             //request.setAttribute("groupFilters", groupFilters);
+            List<GroupFilterEntity> groupFilterList = new ArrayList();
+            for (GroupFilter filter : groupFilters) {
+                GroupFilterEntity entity = new GroupFilterEntity();
+                entity.setId(filter.getId());
+                entity.setName(filter.getName());
+                groupFilterList.add(entity);
+            }
+            response.setGroupFilters(groupFilterList);
 
         }
 //
@@ -212,19 +232,159 @@ public class SearchMembersController extends BaseRestController {
     protected boolean allowRemovedGroups() {
         return true;
     }
-    
-  
-    
+
     @RequestMapping(value = "admin/searchMember", method = RequestMethod.POST)
     @ResponseBody
-    public void handleSubmit(){
-       
-        
-      //final List<? extends Element> list = elementService.fullTextSearch(query);    
-        
-        
+    public SearchMemberResponse handleSubmit(@RequestBody SearchMembersParameters params) {
+        SearchMemberResponse response = new SearchMemberResponse();
+        LocalSettings settings = settingsService.getLocalSettings();
+        FullTextMemberQuery query = new FullTextMemberQuery();
+        if (params.getKeywords() != null) {
+            query.setKeywords(params.getKeywords());
+        }
+        Period period = new Period();
+        period.setBegin(settings.getDateConverter().valueOf(params.getBegin()));
+        period.setEnd(settings.getDateConverter().valueOf(params.getEnd()));
+        query.setActivationPeriod(period);
+        List<GroupFilter> groupFilters = new ArrayList();
+        if (params.getGroupFilters() != null) {
+            for (Long l : params.getGroupFilters()) {
+                groupFilters.add(groupFilterService.load(l, GroupFilter.Relationships.GROUPS));
+
+            }
+        }
+        query.setGroupFilters(groupFilters);
+        List<Group> groups = new ArrayList();
+        if (params.getGroups() != null) {
+            for (Long group : params.getGroups()) {
+                groups.add(groupService.load(group, Group.Relationships.GROUP_FILTERS));
+            }
+        }
+        query.setGroups(groups);
+        if(params.getBegin()!=null)
+        query.setBroker((Member) elementService.load(params.getBroker(), Element.Relationships.USER));
+
+        final List<? extends Element> list = elementService.fullTextSearch(query);
+        List<MemberEntity> members = new ArrayList();
+        Member member = null;
+        for (Element e : list) {
+            member = (Member) e;
+            MemberEntity entity = new MemberEntity();
+            entity.setId(member.getId());
+            entity.setName(member.getName());
+            entity.setUsername(member.getUsername());
+            members.add(entity);
+        }
+
+        response.setMembers(members);
+        response.setStatus(0);
+        return response;
+
     }
-    
-    
-    
+
+    public static class SearchMembersParameters {
+
+        private String keywords;
+        private Long[] groupFilters;
+        private Long[] groups;
+        private Long broker;
+        private String begin;
+        private String end;
+
+        public String getKeywords() {
+            return keywords;
+        }
+
+        public void setKeywords(String keywords) {
+            this.keywords = keywords;
+        }
+
+        public Long[] getGroupFilters() {
+            return groupFilters;
+        }
+
+        public void setGroupFilters(Long[] groupFilters) {
+            this.groupFilters = groupFilters;
+        }
+
+        public Long[] getGroups() {
+            return groups;
+        }
+
+        public void setGroups(Long[] groups) {
+            this.groups = groups;
+        }
+
+        public Long getBroker() {
+            return broker;
+        }
+
+        public void setBroker(Long broker) {
+            this.broker = broker;
+        }
+
+        public String getBegin() {
+            return begin;
+        }
+
+        public void setBegin(String begin) {
+            this.begin = begin;
+        }
+
+        public String getEnd() {
+            return end;
+        }
+
+        public void setEnd(String end) {
+            this.end = end;
+        }
+
+    }
+
+    public static class SearchMemberResponse extends GenericResponse {
+
+        private List<MemberEntity> members;
+
+        public List<MemberEntity> getMembers() {
+            return members;
+        }
+
+        public void setMembers(List<MemberEntity> members) {
+            this.members = members;
+        }
+
+    }
+
+    public static class MemberEntity {
+
+        private Long id;
+        private String name;
+        private String username;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+    }
+
 }

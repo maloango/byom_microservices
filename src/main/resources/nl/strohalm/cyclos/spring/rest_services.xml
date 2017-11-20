@@ -362,6 +362,8 @@
     <!--manage member-->
     <bean id="searchMembersController"
           class="nl.strohalm.cyclos.webservices.rest.members.SearchMembersController" />
+      <bean id="createMemberController"
+          class="nl.strohalm.cyclos.webservices.rest.members.CreateMemberController" />
     
 
 
@@ -402,6 +404,16 @@
     <!---user and groups-->
     <bean id="memberBulkActionsController"
           class="nl.strohalm.cyclos.webservices.rest.members.bulk.MemberBulkActionsController" />
+    <bean id="memberBulkChangeGroupController"
+          class="nl.strohalm.cyclos.webservices.rest.members.bulk.MemberBulkChangeGroupController" />
+    <bean id="memberBulkChangeBrokerController"
+          class="nl.strohalm.cyclos.webservices.rest.members.bulk.MemberBulkChangeBrokerController" />
+    <bean id="memberBulkGeneratedCardController"
+          class="nl.strohalm.cyclos.webservices.rest.members.bulk.MemberBulkGeneratedCardController" />
+     <bean id="memberBulkChangeChannelController"
+          class="nl.strohalm.cyclos.webservices.rest.members.bulk.MemberBulkChangeChannelController" />
+    
+    
         
         
         
@@ -493,8 +505,8 @@
           class="nl.strohalm.cyclos.webservices.rest.members.accounts.SearchScheduledPaymentsController" />
     
     
-    <!--    <bean id="searchLoansController"
-    class="nl.strohalm.cyclos.webservices.rest.members.accounts.SearchLoansController" />-->
+        <bean id="searchLoansController"
+    class="nl.strohalm.cyclos.webservices.rest.loans.SearchLoansController" />
     
     <bean id="confirmMemberMemberPaymentController"
           class="nl.strohalm.cyclos.webservices.rest.members.accounts.ConfirmMemberPaymentController" />
@@ -602,7 +614,7 @@
           class="nl.strohalm.cyclos.webservices.rest.members.records.EditMemberRecordTypeController" />
     
     <bean id="removeMemberRecordTypeController"
-            class="nl.strohalm.cyclos.webservices.rest.members.records.RemoveMemberRecordTypeController" />
+          class="nl.strohalm.cyclos.webservices.rest.members.records.RemoveMemberRecordTypeController" />
     
     
     <!--admin ads-->
@@ -634,6 +646,12 @@
           class=" nl.strohalm.cyclos.webservices.rest.admins.sms.SearchSmsMailingsController"/>
     <bean id="sendSmsMailingController" 
           class=" nl.strohalm.cyclos.webservices.rest.admins.sms.SendSmsMailingController"/>
-     
+    
+    <!--admins-->
+    
+       <bean id="searchAdminsController" 
+          class="nl.strohalm.cyclos.webservices.rest.admins.SearchAdminsController"/>
+        <bean id="createAdminController" 
+          class="nl.strohalm.cyclos.webservices.rest.admins.CreateAdminController"/>
         
 </beans>

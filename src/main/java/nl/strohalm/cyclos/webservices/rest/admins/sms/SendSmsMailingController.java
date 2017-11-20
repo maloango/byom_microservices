@@ -146,8 +146,8 @@ public class SendSmsMailingController extends BaseRestController {
     public static class SendSmsParameters {
 
         private String text;
-        private List<Long> groups;
-        private Boolean free;
+        private Long[] groups;
+        private boolean free;
         private Long member;
         private boolean canSendFree;
         private boolean canSendPaid;
@@ -177,8 +177,6 @@ public class SendSmsMailingController extends BaseRestController {
             this.singleMember = singleMember;
         }
 
-        
-
         public String getText() {
             return text;
         }
@@ -187,19 +185,19 @@ public class SendSmsMailingController extends BaseRestController {
             this.text = text;
         }
 
-        public List<Long> getGroups() {
+        public Long[] getGroups() {
             return groups;
         }
 
-        public void setGroups(List<Long> groups) {
+        public void setGroups(Long[] groups) {
             this.groups = groups;
         }
 
-        public Boolean getFree() {
+        public boolean isFree() {
             return free;
         }
 
-        public void setFree(Boolean free) {
+        public void setFree(boolean free) {
             this.free = free;
         }
 
@@ -217,17 +215,30 @@ public class SendSmsMailingController extends BaseRestController {
     @ResponseBody
     public GenericResponse sendSms(@RequestBody SendSmsParameters params) {
         GenericResponse response = new GenericResponse();
-        Map<String, Object> query = new HashMap();
-        query.put("text", params.getText());
-        query.put("member", params.getMember());
-        query.put("free", params.getFree());
-        if (params.getGroups() != null && params.getGroups().isEmpty()) {
-            query.put("groups", params.getGroups());
+//        Map<String, Object> query = new HashMap();
+//        query.put("text", params.getText());
+//        query.put("member", params.getMember());
+//        query.put("free", params.getFree());
+//        if (params.getGroups() != null && params.getGroups().isEmpty()) {
+//            query.put("groups", params.getGroups());
+//        }
+//        query.put("canSendFree", params.isCanSendFree());
+//        query.put("canSendPaid", params.isCanSendPaid());
+//        query.put("singleMember", params.isSingleMember());
+//        final SmsMailing smsMailing = getDataBinder().readFromString(query);
+        final SmsMailing smsMailing = new SmsMailing();
+        smsMailing.setText(params.getText());
+        if (params.getMember() != null && params.getMember() > 0L) {
+            smsMailing.setMember((Member) elementService.load(params.getMember(), Element.Relationships.USER));
         }
-        query.put("canSendFree", params.isCanSendFree());
-        query.put("canSendPaid", params.isCanSendPaid());
-        query.put("singleMember", params.isSingleMember());
-        final SmsMailing smsMailing = getDataBinder().readFromString(query);
+        smsMailing.setFree(params.isFree());
+        List<MemberGroup> groups = new ArrayList();
+        if (params.getGroups() != null) {
+            for (Long l : params.getGroups()) {
+                groups.add((MemberGroup) groupService.load(l, Group.Relationships.ELEMENTS));
+            }
+            smsMailing.setGroups(groups);
+        }
 
         Permission permission;
         if (LoggedUser.isAdministrator()) {

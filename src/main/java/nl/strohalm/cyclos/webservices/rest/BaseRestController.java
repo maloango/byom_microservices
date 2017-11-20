@@ -42,15 +42,18 @@ import nl.strohalm.cyclos.services.application.ApplicationService;
 import nl.strohalm.cyclos.services.customization.CustomizedFileService;
 import nl.strohalm.cyclos.services.customization.MemberCustomFieldService;
 import nl.strohalm.cyclos.services.customization.TranslationMessageService;
+import nl.strohalm.cyclos.services.elements.BrokeringService;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.services.elements.MemberRecordTypeService;
 import nl.strohalm.cyclos.services.elements.MemberService;
 import nl.strohalm.cyclos.services.elements.MessageCategoryService;
+import nl.strohalm.cyclos.services.elements.MessageService;
 import nl.strohalm.cyclos.services.elements.RegistrationAgreementService;
 import nl.strohalm.cyclos.services.groups.GroupFilterService;
 import nl.strohalm.cyclos.services.groups.GroupService;
 import nl.strohalm.cyclos.services.loangroups.LoanGroupService;
 import nl.strohalm.cyclos.services.permissions.PermissionService;
+import nl.strohalm.cyclos.services.preferences.PreferenceService;
 import nl.strohalm.cyclos.services.services.ServiceClientService;
 import nl.strohalm.cyclos.services.settings.SettingsService;
 import nl.strohalm.cyclos.services.sms.SmsMailingService;
@@ -119,6 +122,24 @@ public abstract class BaseRestController {
     protected TranslationMessageService translationMessageService;
     protected ServiceClientService serviceClientService;
     protected ApplicationService applicationService;
+    protected BrokeringService brokeringService;
+    protected MessageService messageService;
+    protected PreferenceService preferenceService;
+
+    @Inject
+    public void setPreferenceService(PreferenceService preferenceService) {
+        this.preferenceService = preferenceService;
+    }
+
+    @Inject
+    public void setMessageService(MessageService messageService) {
+        this.messageService = messageService;
+    }
+
+    @Inject
+    public void setBrokeringService(BrokeringService brokeringService) {
+        this.brokeringService = brokeringService;
+    }
 
     @Inject
     public void setApplicationService(ApplicationService applicationService) {

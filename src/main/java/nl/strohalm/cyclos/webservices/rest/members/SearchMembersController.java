@@ -41,112 +41,112 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 public class SearchMembersController extends BaseRestController {
-
+    
     public static class MemberGroupEntity {
-
+        
         private Long id;
         private String name;
-
+        
         public Long getId() {
             return id;
         }
-
+        
         public void setId(Long id) {
             this.id = id;
         }
-
+        
         public String getName() {
             return name;
         }
-
+        
         public void setName(String name) {
             this.name = name;
         }
-
+        
     }
-
+    
     public static class GroupFilterEntity {
-
+        
         private Long id;
         private String name;
-
+        
         public Long getId() {
             return id;
         }
-
+        
         public void setId(Long id) {
             this.id = id;
         }
-
+        
         public String getName() {
             return name;
         }
-
+        
         public void setName(String name) {
             this.name = name;
         }
-
+        
     }
-
+    
     public static class PossibleGroupEntity {
-
+        
         private Long id;
         private String name;
-
+        
         public Long getId() {
             return id;
         }
-
+        
         public void setId(Long id) {
             this.id = id;
         }
-
+        
         public String getName() {
             return name;
         }
-
+        
         public void setName(String name) {
             this.name = name;
         }
-
+        
     }
-
+    
     public static class SearchMembersResponse extends GenericResponse {
-
+        
         private List<MemberGroupEntity> memberGroups;
         private List<PossibleGroupEntity> possibleGroups;
         List<GroupFilterEntity> groupFilters;
-
+        
         public List<GroupFilterEntity> getGroupFilters() {
             return groupFilters;
         }
-
+        
         public void setGroupFilters(List<GroupFilterEntity> groupFilters) {
             this.groupFilters = groupFilters;
         }
-
+        
         public List<PossibleGroupEntity> getPossibleGroups() {
             return possibleGroups;
         }
-
+        
         public void setPossibleGroups(List<PossibleGroupEntity> possibleGroups) {
             this.possibleGroups = possibleGroups;
         }
-
+        
         public List<MemberGroupEntity> getMemberGroups() {
             return memberGroups;
         }
-
+        
         public void setMemberGroups(List<MemberGroupEntity> memberGroups) {
             this.memberGroups = memberGroups;
         }
-
+        
     }
-
+    
     @RequestMapping(value = "admin/searchMember", method = RequestMethod.GET)
     @ResponseBody
     public SearchMembersResponse prepareForm() throws Exception {
-
+        
         SearchMembersResponse response = new SearchMembersResponse();
         // Retrieve the custom fields that will be used on the search
 //        final List<MemberCustomField> fields = customFieldHelper.onlyForMemberSearch(memberCustomFieldService.list());
@@ -217,7 +217,7 @@ public class SearchMembersController extends BaseRestController {
                 groupFilterList.add(entity);
             }
             response.setGroupFilters(groupFilterList);
-
+            
         }
 //
 //        final Member broker = memberQuery.getBroker() == null ? null : (Member) elementService.load(memberQuery.getBroker().getId(), Element.Relationships.USER);
@@ -226,19 +226,20 @@ public class SearchMembersController extends BaseRestController {
 //        return memberQuery;
         response.setStatus(0);
         return response;
-
+        
     }
-
+    
     protected boolean allowRemovedGroups() {
         return true;
     }
-
+    
     @RequestMapping(value = "admin/searchMember", method = RequestMethod.POST)
     @ResponseBody
     public SearchMemberResponse handleSubmit(@RequestBody SearchMembersParameters params) {
         SearchMemberResponse response = new SearchMemberResponse();
         LocalSettings settings = settingsService.getLocalSettings();
         FullTextMemberQuery query = new FullTextMemberQuery();
+        query.fetch(Member.Relationships.IMAGES);
         if (params.getKeywords() != null) {
             query.setKeywords(params.getKeywords());
         }
@@ -250,7 +251,7 @@ public class SearchMembersController extends BaseRestController {
         if (params.getGroupFilters() != null) {
             for (Long l : params.getGroupFilters()) {
                 groupFilters.add(groupFilterService.load(l, GroupFilter.Relationships.GROUPS));
-
+                
             }
         }
         query.setGroupFilters(groupFilters);
@@ -261,10 +262,12 @@ public class SearchMembersController extends BaseRestController {
             }
         }
         query.setGroups(groups);
-        if(params.getBegin()!=null)
-        query.setBroker((Member) elementService.load(params.getBroker(), Element.Relationships.USER));
-
+        if (params.getBroker() != null) {
+            query.setBroker((Member) elementService.load(params.getBroker(), Element.Relationships.USER));
+        }
+        
         final List<? extends Element> list = elementService.fullTextSearch(query);
+        System.out.println("-----"+list);
         List<MemberEntity> members = new ArrayList();
         Member member = null;
         for (Element e : list) {
@@ -275,116 +278,116 @@ public class SearchMembersController extends BaseRestController {
             entity.setUsername(member.getUsername());
             members.add(entity);
         }
-
+        
         response.setMembers(members);
         response.setStatus(0);
         return response;
-
+        
     }
-
+    
     public static class SearchMembersParameters {
-
+        
         private String keywords;
         private Long[] groupFilters;
         private Long[] groups;
         private Long broker;
         private String begin;
         private String end;
-
+        
         public String getKeywords() {
             return keywords;
         }
-
+        
         public void setKeywords(String keywords) {
             this.keywords = keywords;
         }
-
+        
         public Long[] getGroupFilters() {
             return groupFilters;
         }
-
+        
         public void setGroupFilters(Long[] groupFilters) {
             this.groupFilters = groupFilters;
         }
-
+        
         public Long[] getGroups() {
             return groups;
         }
-
+        
         public void setGroups(Long[] groups) {
             this.groups = groups;
         }
-
+        
         public Long getBroker() {
             return broker;
         }
-
+        
         public void setBroker(Long broker) {
             this.broker = broker;
         }
-
+        
         public String getBegin() {
             return begin;
         }
-
+        
         public void setBegin(String begin) {
             this.begin = begin;
         }
-
+        
         public String getEnd() {
             return end;
         }
-
+        
         public void setEnd(String end) {
             this.end = end;
         }
-
+        
     }
-
+    
     public static class SearchMemberResponse extends GenericResponse {
-
+        
         private List<MemberEntity> members;
-
+        
         public List<MemberEntity> getMembers() {
             return members;
         }
-
+        
         public void setMembers(List<MemberEntity> members) {
             this.members = members;
         }
-
+        
     }
-
+    
     public static class MemberEntity {
-
+        
         private Long id;
         private String name;
         private String username;
-
+        
         public Long getId() {
             return id;
         }
-
+        
         public void setId(Long id) {
             this.id = id;
         }
-
+        
         public String getName() {
             return name;
         }
-
+        
         public void setName(String name) {
             this.name = name;
         }
-
+        
         public String getUsername() {
             return username;
         }
-
+        
         public void setUsername(String username) {
             this.username = username;
         }
-
+        
     }
-
+    
 }

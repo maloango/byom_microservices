@@ -43,6 +43,15 @@ public class CreateMemberController extends BaseRestController {
         private String password;
         private String confirmPassword;
         private boolean forceChangePassword;
+        private Long broker;
+
+        public Long getBroker() {
+            return broker;
+        }
+
+        public void setBroker(Long broker) {
+            this.broker = broker;
+        }
 
         public Long getGroupId() {
             return groupId;
@@ -127,33 +136,37 @@ public class CreateMemberController extends BaseRestController {
         member.setEmail(params.getEmail());
         member.setGroup(groupService.load(params.getGroupId(), Group.Relationships.ELEMENTS));
         member.setHideEmail(params.isHideEmail());
-        MemberUser memberUser = new MemberUser();
-        memberUser.setUsername(params.getUsername());
-        memberUser.setPassword(params.getPassword());
-        member.setUser(memberUser);
-      ensureBrokerIsSet(member);
+        User user = new MemberUser();
+        user.setUsername(params.getUsername());
+        user.setPassword(params.getPassword());
+        member.setUser(user);
+        ensureBrokerIsSet(member);
+        member.setBroker((Member ) (elementService.load(params.getBroker(), Element.Relationships.USER)));
+        System.out.println("-----member: "+member.getGroup());
+        System.out.println("-----member: "+member.getUser());
+        System.out.println("-----member: "+member.getBroker());
 //
-       final boolean sendPasswordByEmail = member.getMemberGroup().getMemberSettings().isSendPasswordByEmail();
-   final boolean canChangePassword = permissionService.hasPermission(LoggedUser.isAdministrator() ? AdminMemberPermission.ACCESS_CHANGE_PASSWORD : BrokerPermission.MEMBER_ACCESS_CHANGE_PASSWORD);
-    final boolean allowSetPassword = !sendPasswordByEmail || canChangePassword;
+        final boolean sendPasswordByEmail = member.getMemberGroup().getMemberSettings().isSendPasswordByEmail();
+        final boolean canChangePassword = permissionService.hasPermission(LoggedUser.isAdministrator() ? AdminMemberPermission.ACCESS_CHANGE_PASSWORD : BrokerPermission.MEMBER_ACCESS_CHANGE_PASSWORD);
+        final boolean allowSetPassword = !sendPasswordByEmail || canChangePassword;
 
         // When password cannot be set, ensure it's null
-        if (!allowSetPassword) {
-            final User user = member.getUser();
-            if (user != null) {
-                user.setPassword(null);
-            }
-        }
+//        if (!allowSetPassword) {
+//            final User user = member.getUser();
+//            if (user != null) {
+//                user.setPassword(null);
+//            }
+//        }
 //
         // When password is not sent by e-mail and can't set a definitive password, ensure the force change is set
         if (!sendPasswordByEmail && !canChangePassword) {
-           // form.setForceChangePassword(true);
+            // form.setForceChangePassword(true);
         }
 
         RegisteredMember registeredMember;
         String successKey = "createMember.created";
         try {
-            registeredMember = (RegisteredMember) elementService.register(member, params.isForceChangePassword(),LoggedUser.remoteAddress());
+            registeredMember = (RegisteredMember) elementService.register(member, params.isForceChangePassword(), LoggedUser.remoteAddress());
         } catch (final MailSendingException e) {
             response.setMessage("createMember.error.mailSending");
         }
@@ -168,10 +181,10 @@ public class CreateMemberController extends BaseRestController {
         response.setMessage(successKey);
         response.setStatus(0);
         return response;
-       
+
     }
-    
-     private void ensureBrokerIsSet( final Element element) {
+
+    private void ensureBrokerIsSet(final Element element) {
         if (LoggedUser.isBroker()) {
             final Member member = (Member) element;
             member.setBroker((Member) LoggedUser.element());

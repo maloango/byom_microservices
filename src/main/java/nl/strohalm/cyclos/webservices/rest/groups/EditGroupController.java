@@ -288,15 +288,19 @@ public class EditGroupController extends BaseRestController {
             nature = groupService.load(id).getNature();
         }
         Map<String, Object> map = new HashMap();
-        map.put("id", params.getId());
+        if (params.getId() != null && params.getId() > 0L) {
+            map.put("id", params.getId());
+        }
         map.put("name", params.getName());
         map.put("rootUrl", params.getRootUrl());
         map.put("description", params.getDescription());
         map.put("nature", Group.Nature.valueOf(params.getNature()));
-        map.put("status", Group.Status.valueOf(status));
+        if (params.getStatus() != null) {
+            map.put("status", Group.Status.valueOf(status));
+        }
 
         final Group group = getDataBinder(nature).readFromString(map);
-        System.out.println("-----group: " + group.getId() + " ," + group.getDescription());
+        // System.out.println("-----group: " + group.getId() + " ," + group.getDescription());
         if (nature == Group.Nature.OPERATOR) {
             // Ensure to set the logged member on operator groups, as this is not read from request
             final Member member = (Member) LoggedUser.element();

@@ -616,6 +616,13 @@
     <bean id="removeMemberRecordTypeController"
           class="nl.strohalm.cyclos.webservices.rest.members.records.RemoveMemberRecordTypeController" />
     
+     <bean id="getMemberRecordTypeByIdController"
+          class="nl.strohalm.cyclos.webservices.rest.members.records.GetMemberRecordTypeByIdController" />
+     
+      <bean id="searchMemberRecordsController"
+          class="nl.strohalm.cyclos.webservices.rest.members.records.SearchMemberRecordsController" />
+    
+    
     
     <!--admin ads-->
     

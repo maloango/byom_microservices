@@ -144,7 +144,7 @@ public class EditMemberRecordTypeController extends BaseRestController {
         query.put("label", params.getLabel());
         query.put("description", params.getDescription());
         query.put("groups", params.getGroups());
-        query.put("layout", params.layout);
+        query.put("layout", params.getLayout());
         query.put("editable", params.isEditable());
         query.put("showMenuItem", params.isShowMenuItem());
         MemberRecordType memberRecordType = getDataBinder().readFromString(query);

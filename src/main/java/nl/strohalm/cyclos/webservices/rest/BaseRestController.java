@@ -44,6 +44,7 @@ import nl.strohalm.cyclos.services.customization.MemberCustomFieldService;
 import nl.strohalm.cyclos.services.customization.TranslationMessageService;
 import nl.strohalm.cyclos.services.elements.BrokeringService;
 import nl.strohalm.cyclos.services.elements.ElementService;
+import nl.strohalm.cyclos.services.elements.MemberRecordService;
 import nl.strohalm.cyclos.services.elements.MemberRecordTypeService;
 import nl.strohalm.cyclos.services.elements.MemberService;
 import nl.strohalm.cyclos.services.elements.MessageCategoryService;
@@ -125,6 +126,12 @@ public abstract class BaseRestController {
     protected BrokeringService brokeringService;
     protected MessageService messageService;
     protected PreferenceService preferenceService;
+    protected MemberRecordService memberRecordService;
+
+    @Inject
+    public void setMemberRecordService(MemberRecordService memberRecordService) {
+        this.memberRecordService = memberRecordService;
+    }
 
     @Inject
     public void setPreferenceService(PreferenceService preferenceService) {

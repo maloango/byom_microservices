@@ -20,68 +20,68 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class EditCardTypeContoller extends BaseRestController {
-    
+
     public static class CardTypesResponse extends GenericResponse {
-        
+
         private List<CardType.CardSecurityCode> cardTypeSecurityCode;
         private boolean editable;
         private boolean hasCardGenerated;
         private List<TimePeriod.Field> time1;
         private List<TimePeriod.Field> time2;
         private CardTypesEntity cardTypes;
-        
+
         public CardTypesEntity getCardTypes() {
             return cardTypes;
         }
-        
+
         public void setCardTypes(CardTypesEntity cardTypes) {
             this.cardTypes = cardTypes;
         }
-        
+
         public List<CardType.CardSecurityCode> getCardTypeSecurityCode() {
             return cardTypeSecurityCode;
         }
-        
+
         public void setCardTypeSecurityCode(List<CardType.CardSecurityCode> cardTypeSecurityCode) {
             this.cardTypeSecurityCode = cardTypeSecurityCode;
         }
-        
+
         public boolean isEditable() {
             return editable;
         }
-        
+
         public void setEditable(boolean editable) {
             this.editable = editable;
         }
-        
+
         public boolean isHasCardGenerated() {
             return hasCardGenerated;
         }
-        
+
         public void setHasCardGenerated(boolean hasCardGenerated) {
             this.hasCardGenerated = hasCardGenerated;
         }
-        
+
         public List<TimePeriod.Field> getTime1() {
             return time1;
         }
-        
+
         public void setTime1(List<TimePeriod.Field> time1) {
             this.time1 = time1;
         }
-        
+
         public List<TimePeriod.Field> getTime2() {
             return time2;
         }
-        
+
         public void setTime2(List<TimePeriod.Field> time2) {
             this.time2 = time2;
         }
-        
+
     }
-    
+
     public static class CardTypesEntity {
-        
+
         private String name;
         private String cardFormatNumber = "#### #### #### ####";
         private TimePeriod defaultExpiration = new TimePeriod(1, TimePeriod.Field.YEARS);
@@ -91,90 +91,90 @@ public class EditCardTypeContoller extends BaseRestController {
         private RangeConstraint cardSecurityCodeLength = new RangeConstraint(4, 4);
         private int maxSecurityCodeTries = 3;
         private TimePeriod securityCodeBlockTime = new TimePeriod(1, TimePeriod.Field.DAYS);
-        
+
         public String getName() {
             return name;
         }
-        
+
         public void setName(String name) {
             this.name = name;
         }
-        
+
         public String getCardFormatNumber() {
             return cardFormatNumber;
         }
-        
+
         public void setCardFormatNumber(String cardFormatNumber) {
             this.cardFormatNumber = cardFormatNumber;
         }
-        
+
         public TimePeriod getDefaultExpiration() {
             return defaultExpiration;
         }
-        
+
         public void setDefaultExpiration(TimePeriod defaultExpiration) {
             this.defaultExpiration = defaultExpiration;
         }
-        
+
         public CardType.CardSecurityCode getCardSecurityCode() {
             return cardSecurityCode;
         }
-        
+
         public void setCardSecurityCode(CardType.CardSecurityCode cardSecurityCode) {
             this.cardSecurityCode = cardSecurityCode;
         }
-        
+
         public boolean isShowCardSecurityCode() {
             return showCardSecurityCode;
         }
-        
+
         public void setShowCardSecurityCode(boolean showCardSecurityCode) {
             this.showCardSecurityCode = showCardSecurityCode;
         }
-        
+
         public boolean isIgnoreDayInExpirationDate() {
             return ignoreDayInExpirationDate;
         }
-        
+
         public void setIgnoreDayInExpirationDate(boolean ignoreDayInExpirationDate) {
             this.ignoreDayInExpirationDate = ignoreDayInExpirationDate;
         }
-        
+
         public RangeConstraint getCardSecurityCodeLength() {
             return cardSecurityCodeLength;
         }
-        
+
         public void setCardSecurityCodeLength(RangeConstraint cardSecurityCodeLength) {
             this.cardSecurityCodeLength = cardSecurityCodeLength;
         }
-        
+
         public int getMaxSecurityCodeTries() {
             return maxSecurityCodeTries;
         }
-        
+
         public void setMaxSecurityCodeTries(int maxSecurityCodeTries) {
             this.maxSecurityCodeTries = maxSecurityCodeTries;
         }
-        
+
         public TimePeriod getSecurityCodeBlockTime() {
             return securityCodeBlockTime;
         }
-        
+
         public void setSecurityCodeBlockTime(TimePeriod securityCodeBlockTime) {
             this.securityCodeBlockTime = securityCodeBlockTime;
         }
-        
+
     }
-    
+
     @RequestMapping(value = "admin/editCardTypes", method = RequestMethod.GET)
     @ResponseBody
     public CardTypesResponse cardData() {
         CardTypesResponse response = new CardTypesResponse();
         boolean editable;
         boolean hasCardGenerated = false;
-        
+
         editable = permissionService.hasPermission(AdminSystemPermission.CARD_TYPES_MANAGE);
-        
+
         CardTypesEntity cardTypes = new CardTypesEntity();
         editable = true;
         response.setCardTypes(cardTypes);
@@ -190,24 +190,41 @@ public class EditCardTypeContoller extends BaseRestController {
         cardTypeSecurityCode.add(CardType.CardSecurityCode.NOT_USED);
         response.setCardTypeSecurityCode(cardTypeSecurityCode);
         response.setStatus(0);
-        
+
         return response;
     }
-    
+
     public static class CardTypesParameters {
-        
+
         private Long id;
         private String name;
         private String cardFormatNumber;
         private String cardSecurityCode;
         private boolean ignoreDayInExpirationDate;
         private int maxSecurityCodeTries;
-         private boolean showCardSecurityCode = false;
-
+        private boolean showCardSecurityCode = false;
+        private String defaultExpiration_field;
+        private int defaultExpiration_number;
         private String securityCodeBlockTime_field;
         private int securityCodeBlockTime_number;
         private int cardSecurityCodeLength_min;
         private int cardSecurityCodeLength_max;
+
+        public String getDefaultExpiration_field() {
+            return defaultExpiration_field;
+        }
+
+        public void setDefaultExpiration_field(String defaultExpiration_field) {
+            this.defaultExpiration_field = defaultExpiration_field;
+        }
+
+        public int getDefaultExpiration_number() {
+            return defaultExpiration_number;
+        }
+
+        public void setDefaultExpiration_number(int defaultExpiration_number) {
+            this.defaultExpiration_number = defaultExpiration_number;
+        }
 
         public boolean isShowCardSecurityCode() {
             return showCardSecurityCode;
@@ -216,52 +233,51 @@ public class EditCardTypeContoller extends BaseRestController {
         public void setShowCardSecurityCode(boolean showCardSecurityCode) {
             this.showCardSecurityCode = showCardSecurityCode;
         }
-        
-        
+
         public int getMaxSecurityCodeTries() {
             return maxSecurityCodeTries;
         }
-        
+
         public void setMaxSecurityCodeTries(int maxSecurityCodeTries) {
             this.maxSecurityCodeTries = maxSecurityCodeTries;
         }
-        
+
         public Long getId() {
             return id;
         }
-        
+
         public void setId(Long id) {
             this.id = id;
         }
-        
+
         public String getName() {
             return name;
         }
-        
+
         public void setName(String name) {
             this.name = name;
         }
-        
+
         public String getCardFormatNumber() {
             return cardFormatNumber;
         }
-        
+
         public void setCardFormatNumber(String cardFormatNumber) {
             this.cardFormatNumber = cardFormatNumber;
         }
-        
+
         public String getCardSecurityCode() {
             return cardSecurityCode;
         }
-        
+
         public void setCardSecurityCode(String cardSecurityCode) {
             this.cardSecurityCode = cardSecurityCode;
         }
-        
+
         public boolean isIgnoreDayInExpirationDate() {
             return ignoreDayInExpirationDate;
         }
-        
+
         public void setIgnoreDayInExpirationDate(boolean ignoreDayInExpirationDate) {
             this.ignoreDayInExpirationDate = ignoreDayInExpirationDate;
         }
@@ -282,25 +298,24 @@ public class EditCardTypeContoller extends BaseRestController {
             this.securityCodeBlockTime_number = securityCodeBlockTime_number;
         }
 
-     
         public int getCardSecurityCodeLength_min() {
             return cardSecurityCodeLength_min;
         }
-        
+
         public void setCardSecurityCodeLength_min(int cardSecurityCodeLength_min) {
             this.cardSecurityCodeLength_min = cardSecurityCodeLength_min;
         }
-        
+
         public int getCardSecurityCodeLength_max() {
             return cardSecurityCodeLength_max;
         }
-        
+
         public void setCardSecurityCodeLength_max(int cardSecurityCodeLength_max) {
             this.cardSecurityCodeLength_max = cardSecurityCodeLength_max;
         }
-        
+
     }
-    
+
     @RequestMapping(value = "admin/editCardTypes", method = RequestMethod.POST)
     @ResponseBody
     public GenericResponse submit(@RequestBody CardTypesParameters params) {
@@ -323,7 +338,10 @@ public class EditCardTypeContoller extends BaseRestController {
         rc.setMin(params.getCardSecurityCodeLength_min());
         cardType.setShowCardSecurityCode(params.isShowCardSecurityCode());
         cardType.setCardSecurityCodeLength(rc);
-        
+        TimePeriod defaultExpiration = new TimePeriod();
+        defaultExpiration.setField(TimePeriod.Field.valueOf(params.getDefaultExpiration_field()));
+        defaultExpiration.setNumber(params.getDefaultExpiration_number());
+        cardType.setDefaultExpiration(defaultExpiration);
         final boolean isInsert = cardType.isTransient();
         cardType = cardTypeService.save(cardType);
         if (isInsert) {
@@ -333,7 +351,7 @@ public class EditCardTypeContoller extends BaseRestController {
         }
         response.setStatus(0);
         return response;
-        
+
     }
-    
+
 }

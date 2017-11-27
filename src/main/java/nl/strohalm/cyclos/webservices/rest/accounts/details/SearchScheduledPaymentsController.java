@@ -56,7 +56,6 @@ public class SearchScheduledPaymentsController extends BaseRestController {
         public void setPrincipal(String principal) {
             this.principal = principal;
         }
-        
 
         public Long getAccountType() {
             return accountType;
@@ -261,20 +260,31 @@ public class SearchScheduledPaymentsController extends BaseRestController {
 //        query.put("period", localSettings);
 //        query.put("member", memberService.loadByIdOrPrincipal(params.getMember(), "admin", "1234"));
         final ScheduledPaymentQuery paymentQuery = new ScheduledPaymentQuery();
-        paymentQuery.setAccountType(accountTypeService.load(params.getAccountType()));
+        if (params.getAccountType() != null && params.getAccountType() > 0L) {
+            paymentQuery.setAccountType(accountTypeService.load(params.getAccountType()));
+        }
         paymentQuery.setPeriod(period);
-        paymentQuery.setStatusGroup(ScheduledPaymentQuery.StatusGroup.valueOf(params.getStatusGroup()));
-        paymentQuery.setMember(memberService.loadByIdOrPrincipal(params.getMember(), null,params.getPrincipal()));
+        if (params.getStatusGroup() != null) {
+            paymentQuery.setStatusGroup(ScheduledPaymentQuery.StatusGroup.valueOf(params.getStatusGroup()));
+        }
+        else{
+           paymentQuery.setStatusGroup(ScheduledPaymentQuery.StatusGroup.OPEN); 
+        }
+        if (params.getMember() != null && params.getMember() > 0L) {
+            paymentQuery.setMember((Member) elementService.load(params.getMember(),Element.Relationships.USER));
+        }
         paymentQuery.setSearchType(ScheduledPaymentQuery.SearchType.OUTGOING);
+        paymentQuery.setOwner(LoggedUser.accountOwner());
 
         List<ScheduledPayment> payments = null;
         if (LoggedUser.isAdministrator()) {
 //            query.setSearchType(ScheduledPaymentQuery.SearchType.OUTGOING);
         }
         payments = scheduledPaymentService.search(paymentQuery);
+        System.out.println("-----" + payments);
         response.setPayments(payments);
         response.setStatus(0);
-        response.setMessage("scheduled payment successfull!!");
+
         return response;
 
     }

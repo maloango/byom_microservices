@@ -11,6 +11,7 @@ import nl.strohalm.cyclos.entities.alerts.ErrorLogEntryQuery;
 import nl.strohalm.cyclos.services.alerts.ErrorLogService;
 import nl.strohalm.cyclos.utils.conversion.CoercionHelper;
 import nl.strohalm.cyclos.utils.query.PageParameters;
+import nl.strohalm.cyclos.utils.query.QueryParameters;
 import org.springframework.stereotype.Controller;
 
 import nl.strohalm.cyclos.webservices.rest.BaseRestController;
@@ -124,6 +125,7 @@ public class ViewErrorLogController extends BaseRestController {
 //        return query;
         final List<ErrorLogEntry> alertsList = errorLogService.search(query);
         List<ErrorLogEntity>alerts=new ArrayList();
+        System.out.println("----"+alertsList);
         for(ErrorLogEntry errorLog:alertsList){
             ErrorLogEntity errorLogEntity=new ErrorLogEntity();
             errorLogEntity.setId(errorLog.getId());

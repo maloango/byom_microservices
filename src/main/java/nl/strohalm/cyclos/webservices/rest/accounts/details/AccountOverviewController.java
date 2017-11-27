@@ -174,7 +174,7 @@ public class AccountOverviewController extends BaseRestController {
                ad.setId(ac.getId());
                ad.setType(ac.getType().getName());
                ad.setCurrency(ac.getType().getCurrency().getSymbol());
-               ad.setBalance(ac.getCreditLimit());
+               ad.setBalance(accountService.getBalance(new AccountDateDTO(account)));
                 overview.add(ad);
             } catch (final EntityNotFoundException e) {
                 // Ignore this account

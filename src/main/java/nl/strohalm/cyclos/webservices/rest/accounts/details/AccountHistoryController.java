@@ -675,10 +675,72 @@ public class AccountHistoryController extends BaseRestController {
         }
 
     }
+    
+    public static class TransferEntity{
+        private Long id;
+        private String from;
+        private Calendar date;
+        private String description;
+        private BigDecimal amount;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getFrom() {
+            return from;
+        }
+
+        public void setFrom(String from) {
+            this.from = from;
+        }
+
+        public Calendar getDate() {
+            return date;
+        }
+
+        public void setDate(Calendar date) {
+            this.date = date;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public BigDecimal getAmount() {
+            return amount;
+        }
+
+        public void setAmount(BigDecimal amount) {
+            this.amount = amount;
+        }
+        
+    }
+    
+    public static class SearchAccountResponse extends GenericResponse{
+       private List<TransferEntity> transferList;
+
+        public List<TransferEntity> getTransferList() {
+            return transferList;
+        }
+
+        public void setTransferList(List<TransferEntity> transferList) {
+            this.transferList = transferList;
+        }
+       
+    }
 
     @RequestMapping(value = "admin/accountHistory", method = RequestMethod.POST)
     @ResponseBody
-    public GenericResponse searchAccount(@RequestBody AccountHistoryRequest request) {
+    public SearchAccountResponse searchAccount(@RequestBody AccountHistoryRequest request) {
 //        final HttpServletRequest request = context.getRequest();
         Map<String, Object> queryParameter = new HashMap<String, Object>();
         queryParameter.put("owner", request.getOwner());
@@ -693,13 +755,23 @@ public class AccountHistoryController extends BaseRestController {
         final TransferQuery query = getDataBinder().readFromString(queryParameter);
 
         //  final TransferQuery query = (TransferQuery) queryParameters;
-        AccountHistoryResponse response = new AccountHistoryResponse();
+        SearchAccountResponse response = new SearchAccountResponse();
         // final Account account = accountService.getAccount(new AccountDTO(owner, type));
         final List<Transfer> transfers = paymentService.search(query);
-        response.setTransfers(transfers);
+        System.out.println("----transfer"+transfers);
+        List<TransferEntity>transferList=new ArrayList();
+        for(Transfer transfer:transfers){
+            TransferEntity entity=new TransferEntity();
+            entity.setId(transfer.getId());
+            entity.setAmount(transfer.getAmount());
+            entity.setDate(transfer.getDate());
+            entity.setDescription(transfer.getDescription());
+            entity.setFrom(transfer.getFrom().getName());
+            transferList.add(entity);
+        }
+        response.setTransferList(transferList);
         response.setStatus(0);
-        response.setMessage("tranfer list!!");
-        return response;
+ return response;
 //        request.setAttribute("accountHistory", Entry.build(permissionService, elementService, account, transfers, fetchMember()));
     }
 

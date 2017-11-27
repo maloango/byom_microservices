@@ -445,6 +445,26 @@
         
     <bean id="sendMessageController"
           class="nl.strohalm.cyclos.webservices.rest.members.messages.SendMessageController" /> 
+		  
+		  <!--member-->
+		   <bean id="memberSearchMessagesController"
+          class="nl.strohalm.cyclos.webservices.rest.members.messages.MemberSearchMessagesController" />
+	
+    <bean id="memberChangeMessageStatusController"
+          class="nl.strohalm.cyclos.webservices.rest.members.messages.MemberChangeMessageStatusController" />
+        
+    <bean id="memberViewMessageController"
+          class="nl.strohalm.cyclos.webservices.rest.members.messages.MemberViewMessageController" />
+        
+    <bean id="memberSendMessageController"
+          class="nl.strohalm.cyclos.webservices.rest.members.messages.MemberSendMessageController" /> 
+        
+    <bean id="memberRemoveMessageCategoryController"
+          class="nl.strohalm.cyclos.webservices.rest.members.messages.MemberRemoveMessageCategoryController" /> 
+         
+    <bean id="memberListMessageCategoriesController"
+          class="nl.strohalm.cyclos.webservices.rest.members.messages.MemberListMessageCategoriesController" />   
+		  
         
     <!--    <bean id="removeMessageCategoryController"
     class="nl.strohalm.cyclos.webservices.rest.members.messages.RemoveMessageCategoryController" /> -->

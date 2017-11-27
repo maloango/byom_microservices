@@ -206,8 +206,6 @@ public class SearchInvoicesController extends BaseRestController {
             this.invoices = invoices;
         }
 
-     
-
     }
 
     public static class SearchInvoiceResponse extends GenericResponse {
@@ -268,8 +266,9 @@ public class SearchInvoicesController extends BaseRestController {
         }
 
     }
-    
-    public static class InvoiceEntity{
+
+    public static class InvoiceEntity {
+
         private Long id;
         private Calendar date;
         private String description;
@@ -315,7 +314,7 @@ public class SearchInvoicesController extends BaseRestController {
         public void setFrom(String from) {
             this.from = from;
         }
-        
+
     }
 
     @RequestMapping(value = "admin/searchInvoices", method = RequestMethod.POST)
@@ -336,25 +335,31 @@ public class SearchInvoicesController extends BaseRestController {
         final InvoiceQuery query = new InvoiceQuery();
         query.setOwner(LoggedUser.accountOwner());
         query.setStatus(Invoice.Status.valueOf(request.getStatus()));
-        query.setDescription(request.getDescription());
-        query.setDirection(InvoiceQuery.Direction.valueOf(request.getDirection()));
+        if (request.getDescription() != null) {
+            query.setDescription(request.getDescription());
+        }
+        if (request.getDirection() != null) {
+            query.setDirection(InvoiceQuery.Direction.valueOf(request.getDirection()));
+        }
         Period period = new Period();
         period.setBegin(localSettings.getDateConverter().valueOf(request.getBegin()));
         period.setEnd(localSettings.getDateConverter().valueOf(request.getEnd()));
         query.setPeriod(period);
-        query.setRelatedOwner((Member) elementService.load(request.getRelatedMemberId()));
-        query.setTransferType(transferTypeService
-                .load(request.getTransferType(),
-                        TransferType.Relationships.FROM,TransferType.Relationships.TO));
+        if (request.getRelatedMemberId() != null && request.getRelatedMemberId() > 0L) {
+            query.setRelatedOwner((Member) elementService.load(request.getRelatedMemberId()));
+        }
+        if (request.getTransferType() != null && request.getTransferType() > 0L) {
+            query.setTransferType(transferTypeService.load(request.getTransferType(), TransferType.Relationships.FROM, TransferType.Relationships.TO));
+        }
         final List<Invoice> invoicesList = invoiceService.search(query);
-        List<InvoiceEntity>invoices=new ArrayList();
-        for(Invoice invoice:invoicesList){
-            InvoiceEntity invoiceEntity=new InvoiceEntity();
+        List<InvoiceEntity> invoices = new ArrayList();
+        for (Invoice invoice : invoicesList) {
+            InvoiceEntity invoiceEntity = new InvoiceEntity();
             invoiceEntity.setId(invoice.getId());
             invoiceEntity.setAmount(invoice.getAmount());
             invoiceEntity.setDate(invoice.getDate());
             invoiceEntity.setDescription(invoice.getDescription());
-           // invoiceEntity.setFrom(invoice.getFromMember().getUsername());
+            // invoiceEntity.setFrom(invoice.getFromMember().getUsername());
             invoices.add(invoiceEntity);
         }
         response.setInvoices(invoices);

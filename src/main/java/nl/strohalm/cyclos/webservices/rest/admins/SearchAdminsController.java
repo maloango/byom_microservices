@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class SearchAdminsController extends BaseRestController {
     
-    public static class GroupEntity {
+    public static class GroupEntity {   
         
         private Long id;
         private String name;

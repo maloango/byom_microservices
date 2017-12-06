@@ -189,6 +189,7 @@ public class SearchMessagesController extends BaseRestController {
         try {
             final MessageQuery queries = new MessageQuery();
             queries.setKeywords(params.getKeywords());
+            if(queries.getRelatedMember()!=null)
             queries.setRelatedMember((Member) elementService.load(params.getRelatedMember(), Element.Relationships.USER));
             queries.setMessageBox(MessageBox.valueOf(params.getMessageBox()));
             if (params.getCategory() != null) {
@@ -196,7 +197,7 @@ public class SearchMessagesController extends BaseRestController {
             }
 
             final List<Message> list = messageService.search(queries);
-            System.out.println("....." + list.size());
+            System.out.println("....." +messageService.search(queries));
             for (int i = 0; i < list.size(); i++) {
                 System.out.println("------" + list.get(i));
             }

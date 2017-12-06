@@ -5,13 +5,16 @@
  */
 package nl.strohalm.cyclos.webservices.rest.admins;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.print.Collation;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.entities.access.AdminUser;
 import nl.strohalm.cyclos.entities.customization.fields.AdminCustomField;
 import nl.strohalm.cyclos.entities.customization.fields.AdminCustomFieldValue;
+import nl.strohalm.cyclos.entities.customization.fields.CustomFieldValue;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
 import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.entities.members.Administrator;
@@ -33,16 +36,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 public class CreateAdminController extends AbstractCreateAdminController<Administrator> {
+
     private ElementService elementService;
     private AdminCustomFieldService adminCustomFieldService;
 
-    private CustomFieldHelper       customFieldHelper;
+    private CustomFieldHelper customFieldHelper;
 
     @Inject
     public void setElementService(ElementService elementService) {
         this.elementService = elementService;
     }
-    
 
     public static class CreateAdminParameters {
 
@@ -116,30 +119,26 @@ public class CreateAdminController extends AbstractCreateAdminController<Adminis
     @ResponseBody
     public GenericResponse create(@RequestBody CreateAdminParameters params) {
         GenericResponse response = new GenericResponse();
-        Map<String, Object> query = new HashMap();
-        query.put("group", params.getGroup());
-        query.put("email", params.getEmail());
-        query.put("name", params.getName());
-
-        Map<String, Object> userMap = new HashMap();
-        userMap.put("username", params.getUsername());
-        userMap.put("password", params.getPassword());
-
-        query.put("user", userMap);
-        final Element element = getDataBinder().readFromString(query);
-        Administrator administrator = (Administrator) element;
+//        Map<String, Object> query = new HashMap();
+//        query.put("group", params.getGroup());
+//        query.put("email", params.getEmail());
+//        query.put("name", params.getName());
+//
+//        Map<String, Object> userMap = new HashMap();
+//        userMap.put("username", params.getUsername());
+//        userMap.put("password", params.getPassword());
+//
+//        query.put("user", userMap);
+//        final Element element = getDataBinder().readFromString(query);
+        Administrator administrator = new Administrator();
         administrator.setEmail(params.getEmail());
         administrator.setName(params.getName());
-        administrator.setGroup(groupService.load(params.getGroup(),Group.Relationships.ELEMENTS));
-          AdminUser adminUser=new AdminUser();
-          adminUser.setUsername(params.getUsername());
-          adminUser.setPassword(params.getPassword());
-          administrator.setUser(adminUser);
-      //   final List<AdminCustomField> customFields = customFieldHelper.onlyForGroup(adminCustomFieldService.list(),administrator.getAdminGroup());
-          
-                 
-        System.out.println("----  "+administrator);
-        administrator = (Administrator)elementService.register(administrator, params.isForceChangePassword(), LoggedUser.remoteAddress());
+        administrator.setGroup(groupService.load(params.getGroup(), Group.Relationships.ELEMENTS));
+        AdminUser adminUser = new AdminUser();
+        adminUser.setUsername(params.getUsername());
+        adminUser.setPassword(params.getPassword());
+        administrator.setUser(adminUser);
+        administrator = (Administrator) elementService.register(administrator, params.isForceChangePassword(), LoggedUser.remoteAddress());
         response.setMessage("createAdmin.created");
         response.setStatus(0);
         return response;

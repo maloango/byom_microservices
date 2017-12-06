@@ -445,6 +445,7 @@
         
     <bean id="sendMessageController"
           class="nl.strohalm.cyclos.webservices.rest.members.messages.SendMessageController" /> 
+    
 		  
 		  <!--member-->
 <!--		   <bean id="memberSearchMessagesController"

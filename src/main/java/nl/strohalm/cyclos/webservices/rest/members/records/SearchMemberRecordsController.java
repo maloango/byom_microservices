@@ -192,14 +192,15 @@ public class SearchMemberRecordsController extends BaseRestController {
             query.setPeriod(period);
         }
         if (params.getElement() != null) {
-            query.setElement(elementService.load(params.getElement(), Element.Relationships.USER));
+            query.setElement(elementService.load(params.getElement(), Element.Relationships.GROUP));
         }
         if (params.getBroker() != null) {
-            query.setBroker((Member) elementService.load(params.getBroker(), Element.Relationships.USER));
+            query.setBroker((Member) elementService.load(params.getBroker()));
         }
-        query.setType(memberRecordTypeService.load(params.getTypeId(), MemberRecordType.Relationships.GROUPS));
+        query.setType(memberRecordTypeService.load(params.getTypeId()));
+        query.fetch(MemberRecord.Relationships.TYPE);
         final List<MemberRecord> memberRecords = memberRecordService.fullTextSearch(query);
-        System.out.println("-----"+memberRecords);
+        System.out.println("-----" + memberRecords);
         List<MemberRecordEntity> memberRecordList = new ArrayList();
         for (MemberRecord record : memberRecords) {
             MemberRecordEntity entity = new MemberRecordEntity();
@@ -208,7 +209,7 @@ public class SearchMemberRecordsController extends BaseRestController {
             entity.setLastModified(record.getLastModified());
             entity.setBy(record.getBy().getName());
             memberRecordList.add(entity);
-            
+
         }
         response.setMemberRecordList(memberRecordList);
         response.setStatus(0);

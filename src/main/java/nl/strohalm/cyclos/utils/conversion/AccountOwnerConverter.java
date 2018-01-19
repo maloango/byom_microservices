@@ -56,6 +56,7 @@ public class AccountOwnerConverter implements Converter<AccountOwner> {
     public String toString(final AccountOwner object) {
         if (object instanceof Member) {
             return REFERENCE_CONVERTER.toString((Member) object);
+            
         }
         return "";
     }

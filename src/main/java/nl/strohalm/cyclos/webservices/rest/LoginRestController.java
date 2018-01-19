@@ -110,6 +110,7 @@ public class LoginRestController extends BaseRestController {
             if (user instanceof MemberUser && elementService.shallAcceptAgreement(((MemberUser) user).getMember())) {
             // Should accept a registration agreement first
             response.setForwardPage("acceptRegistrationAgreement");
+            
             response.setErrorCode(200);//ok
         } else if (accessService.hasPasswordExpired()) {
             // Should change an expired password

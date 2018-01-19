@@ -649,6 +649,11 @@
     
     <bean id="searchAdsController" 
           class="nl.strohalm.cyclos.webservices.rest.ads.SearchAdsController"/>
+      <bean id="deleteAdController" 
+          class="nl.strohalm.cyclos.webservices.rest.ads.RemoveAdController"/>
+       <bean id="modifyAdController" 
+          class="nl.strohalm.cyclos.webservices.rest.ads.EditAdController"/>
+       
     <bean id="listAdCategoriesController" 
           class="nl.strohalm.cyclos.webservices.rest.ads.ListAdCategoriesController"/>
    

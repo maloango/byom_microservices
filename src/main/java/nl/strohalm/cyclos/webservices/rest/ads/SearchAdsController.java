@@ -194,8 +194,10 @@ public class SearchAdsController extends BaseRestController {
             //request.setAttribute("categories", categories);
             //request.setAttribute("showCounters", true);
             response.setCategories(categories);
+            System.out.println("-----adcat: " + categories);
         } else {
             final List<AdCategory> categories = adCategoryService.listRoot();
+            System.out.println("add----" + categories.get(0).getChildren());
             rootCategoryCount = categories.size();
             response.setAdCategories(categories);
             //request.setAttribute("categories", categories);
@@ -269,6 +271,15 @@ public class SearchAdsController extends BaseRestController {
         private Long currency;
         private int since_number;
         private String since_field;
+        private Long category;
+
+        public Long getCategory() {
+            return category;
+        }
+
+        public void setCategory(Long category) {
+            this.category = category;
+        }
 
         public String getTradeType() {
             return tradeType;
@@ -391,7 +402,6 @@ public class SearchAdsController extends BaseRestController {
         public void setPublishedBy(String publishedBy) {
             this.publishedBy = publishedBy;
         }
-        
 
         public String getDescription() {
             return description;
@@ -449,8 +459,12 @@ public class SearchAdsController extends BaseRestController {
         List<Ad> ads = null;
 
         final FullTextAdQuery query = new FullTextAdQuery();
-        if(params.getKeywords()!=null)
-        query.setKeywords(params.getKeywords());
+        if (params.getCategory() != null && params.getCategory()>0L) {
+            query.setCategory(adCategoryService.load(params.getCategory()));
+        }
+        if (params.getKeywords() != null) {
+            query.setKeywords(params.getKeywords());
+        }
         if (params.getCurrency() != null && params.getCurrency() > 0L) {
             query.setCurrency(currencyService.load(params.getCurrency()));
         }
@@ -460,22 +474,29 @@ public class SearchAdsController extends BaseRestController {
         if (params.getFinalPrice() != null) {
             query.setFinalPrice(params.getFinalPrice());
         }
-        if(params.isWithImagesOnly()!=false)
-        query.setWithImagesOnly(params.isWithImagesOnly());
-        if(params.getAdStatus()!=null)
-        query.setStatus(Ad.Status.valueOf(params.getAdStatus()));
-        if(params.getTradeType()!=null)
-        query.setTradeType(Ad.TradeType.valueOf(params.getTradeType()));
-        List<GroupFilter> groupFilters = new ArrayList();
-        for (Long groupId : params.getGroupFilters()) {
-            groupFilters.add(groupFilterService.load(groupId, GroupFilter.Relationships.GROUPS));
+        if (params.isWithImagesOnly() != false) {
+            query.setWithImagesOnly(params.isWithImagesOnly());
         }
-        query.setGroupFilters(groupFilters);
-        List<MemberGroup> groups = new ArrayList();
-        for (Long id : params.getGroups()) {
-            groups.add((MemberGroup) groupService.load(id, Group.Relationships.GROUP_FILTERS));
+        if (params.getAdStatus() != null) {
+            query.setStatus(Ad.Status.valueOf(params.getAdStatus()));
         }
-        query.setGroups(groups);
+        if (params.getTradeType() != null) {
+            query.setTradeType(Ad.TradeType.valueOf(params.getTradeType()));
+        }
+        if (params.getGroupFilters() != null) {
+            List<GroupFilter> groupFilters = new ArrayList();
+            for (Long groupId : params.getGroupFilters()) {
+                groupFilters.add(groupFilterService.load(groupId, GroupFilter.Relationships.GROUPS));
+            }
+            query.setGroupFilters(groupFilters);
+        }
+        if (params.getGroups() != null) {
+            List<MemberGroup> groups = new ArrayList();
+            for (Long id : params.getGroups()) {
+                groups.add((MemberGroup) groupService.load(id, Group.Relationships.GROUP_FILTERS));
+            }
+            query.setGroups(groups);
+        }
         if (params.getSince_field() != null) {
             TimePeriod tp = new TimePeriod();
             tp.setNumber(params.getSince_number());
@@ -495,7 +516,7 @@ public class SearchAdsController extends BaseRestController {
             entity.setPrice(ad.getPrice());
             entity.setPublishedBy(ad.getOwner().getName());
             adList.add(entity);
-            
+
         }
         response.setStatus(0);
         response.setAdList(adList);

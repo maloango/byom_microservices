@@ -7,7 +7,6 @@ package nl.strohalm.cyclos.webservices.rest.members;
 
 import nl.strohalm.cyclos.access.AdminMemberPermission;
 import nl.strohalm.cyclos.access.BrokerPermission;
-import nl.strohalm.cyclos.controls.ActionContext;
 import nl.strohalm.cyclos.entities.access.MemberUser;
 import nl.strohalm.cyclos.entities.access.User;
 import nl.strohalm.cyclos.entities.groups.Group;

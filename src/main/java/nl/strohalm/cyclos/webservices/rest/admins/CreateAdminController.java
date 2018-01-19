@@ -5,20 +5,13 @@
  */
 package nl.strohalm.cyclos.webservices.rest.admins;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javafx.print.Collation;
 import nl.strohalm.cyclos.annotations.Inject;
 import nl.strohalm.cyclos.entities.access.AdminUser;
 import nl.strohalm.cyclos.entities.customization.fields.AdminCustomField;
 import nl.strohalm.cyclos.entities.customization.fields.AdminCustomFieldValue;
-import nl.strohalm.cyclos.entities.customization.fields.CustomFieldValue;
 import nl.strohalm.cyclos.entities.groups.AdminGroup;
 import nl.strohalm.cyclos.entities.groups.Group;
 import nl.strohalm.cyclos.entities.members.Administrator;
-import nl.strohalm.cyclos.entities.members.Element;
 import nl.strohalm.cyclos.services.customization.AdminCustomFieldService;
 import nl.strohalm.cyclos.services.elements.ElementService;
 import nl.strohalm.cyclos.utils.CustomFieldHelper;
